@@ -1,0 +1,66 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model AuthUser {
+  id           String         @id @map("_id")
+  auth_session AuthSession[]
+  auth_key     AuthKey[]
+  loggedInAt   DateTime       @default(now()) @updatedAt
+  name         String?
+  minions      MinionSeller[] // Updated relation to MinionSeller
+
+  @@map("auth_user")
+}
+
+model AuthSession {
+  id             String   @id @map("_id")
+  user_id        String
+  active_expires BigInt
+  idle_expires   BigInt
+  auth_user      AuthUser @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@map("auth_session")
+}
+
+model AuthKey {
+  id              String   @id @map("_id")
+  hashed_password String?
+  user_id         String
+  primary_key     Boolean
+  expires         BigInt?
+  auth_user       AuthUser @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@map("auth_key")
+}
+
+model Minion {
+  id             String         @id @map("_id")
+  name           String
+  generator      String
+  generator_tier Int
+  tier           String
+  damage         Int
+  texture        String
+  sellers        MinionSeller[]
+}
+
+model MinionSeller {
+  id        String   @id @map("_id")
+  minion_id String
+  user_id   String
+  user      AuthUser @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  minion    Minion   @relation(fields: [minion_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@index([minion_id])
+}
