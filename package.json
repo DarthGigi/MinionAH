@@ -10,7 +10,8 @@
     "lint": "prettier --plugin-search-dir . --check .",
     "format": "prettier --plugin-search-dir . --write .",
     "prisma db push": "dotenv -e .env.development npx prisma db push",
-    "prisma studio": "dotenv -e .env.development npx prisma studio"
+    "prisma studio": "dotenv -e .env.development npx prisma studio",
+    "postinstall": "prisma generate"
   },
   "devDependencies": {
     "@rgossiaux/svelte-headlessui": "^2.0.0",
