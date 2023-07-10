@@ -24,7 +24,6 @@ export const GET: RequestHandler = async ({ cookies, url, locals }) => {
   }
 
   try {
-    console.log("valid state");
     const { existingUser, providerUser, createUser } = await discordAuth.validateCallback(code);
 
     const getUser = async () => {
@@ -37,8 +36,7 @@ export const GET: RequestHandler = async ({ cookies, url, locals }) => {
     };
     const user = await getUser();
     const session = await auth.createSession(user.userId);
-    locals.setSession(session);
-    console.log("session created");
+    locals.auth.setSession(session);
   } catch (e) {
     console.log(JSON.stringify(e));
     // invalid code

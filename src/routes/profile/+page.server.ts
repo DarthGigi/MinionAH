@@ -8,10 +8,12 @@ export const load = (async ({ locals }) => {
     throw redirect(302, "/login");
   }
 
+  console.log(session);
+
   // Load user profile data from database
   const user = await prisma.authUser.findUnique({
     where: {
-      id: session.id
+      id: session.userId
     }
   });
 

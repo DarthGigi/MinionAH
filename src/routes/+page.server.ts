@@ -1,4 +1,4 @@
-import type { PageServerLoad, Actions } from "./$types";
+import type { PageServerLoad } from "./$types";
 import type { Minion } from "$lib/types";
 
 export const load = (async () => {
