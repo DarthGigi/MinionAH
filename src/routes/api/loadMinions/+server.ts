@@ -1,6 +1,6 @@
 import type { RequestHandler } from "./$types";
 import type { Minion } from "$lib/types";
-import { prisma } from "$lib/server/prisma";
+import prisma from "$lib/server/prisma";
 
 type Params = {
   take?: number;

@@ -3,7 +3,7 @@ import prismaAdapter from "@lucia-auth/adapter-prisma";
 import { sveltekit } from "lucia-auth/middleware";
 import { discord } from "@lucia-auth/oauth/providers";
 import { dev } from "$app/environment";
-import { prisma } from "$lib/server/prisma";
+import prisma from "$lib/server/prisma";
 import { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI } from "$env/static/private";
 
 export const auth = lucia({
