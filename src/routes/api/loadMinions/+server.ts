@@ -38,8 +38,7 @@ export const POST: RequestHandler = async ({ request }) => {
   const ip = !dev ? request.headers.get("CF-Connecting-IP") || request.headers.get("X-Forwarded-For") || request.headers.get("X-Real-IP") || request.headers.get("X-Client-IP") || request.headers.get("X-Cluster-Client-IP") || request.headers.get("X-Forwarded") || request.headers.get("Forwarded-For") || request.headers.get("Forwarded") : "127.0.0.1";
 
   if (!ip) {
-    console.log("No IP address found");
-    return new Response(null, {
+    return new Response("No IP address found", {
       status: 400
     });
   }
@@ -47,8 +46,7 @@ export const POST: RequestHandler = async ({ request }) => {
   const requestCount = requestCounts.get(ip) || 0;
 
   if (requestCount >= MAX_REQUESTS_PER_MINUTE) {
-    console.log("Too many requests");
-    return new Response(null, {
+    return new Response("Too many requests", {
       status: 429
     });
   }
