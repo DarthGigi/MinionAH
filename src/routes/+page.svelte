@@ -11,6 +11,7 @@
   let loadingMore = false;
   let currentTier: string | undefined = undefined;
   let isFirstFilter = true;
+  let search: string | undefined = undefined;
 
   async function initializeMinions() {
     minions = await data.props.minions;
@@ -18,52 +19,26 @@
 
   onMount(initializeMinions);
 
-  async function loadData(filterTier?: string, skip?: number, search?: string) {
-    loadingMore = true;
+  async function loadData(filterTier?: string, skip?: number, search?: string, isMore: boolean = false) {
+    loadingMore = isMore;
 
-    let apiURL = "/api/loadMinions";
-
-    if (skip) {
-      apiURL += `?skip=${skip}`;
-    }
-
-    if (filterTier) {
-      apiURL += `${skip || search ? "&" : "?"}where={"generator_tier":${filterTier}}`;
-    }
-
-    if (search) {
-      console.log("search: ", search);
-      console.log("empty? ", search === "");
-      console.log("typeof: ", typeof search);
-
-      apiURL += `${skip || filterTier ? "&" : "?"}where={"name":{"contains":"${search}","mode":"insensitive"}}`;
-    }
-
-    const res = await fetch(apiURL, {
-      method: "GET"
-    }).then((res) => res.json());
-
-    if (filterTier) {
-      if (isFirstFilter) {
-        minions = res;
-        isFirstFilter = false;
-      } else {
-        minions = minions.concat(res);
-      }
-    } else {
-      if (search !== "") {
-        minions = res;
-      } else if (search === "") {
-        minions = data.props.minions;
-      } else {
-        if (minions.length === 0) {
-          minions = [...minions, ...res];
-        } else {
-          minions = minions.concat(res);
+    const res = await fetch("/api/loadMinions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        skip: skip,
+        where: {
+          ...(filterTier && { generator_tier: filterTier }),
+          ...(search && {
+            AND: [{ name: { contains: search, mode: "insensitive" } }, { generator_tier: filterTier }]
+          })
         }
-      }
-    }
-
+      })
+    });
+    const data = await res.json();
+    minions = isMore ? [...minions, ...data] : data;
     loadingMore = false;
   }
 </script>
@@ -71,7 +46,16 @@
 <div class="mx-auto flex flex-row items-center justify-center gap-4 px-4 py-20 sm:px-6 lg:px-8">
   <div class="h-[4.25rem] w-48">
     <span class="text-white">Search</span>
-    <input type="text" on:input={(e) => loadData(currentTier, undefined, e.target.value)} class="h-9 w-full rounded border-2 border-neutral-700 bg-black px-4 text-sm text-white placeholder-white placeholder-opacity-30" placeholder="Search..." maxlength="32" />
+    <input
+      type="text"
+      on:input={(e) => {
+        search = e.target.value;
+        loadData(currentTier, undefined, search);
+      }}
+      class="h-9 w-full rounded border-2 border-neutral-700 bg-black px-4 text-sm text-white placeholder-white placeholder-opacity-30"
+      placeholder="Search..."
+      maxlength="32"
+    />
   </div>
   <Listbox
     on:filterTier={({ detail }) => {
@@ -105,7 +89,7 @@
       {#if minions.length === 0}
         <p class="text-center text-neutral-200">No more minions to load.</p>
       {:else}
-        <button type="button" on:click={() => loadData(currentTier, minions.length)} class="rounded px-4 py-1 text-sm text-white transition-colors duration-300 hover:bg-white hover:text-black">Load more...</button>
+        <button type="button" on:click={() => loadData(currentTier, minions.length, search, true)} class="rounded px-4 py-1 text-sm text-white transition-colors duration-300 hover:bg-white hover:text-black">Load more...</button>
       {/if}
     </div>
   </div>

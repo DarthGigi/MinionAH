@@ -22,27 +22,15 @@ async function getMinions(take: number = 9, skip?: number, orderBy: object = [{ 
   return minions as Minion[];
 }
 
-export const GET: RequestHandler = async ({ request }) => {
-  const url = new URL(request.url);
-  const params: Params = {
-    take: Number(url.searchParams.get("take")) || 9,
-    skip: Number(url.searchParams.get("skip")),
-    orderBy: url.searchParams.get("orderBy") ? JSON.parse(url.searchParams.get("orderBy") as string) : [{ generator: "asc" }, { generator_tier: "asc" }],
-    distinct: url.searchParams.get("distinct"),
-    where: url.searchParams.get("where") ? JSON.parse(url.searchParams.get("where") as string) : undefined
-  };
+export const POST: RequestHandler = async ({ request }) => {
+  // Switch from GET to POST
+  const params: Params = await request.json();
 
-  const filteredParams = Object.entries(params).reduce((acc, [key, value]) => {
-    if (value !== undefined && value !== null) {
-      acc[key as keyof Params] = value;
-    }
-    return acc;
-  }, {} as Params);
+  console.log(params);
 
   let minions;
   try {
-    minions = await getMinions(filteredParams.take, filteredParams.skip, filteredParams.orderBy as object, filteredParams.distinct, filteredParams.where);
-    console.log(minions);
+    minions = await getMinions(params.take, params.skip, params.orderBy, params.distinct, params.where);
   } catch (e) {
     console.log(e);
     return new Response(null, {
