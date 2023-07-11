@@ -31,16 +31,20 @@ export const GET: RequestHandler = async ({ cookies, url, locals }) => {
       // create a new user if the user does not exist
       return await createUser({
         // attributes
-        name: providerUser.username
+        id: providerUser.id,
+        username: providerUser.username,
+        avatar: providerUser.avatar,
+        banner: providerUser.banner,
+        accent_color: providerUser.accent_color,
+        locale: providerUser.locale
       });
     };
     const user = await getUser();
     const session = await auth.createSession(user.userId);
     locals.auth.setSession(session);
   } catch (e) {
-    console.log(JSON.stringify(e));
-    // invalid code
-    return new Response(null, {
+    console.log(e);
+    return new Response("Internal Server Error", {
       status: 500
     });
   }

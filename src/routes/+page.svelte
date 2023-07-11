@@ -3,14 +3,14 @@
   import Card from "$lib/components/Card.svelte";
   import type { Minion } from "$lib/types";
   import CardLoading from "$lib/components/CardLoading.svelte";
-  import Listbox from "$lib/components/Listbox.svelte";
+  import TierListbox from "$lib/components/TierListbox.svelte";
   import { onMount } from "svelte";
 
   export let data: PageData;
   let minions: Minion[] = [];
   let loadingMore = false;
   let currentTier: string | undefined = undefined;
-  let isFirstFilter = true;
+
   let search: string | undefined = undefined;
 
   async function initializeMinions() {
@@ -57,7 +57,7 @@
       maxlength="32"
     />
   </div>
-  <Listbox
+  <TierListbox
     on:filterTier={({ detail }) => {
       currentTier = detail.tier;
       loadData(currentTier);

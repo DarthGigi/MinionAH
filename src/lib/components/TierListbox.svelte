@@ -18,6 +18,8 @@
   }
 </script>
 
+<input type="hidden" name="tier" bind:value={selectedTier} />
+
 <Listbox bind:value={selectedTier}>
   <ListboxLabel>Tier</ListboxLabel>
   <ListboxButton class="relative w-full cursor-default rounded-md bg-neutral-700 py-1.5 pl-3 pr-10 text-left text-neutral-200 shadow-sm ring-1 ring-inset focus:outline-none focus:ring-2 focus:ring-neutral-500 sm:text-sm sm:leading-6">{isNaN(Number(selectedTier)) ? "Select tier" : `${["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"][Number(selectedTier) - 1]} (${selectedTier})`}</ListboxButton>
