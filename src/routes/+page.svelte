@@ -15,6 +15,7 @@
 
   async function initializeMinions() {
     minions = await data.props.minions;
+    console.log(minions);
   }
 
   onMount(initializeMinions);

@@ -9,7 +9,7 @@ export const load = (async () => {
         skip: 0,
         orderBy: [
           {
-            generator: "asc"
+            name: "asc"
           },
           {
             generator_tier: "asc"

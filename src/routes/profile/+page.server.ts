@@ -103,14 +103,23 @@ export const actions = {
 
     // create the minion in the database
     try {
+      console.log("Minion id: ", minion.id);
       const createdMinion = await prisma.minionSeller.create({
         data: {
           id: randomUUID(),
 
           amount: Number(amount),
           price: Number(priceNumber),
-          user_id: user.id,
-          minion_id: minion.id
+          minion: {
+            connect: {
+              id: minion.id
+            }
+          },
+          user: {
+            connect: {
+              id: user.id
+            }
+          }
         }
       });
 

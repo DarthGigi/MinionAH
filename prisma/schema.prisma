@@ -19,7 +19,7 @@ model AuthUser {
   banner       String?
   accent_color Int?
   locale       String?
-  minions      MinionSeller[] // Updated relation to MinionSeller
+  minions      MinionSeller[]
 
   @@map("auth_user")
 }
@@ -59,13 +59,14 @@ model Minion {
 }
 
 model MinionSeller {
-  id        String   @id @default(cuid()) @map("_id")
-  minion_id String
-  user_id   String
-  user      AuthUser @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  minion    Minion   @relation(fields: [minion_id], references: [id], onDelete: Cascade)
-  price     Float
-  amount    Int?
+  id          String   @id @default(cuid()) @map("_id")
+  minion_id   String
+  user_id     String
+  user        AuthUser @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  minion      Minion   @relation(fields: [minion_id], references: [id], onDelete: Cascade)
+  price       Float
+  amount      Int?
+  timeCreated DateTime @default(now()) @updatedAt
 
   @@index([user_id])
   @@index([minion_id])
