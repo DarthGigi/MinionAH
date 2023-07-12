@@ -52,8 +52,6 @@ model Minion {
   name           String
   generator      String
   generator_tier Int
-  tier           String
-  damage         Int
   texture        String
   sellers        MinionSeller[]
 }

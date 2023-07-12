@@ -1,13 +1,13 @@
 <script lang="ts">
   import type { PageData } from "./$types";
   import Card from "$lib/components/Card.svelte";
-  import type { Minion } from "$lib/types";
+  import type { Seller } from "$lib/types";
   import CardLoading from "$lib/components/CardLoading.svelte";
   import TierListbox from "$lib/components/TierListbox.svelte";
   import { onMount } from "svelte";
 
   export let data: PageData;
-  let minions: Minion[] = [];
+  let minions: Seller[] = [];
   let loadingMore = false;
   let currentTier: string | undefined = undefined;
 
@@ -31,13 +31,25 @@
       body: JSON.stringify({
         skip: skip,
         where: {
-          ...(filterTier && { generator_tier: filterTier }),
-          ...(search && {
-            AND: [{ name: { contains: search, mode: "insensitive" } }, { generator_tier: filterTier }]
-          })
+          OR: [
+            {
+              minion: {
+                ...(filterTier && { generator_tier: filterTier }),
+                ...(search && {
+                  AND: [{ name: { contains: search, mode: "insensitive" } }, { generator_tier: filterTier }]
+                })
+              }
+            },
+            {
+              user: {
+                ...(search && { username: { contains: search, mode: "insensitive" } })
+              }
+            }
+          ]
         }
       })
     });
+
     const data = await res.json();
     minions = isMore ? [...minions, ...data] : data;
     loadingMore = false;
@@ -50,8 +62,10 @@
     <input
       type="text"
       on:input={(e) => {
-        search = e.target.value;
-        loadData(currentTier, undefined, search);
+        if (e.target instanceof HTMLInputElement) {
+          search = e.target.value;
+          loadData(currentTier, undefined, search);
+        }
       }}
       class="h-9 w-full rounded border-2 border-neutral-700 bg-black px-4 text-sm text-white placeholder-white placeholder-opacity-30"
       placeholder="Search..."
@@ -74,8 +88,8 @@
           <CardLoading />
         {/each}
       {:then minions}
-        {#each minions as minion}
-          <Card {minion} />
+        {#each minions as seller}
+          <Card {seller} />
         {/each}
 
         {#if loadingMore}

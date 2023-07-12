@@ -1,7 +1,7 @@
 import type { PageServerLoad, Actions } from "./$types";
 import { redirect } from "@sveltejs/kit";
 import prisma from "$lib/server/prisma";
-import { randomUUID } from "crypto";
+import type { Seller } from "$lib/types";
 
 export const load = (async ({ locals }) => {
   const session = await locals.auth.validate();
@@ -35,7 +35,21 @@ export const load = (async ({ locals }) => {
   return {
     user,
     streamed: {
-      minionTypes
+      minionTypes,
+      userMinions: prisma.minionSeller.findMany({
+        where: {
+          user: {
+            id: user.id
+          }
+        },
+        include: {
+          minion: true,
+          user: true
+        },
+        orderBy: {
+          timeCreated: "desc"
+        }
+      }) as Promise<Seller[]>
     }
   };
 }) satisfies PageServerLoad;
@@ -55,7 +69,6 @@ export const actions = {
         }
       });
 
-      console.log("User: ", user);
       if (!user) {
         throw redirect(302, "/login");
       }
@@ -66,11 +79,9 @@ export const actions = {
 
     const formData = await request.formData();
     const minionType = formData.get("minionType") as string;
-    const amount = formData.get("amount") as unknown as number;
-    const price = formData.get("price") as string;
-    const tier = formData.get("tier") as unknown as number;
-
-    const priceNumber = parseFloat(price.replace(/,/g, ".").replace(/[^\d.-]/g, "")) * (price.endsWith("k") ? 1000 : price.endsWith("m") ? 1000000 : 1);
+    const amount = Number(formData.get("amount")) as number;
+    const price = Number(formData.get("price")) as number;
+    const tier = Number(formData.get("tier")) as number;
 
     let minion;
     try {
@@ -80,13 +91,11 @@ export const actions = {
           generator: minionType,
           AND: [
             {
-              generator_tier: Number(tier)
+              generator_tier: tier
             }
           ]
         }
       });
-
-      console.log("Minion: ", minion);
 
       if (!minion) {
         throw new Error("Minion not found");
@@ -103,27 +112,26 @@ export const actions = {
 
     // create the minion in the database
     try {
-      console.log("Minion id: ", minion.id);
       const createdMinion = await prisma.minionSeller.create({
         data: {
-          id: randomUUID(),
-
-          amount: Number(amount),
-          price: Number(priceNumber),
-          minion: {
-            connect: {
-              id: minion.id
-            }
-          },
+          amount,
+          price,
           user: {
             connect: {
               id: user.id
+            }
+          },
+          minion: {
+            connect: {
+              id: minion.id
             }
           }
         }
       });
 
-      console.log("Created minion: ", createdMinion);
+      if (!createdMinion) {
+        throw new Error("Something went wrong");
+      }
 
       return {
         status: 200,

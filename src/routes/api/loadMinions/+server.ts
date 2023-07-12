@@ -1,5 +1,5 @@
 import type { RequestHandler } from "./$types";
-import type { Minion } from "$lib/types";
+import type { Seller } from "$lib/types";
 import prisma from "$lib/server/prisma";
 
 type Params = {
@@ -10,16 +10,30 @@ type Params = {
   where?: any;
 };
 
-async function getMinions(take: number = 9, skip?: number, orderBy: object = [{ generator: "asc" }, { generator_tier: "asc" }], distinct?: any, where?: any) {
-  let minions = await prisma.minion.findMany({
+async function getMinions(take: number = 9, skip?: number, orderBy: object = [{ timeCreated: "desc" }, { price: "asc" }], distinct?: any, where?: any) {
+  let minions = await prisma.minionSeller.findMany({
     take,
     skip,
     orderBy,
     distinct,
-    where
+    where,
+    include: {
+      minion: true,
+      user: {
+        select: {
+          accent_color: true,
+          avatar: true,
+          banner: true,
+          id: true,
+          locale: true,
+          loggedInAt: false,
+          username: true
+        }
+      }
+    }
   });
 
-  return minions as Minion[];
+  return minions as Seller[];
 }
 
 export const POST: RequestHandler = async ({ request }) => {

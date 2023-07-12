@@ -1,21 +1,35 @@
 import type { PageServerLoad } from "./$types";
-import type { Minion } from "$lib/types";
+import type { Seller } from "$lib/types";
 
 export const load = (async () => {
   return {
     props: {
-      minions: prisma.minion.findMany({
+      minions: prisma.minionSeller.findMany({
         take: 9,
         skip: 0,
         orderBy: [
           {
-            name: "asc"
+            timeCreated: "desc"
           },
           {
-            generator_tier: "asc"
+            price: "asc"
           }
-        ]
-      }) as Promise<Minion[]>
+        ],
+        include: {
+          minion: true,
+          user: {
+            select: {
+              accent_color: true,
+              avatar: true,
+              banner: true,
+              id: true,
+              locale: true,
+              loggedInAt: false,
+              username: true
+            }
+          }
+        }
+      }) as Promise<Seller[]>
     }
   };
 }) as PageServerLoad;
