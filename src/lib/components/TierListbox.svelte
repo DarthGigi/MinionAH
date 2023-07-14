@@ -9,8 +9,6 @@
     .fill(0)
     .map((_, i) => i + 1);
 
-  console.log($page);
-
   let selectedTier: number;
 
   function selectedChoice(tier: number) {
