@@ -9,19 +9,40 @@
   export let data: PageData;
   let minions: Seller[] = [];
   let loadingMore = false;
-  let currentTier: string | undefined = undefined;
+  let currentTier: number | undefined = undefined;
 
   let search: string | undefined = undefined;
 
   async function initializeMinions() {
     minions = await data.props.minions;
-    console.log(minions);
   }
 
   onMount(initializeMinions);
 
-  async function loadData(filterTier?: string, skip?: number, search?: string, isMore: boolean = false) {
+  async function loadData(filterTier?: number | undefined, skip?: number, search?: string, isMore: boolean = false) {
     loadingMore = isMore;
+
+    let where = {};
+
+    if (filterTier || search) {
+      where = {
+        OR: [
+          {
+            minion: {
+              ...(filterTier && { generator_tier: filterTier }),
+              ...(search && {
+                AND: [{ name: { contains: search, mode: "insensitive" } }, { generator_tier: filterTier }]
+              })
+            }
+          },
+          {
+            user: {
+              ...(search && { username: { contains: search, mode: "insensitive" } })
+            }
+          }
+        ]
+      };
+    }
 
     const res = await fetch("/api/loadMinions", {
       method: "POST",
@@ -30,23 +51,7 @@
       },
       body: JSON.stringify({
         skip: skip,
-        where: {
-          OR: [
-            {
-              minion: {
-                ...(filterTier && { generator_tier: filterTier }),
-                ...(search && {
-                  AND: [{ name: { contains: search, mode: "insensitive" } }, { generator_tier: filterTier }]
-                })
-              }
-            },
-            {
-              user: {
-                ...(search && { username: { contains: search, mode: "insensitive" } })
-              }
-            }
-          ]
-        }
+        where: where
       })
     });
 
@@ -74,6 +79,11 @@
   </div>
   <TierListbox
     on:filterTier={({ detail }) => {
+      if (detail.tier === null) {
+        currentTier = undefined;
+        loadData(currentTier);
+        return;
+      }
       currentTier = detail.tier;
       loadData(currentTier);
     }}

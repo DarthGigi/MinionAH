@@ -45,13 +45,13 @@
     <div class="-mt-px flex divide-x divide-neutral-700">
       <div class="relative inline-flex w-0 flex-1 items-center justify-center overflow-hidden rounded-bl-lg text-sm font-medium text-neutral-200">
         <span class="z-10 inline-block flex-shrink-0 rounded-full px-2 py-0.5 text-xs font-medium text-neutral-800 transition-transform duration-300 group-hover:scale-125 group-hover:text-neutral-900">{` Tier ${["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"][seller.minion.generator_tier - 1]} (${seller.minion.generator_tier})`}</span>
-        <div class="absolute z-0 h-5 w-20 flex-shrink-0 rounded-full bg-neutral-400 transition-all duration-500 group-hover:h-[110%] group-hover:w-[125%]" />
+        <div class="absolute z-0 h-5 w-20 flex-shrink-0 rounded-[50px] bg-neutral-400 transition-all duration-500 group-hover:h-full group-hover:w-full group-hover:rounded-none" />
       </div>
       <div class="relative -ml-px inline-flex w-0 flex-1 overflow-hidden">
-        <span class="relative z-10 inline-flex w-0 flex-1 items-center justify-center overflow-hidden py-4 text-sm font-medium text-neutral-200 transition-all duration-300 group-hover:scale-125 group-hover:text-neutral-900"
-          >₵
+        <span class="relative z-10 inline-flex w-0 flex-1 items-center justify-center overflow-hidden py-4 text-sm font-medium text-neutral-200 transition-all duration-300 group-hover:scale-125 group-hover:text-neutral-900">
+          <img class="mr-1 h-6 w-6" src="/assets/images/coin.png" alt="Coin icon" />
           {(() => {
-            let num = seller.amount;
+            let num = seller.price;
             return formatNumber(num);
           })()}
         </span>
@@ -59,7 +59,7 @@
       </div>
       <div class="relative inline-flex w-0 flex-1 items-center justify-center overflow-hidden rounded-br-lg text-sm font-medium text-neutral-200">
         <span class="z-10 inline-block flex-shrink-0 rounded-full px-2 py-0.5 text-xs font-medium text-neutral-800 transition-transform duration-300 group-hover:scale-125 group-hover:text-neutral-900">{` Amount: ${seller.amount}`}</span>
-        <div class="absolute z-0 h-5 w-20 flex-shrink-0 rounded-full bg-neutral-400 transition-all duration-500 group-hover:h-[110%] group-hover:w-[125%]" />
+        <div class="absolute z-0 h-5 w-20 flex-shrink-0 rounded-[50px] bg-neutral-400 transition-all duration-500 group-hover:h-full group-hover:w-full group-hover:rounded-none" />
       </div>
     </div>
   </a>

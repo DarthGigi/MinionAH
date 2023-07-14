@@ -39,5 +39,6 @@ export const handle: Handle = async ({ event, resolve }) => {
   requestCounts.set(ip, requestCount + 1);
 
   event.locals.auth = auth.handleRequest(event);
+
   return await resolve(event);
 };
