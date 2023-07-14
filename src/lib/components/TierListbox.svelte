@@ -1,6 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
   import { Transition, Listbox, ListboxButton, ListboxOptions, ListboxOption, ListboxLabel } from "@rgossiaux/svelte-headlessui";
+  import { page } from "$app/stores";
 
   const dispatch = createEventDispatcher();
 
@@ -8,11 +9,12 @@
     .fill(0)
     .map((_, i) => i + 1);
 
+  console.log($page);
+
   let selectedTier: number;
 
   function selectedChoice(tier: number) {
     selectedTier = tier;
-    console.log(selectedTier);
     dispatch("filterTier", {
       tier: selectedTier
     });
@@ -27,7 +29,7 @@
   <div class="relative mt-2">
     <Transition enter="transition ease-in duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="transition ease-in duration-300" leaveFrom="opacity-100" leaveTo="opacity-0">
       <ListboxOptions class="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-neutral-700 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-        {#if selectedTier != null}
+        {#if selectedTier != null && $page.route.id !== "/profile"}
           <ListboxOption on:click={() => selectedChoice(null)} class="relative cursor-default select-none py-2 pl-3 pr-9 text-neutral-200" value={null}>Any</ListboxOption>
         {/if}
 
