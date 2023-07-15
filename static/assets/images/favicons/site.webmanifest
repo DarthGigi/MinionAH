@@ -1,0 +1,19 @@
+{
+  "name": "Minion Auction House",
+  "short_name": "Minion AH",
+  "icons": [
+    {
+      "src": "/assets/images/favicons/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/images/favicons/android-chrome-256x256.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#131313",
+  "background_color": "#131313",
+  "display": "standalone"
+}

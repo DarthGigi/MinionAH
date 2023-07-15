@@ -8,17 +8,16 @@ declare global {
       validate: import("@lucia-auth/sveltekit").Validate;
       validateUser: import("@lucia-auth/sveltekit").ValidateUser;
       setSession: import("@lucia-auth/sveltekit").SetSession;
-      auth: import("lucia").AuthRequest;
+      auth: import("lucia-auth").AuthRequest;
     }
     // interface PageData {}
     // interface Platform {}
   }
-  var prisma: PrismaClient;
-}
+  var __prisma: PrismaClient;
 
-/// <reference types="lucia" />
-declare global {
-  namespace Lucia {
+  /// <reference types="lucia" />
+
+  declare namespace Lucia {
     type Auth = import("$lib/server/lucia").Auth;
     type UserAttributes = {
       id: string;

@@ -30,7 +30,6 @@ export const GET: RequestHandler = async ({ cookies, url, locals }) => {
       if (existingUser) return existingUser;
       // create a new user if the user does not exist
       return await createUser({
-        // attributes
         id: providerUser.id,
         username: providerUser.username,
         avatar: providerUser.avatar,
@@ -40,7 +39,9 @@ export const GET: RequestHandler = async ({ cookies, url, locals }) => {
       });
     };
     const user = await getUser();
+
     const session = await auth.createSession(user.userId);
+
     locals.auth.setSession(session);
   } catch (e) {
     console.log(e);

@@ -8,10 +8,9 @@ export const GET: RequestHandler = async ({ locals }) => {
     throw redirect(302, "/login");
   }
 
-  let response = await auth.invalidateSession(session.sessionId);
-  console.log(response);
+  await auth.invalidateSession(session.sessionId);
+  locals.auth.setSession(null);
 
-  return new Response();
   return new Response(
     JSON.stringify({
       success: true
@@ -19,7 +18,6 @@ export const GET: RequestHandler = async ({ locals }) => {
     {
       status: 200,
       headers: {
-        "Content-Type": "application/json",
         Location: "/"
       }
     }
