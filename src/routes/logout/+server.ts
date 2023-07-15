@@ -11,15 +11,11 @@ export const GET: RequestHandler = async ({ locals }) => {
   await auth.invalidateSession(session.sessionId);
   locals.auth.setSession(null);
 
-  return new Response(
-    JSON.stringify({
-      success: true
-    }),
-    {
-      status: 200,
-      headers: {
-        Location: "/"
-      }
+  // redirect to home page
+  return new Response(null, {
+    status: 302,
+    headers: {
+      location: "/"
     }
-  );
+  });
 };
