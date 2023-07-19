@@ -1,6 +1,8 @@
 import { auth, discordAuth } from "$lib/server/lucia";
 import { redirect } from "@sveltejs/kit";
 
+import prisma from "$lib/server/prisma";
+
 import type { RequestHandler } from "@sveltejs/kit";
 
 export const GET: RequestHandler = async ({ cookies, url, locals }) => {
@@ -39,6 +41,23 @@ export const GET: RequestHandler = async ({ cookies, url, locals }) => {
       });
     };
     const user = await getUser();
+
+    const auth_key = await prisma.authKey.findUnique({
+      where: {
+        id: "discord:" + user.userId
+      }
+    });
+
+    if (auth_key) {
+      await prisma.authKey.update({
+        where: {
+          id: "discord:" + user.userId
+        },
+        data: {
+          user_id: user.userId
+        }
+      });
+    }
 
     const session = await auth.createSession(user.userId);
 

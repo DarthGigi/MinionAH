@@ -17,7 +17,7 @@
   <ListboxButton class="relative w-full cursor-default rounded-md bg-neutral-700 py-1.5 pl-3 text-left text-neutral-200 shadow-sm ring-1 ring-inset focus:outline-none focus:ring-2 focus:ring-neutral-500 sm:text-sm sm:leading-6">
     <div class="flex">
       {#if selectedType.texture !== "none"}
-        <img src={`https://mc-heads.net/head/${selectedType.texture}`} class="mr-2 h-6 w-6" alt={selectedType.generator} />
+        <img loading="lazy" src={`https://mc-heads.net/head/${selectedType.texture}`} class="mr-2 h-6 w-6 pointer-events-none" alt={selectedType.generator} />
       {/if}
 
       {selectedType ? selectedType.generator.replace(/_/g, " ").toLowerCase().charAt(0).toUpperCase() + selectedType.generator.slice(1).toLowerCase().replace(/_/g, " ") : "Select type"}

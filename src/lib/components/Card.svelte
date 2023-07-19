@@ -49,7 +49,7 @@
       </div>
       <div class="relative -ml-px inline-flex w-0 flex-1 overflow-hidden">
         <span class="relative z-10 inline-flex w-0 flex-1 items-center justify-center overflow-hidden py-4 text-sm font-medium text-neutral-200 transition-all duration-300 group-hover:scale-125 group-hover:text-neutral-900">
-          <img class="mr-1 h-6 w-6" src="/assets/images/coin.png" alt="Coin icon" />
+          <img class="mr-1 h-6 w-6 pointer-events-none" src="/assets/images/coin.png" alt="Coin icon" />
           {(() => {
             let num = seller.price;
             return formatNumber(num);
