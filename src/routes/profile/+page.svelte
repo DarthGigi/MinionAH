@@ -65,7 +65,7 @@
                     name="amount"
                     id="amount"
                     max="64"
-                    min="1"
+                    min="3"
                     class="block h-9 w-full rounded-md border-neutral-300 bg-black placeholder-neutral-500 shadow-sm focus:border-neutral-500 focus:ring-neutral-500 sm:text-sm"
                     placeholder="1"
                     on:input={(e) => {
@@ -87,7 +87,7 @@
                     name="price"
                     id="price"
                     class="block h-9 w-full rounded-md border-neutral-300 bg-black placeholder-neutral-500 shadow-sm invalid:border-red-500 focus:border-neutral-500 focus:ring-neutral-500 sm:text-sm"
-                    placeholder="1"
+                    placeholder="100"
                     on:keydown={(e) => {
                       if (e.key === "e" || e.key === "." || e.key === "-" || e.key === "+" || e.key === "E" || e.key === " " || e.key === ",") {
                         e.preventDefault();
