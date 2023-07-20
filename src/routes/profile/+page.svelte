@@ -83,7 +83,7 @@
                   <input
                     type="number"
                     min="1"
-                    max="999999999"
+                    max="10000000000"
                     name="price"
                     id="price"
                     class="block h-9 w-full rounded-md border-neutral-300 bg-black placeholder-neutral-500 shadow-sm invalid:border-red-500 focus:border-neutral-500 focus:ring-neutral-500 sm:text-sm"
