@@ -14,7 +14,7 @@
 <input type="hidden" name="minionType" bind:value={selectedType.generator} />
 <Listbox bind:value={selectedType} class="w-40">
   <ListboxLabel>Minion</ListboxLabel>
-  <ListboxButton class="relative w-full cursor-default rounded-md bg-neutral-700 py-1.5 pl-3 text-left text-neutral-200 shadow-sm ring-1 ring-inset focus:outline-none focus:ring-2 focus:ring-neutral-500 sm:text-sm sm:leading-6">
+  <ListboxButton class="relative w-full ring-transparent cursor-default rounded-md bg-neutral-700 py-1.5 pl-3 text-left text-neutral-200 shadow-sm ring-1 ring-inset focus:outline-none focus:ring-2 focus:ring-neutral-500 sm:text-sm sm:leading-6">
     <div class="flex">
       {#if selectedType.texture !== "none"}
         <img loading="lazy" src={`https://mc-heads.net/head/${selectedType.texture}`} class="mr-2 h-6 w-6 pointer-events-none" alt={selectedType.generator} />
