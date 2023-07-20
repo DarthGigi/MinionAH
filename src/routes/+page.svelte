@@ -4,20 +4,19 @@
   import type { Seller } from "$lib/types";
   import CardLoading from "$lib/components/CardLoading.svelte";
   import TierListbox from "$lib/components/TierListbox.svelte";
-  import { onMount } from "svelte";
 
   export let data: PageData;
   let minions: Seller[] = [];
-  let loadingMore = false;
+  let loadingMore = true;
   let currentTier: number | undefined = undefined;
+  let newMinionAmount: number;
 
   let search: string | undefined = undefined;
 
-  async function initializeMinions() {
+  (async function () {
     minions = await data.props.minions;
-  }
-
-  onMount(initializeMinions);
+    loadingMore = false;
+  })();
 
   async function loadData(filterTier?: number | undefined, skip?: number, search?: string, isMore: boolean = false) {
     loadingMore = isMore;
@@ -53,11 +52,14 @@
         skip: skip,
         where: where
       })
-    });
+    })
+      .then((res) => res.json())
+      .finally(() => {
+        loadingMore = false;
+      });
 
-    const data = await res.json();
-    minions = isMore ? [...minions, ...data] : data;
-    loadingMore = false;
+    newMinionAmount = res.length;
+    minions = isMore ? [...minions, ...res] : res;
   }
 </script>
 
@@ -93,11 +95,7 @@
 <div class="py-8">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
     <ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {#await minions}
-        {#each Array(9) as _}
-          <CardLoading />
-        {/each}
-      {:then minions}
+      {#await minions then minions}
         {#each minions as seller}
           <Card {seller} />
         {/each}
@@ -111,8 +109,10 @@
     </ul>
     <div class="flex w-full justify-center py-4">
       <!-- check if there are no longer any items in the database -->
-      {#if minions.length === 0}
-        <p class="text-center text-neutral-200">No more minions to load.</p>
+      {#if newMinionAmount === 0 || newMinionAmount < 9 || (minions.length === 0 && !loadingMore)}
+        <p class="text-center text-neutral-200 text-sm text-opacity-40 px-4 py-1">No more minions to load.</p>
+      {:else if loadingMore}
+        <p class="text-center text-neutral-200 text-sm text-opacity-60 px-4 py-1">Loading...</p>
       {:else}
         <button type="button" on:click={() => loadData(currentTier, minions.length, search, true)} class="rounded px-4 py-1 text-sm text-white transition-colors duration-300 hover:bg-white hover:text-black">Load more...</button>
       {/if}
