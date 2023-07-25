@@ -7,13 +7,13 @@ MinionAH makes it easy to sell minions and view information about minions with a
 # Screenshots
 ![MinionAH](/static/assets/images/showcase1.png)
 As shown, it's easy to find minions on MinionAH. But it even gets better with a beautiful hover animation. Clicking the card or the user will open the seller's Discord profile. Clicking the minion will open the wiki page of the minion for even more information.
-![Minion Animation](/static/assets/images/showcase2.png)
+![Minion Animation](/static/assets/images/showcase2.gif)
 It's also super easy to search for minions on MinionAH.
-![Minion Animation](/static/assets/images/showcase3.png)
+![Minion Animation](/static/assets/images/showcase3.gif)
 After logging in with Discord, you can access your profile page where you can sell a minion, see a list of your minions and delete minions you sell or no longer want to sell.
-![Minion Animation](/static/assets/images/showcase4.png)
+![Minion Animation](/static/assets/images/showcase4.gif)
 Creating minions is very easy too. You simply select a minion from the minion dropdown, or just start typing the name of the minion. Next, select the tier and fill how many minions you're selling and the price (for each). Finally, just click Create and you're done!
-![Minion Animation](/static/assets/images/showcase5.png)
+![Minion Animation](/static/assets/images/showcase5.gif)
 
 # Purchasing Minions
 The way you buy minions is essentially the same as you would if using Discord servers to sell your minions. You simply DM the user that sells the minion and discuss when you both can get online and trade. As mentioned before, you can click on the card or the user to open their discord account in Discord itself.
