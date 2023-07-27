@@ -20,9 +20,9 @@ export const load = (async ({ locals, url }) => {
     };
   }
 
-  const user = await prisma.authUser.findUnique({
+  const user = await prisma.user.findUnique({
     where: {
-      id: session.userId
+      id: session.user.userId
     }
   });
 

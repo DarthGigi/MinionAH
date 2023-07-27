@@ -1,6 +1,7 @@
 import type { PageServerLoad, Actions } from "./$types";
 import { redirect } from "@sveltejs/kit";
 import prisma from "$lib/server/prisma";
+
 import type { Seller } from "$lib/types";
 
 export const load = (async ({ locals }) => {
@@ -10,9 +11,10 @@ export const load = (async ({ locals }) => {
   }
 
   // Load user profile data from database
-  const user = await prisma.authUser.findUnique({
+
+  const user = await prisma.user.findUnique({
     where: {
-      id: session.userId
+      id: session.user.userId
     }
   });
 
@@ -63,9 +65,9 @@ export const actions = {
 
     let user;
     try {
-      user = await prisma.authUser.findUnique({
+      user = await prisma.user.findUnique({
         where: {
-          id: session.userId
+          id: session.user.userId
         }
       });
 
@@ -158,9 +160,9 @@ export const actions = {
 
     let user;
     try {
-      user = await prisma.authUser.findUnique({
+      user = await prisma.user.findUnique({
         where: {
-          id: session.userId
+          id: session.user.userId
         }
       });
 
