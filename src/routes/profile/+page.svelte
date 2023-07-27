@@ -65,7 +65,7 @@
                     name="amount"
                     id="amount"
                     max="64"
-                    min="3"
+                    min="1"
                     class="block h-9 w-full rounded-md border-neutral-300 bg-black placeholder-neutral-500 shadow-sm focus:border-neutral-500 focus:ring-neutral-500 sm:text-sm"
                     placeholder="1"
                     on:input={(e) => {
