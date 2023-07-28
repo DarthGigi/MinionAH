@@ -55,6 +55,13 @@
                 <div class="mt-1 flex flex-col rounded-md shadow-sm">
                   <TierListbox />
                 </div>
+                <div class="mt-1 flex flex-col rounded-md justify-center shadow-sm">
+                  <!-- checkbox -->
+                  <div class="flex h-5 items-center">
+                    <input id="infusion" name="infusion" type="checkbox" class="h-4 w-4 rounded border-gray-300 focus:checked:bg-neutral-700 hover:checked:bg-neutral-700 checked:bg-neutral-600 ring-0 focus:ring-neutral-700" />
+                    <label for="infusion" class="font-medium ml-1 text-neutral-200">Mithril Infused</label>
+                  </div>
+                </div>
               </div>
 
               <div class="flex gap-4 sm:col-span-4">
@@ -79,7 +86,7 @@
                   />
                 </div>
                 <div class="mt-1 flex flex-col rounded-md shadow-sm">
-                  <label for="price" class="block font-medium text-neutral-200">Price</label>
+                  <label for="price" class="block font-medium text-neutral-200">Price <span class="text-xs text-neutral-200/50">(each)</span></label>
                   <input
                     type="number"
                     min="1"

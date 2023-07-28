@@ -54,6 +54,8 @@
             let num = seller.price;
             return formatNumber(num);
           })()}
+          <span class="text-sm transition-all duration-300 group-hover:text-neutral-900/0 text-neutral-200/50 ml-1 group-hover:ml-0">/</span>
+          <span class="text-sm transition-all duration-300 group-hover:text-neutral-900 text-neutral-200/50 group-hover:-ml-0.5">each</span>
         </span>
         <div class="absolute z-0 h-0 w-full flex-shrink-0 bg-neutral-400 transition-all duration-500 group-hover:h-full" />
       </div>
@@ -62,5 +64,10 @@
         <div class="absolute z-0 h-5 w-20 flex-shrink-0 rounded-[50px] bg-neutral-400 transition-all duration-500 group-hover:h-full group-hover:w-full group-hover:rounded-none" />
       </div>
     </div>
+    {#if seller.hasInfusion}
+      <div class="absolute right-2 m-0 p-2 top-2 w-10 h-10 flex !border-2 !border-black/30 justify-center items-center rounded-lg bg-neutral-700 transition-all duration-300 group-hover:bg-neutral-900 group-hover:!border-black/0">
+        <img class="w-[18.85px] h-[20px]" src="https://mc-heads.net/head/7e051df4dd2151481f5145b93fb7a9aa62888fbcb90add9890ad07caf1faca73" alt="Mithril Infusion" />
+      </div>
+    {/if}
   </a>
 </li>

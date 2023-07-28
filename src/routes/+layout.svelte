@@ -3,7 +3,7 @@
   import Navbar from "$lib/components/Navbar.svelte";
   import { inject } from "@vercel/analytics";
   import "../app.css";
-  inject({ mode: dev ? "development" : "production" });
+  inject({ mode: dev ? "development" : "production", debug: false });
 </script>
 
 <Navbar />

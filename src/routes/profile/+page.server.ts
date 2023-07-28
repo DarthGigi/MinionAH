@@ -84,6 +84,7 @@ export const actions = {
     const amount = Number(formData.get("amount")) as number;
     const price = Number(formData.get("price")) as number;
     const tier = Number(formData.get("tier")) as number;
+    const infused = (formData.get("infusion") as string) === "on";
 
     let minion;
     try {
@@ -118,6 +119,7 @@ export const actions = {
         data: {
           amount,
           price,
+          hasInfusion: infused,
           user: {
             connect: {
               id: user.id

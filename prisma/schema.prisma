@@ -56,6 +56,7 @@ model MinionSeller {
   user_id     String
   user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
   minion      Minion   @relation(fields: [minion_id], references: [id], onDelete: Cascade)
+  hasInfusion Boolean  @default(false)
   price       Float
   amount      Int?
   timeCreated DateTime @default(now()) @updatedAt
