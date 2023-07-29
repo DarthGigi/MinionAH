@@ -5,14 +5,14 @@
   import CardLoading from "$lib/components/CardLoading.svelte";
   import MinionsListbox from "$lib/components/MinionsListbox.svelte";
   import TierListbox from "$lib/components/TierListbox.svelte";
-  import type { AuthUser } from "@prisma/client";
+  import type { User } from "@prisma/client";
   import { Dialog, DialogOverlay, DialogTitle, Transition, TransitionChild } from "@rgossiaux/svelte-headlessui";
   import type { PageData } from "./$types";
-  import MinionCardProfile from "$lib/components/MinionCardProfile.svelte";
+
   let isOpen = false;
 
   export let data: PageData;
-  $: user = data.user as AuthUser;
+  $: user = data.user as User;
 
   let showDelete = false;
   let minionToDelete: string;
@@ -135,7 +135,7 @@
         {/each}
       {:then minions}
         {#each minions as seller}
-          <MinionCardProfile
+          <Card
             {seller}
             on:openDeleteModal={({ detail }) => {
               showDelete = true;
