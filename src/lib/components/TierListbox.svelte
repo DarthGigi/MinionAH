@@ -27,7 +27,7 @@
   <div class="relative mt-2">
     <Transition enter="transition ease-in duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="transition ease-in duration-300" leaveFrom="opacity-100" leaveTo="opacity-0">
       <ListboxOptions class="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-neutral-700 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-        {#if selectedTier != null && $page.route.id !== "/profile"}
+        {#if selectedTier != null && $page.url.pathname !== "/profile"}
           <ListboxOption on:click={() => selectedChoice(null)} class="relative cursor-default select-none py-2 pl-3 pr-9 text-neutral-200" value={null}>Any</ListboxOption>
         {/if}
 

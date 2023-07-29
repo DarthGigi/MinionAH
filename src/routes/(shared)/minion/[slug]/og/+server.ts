@@ -1,8 +1,5 @@
 import type { RequestHandler } from "./$types";
 import type { Config } from "@sveltejs/adapter-vercel";
-export const config: Config = {
-  runtime: "edge"
-};
 
 function formatNumber(num: number) {
   if (num != null) {

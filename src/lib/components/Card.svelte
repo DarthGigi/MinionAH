@@ -5,7 +5,10 @@
 
   export let seller: Seller;
 
-  const isHome = $page.route.id === "/";
+  const isHome = $page.url.pathname === "/";
+  const isMinionPage = $page.url.pathname === `/` || $page.url.pathname === `/profile`;
+
+  let copied = false;
 
   function formatNumber(num: number) {
     if (num != null) {
@@ -41,7 +44,7 @@
 </script>
 
 <li>
-  <a href={isHome ? `https://discord.com/users/${seller.user.id}` : null} target="_blank" class="relative col-span-1 list-item divide-y divide-neutral-700 rounded-lg bg-neutral-800 transition-all duration-300" class:group={isHome} class:hover:scale-[1.02]={isHome} class:hover:bg-neutral-900={isHome}>
+  <div class="relative list-item divide-y divide-neutral-700 rounded-lg bg-neutral-800 transition-all duration-300" class:group={isHome} class:hover:scale-[1.02]={isHome} class:hover:bg-neutral-900={isHome}>
     <div class="flex h-full w-full items-center justify-center space-x-6 px-4">
       <a href={`https://hypixel-skyblock.fandom.com/wiki/${seller.minion.name.replace(/ [IVX]+$/, "").replace(/ /g, "_")}`} target="_blank" class="z-20 my-2 flex flex-col items-center truncate rounded p-1 transition-all duration-500" class:hover:scale-150={isHome} class:hover:bg-neutral-800={isHome}>
         <div class="h-12 w-12 flex-shrink-0 overflow-hidden rounded-full bg-neutral-700 p-1">
@@ -84,12 +87,43 @@
         <img class="w-[18.85px] h-[20px]" src="https://mc-heads.net/head/7e051df4dd2151481f5145b93fb7a9aa62888fbcb90add9890ad07caf1faca73" alt="Mithril Infusion" />
       </div>
     {/if}
-    {#if $page.route.id === "/profile"}
-      <button type="button" class="absolute left-0 top-0 ml-2 mt-2 h-6 w-6 rounded bg-neutral-700 transition-all duration-300 hover:scale-110 hover:bg-neutral-600" on:click={() => openModal(seller.id)}>
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 p-1">
+    {#if $page.url.pathname === "/profile"}
+      <button class="absolute left-12 top-2 text-neutral-400 group bg-neutral-700 focus:ring-4 focus:outline-none focus:ring-transparent rounded-lg text-sm p-1.5 hover:text-white/70 hover:bg-red-600 group-hover:opacity-100 !border-0 transition-all duration-300" type="button" on:click={() => openModal(seller.id)}>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
           <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
         </svg>
       </button>
     {/if}
-  </a>
+
+    {#if isMinionPage}
+      <button
+        id="minionButton"
+        data-dropdown-toggle="dropdown"
+        class="absolute left-2 top-2 text-neutral-400 group bg-neutral-700 focus:ring-4 focus:outline-none focus:ring-transparent rounded-lg text-sm p-1.5 group-hover:opacity-100 !border-0 transition-all duration-300 bg-opacity-0 hover:bg-opacity-100"
+        class:opacity-0={isHome}
+        class:!bg-opacity-100={!isHome}
+        type="button"
+        on:click={() => {
+          // copy url to clipboard
+          navigator.clipboard.writeText(`https://minions.mrgigi.me/minion/${seller.id}`);
+          // change the icon to a checkmark
+          copied = true;
+          // change the icon back to a minion icon after 2 seconds
+          setTimeout(() => {
+            copied = false;
+          }, 2000);
+        }}
+      >
+        {#if !copied}
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="group-hover:text-white transition-colors duration-300 w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
+          </svg>
+        {:else}
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 text-green-400 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        {/if}
+      </button>
+    {/if}
+  </div>
 </li>
