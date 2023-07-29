@@ -6,7 +6,6 @@
   export let seller: Seller;
 
   const isHome = $page.route.id === "/";
-  console.log(isHome);
 
   function formatNumber(num: number) {
     if (num != null) {

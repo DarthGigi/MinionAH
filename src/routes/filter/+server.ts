@@ -1,5 +1,4 @@
 import type { RequestHandler } from "./$types";
-import prisma from "$lib/server/prisma";
 
 export const GET: RequestHandler = async () => {
   const itemsList = await fetch("https://api.slothpixel.me/api/skyblock/items");

@@ -15,7 +15,7 @@
   $: user = data.user as User;
 
   let showDelete = false;
-  let minionToDelete: string;
+  let minionToDelete: string | null = null;
 </script>
 
 <div class="mx-auto flex max-w-xl flex-col justify-center gap-8 self-center">
@@ -76,10 +76,14 @@
                     class="block h-9 w-full rounded-md border-neutral-300 bg-black placeholder-neutral-500 shadow-sm focus:border-neutral-500 focus:ring-neutral-500 sm:text-sm"
                     placeholder="1"
                     on:input={(e) => {
+                      // @ts-ignore
                       if (e.target.valueAsNumber > 64) {
+                        // @ts-ignore
                         e.target.value = "64";
                       }
+                      // @ts-ignore
                       if (e.target.valueAsNumber < 1) {
+                        // @ts-ignore
                         e.target.value = "1";
                       }
                     }}

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { PageData } from "./$types";
+  import type { PageData } from "../(shared)/$types";
   import Card from "$lib/components/Card.svelte";
   import type { Seller } from "$lib/types";
   import CardLoading from "$lib/components/CardLoading.svelte";

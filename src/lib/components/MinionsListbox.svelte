@@ -1,6 +1,5 @@
 <script lang="ts">
   import { Transition, Listbox, ListboxButton, ListboxOptions, ListboxOption, ListboxLabel } from "@rgossiaux/svelte-headlessui";
-  import type { Minion } from "@prisma/client";
 
   function classNames(...classes: (false | null | undefined | string)[]): string {
     return classes.filter(Boolean).join(" ");
@@ -8,7 +7,7 @@
 
   $: selectedType = { generator: "Select a minion", texture: "none" };
 
-  export let minionType: Minion[];
+  export let minionType: { generator: string; texture: string }[];
 </script>
 
 <input type="hidden" name="minionType" bind:value={selectedType.generator} />
