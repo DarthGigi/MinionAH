@@ -40,7 +40,8 @@
       type="button"
       on:click={() => {
         // copy url to clipboard
-        navigator.clipboard.writeText(window.location.href);
+
+        navigator.clipboard.writeText(`${window.location.href}/`);
         // change the icon to a checkmark
         copied = true;
         // change the icon back to a minion icon after 2 seconds
