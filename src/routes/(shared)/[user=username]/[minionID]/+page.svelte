@@ -8,8 +8,6 @@
   $: minion = data.minion;
 
   let copied = false;
-
-  console.log($page.params.minionID);
 </script>
 
 <svelte:head>
