@@ -153,7 +153,7 @@
 </div>
 
 {#if $page.form}
-  {(isOpen = true)}
+  {void (isOpen = true) ?? ""}
   {#if $page.form.status == 200}
     <Transition show={isOpen}>
       <Dialog as="div" class="fixed inset-0 z-50 overflow-y-auto" open={isOpen} on:close={() => (isOpen = false)}>
