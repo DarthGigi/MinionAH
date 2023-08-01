@@ -30,7 +30,7 @@
         type="button"
         on:click={() => {
           // copy url to clipboard
-          navigator.clipboard.writeText(`${window.location.host}/${user.username}/`);
+          navigator.clipboard.writeText(`${window.location.protocol}//${window.location.host}/${user.username}/`);
           // change the icon to a checkmark
           copied = true;
           // change the icon back to a minion icon after 2 seconds
