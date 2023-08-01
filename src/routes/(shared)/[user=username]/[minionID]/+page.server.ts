@@ -1,6 +1,9 @@
 import { redirect } from "@sveltejs/kit";
 import { getAverageColor } from "fast-average-color-node";
 import type { PageServerLoad } from "./$types";
+export const config = {
+  runtime: "edge"
+};
 
 export const load = (async ({ params }) => {
   const minionID = params.minionID;

@@ -2,6 +2,9 @@
   import type { PageData } from "./$types";
   import Card from "$lib/components/Card.svelte";
   import { page } from "$app/stores";
+  export const config = {
+    runtime: "edge"
+  };
 
   export let data: PageData;
 

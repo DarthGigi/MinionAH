@@ -4,6 +4,9 @@
   import Card from "$lib/components/Card.svelte";
   import { page } from "$app/stores";
   import CardLoading from "$lib/components/CardLoading.svelte";
+  export const config = {
+    runtime: "edge"
+  };
 
   export let data: PageData;
   $: userprofile = data.userprofile as User & { minions: MinionSeller[] };

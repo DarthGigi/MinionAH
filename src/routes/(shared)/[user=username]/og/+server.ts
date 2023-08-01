@@ -1,4 +1,7 @@
 import type { RequestHandler } from "./$types";
+export const config = {
+  runtime: "edge"
+};
 
 function formatNumber(num: number) {
   if (num != null) {
