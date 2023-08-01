@@ -6,7 +6,7 @@
   export let seller: Seller;
 
   const isHome = $page.url.pathname === "/";
-  const isMinionPage = $page.url.pathname === `/` || $page.url.pathname === `/profile`;
+  const isMinionPage = $page.url.pathname === `/` || $page.url.pathname === `/profile` || $page.url.pathname === `/${seller.user.username}`;
 
   let copied = false;
 
@@ -105,7 +105,7 @@
         type="button"
         on:click={() => {
           // copy url to clipboard
-          navigator.clipboard.writeText(`${window.location.href}minion/${seller.id}/`);
+          navigator.clipboard.writeText(`${window.location.host}/${seller.user.username}/${seller.id}/`);
           // change the icon to a checkmark
           copied = true;
           // change the icon back to a minion icon after 2 seconds

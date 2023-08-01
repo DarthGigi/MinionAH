@@ -14,7 +14,7 @@ model User {
   auth_session Session[]
   auth_key     Key[]
   loggedInAt   DateTime       @default(now()) @updatedAt
-  username     String
+  username     String         @unique
   avatar       String
   banner       String?
   accent_color Int?

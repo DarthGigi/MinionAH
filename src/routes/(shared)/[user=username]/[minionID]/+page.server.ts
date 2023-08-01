@@ -1,14 +1,21 @@
-import type { Config } from "@sveltejs/adapter-vercel";
 import { redirect } from "@sveltejs/kit";
 import { getAverageColor } from "fast-average-color-node";
 import type { PageServerLoad } from "./$types";
 
 export const load = (async ({ params }) => {
-  const slug = params.slug;
+  const minionID = params.minionID;
+  const username = params.user;
 
   const minion = await prisma.minionSeller.findUnique({
     where: {
-      id: slug
+      id: minionID,
+      AND: [
+        {
+          user: {
+            username: username
+          }
+        }
+      ]
     },
     include: {
       minion: true,

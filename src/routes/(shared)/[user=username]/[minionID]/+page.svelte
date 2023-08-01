@@ -40,7 +40,6 @@
       type="button"
       on:click={() => {
         // copy url to clipboard
-
         navigator.clipboard.writeText(`${window.location.href}/`);
         // change the icon to a checkmark
         copied = true;

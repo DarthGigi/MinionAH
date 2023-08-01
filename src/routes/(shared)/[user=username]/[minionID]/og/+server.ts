@@ -1,5 +1,4 @@
 import type { RequestHandler } from "./$types";
-import type { Config } from "@sveltejs/adapter-vercel";
 
 function formatNumber(num: number) {
   if (num != null) {
@@ -42,11 +41,19 @@ const fontData400: ArrayBuffer = await fontFile400.arrayBuffer();
 const fontData700: ArrayBuffer = await fontFile700.arrayBuffer();
 
 export const GET: RequestHandler = async ({ params }) => {
-  const slug = params.slug;
+  const minionID = params.minionID;
+  const username = params.user;
 
   const minion = await prisma.minionSeller.findUnique({
     where: {
-      id: slug
+      id: minionID,
+      AND: [
+        {
+          user: {
+            username: username
+          }
+        }
+      ]
     },
     include: {
       minion: true,
