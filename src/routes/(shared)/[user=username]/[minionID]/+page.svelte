@@ -8,6 +8,8 @@
   $: minion = data.minion;
 
   let copied = false;
+
+  console.log($page.params.minionID);
 </script>
 
 <svelte:head>
@@ -18,17 +20,17 @@
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://minions.mrgigi.me/minion/{$page.params.slug}" />
+  <meta property="og:url" content="https://minions.mrgigi.me/{$page.params.user}/{$page.params.minionID}" />
   <meta property="og:title" content="{minion.user.username}'s {minion.minion.name.replace(/ [IVX]+$/, '')}{minion.amount && minion.amount > 1 ? 's' : ''} — MinionAH" />
   <meta property="og:description" content={`${minion.user.username} is selling ${minion.amount ? minion.amount : 0} ${minion.minion.name.replace(/ [IVX]+$/, "")}${minion.amount && minion.amount > 1 ? "s" : ""}. Check out their listing on MinionAH!`} />
-  <meta property="og:image" content="https://minions.mrgigi.me/minion/{$page.params.slug}/og" />
+  <meta property="og:image" content="https://minions.mrgigi.me/{$page.params.user}/{$page.params.minionID}/og" />
 
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image" />
-  <meta property="twitter:url" content="https://minions.mrgigi.me/minion/{$page.params.slug}" />
+  <meta property="twitter:url" content="https://minions.mrgigi.me/{$page.params.user}/{$page.params.minionID}" />
   <meta property="twitter:title" content="{minion.user.username}'s {minion.minion.name.replace(/ [IVX]+$/, '')}{minion.amount && minion.amount > 1 ? 's' : ''} — MinionAH" />
   <meta property="twitter:description" content={`${minion.user.username} is selling ${minion.amount ? minion.amount : 0} ${minion.minion.name.replace(/ [IVX]+$/, "")}${minion.amount && minion.amount > 1 ? "s" : ""}. Check out their listing on MinionAH!`} />
-  <meta property="twitter:image" content="https://minions.mrgigi.me/minion/{$page.params.slug}/og" />
+  <meta property="twitter:image" content="https://minions.mrgigi.me/{$page.params.user}/{$page.params.minionID}/og" />
 </svelte:head>
 
 <div class="w-screen h-[calc(100vh-64px)] flex justify-center items-center">
