@@ -28,7 +28,7 @@
     "autoprefixer": "^10.4.14",
     "fast-average-color-node": "^2.6.0",
     "lucia": "^2.0.0",
-    "postcss": "^8.4.27",
+    "postcss": "^8.4.31",
     "prettier": "^3.0.0",
     "prettier-plugin-svelte": "^3.0.3",
     "prettier-plugin-tailwindcss": "^0.4.1",
