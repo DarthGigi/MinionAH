@@ -20,6 +20,9 @@ model User {
   accent_color Int?
   locale       String?
   minions      MinionSeller[]
+  chatsAsUser1 Chat[]         @relation("user1")
+  chatsAsUser2 Chat[]         @relation("user2")
+  messages     Message[]
 }
 
 model Session {
@@ -63,4 +66,26 @@ model MinionSeller {
 
   @@index([user_id])
   @@index([minion_id])
+}
+
+model Chat {
+  id       String    @id @default(cuid()) @map("_id")
+  user1_id String
+  user2_id String
+  user1    User      @relation("user1", fields: [user1_id], references: [id])
+  user2    User      @relation("user2", fields: [user2_id], references: [id])
+  messages Message[]
+}
+
+model Message {
+  id        String   @id @default(cuid()) @map("_id")
+  chat_id   String
+  user_id   String
+  content   String
+  chat      Chat     @relation(fields: [chat_id], references: [id])
+  user      User     @relation(fields: [user_id], references: [id])
+  createdAt DateTime @default(now())
+
+  @@index([chat_id])
+  @@index([user_id])
 }
