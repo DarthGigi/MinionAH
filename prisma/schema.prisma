@@ -12,7 +12,7 @@ datasource db {
 model User {
   id           String         @id @map("_id")
   auth_session Session[]
-  auth_key     Key[]
+  key     Key[]
   loggedInAt   DateTime       @default(now()) @updatedAt
   username     String         @unique
   avatar       String
