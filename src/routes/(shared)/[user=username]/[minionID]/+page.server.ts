@@ -1,12 +1,20 @@
+import { PrismaClient } from "@prisma/client/edge";
+import { withAccelerate } from "@prisma/extension-accelerate";
+import type { Config } from "@sveltejs/adapter-vercel";
 import { redirect } from "@sveltejs/kit";
-import { getAverageColor } from "fast-average-color-node";
 import type { PageServerLoad } from "./$types";
 
-export const load = (async ({ params }) => {
+export let config: Config = {
+  runtime: "edge"
+};
+
+const prismaEdge = new PrismaClient().$extends(withAccelerate());
+
+export const load = (async ({ params, fetch }) => {
   const minionID = params.minionID;
   const username = params.user;
 
-  const minion = await prisma.minionSeller.findUnique({
+  const minion = await prismaEdge.minionSeller.findUnique({
     where: {
       id: minionID,
       AND: [
@@ -37,8 +45,24 @@ export const load = (async ({ params }) => {
     throw redirect(302, "/");
   }
 
+  let color;
+  const avatar = await fetch(`https://cdn.discordapp.com/avatars/${minion.user.id}/${minion.user.avatar}?size=1024`);
+  if (avatar.status === 404) {
+    color = await fetch("/api/getColor", {
+      headers: {
+        imageUrl: `https://cdn.discordapp.com/embed/avatars/${Number(minion.user.id) % 6}.png`
+      }
+    }).then((res) => res.text());
+  } else {
+    color = await fetch("/api/getColor", {
+      headers: {
+        imageUrl: `https://cdn.discordapp.com/avatars/${minion.user.id}/${minion.user.avatar}?size=1024`
+      }
+    }).then((res) => res.text());
+  }
+
   return {
     minion,
-    color: (await getAverageColor(`https://cdn.discordapp.com/avatars/${minion.user.id}/${minion.user.avatar}?size=1024`)).hex
+    color
   };
 }) satisfies PageServerLoad;
