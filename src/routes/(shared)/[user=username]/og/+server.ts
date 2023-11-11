@@ -3,9 +3,9 @@ import { ImageResponse } from "@ethercorps/sveltekit-og";
 import type { Config } from "@sveltejs/adapter-vercel";
 import type { RequestHandler } from "./$types";
 
-export const config: Config = {
-  runtime: "edge"
-};
+// export const config: Config = {
+//   runtime: "edge"
+// };
 
 function formatNumber(num: number) {
   if (num != null) {
