@@ -12,8 +12,8 @@ dependencies:
     specifier: ^2.0.2
     version: 2.0.2(svelte@4.2.3)
   '@vercel/og':
-    specifier: ^0.5.20
-    version: 0.5.20
+    specifier: 0.5.17
+    version: 0.5.17
   bits-ui:
     specifier: ^0.9.4
     version: 0.9.4(svelte@4.2.3)
@@ -344,7 +344,7 @@ packages:
     peerDependencies:
       svelte: ^4.0.0
     dependencies:
-      '@vercel/og': 0.5.20
+      '@vercel/og': 0.5.17
       satori-html: 0.3.2
       svelte: 4.2.3
     dev: false
@@ -522,8 +522,8 @@ packages:
       '@prisma/client': 5.5.2(prisma@5.5.2)
     dev: true
 
-  /@resvg/resvg-wasm@2.6.0:
-    resolution: {integrity: sha512-iDkBM6Ivex8nULtBu8cX670/lfsGxq8U1cuqE+qS9xFpPQP1enPdVm/33Kq3+B+bAldA+AHNZnCgpmlHo/fZrQ==}
+  /@resvg/resvg-wasm@2.4.1:
+    resolution: {integrity: sha512-yi6R0HyHtsoWTRA06Col4WoDs7SvlXU3DLMNP2bdAgs7HK18dTEVl1weXgxRzi8gwLteGUbIg29zulxIB3GSdg==}
     engines: {node: '>= 10'}
     dev: false
 
@@ -688,12 +688,12 @@ packages:
       - supports-color
     dev: true
 
-  /@vercel/og@0.5.20:
-    resolution: {integrity: sha512-zi+ZXSx/peXA+1lq7s/5Vzmm/TTfTSf/5P1qNYnh42+7X+pZmahWoXt0i7SWiq3WagfsNUNA4hUDapDiHRoXqA==}
+  /@vercel/og@0.5.17:
+    resolution: {integrity: sha512-/GOyUBq3MhB3ygbhTJoZ0cHvwlyKdt0g8f4npuj4mwFlp57S7j4XWwgtqILK3XdFf25esN9i77fInrDkeRJfgA==}
     engines: {node: '>=16'}
     dependencies:
-      '@resvg/resvg-wasm': 2.6.0
-      satori: 0.10.9
+      '@resvg/resvg-wasm': 2.4.1
+      satori: 0.10.8
       yoga-wasm-web: 0.3.3
     dev: false
 
@@ -1939,8 +1939,8 @@ packages:
       ultrahtml: 1.5.2
     dev: false
 
-  /satori@0.10.9:
-    resolution: {integrity: sha512-XU9EELUEZuioT4acLIpCXxHcFzrsC8muvg0MY28d+TlqwxbkTzBmWbw+3+hnCzXT7YZ0Qm8k3eXktDaEu+qmEw==}
+  /satori@0.10.8:
+    resolution: {integrity: sha512-WlPLxgpx5kIyMuOO6qi98DhZGIbRk5XJRqENkt6D6gyDBWGyo3M5kcSl0X/oSFHUH+n4unlzwMejoPM47s4zug==}
     engines: {node: '>=16'}
     dependencies:
       '@shuding/opentype.js': 1.4.0-beta.0
