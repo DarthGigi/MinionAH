@@ -1,8 +1,9 @@
+import { toReactElement } from "@ethercorps/svelte-h2j";
+import type { Config } from "@sveltejs/adapter-vercel";
 import { ImageResponse } from "@vercel/og";
 import type { RequestHandler } from "./$types";
-import { toReactElement } from "@ethercorps/svelte-h2j";
 
-export const config = {
+export const config: Config = {
   runtime: "edge"
 };
 
