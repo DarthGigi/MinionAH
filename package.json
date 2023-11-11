@@ -21,7 +21,7 @@
     "@prisma/extension-accelerate": "^0.6.2",
     "@rgossiaux/svelte-headlessui": "^2.0.0",
     "@sveltejs/adapter-vercel": "^3.0.3",
-    "@sveltejs/kit": "^1.27.4",
+    "@sveltejs/kit": "^1.27.5",
     "@tailwindcss/forms": "^0.5.7",
     "@types/cookie": "^0.5.4",
     "@types/node": "^20.9.0",
@@ -51,5 +51,12 @@
     "lucide-svelte": "^0.292.0",
     "tailwind-merge": "^2.0.0",
     "tailwind-variants": "^0.1.18"
+  },
+  "pnpm": {
+    "updateConfig": {
+      "ignoreDependencies": [
+        "@ethercorps/sveltekit-og"
+      ]
+    }
   }
 }
