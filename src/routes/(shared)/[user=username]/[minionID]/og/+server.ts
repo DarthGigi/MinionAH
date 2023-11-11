@@ -1,6 +1,6 @@
-import { toReactElement } from "@ethercorps/svelte-h2j";
+// import { toReactElement } from "@ethercorps/svelte-h2j";
+import { ImageResponse } from "@ethercorps/sveltekit-og";
 import type { Config } from "@sveltejs/adapter-vercel";
-import { ImageResponse } from "@vercel/og";
 import type { RequestHandler } from "./$types";
 
 export const config: Config = {
@@ -31,19 +31,16 @@ function formatNumber(num: number) {
   }
 }
 
-const errorTemplate = toReactElement(`
+const errorTemplate = `
 <div tw="flex h-full w-full text-white text-7xl flex-col items-center justify-center bg-[#131313]">
 <span>Something went wrong</span>
 <span tw="text-3xl mt-10">Minion not found</span>
 </div>
-`);
+`;
 
 export const GET: RequestHandler = async ({ params }) => {
   const fontData400 = await fetch("https://og-playground.vercel.app/inter-latin-ext-400-normal.woff").then((res) => res.arrayBuffer());
   const fontData700 = await fetch("https://og-playground.vercel.app/inter-latin-ext-700-normal.woff").then((res) => res.arrayBuffer());
-
-  console.log("fontData400: ", fontData400);
-  console.log("fontData700: ", fontData700);
 
   const minionID = params.minionID;
   const username = params.user;
@@ -77,7 +74,7 @@ export const GET: RequestHandler = async ({ params }) => {
 
   if (!minion) {
     try {
-      return new ImageResponse(errorTemplate, {
+      return await ImageResponse(errorTemplate, {
         height: 630,
         width: 1200,
         fonts: [
@@ -103,7 +100,7 @@ export const GET: RequestHandler = async ({ params }) => {
     }
   }
 
-  const template = toReactElement(`
+  const template = `
   <div tw="flex h-full w-full flex-col items-center justify-center bg-[#131313]">
     <div tw="flex w-full max-w-sm flex-col rounded-lg border border-neutral-700 bg-neutral-800 shadow">
       <div tw="mx-auto flex flex-col items-center rounded py-10">
@@ -134,10 +131,10 @@ export const GET: RequestHandler = async ({ params }) => {
       </div>
     </div>
   </div>
-  `);
+  `;
 
   try {
-    return new ImageResponse(template, {
+    return await ImageResponse(template, {
       height: 430,
       width: 819.05,
       fonts: [
