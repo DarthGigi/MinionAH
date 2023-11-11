@@ -38,24 +38,10 @@ const errorTemplate = toReactElement(`
 </div>
 `);
 
-let fontFile400;
-let fontFile700;
-
 export const GET: RequestHandler = async ({ params }) => {
-  try {
-    fontFile400 = await fetch("https://og-playground.vercel.app/inter-latin-ext-400-normal.woff");
-    fontFile700 = await fetch("https://og-playground.vercel.app/inter-latin-ext-700-normal.woff");
-  } catch (e) {
-    console.log(e);
-    // stop the image from loading
-    return new Response(null, {
-      status: 500
-    });
-  }
+  const fontData400 = await fetch(new URL("../../../assets/fonts/inter-latin-ext-400-normal.woff", import.meta.url)).then((res) => res.arrayBuffer());
+  const fontData700 = await fetch(new URL("../../../assets/fonts/inter-latin-ext-700-normal.woff", import.meta.url)).then((res) => res.arrayBuffer());
 
-  const fontData400: ArrayBuffer = await fontFile400.arrayBuffer();
-
-  const fontData700: ArrayBuffer = await fontFile700.arrayBuffer();
   const minionID = params.minionID;
   const username = params.user;
 
@@ -95,12 +81,14 @@ export const GET: RequestHandler = async ({ params }) => {
           {
             name: "Inter",
             data: fontData400,
-            weight: 400
+            weight: 400,
+            style: "normal"
           },
           {
             name: "Inter",
             data: fontData700,
-            weight: 700
+            weight: 700,
+            style: "normal"
           }
         ]
       });
@@ -153,12 +141,14 @@ export const GET: RequestHandler = async ({ params }) => {
         {
           name: "Inter",
           data: fontData400,
-          weight: 400
+          weight: 400,
+          style: "normal"
         },
         {
           name: "Inter",
           data: fontData700,
-          weight: 700
+          weight: 700,
+          style: "normal"
         }
       ]
     });
