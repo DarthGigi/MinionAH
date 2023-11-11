@@ -1,4 +1,10 @@
+import { ImageResponse } from "@vercel/og";
 import type { RequestHandler } from "./$types";
+import { toReactElement } from "@ethercorps/svelte-h2j";
+
+export const config = {
+  runtime: "edge"
+};
 
 function formatNumber(num: number) {
   if (num != null) {
@@ -24,23 +30,31 @@ function formatNumber(num: number) {
   }
 }
 
-import { ImageResponse } from "@ethercorps/sveltekit-og";
-
-const errorTemplate = `
+const errorTemplate = toReactElement(`
 <div tw="flex h-full w-full text-white text-7xl flex-col items-center justify-center bg-[#131313]">
 <span>Something went wrong</span>
 <span tw="text-3xl mt-10">User not found</span>
-</div>
-`;
+</div>`);
 
-const fontFile400 = await fetch("https://raw.githubusercontent.com/etherCorps/sveltekit-og/main/static/inter-latin-ext-400-normal.woff");
-
-const fontFile700 = await fetch("https://raw.githubusercontent.com/etherCorps/sveltekit-og/main/static/inter-latin-ext-700-normal.woff");
-
-const fontData400: ArrayBuffer = await fontFile400.arrayBuffer();
-const fontData700: ArrayBuffer = await fontFile700.arrayBuffer();
+let fontFile400;
+let fontFile700;
 
 export const GET: RequestHandler = async ({ params }) => {
+  try {
+    fontFile400 = await fetch("https://og-playground.vercel.app/inter-latin-ext-400-normal.woff");
+    fontFile700 = await fetch("https://og-playground.vercel.app/inter-latin-ext-700-normal.woff");
+  } catch (e) {
+    console.log(e);
+    // stop the image from loading
+    return new Response(null, {
+      status: 500
+    });
+  }
+
+  const fontData400: ArrayBuffer = await fontFile400.arrayBuffer();
+
+  const fontData700: ArrayBuffer = await fontFile700.arrayBuffer();
+
   const username = params.user;
 
   const user = await prisma.user.findUnique({
@@ -50,25 +64,32 @@ export const GET: RequestHandler = async ({ params }) => {
   });
 
   if (!user) {
-    return await ImageResponse(errorTemplate, {
-      height: 630,
-      width: 1200,
-      fonts: [
-        {
-          name: "Inter Latin",
-          data: fontData400,
-          weight: 400
-        },
-        {
-          name: "Inter Latin",
-          data: fontData700,
-          weight: 700
-        }
-      ]
-    });
+    try {
+      return new ImageResponse(errorTemplate, {
+        height: 630,
+        width: 1200,
+        fonts: [
+          {
+            name: "Inter",
+            data: fontData400,
+            weight: 400
+          },
+          {
+            name: "Inter",
+            data: fontData700,
+            weight: 700
+          }
+        ]
+      });
+    } catch (error) {
+      console.log(error);
+      return new Response(null, {
+        status: 500
+      });
+    }
   }
 
-  const template = `
+  const template = toReactElement(`
   <div tw="flex h-full w-full flex-col items-center justify-center bg-[#131313]">
     <div tw="flex w-full max-w-sm justify-center rounded-lg border border-neutral-700 bg-neutral-800 shadow">
       <div tw="mx-auto flex flex-col items-center rounded py-10">
@@ -78,22 +99,29 @@ export const GET: RequestHandler = async ({ params }) => {
       </div>
     </div>
   </div>
-  `;
+  `);
 
-  return await ImageResponse(template, {
-    height: 430,
-    width: 819.05,
-    fonts: [
-      {
-        name: "Inter Latin",
-        data: fontData400,
-        weight: 400
-      },
-      {
-        name: "Inter Latin",
-        data: fontData700,
-        weight: 700
-      }
-    ]
-  });
+  try {
+    return new ImageResponse(template, {
+      height: 430,
+      width: 819.05,
+      fonts: [
+        {
+          name: "Inter",
+          data: fontData400,
+          weight: 400
+        },
+        {
+          name: "Inter",
+          data: fontData700,
+          weight: 700
+        }
+      ]
+    });
+  } catch (error) {
+    console.log(error);
+    return new Response(null, {
+      status: 500
+    });
+  }
 };
