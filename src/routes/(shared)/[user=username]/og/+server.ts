@@ -41,9 +41,11 @@ let fontFile400;
 let fontFile700;
 
 export const GET: RequestHandler = async ({ params }) => {
-  const fontData400 = await fetch(new URL("../../assets/fonts/inter-latin-ext-400-normal.woff", import.meta.url)).then((res) => res.arrayBuffer());
+  const fontData400 = await fetch("https://og-playground.vercel.app/inter-latin-ext-400-normal.woff").then((res) => res.arrayBuffer());
+  const fontData700 = await fetch("https://og-playground.vercel.app/inter-latin-ext-700-normal.woff").then((res) => res.arrayBuffer());
 
-  const fontData700 = await fetch(new URL("../../assets/fonts/inter-latin-ext-700-normal.woff", import.meta.url)).then((res) => res.arrayBuffer());
+  console.log("fontData400: ", fontData400);
+  console.log("fontData700: ", fontData700);
 
   const username = params.user;
 
