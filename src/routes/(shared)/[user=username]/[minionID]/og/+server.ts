@@ -1,11 +1,15 @@
-// import { toReactElement } from "@ethercorps/svelte-h2j";
-import { ImageResponse } from "@ethercorps/sveltekit-og";
+import { toReactElement } from "@ethercorps/svelte-h2j";
+import { PrismaClient } from "@prisma/client/edge";
+import { withAccelerate } from "@prisma/extension-accelerate";
 import type { Config } from "@sveltejs/adapter-vercel";
+import { ImageResponse } from "@vercel/og";
 import type { RequestHandler } from "./$types";
 
-// export const config: Config = {
-//   runtime: "edge"
-// };
+export const config: Config = {
+  runtime: "edge"
+};
+
+const prismaEdge = new PrismaClient().$extends(withAccelerate());
 
 function formatNumber(num: number) {
   if (num != null) {
@@ -31,21 +35,21 @@ function formatNumber(num: number) {
   }
 }
 
-const errorTemplate = `
+const errorTemplate = toReactElement(`
 <div tw="flex h-full w-full text-white text-7xl flex-col items-center justify-center bg-[#131313]">
 <span>Something went wrong</span>
 <span tw="text-3xl mt-10">Minion not found</span>
 </div>
-`;
+`);
 
-export const GET: RequestHandler = async ({ params }) => {
+export const GET: RequestHandler = async ({ params, fetch }) => {
   const fontData400 = await fetch("https://og-playground.vercel.app/inter-latin-ext-400-normal.woff").then((res) => res.arrayBuffer());
   const fontData700 = await fetch("https://og-playground.vercel.app/inter-latin-ext-700-normal.woff").then((res) => res.arrayBuffer());
 
   const minionID = params.minionID;
   const username = params.user;
 
-  const minion = await prisma.minionSeller.findUnique({
+  const minion = await prismaEdge.minionSeller.findUnique({
     where: {
       id: minionID,
       AND: [
@@ -74,7 +78,7 @@ export const GET: RequestHandler = async ({ params }) => {
 
   if (!minion) {
     try {
-      return await ImageResponse(errorTemplate, {
+      return new ImageResponse(errorTemplate, {
         height: 630,
         width: 1200,
         fonts: [
@@ -93,18 +97,26 @@ export const GET: RequestHandler = async ({ params }) => {
         ]
       });
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       return new Response(null, {
         status: 500
       });
     }
   }
 
-  const template = `
+  let avatarUrl;
+  const avatar = await fetch(`https://cdn.discordapp.com/avatars/${minion.user.id}/${minion.user.avatar}.png?size=1024`);
+  if (avatar.status === 404) {
+    avatarUrl = `https://cdn.discordapp.com/embed/avatars/${Number(minion.user.id) % 6}.png?size=1024`;
+  } else {
+    avatarUrl = `https://cdn.discordapp.com/avatars/${minion.user.id}/${minion.user.avatar}.png?size=1024`;
+  }
+
+  const template = toReactElement(`
   <div tw="flex h-full w-full flex-col items-center justify-center bg-[#131313]">
     <div tw="flex w-full max-w-sm flex-col rounded-lg border border-neutral-700 bg-neutral-800 shadow">
       <div tw="mx-auto flex flex-col items-center rounded py-10">
-        <img tw="mb-3 h-24 w-24 rounded-full shadow-lg" src="https://cdn.discordapp.com/avatars/${minion.user.id}/${minion.user.avatar}.png?size=64" />
+        <img tw="mb-3 h-24 w-24 rounded-full shadow-lg" src="${avatarUrl}" />
         <span tw="mb-1 text-xl font-medium text-white">${minion.user.username}</span>
         <span tw="text-sm text-neutral-400">${minion.user.id}</span>
       </div>
@@ -131,10 +143,10 @@ export const GET: RequestHandler = async ({ params }) => {
       </div>
     </div>
   </div>
-  `;
+  `);
 
   try {
-    return await ImageResponse(template, {
+    return new ImageResponse(template, {
       height: 430,
       width: 819.05,
       fonts: [
@@ -153,8 +165,8 @@ export const GET: RequestHandler = async ({ params }) => {
       ]
     });
   } catch (error) {
-    console.log(error);
-    return new Response(null, {
+    // console.log(error);
+    return new Response("null", {
       status: 500
     });
   }

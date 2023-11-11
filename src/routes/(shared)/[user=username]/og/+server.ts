@@ -1,11 +1,15 @@
-// import { toReactElement } from "@ethercorps/svelte-h2j";
-import { ImageResponse } from "@ethercorps/sveltekit-og";
+import { toReactElement } from "@ethercorps/svelte-h2j";
+import { ImageResponse } from "@vercel/og";
+import { PrismaClient } from "@prisma/client/edge";
+import { withAccelerate } from "@prisma/extension-accelerate";
 import type { Config } from "@sveltejs/adapter-vercel";
 import type { RequestHandler } from "./$types";
 
-// export const config: Config = {
-//   runtime: "edge"
-// };
+export const config: Config = {
+  runtime: "edge"
+};
+
+const prismaEdge = new PrismaClient().$extends(withAccelerate());
 
 function formatNumber(num: number) {
   if (num != null) {
@@ -31,19 +35,19 @@ function formatNumber(num: number) {
   }
 }
 
-const errorTemplate = `
+const errorTemplate = toReactElement(`
 <div tw="flex h-full w-full text-white text-7xl flex-col items-center justify-center bg-[#131313]">
 <span>Something went wrong</span>
 <span tw="text-3xl mt-10">User not found</span>
-</div>`;
+</div>`);
 
-export const GET: RequestHandler = async ({ params }) => {
+export const GET: RequestHandler = async ({ params, fetch }) => {
   const fontData400 = await fetch("https://og-playground.vercel.app/inter-latin-ext-400-normal.woff").then((res) => res.arrayBuffer());
   const fontData700 = await fetch("https://og-playground.vercel.app/inter-latin-ext-700-normal.woff").then((res) => res.arrayBuffer());
 
   const username = params.user;
 
-  const user = await prisma.user.findUnique({
+  const user = await prismaEdge.user.findUnique({
     where: {
       username: username
     }
@@ -51,7 +55,7 @@ export const GET: RequestHandler = async ({ params }) => {
 
   if (!user) {
     try {
-      return await ImageResponse(errorTemplate, {
+      return new ImageResponse(errorTemplate, {
         height: 630,
         width: 1200,
         fonts: [
@@ -77,7 +81,7 @@ export const GET: RequestHandler = async ({ params }) => {
     }
   }
 
-  const template = `
+  const template = toReactElement(`
   <div tw="flex h-full w-full flex-col items-center justify-center bg-[#131313]">
     <div tw="flex w-full max-w-sm justify-center rounded-lg border border-neutral-700 bg-neutral-800 shadow">
       <div tw="mx-auto flex flex-col items-center rounded py-10">
@@ -87,10 +91,10 @@ export const GET: RequestHandler = async ({ params }) => {
       </div>
     </div>
   </div>
-  `;
+  `);
 
   try {
-    return await ImageResponse(template, {
+    return new ImageResponse(template, {
       height: 430,
       width: 819.05,
       fonts: [
