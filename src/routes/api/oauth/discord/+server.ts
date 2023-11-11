@@ -2,8 +2,6 @@ import { auth, discordAuth } from "$lib/server/lucia";
 import { redirect } from "@sveltejs/kit";
 import { OAuthRequestError } from "@lucia-auth/oauth";
 
-import prisma from "$lib/server/prisma";
-
 import type { RequestHandler } from "@sveltejs/kit";
 
 export const GET: RequestHandler = async ({ cookies, url, locals }) => {
@@ -21,9 +19,10 @@ export const GET: RequestHandler = async ({ cookies, url, locals }) => {
   }
 
   try {
-    const { existingUser, discordUser, createUser } = await discordAuth.validateCallback(code);
+    const { getExistingUser, discordUser, createUser } = await discordAuth.validateCallback(code);
 
     const getUser = async () => {
+      const existingUser = await getExistingUser();
       if (existingUser) return existingUser;
       // create a new user if the user does not exist
       const user = await createUser({
@@ -31,10 +30,10 @@ export const GET: RequestHandler = async ({ cookies, url, locals }) => {
         attributes: {
           id: discordUser.id,
           username: discordUser.username,
-          avatar: discordUser.avatar,
-          banner: discordUser.banner,
-          accent_color: discordUser.accent_color,
-          locale: discordUser.locale
+          avatar: discordUser.avatar ?? "",
+          banner: discordUser.banner ?? "",
+          accent_color: discordUser.accent_color ?? undefined,
+          locale: discordUser.locale ?? ""
         }
       });
 
