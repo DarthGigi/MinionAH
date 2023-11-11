@@ -13,7 +13,6 @@
     "postinstall": "prisma generate --no-engine"
   },
   "devDependencies": {
-    "@ethercorps/sveltekit-og": "2.0.1",
     "@lucia-auth/adapter-prisma": "3.0.2",
     "@lucia-auth/oauth": "^3.5.0",
     "@lucia-auth/sveltekit": "^0.6.11",
@@ -43,6 +42,7 @@
   },
   "type": "module",
   "dependencies": {
+    "@ethercorps/sveltekit-og": "^2.0.2",
     "@ethercorps/svelte-h2j": "^0.1.0",
     "@vercel/og": "^0.5.20",
     "bits-ui": "^0.9.4",
@@ -51,12 +51,5 @@
     "lucide-svelte": "^0.292.0",
     "tailwind-merge": "^2.0.0",
     "tailwind-variants": "^0.1.18"
-  },
-  "pnpm": {
-    "updateConfig": {
-      "ignoreDependencies": [
-        "@ethercorps/sveltekit-og"
-      ]
-    }
   }
 }
