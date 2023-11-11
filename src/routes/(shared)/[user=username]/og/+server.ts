@@ -1,15 +1,15 @@
 import { toReactElement } from "@ethercorps/svelte-h2j";
 import { ImageResponse } from "@vercel/og";
-import { PrismaClient } from "@prisma/client/edge";
-import { withAccelerate } from "@prisma/extension-accelerate";
+// import { PrismaClient } from "@prisma/client/edge";
+// import { withAccelerate } from "@prisma/extension-accelerate";
 import type { Config } from "@sveltejs/adapter-vercel";
 import type { RequestHandler } from "./$types";
 
-export const config: Config = {
-  runtime: "edge"
-};
+// export const config: Config = {
+//   runtime: "edge"
+// };
 
-const prismaEdge = new PrismaClient().$extends(withAccelerate());
+// const prismaEdge = new PrismaClient().$extends(withAccelerate());
 
 function formatNumber(num: number) {
   if (num != null) {
@@ -47,7 +47,7 @@ export const GET: RequestHandler = async ({ params, fetch }) => {
 
   const username = params.user;
 
-  const user = await prismaEdge.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: {
       username: username
     }

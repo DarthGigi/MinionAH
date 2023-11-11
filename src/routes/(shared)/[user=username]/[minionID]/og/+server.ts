@@ -1,15 +1,15 @@
 import { toReactElement } from "@ethercorps/svelte-h2j";
-import { PrismaClient } from "@prisma/client/edge";
-import { withAccelerate } from "@prisma/extension-accelerate";
+// import { PrismaClient } from "@prisma/client/edge";
+// import { withAccelerate } from "@prisma/extension-accelerate";
 import type { Config } from "@sveltejs/adapter-vercel";
 import { ImageResponse } from "@vercel/og";
 import type { RequestHandler } from "./$types";
 
-export const config: Config = {
-  runtime: "edge"
-};
+// export const config: Config = {
+//   runtime: "edge"
+// };
 
-const prismaEdge = new PrismaClient().$extends(withAccelerate());
+// const prismaEdge = new PrismaClient().$extends(withAccelerate());
 
 function formatNumber(num: number) {
   if (num != null) {
@@ -49,7 +49,7 @@ export const GET: RequestHandler = async ({ params, fetch }) => {
   const minionID = params.minionID;
   const username = params.user;
 
-  const minion = await prismaEdge.minionSeller.findUnique({
+  const minion = await prisma.minionSeller.findUnique({
     where: {
       id: minionID,
       AND: [
