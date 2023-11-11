@@ -5,7 +5,7 @@ declare global {
   var prisma: PrismaClient;
 }
 
-const prisma = global.prisma || new PrismaClient({ log: ["info"] }).$extends(withAccelerate());
+const prisma = global.prisma || new PrismaClient().$extends(withAccelerate());
 global.prisma = prisma;
 
 export default prisma;
