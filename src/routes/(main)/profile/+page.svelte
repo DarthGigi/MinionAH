@@ -6,15 +6,15 @@
   import MinionCopyButton from "$lib/components/MinionCopyButton.svelte";
   import MinionsListBox from "$lib/components/MinionsListBox.svelte";
   import TierListbox from "$lib/components/TierListbox.svelte";
+  import * as AlertDialog from "$lib/components/ui/alert-dialog";
+  import * as Avatar from "$lib/components/ui/avatar";
   import * as Card from "$lib/components/ui/card";
   import { Input } from "$lib/components/ui/input";
   import { Label } from "$lib/components/ui/label";
   import { Switch } from "$lib/components/ui/switch";
-  import type { User } from "@prisma/client";
-  import { Dialog, DialogOverlay, DialogTitle, Transition, TransitionChild } from "@rgossiaux/svelte-headlessui";
+  import { formatNumber } from "$lib/utilities";
+  import type { Minion, MinionSeller as Seller, User } from "@prisma/client";
   import type { PageData } from "./$types";
-
-  let isOpen = false;
 
   export let data: PageData;
   $: user = data.user as User;
@@ -22,7 +22,7 @@
   let moreThan1 = false;
 
   let showDelete = false;
-  let minionToDelete: string | null = null;
+  let minionToDelete: Seller & { minion: Minion } & { user: User };
 </script>
 
 <div class="mx-auto flex max-w-xl flex-col justify-center gap-8 self-center">
@@ -164,9 +164,11 @@
         {#each minions as seller}
           <MinionCard
             minion={seller}
-            on:openDeleteModal={({ detail }) => {
+            on:openDeleteModal={() => {
               showDelete = true;
-              minionToDelete = detail.minion;
+              console.log(seller);
+              // @ts-ignore
+              minionToDelete = seller;
             }}
           />
         {/each}
@@ -176,110 +178,73 @@
 </div>
 
 {#if $page.form}
-  {void (isOpen = true) ?? ""}
-  {#if $page.form.status == 200}
-    <Transition show={isOpen}>
-      <Dialog as="div" class="fixed inset-0 z-50 overflow-y-auto" open={isOpen} on:close={() => (isOpen = false)}>
-        <div class="min-h-screen px-4 text-center">
-          <TransitionChild enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom="opacity-100" leaveTo="opacity-0">
-            <DialogOverlay class="fixed inset-0 bg-black/50" />
-          </TransitionChild>
-
-          <TransitionChild enter="ease-out duration-300" enterFrom="opacity-0 scale-95" enterTo="opacity-100 scale-100" leave="ease-in duration-200" leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-95">
-            <!-- This element is to trick the browser into centering the modal contents. -->
-            <span class="inline-block h-screen align-middle" aria-hidden="true"> &#8203; </span>
-            <div class="my-8 inline-block w-full max-w-md transform overflow-hidden rounded-2xl bg-neutral-700 p-6 text-left align-middle shadow-xl transition-all">
-              <DialogTitle as="h3" class="text-lg font-medium leading-6 text-white">Success</DialogTitle>
-              <div class="mt-2">
-                <p class=" text-neutral-200">{$page.form.body.message}</p>
-              </div>
-
-              <div class="mt-4">
-                <button
-                  type="button"
-                  class="inline-flex justify-center rounded-md border border-transparent bg-green-100 px-4 py-2 text-sm font-medium text-green-900 hover:bg-green-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2"
-                  on:click={() => {
-                    isOpen = false;
-                    $page.form = null;
-                  }}
-                >
-                  Got it, thanks!
-                </button>
-              </div>
-            </div>
-          </TransitionChild>
-        </div>
-      </Dialog>
-    </Transition>
-  {:else if $page.form.status == 400}
-    <Transition show={isOpen}>
-      <Dialog as="div" class="fixed inset-0 z-50 overflow-y-auto" open={isOpen} on:close={() => (isOpen = false)}>
-        <div class="min-h-screen px-4 text-center">
-          <TransitionChild enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom="opacity-100" leaveTo="opacity-0">
-            <DialogOverlay class="fixed inset-0 bg-black/50" />
-          </TransitionChild>
-
-          <TransitionChild enter="ease-out duration-300" enterFrom="opacity-0 scale-95" enterTo="opacity-100 scale-100" leave="ease-in duration-200" leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-95">
-            <!-- This element is to trick the browser into centering the modal contents. -->
-            <span class="inline-block h-screen align-middle" aria-hidden="true"> &#8203; </span>
-            <div class="my-8 inline-block w-full max-w-md transform overflow-hidden rounded-2xl bg-neutral-700 p-6 text-left align-middle shadow-xl transition-all">
-              <DialogTitle as="h3" class="text-lg font-medium leading-6 text-red-200">Oops</DialogTitle>
-              <div class="mt-2">
-                <p class=" text-red-400">{$page.form.body.error}</p>
-              </div>
-
-              <div class="mt-4">
-                <button
-                  type="button"
-                  class="inline-flex justify-center rounded-md border border-transparent bg-neutral-800 px-4 py-2 text-sm font-medium text-neutral-200 hover:bg-neutral-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-2"
-                  on:click={() => {
-                    isOpen = false;
-                    $page.form = null;
-                  }}
-                >
-                  Got it, thanks!
-                </button>
-              </div>
-            </div>
-          </TransitionChild>
-        </div>
-      </Dialog>
-    </Transition>
-  {/if}
+  <AlertDialog.Root open={true} closeOnEscape={true} closeOnOutsideClick={true}>
+    <AlertDialog.Content>
+      {#if $page.form.status == 200}
+        <AlertDialog.Header>
+          <AlertDialog.Title>Success</AlertDialog.Title>
+          <AlertDialog.Description>{$page.form.body.message}</AlertDialog.Description>
+        </AlertDialog.Header>
+      {:else if $page.form.status == 400}
+        <AlertDialog.Header>
+          <AlertDialog.Title>Oops</AlertDialog.Title>
+          <AlertDialog.Description>{$page.form.body.error}</AlertDialog.Description>
+        </AlertDialog.Header>
+      {/if}
+      <AlertDialog.Footer>
+        <AlertDialog.Cancel>Close</AlertDialog.Cancel>
+      </AlertDialog.Footer>
+    </AlertDialog.Content>
+  </AlertDialog.Root>
 {/if}
 
-<Transition show={showDelete}>
-  <Dialog
-    as="div"
-    class="fixed inset-0 z-50 overflow-y-auto"
-    open={showDelete}
-    on:close={() => {
-      showDelete = false;
-      minionToDelete = null;
-    }}
-  >
-    <div class="min-h-screen px-4 text-center">
-      <TransitionChild enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom="opacity-100" leaveTo="opacity-0">
-        <DialogOverlay class="fixed inset-0 bg-black/50" />
-      </TransitionChild>
+<AlertDialog.Root bind:open={showDelete} closeOnEscape={true} closeOnOutsideClick={true}>
+  <AlertDialog.Content>
+    <AlertDialog.Header>
+      <AlertDialog.Title>Warning</AlertDialog.Title>
+      <AlertDialog.Description>Are you sure you want to delete this minion?</AlertDialog.Description>
+      <ul>
+        <li>
+          <div class="relative list-item divide-y divide-neutral-700 rounded-lg bg-neutral-800 transition-all duration-300" class:group={false} class:hover:bg-neutral-900={false}>
+            <div class="flex h-full w-full flex-col items-center justify-center gap-x-6 px-4 py-2">
+              <Avatar.Root class="h-12 w-12 flex-shrink-0 rounded-full bg-neutral-700 ">
+                <Avatar.Image class="pointer-events-none object-cover p-1" src={`https://mc-heads.net/head/${minionToDelete.minion.texture}`} alt={minionToDelete.minion.name} />
+                <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-700">{minionToDelete.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
+              </Avatar.Root>
+              <h3 class="truncate text-sm font-medium text-white">{minionToDelete.minion.name.replace(/ [IVX]+$/, "")}</h3>
+            </div>
 
-      <TransitionChild enter="ease-out duration-300" enterFrom="opacity-0 scale-95" enterTo="opacity-100 scale-100" leave="ease-in duration-200" leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-95">
-        <!-- This element is to trick the browser into centering the modal contents. -->
-        <span class="inline-block h-screen align-middle" aria-hidden="true"> &#8203; </span>
-        <div class="my-8 inline-block w-full max-w-md transform overflow-hidden rounded-2xl bg-neutral-700 p-6 text-left align-middle shadow-xl transition-all">
-          <DialogTitle as="h3" class="text-lg font-medium leading-6 text-orange-300">Warning</DialogTitle>
-          <div class="mt-2">
-            <p class=" text-red-200">Are you sure you want to delete this minion?</p>
+            <div class="-mt-px flex divide-x divide-neutral-700">
+              <div class="relative inline-flex w-0 flex-1 items-center justify-center overflow-hidden rounded-bl-lg text-sm font-medium text-neutral-200">
+                <span class="z-10 inline-block flex-shrink-0 rounded-full px-2 py-0.5 text-xs font-medium text-neutral-800 transition-transform duration-300 group-hover:scale-125 group-hover:text-neutral-900">{` Tier ${["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"][minionToDelete.minion.generator_tier - 1]} (${minionToDelete.minion.generator_tier})`}</span>
+                <div class="absolute z-0 h-5 w-20 flex-shrink-0 rounded-[50px] bg-neutral-400 transition-all duration-500 group-hover:h-full group-hover:w-full group-hover:rounded-none" />
+              </div>
+              <div class="relative -ml-px inline-flex w-0 flex-1 overflow-hidden">
+                <span class="relative z-10 inline-flex w-0 flex-1 items-center justify-center overflow-hidden py-4 text-sm font-medium text-neutral-200 transition-all duration-300 group-hover:scale-125 group-hover:text-neutral-900">
+                  <img class="pointer-events-none mr-1 h-6 w-6" src="/assets/images/coin.png" alt="Coin icon" />
+                  {formatNumber(minionToDelete.price)}
+                  {#if minionToDelete.amount ? minionToDelete.amount > 1 : false}
+                    <span class="ml-1 text-sm text-neutral-200/50 transition-all duration-300 group-hover:ml-0 group-hover:text-neutral-900/0">/</span>
+                    <span class="text-sm text-neutral-200/50 transition-all duration-300 group-hover:-ml-0.5 group-hover:text-neutral-900">each</span>
+                  {/if}
+                </span>
+                <div class="absolute z-0 h-0 w-full flex-shrink-0 bg-neutral-400 transition-all duration-500 group-hover:h-full" />
+              </div>
+              <div class="relative inline-flex w-0 flex-1 items-center justify-center overflow-hidden rounded-br-lg text-sm font-medium text-neutral-200">
+                <span class="z-10 inline-block flex-shrink-0 rounded-full px-2 py-0.5 text-xs font-medium text-neutral-800 transition-transform duration-300 group-hover:scale-125 group-hover:text-neutral-900">{` Amount: ${minionToDelete.amount}`}</span>
+                <div class="absolute z-0 h-5 w-20 flex-shrink-0 rounded-[50px] bg-neutral-400 transition-all duration-500 group-hover:h-full group-hover:w-full group-hover:rounded-none" />
+              </div>
+            </div>
           </div>
-
-          <div class="mt-4">
-            <form action="?/deleteMinion" use:enhance method="POST">
-              <input type="hidden" name="minion" value={minionToDelete} />
-              <button type="submit" class="inline-flex justify-center rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"> Delete </button>
-            </form>
-          </div>
-        </div>
-      </TransitionChild>
-    </div>
-  </Dialog>
-</Transition>
+        </li>
+      </ul>
+    </AlertDialog.Header>
+    <AlertDialog.Footer>
+      <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+      <form action="?/deleteMinion" use:enhance method="POST">
+        <input type="hidden" name="minion" value={minionToDelete?.id} />
+        <AlertDialog.Action type="submit">Delete</AlertDialog.Action>
+      </form>
+    </AlertDialog.Footer>
+  </AlertDialog.Content>
+</AlertDialog.Root>
