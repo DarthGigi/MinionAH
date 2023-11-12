@@ -1,9 +1,11 @@
 <script lang="ts">
-  import type { PageData } from "../(shared)/$types";
+  import type { PageData } from "./$types";
   import Card from "$lib/components/Card.svelte";
   import type { Seller } from "$lib/types";
   import CardLoading from "$lib/components/CardLoading.svelte";
   import TierListbox from "$lib/components/TierListbox.svelte";
+  import { Input } from "$lib/components/ui/input";
+  import { Label } from "$lib/components/ui/label";
 
   export let data: PageData;
   let minions: Seller[] = [];
@@ -64,32 +66,33 @@
 </script>
 
 <div class="mx-auto flex flex-row items-center justify-center gap-4 px-4 py-20 sm:px-6 lg:px-8">
-  <div class="h-[4.25rem] w-48">
-    <span class="text-white">Search</span>
-    <input
+  <div>
+    <Label for="search" class="text-base font-normal">Search</Label>
+    <Input
       type="text"
-      on:input={(e) => {
-        if (e.target instanceof HTMLInputElement) {
-          search = e.target.value;
-          loadData(currentTier, undefined, search);
-        }
-      }}
-      class="h-9 w-full rounded border-2 border-neutral-700 bg-black px-4 text-sm text-white placeholder-white placeholder-opacity-30"
+      class="w-44 border-2 border-none bg-neutral-700 text-white placeholder-white placeholder-opacity-30 focus-visible:border-neutral-600 focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-0"
       placeholder="Search..."
-      maxlength="32"
+      maxlength={32}
+      on:input={({ currentTarget }) => {
+        if (!(currentTarget instanceof HTMLInputElement)) return;
+        search = currentTarget.value;
+        loadData(currentTier, undefined, search);
+      }}
     />
   </div>
-  <TierListbox
-    on:filterTier={({ detail }) => {
-      if (detail.tier === null) {
-        currentTier = undefined;
+  <div>
+    <TierListbox
+      on:filterTier={({ detail }) => {
+        if (detail.tier === null) {
+          currentTier = undefined;
+          loadData(currentTier);
+          return;
+        }
+        currentTier = detail.tier;
         loadData(currentTier);
-        return;
-      }
-      currentTier = detail.tier;
-      loadData(currentTier);
-    }}
-  />
+      }}
+    />
+  </div>
 </div>
 
 <div class="py-8">
@@ -114,7 +117,11 @@
       {:else if loadingMore}
         <p class="px-4 py-1 text-center text-sm text-neutral-200 text-opacity-60">Loading...</p>
       {:else}
-        <button type="button" on:click={() => loadData(currentTier, minions.length, search, true)} class="rounded px-4 py-1 text-sm text-white transition-colors duration-300 hover:bg-white hover:text-black">Load more...</button>
+        <button type="button" on:click={() => loadData(currentTier, minions.length, search, true)} class="rounded p-1 text-sm text-white text-opacity-30 transition-all duration-300 hover:bg-neutral-700 hover:text-opacity-100"
+          ><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+          </svg>
+        </button>
       {/if}
     </div>
   </div>
