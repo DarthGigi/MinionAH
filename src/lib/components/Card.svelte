@@ -5,6 +5,7 @@
   import { createEventDispatcher } from "svelte";
   import { fade } from "svelte/transition";
   import MinionCopyButton from "./MinionCopyButton.svelte";
+  import * as Avatar from "$lib/components/ui/avatar";
 
   export let minion: Seller;
 
@@ -55,15 +56,10 @@
       </a>
       {#if isHome}
         <a href={`/${minion.user.username}`} class="z-20 my-2 flex flex-col items-center truncate rounded p-1 transition-all duration-500 hover:scale-150 hover:bg-neutral-800">
-          <img
-            class="pointer-events-none h-12 w-12 flex-shrink-0 rounded-full bg-neutral-700 object-cover"
-            src={`https://cdn.discordapp.com/avatars/${minion.user.id}/${minion.user.avatar}.png?size=64`}
-            alt={`${minion.user.username}'s discord avatar`}
-            on:error={({ currentTarget }) => {
-              if (!(currentTarget instanceof HTMLImageElement)) return;
-              currentTarget.src = `https://cdn.discordapp.com/embed/avatars/${Number(minion.user.id) % 6}.png?size=64`;
-            }}
-          />
+          <Avatar.Root class="h-12 w-12">
+            <Avatar.Image class="pointer-events-none  flex-shrink-0 rounded-full bg-neutral-700 object-cover" src={`https://cdn.discordapp.com/avatars/${minion.user.id}/${minion.user.avatar}.png?size=64`} alt={`${minion.user.username}'s avatar`} />
+            <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-800">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
+          </Avatar.Root>
           <h3 class="text-sm font-medium text-white">{minion.user.username}</h3>
         </a>
       {/if}
