@@ -5,36 +5,14 @@
   import { createEventDispatcher } from "svelte";
   import { fade } from "svelte/transition";
   import MinionCopyButton from "./MinionCopyButton.svelte";
+  import { formatNumber } from "$lib/utilities";
   import * as Avatar from "$lib/components/ui/avatar";
+  import * as HoverCard from "$lib/components/ui/hover-card";
 
   export let minion: Seller;
 
   const isHome = $page.url.pathname === "/";
   const isMinionPage = $page.url.pathname === `/` || $page.url.pathname === `/profile` || $page.url.pathname === `/${minion.user.username}`;
-
-  function formatNumber(num: number) {
-    if (num != null) {
-      let suffix = "";
-      if (num >= 1000000) {
-        num = num / 1000000;
-        suffix = "m";
-      } else if (num >= 1000) {
-        num = num / 1000;
-        suffix = "k";
-      }
-      if (suffix) {
-        if (num % 1 === 0) {
-          return num.toFixed(0) + suffix;
-        } else {
-          return num.toFixed(num < 10 ? 1 : 2) + suffix;
-        }
-      } else {
-        return num.toString();
-      }
-    } else {
-      return "N/A";
-    }
-  }
 
   const dispatch = createEventDispatcher();
 
@@ -46,22 +24,61 @@
 </script>
 
 <li transition:fade|global>
-  <div class="relative list-item divide-y divide-neutral-700 rounded-lg bg-neutral-800 transition-all duration-300" class:group={isHome} class:hover:scale-[1.02]={isHome} class:hover:bg-neutral-900={isHome}>
-    <div class="flex h-full w-full items-center justify-center space-x-6 px-4">
-      <a href={`https://hypixel-skyblock.fandom.com/wiki/${minion.minion.name.replace(/ [IVX]+$/, "").replace(/ /g, "_")}`} target="_blank" class="z-20 my-2 flex flex-col items-center truncate rounded p-1 transition-all duration-500" class:hover:scale-150={isHome} class:hover:bg-neutral-800={isHome}>
-        <div class="h-12 w-12 flex-shrink-0 overflow-hidden rounded-full bg-neutral-700 p-1">
-          <img class="pointer-events-none h-full w-full" src={`https://mc-heads.net/head/${minion.minion.texture}`} alt={`${minion.minion.name} head image`} />
-        </div>
-        <h3 class="truncate text-sm font-medium text-white">{minion.minion.name.replace(/ [IVX]+$/, "")}</h3>
-      </a>
-      {#if isHome}
-        <a href={`/${minion.user.username}`} class="z-20 my-2 flex flex-col items-center truncate rounded p-1 transition-all duration-500 hover:scale-150 hover:bg-neutral-800">
-          <Avatar.Root class="h-12 w-12">
-            <Avatar.Image class="pointer-events-none  flex-shrink-0 rounded-full bg-neutral-700 object-cover" src={`https://cdn.discordapp.com/avatars/${minion.user.id}/${minion.user.avatar}.png?size=64`} alt={`${minion.user.username}'s avatar`} />
-            <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-800">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
+  <div class="relative list-item divide-y divide-neutral-700 rounded-lg bg-neutral-800 transition-all duration-300" class:group={isHome} class:hover:bg-neutral-900={isHome}>
+    <div class="flex h-full w-full items-center justify-center gap-x-6 px-4">
+      <HoverCard.Root openDelay={150} closeDelay={150}>
+        <HoverCard.Trigger href={`https://hypixel-skyblock.fandom.com/wiki/${minion.minion.name.replace(/ [IVX]+$/, "").replace(/ /g, "_")}`} target="_blank" rel="noopener" class="my-2 flex flex-col items-center truncate rounded p-1 transition-all duration-500">
+          <Avatar.Root class="h-12 w-12 flex-shrink-0 rounded-full bg-neutral-700">
+            <Avatar.Image class="pointer-events-none object-cover p-1" src={`https://mc-heads.net/head/${minion.minion.texture}`} alt={minion.minion.name} />
+            <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-700">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
           </Avatar.Root>
-          <h3 class="text-sm font-medium text-white">{minion.user.username}</h3>
-        </a>
+          <h3 class="truncate text-sm font-medium text-white">{minion.minion.name.replace(/ [IVX]+$/, "")}</h3>
+        </HoverCard.Trigger>
+        <HoverCard.Content class="mt-0 -translate-y-44 border-neutral-700 bg-neutral-900">
+          <div class="flex justify-center gap-x-4">
+            <Avatar.Root class="h-12 w-12 flex-shrink-0 rounded-full bg-neutral-700">
+              <Avatar.Image class="pointer-events-none object-cover p-1" src={`https://mc-heads.net/head/${minion.minion.texture}`} alt={minion.minion.name} />
+              <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-800">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
+            </Avatar.Root>
+            <div class="space-y-1">
+              <h4 class="text-sm font-semibold">
+                {minion.minion.name}
+                <p class="text-xs text-muted-foreground">
+                  Created on {new Date(minion.timeCreated).toLocaleString(window.navigator.language, {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "numeric"
+                  })}
+                </p>
+              </h4>
+            </div>
+          </div>
+        </HoverCard.Content>
+      </HoverCard.Root>
+      {#if isHome}
+        <HoverCard.Root openDelay={150} closeDelay={150}>
+          <HoverCard.Trigger href={`/${minion.user.username}`} class="my-2 flex min-w-[4.75rem] max-w-[8rem] flex-col items-center truncate p-1">
+            <Avatar.Root class="h-12 w-12">
+              <Avatar.Image class="pointer-events-none  flex-shrink-0 rounded-full bg-neutral-700 object-cover" src={`https://cdn.discordapp.com/avatars/${minion.user.id}/${minion.user.avatar}.png?size=64`} alt={`${minion.user.username}'s avatar`} />
+              <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-800">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
+            </Avatar.Root>
+            <h3 class="max-w-[8rem] truncate text-sm font-medium text-white">{minion.user.username}</h3>
+          </HoverCard.Trigger>
+          <HoverCard.Content class="mt-0 -translate-y-44 border-neutral-700 bg-neutral-900">
+            <div class="flex w-full justify-center gap-x-4 truncate">
+              <Avatar.Root class="h-12 w-12">
+                <Avatar.Image class="pointer-events-none flex-shrink-0 rounded-full bg-neutral-700 object-cover" src={`https://cdn.discordapp.com/avatars/${minion.user.id}/${minion.user.avatar}.png?size=64`} alt={`${minion.user.username}'s avatar`} />
+                <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-800">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
+              </Avatar.Root>
+              <div class="space-y-1">
+                <h4 class="max-w-[8rem] truncate text-sm font-semibold">@{minion.user.username}</h4>
+                <p class="text-xs text-muted-foreground">{minion.user.id}</p>
+              </div>
+            </div>
+          </HoverCard.Content>
+        </HoverCard.Root>
       {/if}
     </div>
 
@@ -74,8 +91,10 @@
         <span class="relative z-10 inline-flex w-0 flex-1 items-center justify-center overflow-hidden py-4 text-sm font-medium text-neutral-200 transition-all duration-300 group-hover:scale-125 group-hover:text-neutral-900">
           <img class="pointer-events-none mr-1 h-6 w-6" src="/assets/images/coin.png" alt="Coin icon" />
           {formatNumber(minion.price)}
-          <span class="ml-1 text-sm text-neutral-200/50 transition-all duration-300 group-hover:ml-0 group-hover:text-neutral-900/0">/</span>
-          <span class="text-sm text-neutral-200/50 transition-all duration-300 group-hover:-ml-0.5 group-hover:text-neutral-900">each</span>
+          {#if minion.amount ? minion.amount > 1 : false}
+            <span class="ml-1 text-sm text-neutral-200/50 transition-all duration-300 group-hover:ml-0 group-hover:text-neutral-900/0">/</span>
+            <span class="text-sm text-neutral-200/50 transition-all duration-300 group-hover:-ml-0.5 group-hover:text-neutral-900">each</span>
+          {/if}
         </span>
         <div class="absolute z-0 h-0 w-full flex-shrink-0 bg-neutral-400 transition-all duration-500 group-hover:h-full" />
       </div>
@@ -89,7 +108,7 @@
         <Tooltip.Trigger class="absolute right-2 top-2 m-0 flex h-10 w-10 items-center justify-center rounded-lg !border-2 !border-black/30 bg-neutral-700 p-2 transition-all duration-300 group-hover:!border-black/0 group-hover:bg-neutral-900">
           <img class="pointer-events-none h-auto w-full" src="https://mc-heads.net/head/7e051df4dd2151481f5145b93fb7a9aa62888fbcb90add9890ad07caf1faca73" alt="Mithril Infusion" />
         </Tooltip.Trigger>
-        <Tooltip.Content class="border-2 border-black/30 bg-neutral-700 text-neutral-200">
+        <Tooltip.Content class="border-neutral-700 bg-neutral-900 text-neutral-200">
           <p>Mithril Infused</p>
         </Tooltip.Content>
       </Tooltip.Root>
