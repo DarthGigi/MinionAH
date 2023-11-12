@@ -66,7 +66,15 @@
               <Menu class="relative ml-3">
                 <MenuButton class="flex rounded-full bg-neutral-800 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-700 focus:ring-offset-2 focus:ring-offset-neutral-800" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
                   <span class="sr-only">Open user menu</span>
-                  <img class="pointer-events-none h-8 w-8 rounded-full" src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}?size=64`} alt="" />
+                  <img
+                    class="pointer-events-none h-8 w-8 rounded-full"
+                    src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}?size=64`}
+                    alt={user.username}
+                    on:error={({ currentTarget }) => {
+                      if (!(currentTarget instanceof HTMLImageElement)) return;
+                      currentTarget.src = `https://cdn.discordapp.com/embed/avatars/${Number(user.id) % 6}.png?size=64`;
+                    }}
+                  />
                 </MenuButton>
 
                 <Transition class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-neutral-700 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" enter="transition ease-out duration-200" enterFrom="transform opacity-0 scale-95" enterTo="transform opacity-100 scale-100" leave="transition ease-in duration-75" leaveFrom="transform opacity-100 scale-100" leaveTo="transform opacity-0 scale-95">
