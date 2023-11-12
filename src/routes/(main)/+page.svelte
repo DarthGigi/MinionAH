@@ -12,6 +12,7 @@
   let loadingMore = true;
   let currentTier: number | undefined = undefined;
   let newMinionAmount: number;
+  let initialDispatch = true;
 
   let search: string | undefined = undefined;
 
@@ -83,7 +84,12 @@
   <div>
     <TierListbox
       on:filterTier={({ detail }) => {
+        if (initialDispatch) {
+          initialDispatch = false;
+          return;
+        }
         if (detail.tier === null) {
+          console.log("null");
           currentTier = undefined;
           loadData(currentTier);
           return;
@@ -117,8 +123,8 @@
       {:else if loadingMore}
         <p class="px-4 py-1 text-center text-sm text-neutral-200 text-opacity-60">Loading...</p>
       {:else}
-        <button type="button" on:click={() => loadData(currentTier, minions.length, search, true)} class="rounded p-1 text-sm text-white text-opacity-30 transition-all duration-300 hover:bg-neutral-700 hover:text-opacity-100"
-          ><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
+        <button type="button" on:click={() => loadData(currentTier, minions.length, search, true)} class="rounded p-1 text-sm text-white text-opacity-30 transition-all duration-300 hover:bg-neutral-700 hover:text-opacity-100">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
           </svg>
         </button>
