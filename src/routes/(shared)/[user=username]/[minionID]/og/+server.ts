@@ -1,6 +1,4 @@
 import { toReactElement } from "@ethercorps/svelte-h2j";
-//
-//
 import type { Config } from "@sveltejs/adapter-vercel";
 import { ImageResponse } from "@vercel/og";
 import type { RequestHandler } from "./$types";
@@ -8,8 +6,6 @@ import type { RequestHandler } from "./$types";
 // export const config: Config = {
 //   runtime: "edge"
 // };
-
-//
 
 function formatNumber(num: number) {
   if (num != null) {

@@ -1,7 +1,5 @@
 import { toReactElement } from "@ethercorps/svelte-h2j";
 import { ImageResponse } from "@vercel/og";
-//
-//
 import type { Config } from "@sveltejs/adapter-vercel";
 import type { RequestHandler } from "./$types";
 
