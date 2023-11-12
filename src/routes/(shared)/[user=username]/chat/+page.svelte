@@ -75,7 +75,7 @@
       <h1 class="text-center text-lg font-semibold">{data.user2?.username}</h1>
     </div>
     {#if data.chat}
-      <ul bind:this={ulMessages} class="flex max-h-72 w-full flex-col gap-2 overflow-scroll px-6 py-6">
+      <ul bind:this={ulMessages} class="no-scrollbar flex max-h-72 w-full max-w-full flex-col gap-2 overflow-x-hidden overflow-y-scroll px-6 py-6">
         {#await data.streamed.messages}
           <li class="animate-pulse self-end rounded-full rounded-br-none bg-[#3C83F7] px-4 py-2">
             <div class="h-4 w-16" />
@@ -103,7 +103,15 @@
               <li class="self-end">
                 <Tooltip.Root>
                   <Tooltip.Trigger class={`cursor-default self-end rounded-full !rounded-br-none bg-[#3C83F7] px-4 py-2 text-left text-[#FDFDFD] ${lines.length > 1 ? "!rounded-3xl" : ""}`}>
-                    <p>
+                    <p
+                      class="no-scrollbar max-w-[18rem] overflow-scroll"
+                      on:mousewheel={(e) => {
+                        if (!(e.currentTarget instanceof HTMLParagraphElement)) return;
+                        // scroll horizontally back and forth when the mouse wheel is used
+                        e.preventDefault();
+                        e.currentTarget.scrollLeft += e.deltaY;
+                      }}
+                    >
                       {#each lines as line}
                         {line}
                         {#if lines.length > 1 && line !== lines[lines.length - 1]}
@@ -121,8 +129,16 @@
               {@const lines = message.content.split("\n")}
               <li class="self-start">
                 <Tooltip.Root>
-                  <Tooltip.Trigger class={`cursor-default self-start rounded-full !rounded-bl-none bg-[#3B3B3D] px-4 py-2 text-left text-[#FDFDFD] ${lines.length > 1 ? "!rounded-3xl" : ""}`}>
-                    <p>
+                  <Tooltip.Trigger class={`max-w-full cursor-default self-start truncate rounded-full !rounded-bl-none bg-[#3B3B3D] px-4 py-2 text-left text-[#FDFDFD] ${lines.length > 1 ? "!rounded-3xl" : ""}`}>
+                    <p
+                      class="no-scrollbar max-w-[18rem] overflow-scroll"
+                      on:mousewheel={(e) => {
+                        if (!(e.currentTarget instanceof HTMLParagraphElement)) return;
+                        // scroll horizontally back and forth when the mouse wheel is used
+                        e.preventDefault();
+                        e.currentTarget.scrollLeft += e.deltaY;
+                      }}
+                    >
                       {#each lines as line}
                         {line}
                         {#if lines.length > 1 && line !== lines[lines.length - 1]}
@@ -148,7 +164,7 @@
           cols="1"
           rows="1"
           maxlength="1000"
-          class="no-scrollbar max-h-96 w-full resize-none rounded-full border-none bg-transparent placeholder-neutral-500 focus-visible:border-none focus-visible:ring-0"
+          class="no-scrollbar h-full w-full resize-none rounded-full border-none bg-transparent placeholder-neutral-500 focus-visible:border-none focus-visible:ring-0"
           class:!rounded-2xl={newLines > 0}
           name="message"
           placeholder={data.chat ? "Message" : "Send a message to start a chat"}
@@ -198,7 +214,9 @@
             }
           }}
         />
-        <div class="pointer-events-none w-8" />
+        <span class="translate-x absolute bottom-1/2 right-2 translate-y-1/2 text-xs text-neutral-500 transition-all duration-300" class:-translate-x-8={textValue} class:!-translate-y-2={newLines > 0} class:!bottom-1={newLines > 0} class:duration-0={newLines > 0}>{textValue && textValue.length ? textValue.length : ""}/1000</span>
+
+        <div class="pointer-events-none w-32" />
         <button type="submit" class="group absolute bottom-1/2 right-1 translate-y-1/2 overflow-hidden opacity-0 transition-opacity duration-300" bind:this={submitButton} class:!bottom-1={newLines > 0} class:!translate-y-0={newLines > 0} class:opacity-100={textValue}>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="relative z-10 h-8 w-8 rounded-full text-blue-500 transition-all duration-300">
             <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm.53 5.47a.75.75 0 00-1.06 0l-3 3a.75.75 0 101.06 1.06l1.72-1.72v5.69a.75.75 0 001.5 0v-5.69l1.72 1.72a.75.75 0 101.06-1.06l-3-3z" clip-rule="evenodd" />
