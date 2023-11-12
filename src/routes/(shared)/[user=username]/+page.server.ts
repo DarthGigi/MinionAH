@@ -1,5 +1,3 @@
-import { PrismaClient } from "@prisma/client/edge";
-import { withAccelerate } from "@prisma/extension-accelerate";
 import type { Config } from "@sveltejs/adapter-vercel";
 import { redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
@@ -8,12 +6,10 @@ export let config: Config = {
   runtime: "edge"
 };
 
-const prismaEdge = new PrismaClient().$extends(withAccelerate());
-
 export const load = (async ({ params, fetch }) => {
   const username = params.user;
 
-  const user = await prismaEdge.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: {
       username: username
     },
@@ -26,7 +22,7 @@ export const load = (async ({ params, fetch }) => {
     throw redirect(302, "/");
   }
 
-  const minions = prismaEdge.minionSeller.findMany({
+  const minions = prisma.minionSeller.findMany({
     where: {
       user: {
         id: user.id

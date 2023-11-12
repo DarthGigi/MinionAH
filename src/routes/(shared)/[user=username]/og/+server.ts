@@ -1,7 +1,7 @@
 import { toReactElement } from "@ethercorps/svelte-h2j";
 import { ImageResponse } from "@vercel/og";
-// import { PrismaClient } from "@prisma/client/edge";
-// import { withAccelerate } from "@prisma/extension-accelerate";
+//
+//
 import type { Config } from "@sveltejs/adapter-vercel";
 import type { RequestHandler } from "./$types";
 
@@ -9,7 +9,7 @@ import type { RequestHandler } from "./$types";
 //   runtime: "edge"
 // };
 
-// const prismaEdge = new PrismaClient().$extends(withAccelerate());
+//
 
 function formatNumber(num: number) {
   if (num != null) {
