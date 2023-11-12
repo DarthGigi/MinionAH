@@ -88,6 +88,17 @@ export const actions: Actions = {
       throw redirect(302, "/login");
     }
 
+    const data = await request.formData();
+
+    const body = Object.fromEntries(data.entries());
+
+    // max message size
+    if (body.message.toString().length > 1000) {
+      throw new Response("Message exceeds max 1000 characters", {
+        status: 400
+      });
+    }
+
     const user = await prisma.user.findUnique({
       where: {
         id: session.user.userId
@@ -105,9 +116,6 @@ export const actions: Actions = {
         username
       }
     });
-
-    console.log(user);
-    console.log(user2);
 
     let chat = await prisma.chat.findFirst({
       where: {
@@ -133,7 +141,6 @@ export const actions: Actions = {
     });
 
     if (!chat) {
-      console.log("creating chat");
       await prisma.chat.create({
         data: {
           user1: {
@@ -173,19 +180,9 @@ export const actions: Actions = {
       }
     });
 
-    console.log(chat);
-
     if (!chat) {
       throw new Error("Chat not found");
     }
-
-    const data = await request.formData();
-
-    console.log(data);
-
-    const body = Object.fromEntries(data.entries());
-
-    console.log(body);
 
     const message = await prisma.message.create({
       data: {

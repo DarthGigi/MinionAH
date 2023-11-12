@@ -147,6 +147,7 @@
           bind:value={textValue}
           cols="1"
           rows="1"
+          maxlength="1000"
           class="no-scrollbar max-h-96 w-full resize-none rounded-full border-none bg-transparent placeholder-neutral-500 focus-visible:border-none focus-visible:ring-0"
           class:!rounded-2xl={newLines > 0}
           name="message"
