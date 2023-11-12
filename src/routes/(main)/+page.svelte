@@ -97,7 +97,7 @@
     <ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {#await minions then minions}
         {#each minions as seller}
-          <Card {seller} />
+          <Card minion={seller} />
         {/each}
 
         {#if loadingMore}
@@ -110,9 +110,9 @@
     <div class="flex w-full justify-center py-4">
       <!-- check if there are no longer any items in the database -->
       {#if newMinionAmount === 0 || newMinionAmount < 9 || (minions.length === 0 && !loadingMore)}
-        <p class="text-center text-neutral-200 text-sm text-opacity-40 px-4 py-1">No more minions to load.</p>
+        <p class="px-4 py-1 text-center text-sm text-neutral-200 text-opacity-40">No more minions to load.</p>
       {:else if loadingMore}
-        <p class="text-center text-neutral-200 text-sm text-opacity-60 px-4 py-1">Loading...</p>
+        <p class="px-4 py-1 text-center text-sm text-neutral-200 text-opacity-60">Loading...</p>
       {:else}
         <button type="button" on:click={() => loadData(currentTier, minions.length, search, true)} class="rounded px-4 py-1 text-sm text-white transition-colors duration-300 hover:bg-white hover:text-black">Load more...</button>
       {/if}
