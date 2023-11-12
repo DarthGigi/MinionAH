@@ -42,7 +42,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
   let minions;
   try {
-    minions = await getMinions(Math.min(50, params.take || 0), params.skip, params.orderBy, params.distinct, params.where);
+    minions = await getMinions(Math.min(50, params.take || 9), params.skip, params.orderBy, params.distinct, params.where);
   } catch (e) {
     console.log(e);
     return new Response(null, {
