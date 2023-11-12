@@ -67,7 +67,7 @@
       {/if}
     </button>
     <div class="absolute right-12 top-3 flex h-8 scale-0 items-center justify-center overflow-hidden rounded-md border border-neutral-700 bg-popover px-2 py-1 text-xs opacity-0 shadow-md transition-all duration-300" class:!scale-100={copied} class:!opacity-100={copied}>Copied Link</div>
-    <a href="https://discord.com/users/{userprofile.id}" class="relative mx-20 my-5 flex flex-col items-center rounded py-5 transition-all duration-300 hover:scale-110 hover:bg-neutral-600" target="_blank">
+    <a href="https://discord.com/users/{userprofile.id}" class="relative mx-20 my-5 flex flex-col items-center rounded py-5 transition-all duration-300 hover:scale-110 hover:bg-neutral-600" target="_blank" rel="noopener">
       <img
         class="pointer-events-none mb-3 h-24 w-24 rounded-full shadow-lg"
         src="https://cdn.discordapp.com/avatars/{userprofile.id}/{userprofile.avatar}?size=1024"

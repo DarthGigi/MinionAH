@@ -46,7 +46,7 @@
       }}
     />
 
-    <a href="https://discord.com/users/{minion.user.id}" target="_blank" class="relative z-10 mx-20 mt-5 flex flex-col items-center rounded py-5 transition-all duration-300 hover:scale-110 hover:bg-neutral-600">
+    <a href="https://discord.com/users/{minion.user.id}" target="_blank" rel="noopener" class="relative z-10 mx-20 mt-5 flex flex-col items-center rounded py-5 transition-all duration-300 hover:scale-110 hover:bg-neutral-600">
       <img
         class="mb-3 h-24 w-24 rounded-full shadow-lg"
         src="https://cdn.discordapp.com/avatars/{minion.user.id}/{minion.user.avatar}?size=1024"
