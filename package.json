@@ -42,9 +42,10 @@
   },
   "type": "module",
   "dependencies": {
-    "@ethercorps/sveltekit-og": "^2.0.2",
     "@ethercorps/svelte-h2j": "^0.1.0",
-    "@vercel/og": "0.5.17",
+    "@ethercorps/sveltekit-og": "^2.0.2",
+    "@vercel/node": "^3.0.9",
+    "@vercel/og": "^0.5.20",
     "bits-ui": "^0.9.4",
     "clsx": "^2.0.0",
     "css-tree": "^2.3.1",
