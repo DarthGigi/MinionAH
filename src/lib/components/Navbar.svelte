@@ -12,26 +12,28 @@
   <nav class="bg-neutral-800">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="flex h-16 justify-between">
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger>
-            <Avatar.Root class="items-center justify-center">
-              <Avatar.Image class="pointer-events-none h-8 w-8 rounded-full" src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}?size=64`} alt={user.username} />
-              <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-700">{user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
-            </Avatar.Root>
-          </DropdownMenu.Trigger>
-          <DropdownMenu.Content class="translate-x-2  scale-110 border-0 bg-neutral-700">
-            <DropdownMenu.Group>
-              <DropdownMenu.Label>My Account</DropdownMenu.Label>
-              <DropdownMenu.Separator class="bg-neutral-800" />
-              <DropdownMenu.Item asChild>
-                <a href="/profile" class="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground">Profile</a>
-              </DropdownMenu.Item>
-              <DropdownMenu.Item asChild>
-                <a data-sveltekit-preload-data="off" href="/logout" class="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground">Sign out</a>
-              </DropdownMenu.Item>
-            </DropdownMenu.Group>
-          </DropdownMenu.Content>
-        </DropdownMenu.Root>
+        <div class="flex items-center justify-center md:hidden">
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger>
+              <Avatar.Root class="items-center justify-center">
+                <Avatar.Image class="pointer-events-none h-8 w-8 rounded-full" src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}?size=64`} alt={user.username} />
+                <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-700">{user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
+              </Avatar.Root>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Content class="translate-x-2  scale-110 border-0 bg-neutral-700">
+              <DropdownMenu.Group>
+                <DropdownMenu.Label>My Account</DropdownMenu.Label>
+                <DropdownMenu.Separator class="bg-neutral-800" />
+                <DropdownMenu.Item asChild>
+                  <a href="/profile" class="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground">Profile</a>
+                </DropdownMenu.Item>
+                <DropdownMenu.Item asChild>
+                  <a data-sveltekit-preload-data="off" href="/logout" class="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground">Sign out</a>
+                </DropdownMenu.Item>
+              </DropdownMenu.Group>
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
+        </div>
 
         <div class="flex flex-shrink-0 items-center">
           <a href="/" class="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-neutral-300 transition-colors duration-300 hover:bg-neutral-700 hover:text-white">
