@@ -1,9 +1,10 @@
 <script lang="ts">
   import { page } from "$app/stores";
+  import * as Tooltip from "$lib/components/ui/tooltip";
   import type { Seller } from "$lib/types";
   import { createEventDispatcher } from "svelte";
-  import MinionCopyButton from "./MinionCopyButton.svelte";
   import { fade } from "svelte/transition";
+  import MinionCopyButton from "./MinionCopyButton.svelte";
 
   export let minion: Seller;
 
@@ -88,9 +89,14 @@
       </div>
     </div>
     {#if minion.hasInfusion}
-      <div class="absolute right-2 top-2 m-0 flex h-10 w-10 items-center justify-center rounded-lg !border-2 !border-black/30 bg-neutral-700 p-2 transition-all duration-300 group-hover:!border-black/0 group-hover:bg-neutral-900">
-        <img class="h-[20px] w-[18.85px]" src="https://mc-heads.net/head/7e051df4dd2151481f5145b93fb7a9aa62888fbcb90add9890ad07caf1faca73" alt="Mithril Infusion" />
-      </div>
+      <Tooltip.Root>
+        <Tooltip.Trigger class="absolute right-2 top-2 m-0 flex h-10 w-10 items-center justify-center rounded-lg !border-2 !border-black/30 bg-neutral-700 p-2 transition-all duration-300 group-hover:!border-black/0 group-hover:bg-neutral-900">
+          <img class="pointer-events-none h-auto w-full" src="https://mc-heads.net/head/7e051df4dd2151481f5145b93fb7a9aa62888fbcb90add9890ad07caf1faca73" alt="Mithril Infusion" />
+        </Tooltip.Trigger>
+        <Tooltip.Content class="border-2 border-black/30 bg-neutral-700 text-neutral-200">
+          <p>Mithril Infused</p>
+        </Tooltip.Content>
+      </Tooltip.Root>
     {/if}
     {#if $page.url.pathname === "/profile"}
       <button class="group absolute left-12 top-2 rounded-lg !border-0 bg-neutral-700 p-1.5 text-sm text-neutral-400 transition-all duration-300 hover:bg-red-600 hover:text-white/70 focus:outline-none focus:ring-4 focus:ring-transparent group-hover:opacity-100" type="button" on:click={() => openModal(minion.id)}>
@@ -110,7 +116,7 @@
         }}
       />
 
-      <a href={`${minion.user.username}/${minion.id}`} class="group absolute right-2 top-2 rounded-lg !border-0 bg-neutral-700 bg-opacity-0 p-1.5 text-sm text-neutral-400 transition-all duration-300 hover:bg-opacity-100 focus:outline-none focus:ring-4 focus:ring-transparent group-hover:opacity-100" class:opacity-0={isHome} class:!bg-opacity-100={!isHome}>
+      <a href={`${minion.user.username}/${minion.id}`} class="group absolute left-2 top-12 rounded-lg !border-0 bg-neutral-700 bg-opacity-0 p-1.5 text-sm text-neutral-400 transition-all duration-300 hover:bg-opacity-100 focus:outline-none focus:ring-4 focus:ring-transparent group-hover:opacity-100" class:opacity-0={isHome} class:!bg-opacity-100={!isHome}>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 transition-colors duration-300 group-hover:text-white">
           <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
           <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
