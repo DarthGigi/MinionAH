@@ -5,10 +5,9 @@ import type { Config } from "@sveltejs/adapter-vercel";
 import { ImageResponse } from "@vercel/og";
 import type { RequestHandler } from "./$types";
 
-export const config: Config = {
-  runtime: "edge",
-  split: true
-};
+// export const config: Config = {
+//   runtime: "edge"
+// };
 
 // const prismaEdge = new PrismaClient().$extends(withAccelerate());
 
