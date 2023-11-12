@@ -1,52 +1,70 @@
 <script lang="ts">
-  import { Transition, Listbox, ListboxButton, ListboxOptions, ListboxOption, ListboxLabel } from "@rgossiaux/svelte-headlessui";
-
-  function classNames(...classes: (false | null | undefined | string)[]): string {
-    return classes.filter(Boolean).join(" ");
-  }
-
-  $: selectedType = { generator: "Select a minion", texture: "none" };
+  import { Check, ChevronsUpDown } from "lucide-svelte";
+  import * as Command from "$lib/components/ui/command";
+  import * as Popover from "$lib/components/ui/popover";
+  import { Button } from "$lib/components/ui/button";
+  import { cn } from "$lib/utils";
+  import { tick } from "svelte";
 
   export let minionType: { generator: string; texture: string }[];
+
+  let open = false;
+  let value = "";
+  $: selectedValue = minionType.find((f) => f.generator === value)?.generator ?? "Select a minion";
+  $: selectedTexture = minionType.find((f) => f.generator === value)?.texture ?? null;
+  // We want to refocus the trigger button when the user selects
+  // an item from the list so users can continue navigating the
+  // rest of the form with the keyboard.
+  function closeAndFocusTrigger(triggerId: string) {
+    open = false;
+    tick().then(() => {
+      document.getElementById(triggerId)?.focus();
+    });
+  }
 </script>
 
-<input type="hidden" name="minionType" bind:value={selectedType.generator} />
-<Listbox bind:value={selectedType} class="w-40">
-  <ListboxLabel>Minion</ListboxLabel>
-  <ListboxButton class="relative w-full ring-transparent cursor-default rounded-md bg-neutral-700 py-1.5 pl-3 text-left text-neutral-200 shadow-sm ring-1 ring-inset focus:outline-none focus:ring-2 focus:ring-neutral-500 sm:text-sm sm:leading-6">
-    <div class="flex">
-      {#if selectedType.texture !== "none"}
-        <img loading="lazy" src={`https://mc-heads.net/head/${selectedType.texture}`} class="mr-2 h-6 w-6 pointer-events-none" alt={selectedType.generator} />
-      {/if}
-
-      {selectedType ? selectedType.generator.replace(/_/g, " ").toLowerCase().charAt(0).toUpperCase() + selectedType.generator.slice(1).toLowerCase().replace(/_/g, " ") : "Select type"}
-    </div>
-  </ListboxButton>
-  <div class="relative mt-2">
-    <Transition enter="transition ease-in duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="transition ease-in duration-300" leaveFrom="opacity-100" leaveTo="opacity-0">
-      <ListboxOptions class="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-neutral-700 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-        {#each minionType as type}
-          <ListboxOption
-            class={({ active }) => {
-              return classNames("relative mx-1 my-2 cursor-default select-none rounded py-2 pl-3 pr-9 text-neutral-200", active ? "bg-neutral-800 text-neutral-100" : "");
+<input type="hidden" name="minionType" bind:value={selectedValue} />
+<block>Minion</block>
+<Popover.Root bind:open let:ids>
+  <Popover.Trigger asChild let:builder>
+    <Button builders={[builder]} variant="outline" role="combobox" aria-expanded={open} class="relative w-40 cursor-default justify-between rounded-md border-none bg-neutral-700 py-1.5 pl-3 text-left text-neutral-200 shadow-sm ring-1 ring-inset ring-transparent hover:bg-neutral-600 hover:text-neutral-200 focus:outline-none focus:ring-2 focus:ring-neutral-500 sm:text-sm sm:leading-6">
+      <div class="flex">
+        {#if selectedTexture !== null}
+          <img loading="lazy" src={`https://mc-heads.net/head/${selectedTexture}`} class="pointer-events-none mr-2 h-6 w-6" alt={selectedValue} />
+        {/if}
+        <span class:capitalize={selectedValue !== "Select a minion"} class:font-normal={selectedValue === "Select a minion"}>
+          {#if selectedValue !== "Select a minion"}
+            {selectedValue.replace(/_/g, " ").toLowerCase().charAt(0) + selectedValue.slice(1).toLowerCase().replace(/_/g, " ")}
+          {:else}
+            Select a minion
+          {/if}
+        </span>
+      </div>
+      <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+    </Button>
+  </Popover.Trigger>
+  <Popover.Content class="w-[200] border-2 border-neutral-600 bg-neutral-700 p-0">
+    <Command.Root class="max-h-56 overflow-hidden border-none bg-neutral-700 text-base sm:text-sm">
+      <Command.Input placeholder="Search minion" class="border-none  text-neutral-200 focus:shadow-none focus:outline-0 focus:ring-0" />
+      <Command.Empty>No minion found.</Command.Empty>
+      <Command.Group class="overflow-scroll">
+        {#each minionType as minionType}
+          <Command.Item
+            value={minionType.generator}
+            onSelect={(currentValue) => {
+              value = currentValue;
+              closeAndFocusTrigger(ids.trigger);
             }}
-            value={type}
-            let:selected
+            class="text-neutral-200 aria-selected:bg-neutral-800 aria-selected:text-neutral-300"
           >
-            <div class="flex items-center">
-              <img src={`https://mc-heads.net/head/${type.texture}`} class="mr-2 h-6 w-6" alt={type.generator} />
-              {type.generator.replace(/_/g, " ").toLowerCase().charAt(0).toUpperCase() + type.generator.slice(1).toLowerCase().replace(/_/g, " ")}
-            </div>
-            {#if selected}
-              <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-neutral-200">
-                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
-                </svg>
-              </span>
-            {/if}
-          </ListboxOption>
+            <Check class={cn("mr-2 h-4 w-4", value !== minionType.generator && "text-transparent")} />
+            <img src={`https://mc-heads.net/head/${minionType.texture}`} class="mr-2 h-6 w-6" alt={minionType.generator} />
+            <span class="capitalize">
+              {minionType.generator.replace(/_/g, " ").toLowerCase().charAt(0).toUpperCase() + minionType.generator.slice(1).toLowerCase().replace(/_/g, " ")}
+            </span>
+          </Command.Item>
         {/each}
-      </ListboxOptions>
-    </Transition>
-  </div>
-</Listbox>
+      </Command.Group>
+    </Command.Root>
+  </Popover.Content>
+</Popover.Root>
