@@ -72,7 +72,7 @@
           currentTarget.src = `https://cdn.discordapp.com/embed/avatars/${Number(data.user2.id) % 6}.png?size=64`;
         }}
       />
-      <h1 class="text-center text-lg font-semibold">{data.user2?.username}</h1>
+      <h2 class="text-center text-lg font-semibold">{data.user2?.username}</h2>
     </div>
     {#if data.chat}
       <ul bind:this={ulMessages} class="no-scrollbar flex max-h-72 w-full max-w-full flex-col gap-2 overflow-x-hidden overflow-y-scroll px-6 py-6">
