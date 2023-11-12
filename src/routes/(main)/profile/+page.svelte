@@ -166,7 +166,6 @@
             minion={seller}
             on:openDeleteModal={() => {
               showDelete = true;
-              console.log(seller);
               // @ts-ignore
               minionToDelete = seller;
             }}
