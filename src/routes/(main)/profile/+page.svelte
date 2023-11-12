@@ -3,7 +3,7 @@
   import { page } from "$app/stores";
   import Card from "$lib/components/Card.svelte";
   import CardLoading from "$lib/components/CardLoading.svelte";
-  import MinionsListbox from "$lib/components/MinionsListbox.svelte";
+  import MinionsListBox from "$lib/components/MinionsListBox.svelte";
   import TierListbox from "$lib/components/TierListbox.svelte";
   import type { User } from "@prisma/client";
   import { Dialog, DialogOverlay, DialogTitle, Transition, TransitionChild } from "@rgossiaux/svelte-headlessui";
@@ -81,10 +81,9 @@
 
             <div class="mt-6">
               <div class="flex gap-4 sm:col-span-4">
-                <div class="mt-1 flex rounded-md shadow-sm">
+                <div class="mt-1 flex flex-col rounded-md shadow-sm">
                   {#await data.streamed.minionTypes then minionType}
-                    <!-- promise was fulfilled -->
-                    <MinionsListbox {minionType} />
+                    <MinionsListBox {minionType} />
                   {/await}
                 </div>
                 <div class="mt-1 flex flex-col rounded-md shadow-sm">
