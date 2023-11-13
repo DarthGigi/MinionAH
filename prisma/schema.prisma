@@ -76,6 +76,9 @@ model Chat {
   user1    User      @relation("user1", fields: [user1_id], references: [id])
   user2    User      @relation("user2", fields: [user2_id], references: [id])
   messages Message[]
+  createdAt DateTime @default(now())
+  user1Read Boolean   @default(false)
+  user2Read Boolean   @default(false)
 }
 
 model Message {
