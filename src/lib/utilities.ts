@@ -1,23 +1,13 @@
-export function formatNumber(num: number) {
-  if (num != null) {
-    let suffix = "";
-    if (num >= 1000000) {
-      num = num / 1000000;
-      suffix = "m";
-    } else if (num >= 1000) {
-      num = num / 1000;
-      suffix = "k";
-    }
-    if (suffix) {
-      if (num % 1 === 0) {
-        return num.toFixed(0) + suffix;
-      } else {
-        return num.toFixed(num < 10 ? 1 : 2) + suffix;
-      }
-    } else {
-      return num.toString();
-    }
-  } else {
-    return "N/A";
+import { format } from "numerable";
+
+export function formatNumber(num: number): string {
+  // check the last digits, if the last 2 or 3 digits are 0, don't format
+  const lastDigits = num % 1000;
+  if (lastDigits === 0 || lastDigits === 0o0 || lastDigits === 0o00) {
+    return format(num, "0a");
   }
+  // if there are only 1, 2 or 3 digits, don't format
+  else if (num < 1000) {
+    return format(num, "0a");
+  } else return format(num, "0.00a");
 }
