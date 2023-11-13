@@ -79,11 +79,19 @@ export const GET: RequestHandler = async ({ params, fetch }) => {
     }
   }
 
+  let avatarUrl;
+  const avatar = await fetch(`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=1024`);
+  if (avatar.status === 404) {
+    avatarUrl = `https://cdn.discordapp.com/embed/avatars/${Number(user.id) % 6}.png?size=1024`;
+  } else {
+    avatarUrl = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=1024`;
+  }
+
   const template = toReactElement(`
   <div tw="flex h-full w-full flex-col items-center justify-center bg-[#131313]">
     <div tw="flex w-full max-w-sm justify-center rounded-lg border border-neutral-700 bg-neutral-800 shadow">
       <div tw="mx-auto flex flex-col items-center rounded py-10">
-        <img tw="mb-3 h-24 w-24 rounded-full shadow-lg" src="https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=64" />
+        <img tw="mb-3 h-24 w-24 rounded-full shadow-lg" src="${avatarUrl}" />
         <span tw="mb-1 text-xl font-medium text-white">${user.username}</span>
         <span tw="text-sm text-neutral-400">${user.id}</span>
       </div>
