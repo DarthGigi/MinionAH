@@ -24,12 +24,9 @@
               <DropdownMenu.Group>
                 <DropdownMenu.Label>My Account</DropdownMenu.Label>
                 <DropdownMenu.Separator class="bg-neutral-800" />
-                <DropdownMenu.Item asChild>
-                  <a href="/profile" class="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground">Profile</a>
-                </DropdownMenu.Item>
-                <DropdownMenu.Item asChild>
-                  <a data-sveltekit-preload-data="off" href="/logout" class="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground">Sign out</a>
-                </DropdownMenu.Item>
+                <DropdownMenu.Item href="/profile" class="cursor-pointer">Profile</DropdownMenu.Item>
+                <DropdownMenu.Item href="/chats" class="cursor-pointer">Messages</DropdownMenu.Item>
+                <DropdownMenu.Item href="/logout" class="cursor-pointer" data-sveltekit-preload-data="off">Sign out</DropdownMenu.Item>
               </DropdownMenu.Group>
             </DropdownMenu.Content>
           </DropdownMenu.Root>
@@ -74,12 +71,9 @@
                   <DropdownMenu.Group>
                     <DropdownMenu.Label>My Account</DropdownMenu.Label>
                     <DropdownMenu.Separator class="bg-neutral-800" />
-                    <DropdownMenu.Item asChild>
-                      <a href="/profile" class="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground">Profile</a>
-                    </DropdownMenu.Item>
-                    <DropdownMenu.Item asChild>
-                      <a data-sveltekit-preload-data="off" href="/logout" class="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground">Sign out</a>
-                    </DropdownMenu.Item>
+                    <DropdownMenu.Item href="/profile" class="cursor-pointer">Profile</DropdownMenu.Item>
+                    <DropdownMenu.Item href="/chats" class="cursor-pointer">Messages</DropdownMenu.Item>
+                    <DropdownMenu.Item href="/logout" class="cursor-pointer" data-sveltekit-preload-data="off">Sign out</DropdownMenu.Item>
                   </DropdownMenu.Group>
                 </DropdownMenu.Content>
               </DropdownMenu.Root>
