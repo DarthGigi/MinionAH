@@ -18,7 +18,7 @@
       {@const read = chat.user1_id === data.user.id ? chat.user1Read : chat.user2Read}
 
       <div class="group relative mt-3">
-        <a href="/{chatUser.username}/chat" class="relative flex w-64 justify-between gap-x-4 truncate rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none">
+        <a href="/{chatUser.username}/chat" data-sveltekit-preload-data="off" class="relative flex w-64 justify-between gap-x-4 truncate rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none">
           <Avatar.Root class="h-12 w-12 flex-shrink">
             <Avatar.Image class="pointer-events-none" src={`https://cdn.discordapp.com/avatars/${chatUserID}/${chatUser.avatar}.png?size=64`} alt={`${chatUser.username}'s avatar`} />
             <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-800">{chatUser.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
