@@ -18,7 +18,7 @@
 
 <Select.Root bind:selected={selectedTier}>
   <Label for="tier" class="block text-base font-normal">Tier</Label>
-  <Select.Trigger id="tier" class="w-44 border-none bg-neutral-700 focus:border-neutral-600 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-0">
+  <Select.Trigger id="tier" class="w-40 border-none bg-neutral-700 focus:border-neutral-600 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-0 md:w-44">
     <Select.Value placeholder={selectedTier.value == 0 ? "Select tier" : `${["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"][selectedTier.value - 1]} (${selectedTier.label})`} />
   </Select.Trigger>
   <Select.Content class="max-h-56 overflow-scroll border-2 border-neutral-600 bg-neutral-700 text-neutral-200">

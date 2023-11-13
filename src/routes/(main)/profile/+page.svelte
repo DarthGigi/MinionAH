@@ -26,9 +26,8 @@
   let minionToDelete: Seller & { minion: Minion } & { user: User };
 </script>
 
-<div class="mx-auto flex max-w-xl flex-col justify-center gap-8 self-center">
+<div class="mx-auto flex max-w-xl flex-col justify-center gap-8 self-center px-2 md:px-0">
   <div class="w-full pt-8">
-    <h3 class="text-lg font-medium leading-6 text-neutral-200">Logged in as</h3>
     <dl class="relative mt-5">
       <MinionCopyButton class="absolute right-3 top-3" on:click={() => navigator.clipboard.writeText(`${window.location.protocol}/${window.location.host}/${user.username}/`)} />
 
@@ -68,8 +67,6 @@
                 </div>
               </div>
 
-              <!-- checkbox -->
-
               <div class="flex gap-4">
                 <div class="mt-1 inline-flex flex-col rounded-md shadow-sm">
                   <Label for="amount" class="block text-base font-normal">Amount of minions</Label>
@@ -79,7 +76,7 @@
                     id="amount"
                     max="64"
                     min="1"
-                    class="w-44 ring-offset-0 focus-visible:border-neutral-500 focus-visible:ring-1 focus-visible:ring-neutral-500 focus-visible:ring-offset-0"
+                    class="w-40 ring-offset-0 focus-visible:border-neutral-500 focus-visible:ring-1 focus-visible:ring-neutral-500 focus-visible:ring-offset-0 md:w-44"
                     placeholder="1"
                     on:input={({ currentTarget }) => {
                       if (!(currentTarget instanceof HTMLInputElement)) return;
@@ -116,7 +113,7 @@
                     max="11"
                     minlength={1}
                     maxlength={11}
-                    class="w-44 ring-offset-0 focus-visible:border-neutral-500 focus-visible:ring-1 focus-visible:ring-neutral-500 focus-visible:ring-offset-0"
+                    class="w-40 ring-offset-0 focus-visible:border-neutral-500 focus-visible:ring-1 focus-visible:ring-neutral-500 focus-visible:ring-offset-0 md:w-44"
                     placeholder="100"
                     on:keydown={(e) => {
                       // check for ctrl + v, cmd + v, ctrl + a, cmd + a, ctrl + x, cmd + x, backspace and delete

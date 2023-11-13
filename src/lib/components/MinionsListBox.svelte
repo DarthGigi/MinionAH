@@ -28,7 +28,7 @@
 <Popover.Root bind:open let:ids>
   <Popover.Trigger id="minionListBox" asChild let:builder>
     <Label for="minionListBox" class="block text-base font-normal">Minion</Label>
-    <Button builders={[builder]} variant="outline" role="combobox" aria-expanded={open} class="relative w-44 cursor-default justify-between rounded-md border-none bg-neutral-700 py-1.5 pl-3 text-left text-neutral-200 shadow-sm ring-1 ring-inset ring-transparent hover:bg-neutral-600 hover:text-neutral-200 focus:outline-none focus:ring-2 focus:ring-neutral-500 sm:text-sm sm:leading-6">
+    <Button builders={[builder]} variant="outline" role="combobox" aria-expanded={open} class="relative w-40 cursor-default justify-between rounded-md border-none bg-neutral-700 py-1.5 pl-3 text-left text-neutral-200 shadow-sm ring-1 ring-inset ring-transparent hover:bg-neutral-600 hover:text-neutral-200 focus:outline-none focus:ring-2 focus:ring-neutral-500 sm:text-sm sm:leading-6 md:w-44">
       <div class="flex">
         {#if selectedTexture !== null}
           <img loading="lazy" src={`https://mc-heads.net/head/${selectedTexture}`} class="pointer-events-none mr-2 h-6 w-6" alt={selectedValue} />
