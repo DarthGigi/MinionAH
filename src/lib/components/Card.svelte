@@ -13,7 +13,9 @@
 
   const isHome = $page.url.pathname === "/";
   const isMinionPage = $page.url.pathname === `/` || $page.url.pathname === `/profile` || $page.url.pathname === `/${minion.user.username}`;
+  let hovering = false;
 
+  // $: (hovering = hovering), console.log(hovering);
   const dispatch = createEventDispatcher();
 
   function openModal(minionID: string) {
@@ -23,7 +25,7 @@
   }
 </script>
 
-<li transition:fade|global>
+<li transition:fade|global on:mouseover={() => (hovering = true)} on:mouseout={() => (hovering = false)} on:blur={() => (hovering = false)} on:focus={() => (hovering = true)}>
   <div class="relative list-item divide-y divide-neutral-700 rounded-lg bg-neutral-800 transition-all duration-300" class:group={isHome} class:hover:bg-neutral-900={isHome}>
     <div class="flex h-full w-full items-center justify-center gap-x-6 px-4">
       <HoverCard.Root openDelay={150} closeDelay={150}>
@@ -88,12 +90,17 @@
         <div class="absolute z-0 h-5 w-20 flex-shrink-0 rounded-[50px] bg-neutral-400 transition-all duration-500 group-hover:h-full group-hover:w-full group-hover:rounded-none" />
       </div>
       <div class="relative -ml-px inline-flex w-0 flex-1 overflow-hidden">
-        <span class="relative z-10 inline-flex w-0 flex-1 items-center justify-center overflow-hidden py-4 text-sm font-medium text-neutral-200 transition-all duration-300 group-hover:scale-125 group-hover:text-neutral-900">
+        <span class="relative z-10 inline-flex w-0 flex-1 items-center justify-center overflow-hidden py-4 text-sm font-medium text-neutral-200 transition-all duration-300 group-hover:translate-y-0 group-hover:scale-125 group-hover:text-neutral-900" class:group-hover:translate-y-0={minion.amount ? minion.amount > 1 : false} class:-translate-y-2.5={minion.amount ? minion.amount > 1 : false}>
           <img class="pointer-events-none mr-1 h-6 w-6" src="/assets/images/coin.png" alt="Coin icon" />
-          {formatNumber(minion.price)}
+          <div class="grid">
+            {#if hovering}
+              <span transition:fade class="[grid-area:1/1]">{formatNumber(minion.price * (minion.amount ?? 1))}</span>
+            {:else}
+              <span transition:fade class="[grid-area:1/1]">{formatNumber(minion.price)}</span>
+            {/if}
+          </div>
           {#if minion.amount ? minion.amount > 1 : false}
-            <span class="ml-1 text-sm text-neutral-200/50 transition-all duration-300 group-hover:ml-0 group-hover:text-neutral-900/0">/</span>
-            <span class="text-sm text-neutral-200/50 transition-all duration-300 group-hover:-ml-0.5 group-hover:text-neutral-900">each</span>
+            <span class="absolute -bottom-1 pt-1 text-sm text-neutral-200/50 transition-all duration-300 group-hover:opacity-0">/each</span>
           {/if}
         </span>
         <div class="absolute z-0 h-0 w-full flex-shrink-0 bg-neutral-400 transition-all duration-500 group-hover:h-full" />
@@ -140,3 +147,12 @@
     {/if}
   </div>
 </li>
+
+<!-- <style>
+  .priceContainer {
+    display: grid;
+  }
+  .priceContainer > * {
+    grid-area: 1 / 1;
+  }
+</style> -->
