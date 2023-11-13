@@ -93,14 +93,14 @@
         <span class="relative z-10 inline-flex w-0 flex-1 items-center justify-center overflow-hidden py-4 text-sm font-medium text-neutral-200 transition-all duration-300 group-hover:translate-y-0 group-hover:scale-125 group-hover:text-neutral-900" class:group-hover:translate-y-0={minion.amount ? minion.amount > 1 : false} class:-translate-y-2.5={minion.amount ? minion.amount > 1 : false}>
           <img class="pointer-events-none mr-1 h-6 w-6" src="/assets/images/coin.png" alt="Coin icon" />
           <div class="grid">
-            {#if hovering}
+            {#if hovering && isHome}
               <span transition:fade class="[grid-area:1/1]">{formatNumber(minion.price * (minion.amount ?? 1))}</span>
             {:else}
               <span transition:fade class="[grid-area:1/1]">{formatNumber(minion.price)}</span>
             {/if}
           </div>
           {#if minion.amount ? minion.amount > 1 : false}
-            <span class="absolute -bottom-1 pt-1 text-sm text-neutral-200/50 transition-all duration-300 group-hover:opacity-0">/each</span>
+            <span class="absolute -bottom-1 pt-1 text-sm text-neutral-200/50 transition-all duration-300" class:group-hover:opacity-0={isHome}>/each</span>
           {/if}
         </span>
         <div class="absolute z-0 h-0 w-full flex-shrink-0 bg-neutral-400 transition-all duration-500 group-hover:h-full" />
