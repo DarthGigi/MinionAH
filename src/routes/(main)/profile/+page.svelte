@@ -20,6 +20,7 @@
   $: user = data.user as User;
 
   let moreThan1 = false;
+  let hiddenPrice: HTMLInputElement;
 
   let showDelete = false;
   let minionToDelete: Seller & { minion: Minion } & { user: User };
@@ -110,22 +111,38 @@
                   />
                 </div>
                 <div class="mt-1 inline-flex flex-col rounded-md shadow-sm">
-                  <Label for="price" class="block text-base font-normal">Price <span class="text-xs text-neutral-200/50 opacity-0 transition-opacity duration-500" class:opacity-100={moreThan1}>(each)</span></Label>
+                  <Label for="formattedPrice" class="block text-base font-normal">Price <span class="text-xs text-neutral-200/50 opacity-0 transition-opacity duration-500" class:opacity-100={moreThan1}>(each)</span></Label>
+                  <input type="hidden" name="price" bind:this={hiddenPrice} />
                   <Input
-                    type="number"
-                    name="price"
-                    id="price"
+                    type="text"
+                    name="formattedPrice"
+                    id="formattedPrice"
                     min="1"
-                    max="10000000000"
+                    max="11"
+                    minlength={1}
+                    maxlength={11}
                     class="w-44 ring-offset-0 focus-visible:border-neutral-500 focus-visible:ring-1 focus-visible:ring-neutral-500 focus-visible:ring-offset-0"
                     placeholder="100"
                     on:keydown={(e) => {
-                      if (e.key === "e" || e.key === "." || e.key === "-" || e.key === "+" || e.key === "E" || e.key === " " || e.key === ",") {
+                      // check for ctrl + v, cmd + v, ctrl + a, cmd + a, ctrl + x, cmd + x, backspace and delete
+                      if ((e.key === "v" && (e.ctrlKey || e.metaKey)) || (e.key === "a" && (e.ctrlKey || e.metaKey)) || (e.key === "x" && (e.ctrlKey || e.metaKey)) || e.key === "Backspace" || e.key === "Delete") {
+                        return;
+                      }
+                      if (isNaN(Number(e.key))) {
                         e.preventDefault();
                       }
                     }}
                     on:paste={(e) => {
-                      e.preventDefault();
+                      if (!(e.currentTarget instanceof HTMLInputElement)) return;
+                      if (isNaN(Number(e.clipboardData?.getData("text/plain")))) e.preventDefault();
+                    }}
+                    on:change={({ currentTarget }) => {
+                      if (!(currentTarget instanceof HTMLInputElement)) return;
+                      if (currentTarget.valueAsNumber <= 0) {
+                        currentTarget.value = "1";
+                      }
+                      hiddenPrice.value = currentTarget.value;
+                      currentTarget.value = formatNumber(currentTarget.value);
                     }}
                   />
                 </div>
