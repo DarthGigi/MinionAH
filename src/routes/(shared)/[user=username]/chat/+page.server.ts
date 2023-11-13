@@ -62,6 +62,26 @@ export const load = (async ({ params, locals }) => {
     return { chat, user, user2 };
   }
 
+  if (chat.user1_id === user.id) {
+    await prisma.chat.update({
+      where: {
+        id: chat.id
+      },
+      data: {
+        user1Read: true
+      }
+    });
+  } else {
+    await prisma.chat.update({
+      where: {
+        id: chat.id
+      },
+      data: {
+        user2Read: true
+      }
+    });
+  }
+
   return {
     chat,
     user,
