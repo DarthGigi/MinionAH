@@ -15,7 +15,6 @@
   const isMinionPage = $page.url.pathname === `/` || $page.url.pathname === `/profile` || $page.url.pathname === `/${minion.user.username}`;
   let hovering = false;
 
-  // $: (hovering = hovering), console.log(hovering);
   const dispatch = createEventDispatcher();
 
   function openModal(minionID: string) {
@@ -25,7 +24,7 @@
   }
 </script>
 
-<li transition:fade|global on:mouseover={() => (hovering = true)} on:mouseout={() => (hovering = false)} on:blur={() => (hovering = false)} on:focus={() => (hovering = true)}>
+<li in:fade|global={{ delay: 0 }} on:mouseover={() => (hovering = true)} on:mouseout={() => (hovering = false)} on:blur={() => (hovering = false)} on:focus={() => (hovering = true)}>
   <div class="relative list-item divide-y divide-neutral-700 rounded-lg bg-neutral-800 transition-all duration-300" class:group={isHome} class:hover:bg-neutral-900={isHome}>
     <div class="flex h-full w-full items-center justify-center gap-x-6 px-4">
       <HoverCard.Root openDelay={150} closeDelay={150}>
