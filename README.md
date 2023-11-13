@@ -44,25 +44,22 @@ Creating minions is very easy too. You simply select a minion from the minion dr
 
 ## 💰 Purchasing Minions
 
-The way you buy minions is essentially the same as you would if using Discord servers to sell your minions. You simply DM the user that sells the minion and discuss when you both can get online and trade. As mentioned before, you can click on the card or the user to open their discord account in Discord itself.  
-A chat/message system will most likely be added to communicate more easily later.
+The way you buy minions is essentially the same as you would if using Discord servers to sell your minions. You simply DM the user that sells the minion and discuss when you both can get online and trade. You can click on the user to start a chat with them.
 
 ## 🤔 Why MinionAH
 
-(Written by Gigi)  
-"I made MinionAH because as you know, you can't sell Minions in the in-game Auction House (which is kind of annoying). Instead, you need to join various Discord servers and post "ad" messages in the right channels or in the in-game chat. In both cases, the message also "disappears" since so many others are doing the same thing.  
+I made MinionAH because (at the time of writing) you can't sell Minions in the in-game Auction House. Instead, you need to join various Discord servers and post "ad" messages in the right channels or in the in-game chat. In both cases, the message also "disappears" since so many others are doing the same thing.  
 That's why I thought, "There must surely be a better way to tackle this problem." So I decided to work on MinionAH.
 
 ## 🌐 Community
 
-<a href="https://discord.gg/3TuQwwym3T">
+<a href="https://minions.mrgigi.me/discord">
   <img src="https://discordapp.com/api/guilds/1133219625497284638/widget.png?style=banner3" alt="Discord Server" />
 </a>
 
 ## 📜 Credits
 
-[Gigi](https://github.com/DarthGigi) - Main Developer + Had the idea  
-[@ConwayTech](https://github.com/ConwayTech-Dev) - Side Developer + Does a few other things
+[Gigi](https://github.com/DarthGigi) - Main Developer
 
 # 🔒 Privacy/Data
 
@@ -110,13 +107,13 @@ Feel free to contribute to MinionAH! Just make a Pull Request.
 5. Run the database initialization script
 
    ```bash
-    npx prisma db push
+    pnpx prisma db push
    ```
 
    and
 
    ```bash
-    npx prisma generate
+    pnpx prisma generate
    ```
 
 6. Start the development server
