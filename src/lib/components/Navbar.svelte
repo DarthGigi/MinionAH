@@ -3,9 +3,13 @@
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
   import * as Avatar from "$lib/components/ui/avatar";
   import type { User } from "@prisma/client";
+  import { fade } from "svelte/transition";
 
   let user: User;
   $: user = $page.data.user;
+
+  let profileDropdownOpen = false;
+  let profileDropdownOpenMobile = false;
 </script>
 
 {#if $page.url.pathname !== "/login"}
@@ -13,24 +17,57 @@
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="flex h-16 justify-between">
         <div class="flex items-center justify-center md:hidden">
-          <DropdownMenu.Root>
-            <DropdownMenu.Trigger>
-              <Avatar.Root class="items-center justify-center">
-                <Avatar.Image class="pointer-events-none h-8 w-8 rounded-full" src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}?size=64`} alt={user.username} />
-                <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-700">{user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
-              </Avatar.Root>
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Content class="translate-x-2  scale-110 border-0 bg-neutral-700">
-              <DropdownMenu.Group>
-                <DropdownMenu.Label>My Account</DropdownMenu.Label>
-                <DropdownMenu.Separator class="bg-neutral-800" />
-                <DropdownMenu.Item href="/profile" class="cursor-pointer">Profile</DropdownMenu.Item>
-                <DropdownMenu.Item href="/profile/chats" class="cursor-pointer">Messages</DropdownMenu.Item>
-                <DropdownMenu.Separator class="bg-neutral-600" />
-                <DropdownMenu.Item href="/logout" class="cursor-pointer" data-sveltekit-preload-data="off">Sign out</DropdownMenu.Item>
-              </DropdownMenu.Group>
-            </DropdownMenu.Content>
-          </DropdownMenu.Root>
+          {#if user}
+            <DropdownMenu.Root bind:open={profileDropdownOpenMobile}>
+              <DropdownMenu.Trigger class="relative">
+                <Avatar.Root class="items-center justify-center">
+                  <Avatar.Image class="pointer-events-none h-8 w-8 rounded-full" src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}?size=64`} alt={user.username} />
+                  <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-700">{user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
+                </Avatar.Root>
+                {#if $page.url.pathname === "/"}
+                  {#await $page.data.props.user then user}
+                    {#await $page.data.props.unreadChats then unreadChats}
+                      {#if unreadChats}
+                        {@const read = unreadChats.user1_id === user.id ? unreadChats.user1Read : unreadChats.user2Read}
+                        {#if !read}
+                          <span class="absolute right-0.5 top-0.5 flex h-3 w-3 transition-all duration-300" class:opacity-0={profileDropdownOpenMobile} class:scale-0={profileDropdownOpenMobile}>
+                            <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-neutral-400 opacity-75" />
+                            <span class="relative inline-flex h-3 w-3 rounded-full bg-neutral-500" />
+                          </span>
+                        {/if}
+                      {/if}
+                    {/await}
+                  {/await}
+                {/if}
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content class="translate-x-2  scale-110 border-0 bg-neutral-700">
+                <DropdownMenu.Group>
+                  <DropdownMenu.Label>My Account</DropdownMenu.Label>
+                  <DropdownMenu.Separator class="bg-neutral-800" />
+                  <DropdownMenu.Item href="/profile" class="cursor-pointer">Profile</DropdownMenu.Item>
+                  <DropdownMenu.Item href="/profile/chats" class="relative cursor-pointer"
+                    >Messages {#if $page.url.pathname === "/"}
+                      {#await $page.data.props.user then user}
+                        {#await $page.data.props.unreadChats then unreadChats}
+                          {#if unreadChats}
+                            {@const read = unreadChats.user1_id === user.id ? unreadChats.user1Read : unreadChats.user2Read}
+                            {#if !read && profileDropdownOpenMobile}
+                              <span transition:fade={{ delay: 5000 }} class="absolute right-2 top-1/2 flex h-3 w-3 -translate-y-1/2 transition-all delay-1000 duration-300">
+                                <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-neutral-400 opacity-75" />
+                                <span class="relative inline-flex h-3 w-3 rounded-full bg-neutral-500" />
+                              </span>
+                            {/if}
+                          {/if}
+                        {/await}
+                      {/await}
+                    {/if}</DropdownMenu.Item
+                  >
+                  <DropdownMenu.Separator class="bg-neutral-600" />
+                  <DropdownMenu.Item href="/logout" class="cursor-pointer" data-sveltekit-preload-data="off">Sign out</DropdownMenu.Item>
+                </DropdownMenu.Group>
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
+          {/if}
         </div>
 
         <div class="flex flex-shrink-0 items-center">
@@ -61,19 +98,51 @@
           {/if}
           {#if user}
             <div class="hidden md:flex md:flex-shrink-0 md:items-center">
-              <DropdownMenu.Root>
-                <DropdownMenu.Trigger>
+              <DropdownMenu.Root bind:open={profileDropdownOpen}>
+                <DropdownMenu.Trigger class="relative">
                   <Avatar.Root class="items-center justify-center">
                     <Avatar.Image class="pointer-events-none h-8 w-8 rounded-full" src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}?size=64`} alt={user.username} />
                     <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-700">{user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
                   </Avatar.Root>
+                  {#if $page.url.pathname === "/"}
+                    {#await $page.data.props.user then user}
+                      {#await $page.data.props.unreadChats then unreadChats}
+                        {#if unreadChats}
+                          {@const read = unreadChats.user1_id === user.id ? unreadChats.user1Read : unreadChats.user2Read}
+                          {#if !read}
+                            <span class="absolute right-0.5 top-0.5 flex h-3 w-3 transition-all duration-300" class:opacity-0={profileDropdownOpen} class:scale-0={profileDropdownOpen}>
+                              <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-neutral-400 opacity-75" />
+                              <span class="relative inline-flex h-3 w-3 rounded-full bg-neutral-500" />
+                            </span>
+                          {/if}
+                        {/if}
+                      {/await}
+                    {/await}
+                  {/if}
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content class="border-0 bg-neutral-700">
                   <DropdownMenu.Group>
                     <DropdownMenu.Label>My Account</DropdownMenu.Label>
                     <DropdownMenu.Separator class="bg-neutral-800" />
                     <DropdownMenu.Item href="/profile" class="cursor-pointer">Profile</DropdownMenu.Item>
-                    <DropdownMenu.Item href="/profile/chats" class="cursor-pointer">Messages</DropdownMenu.Item>
+                    <DropdownMenu.Item href="/profile/chats" class="relative cursor-pointer"
+                      >Messages
+                      {#if $page.url.pathname === "/"}
+                        {#await $page.data.props.user then user}
+                          {#await $page.data.props.unreadChats then unreadChats}
+                            {#if unreadChats}
+                              {@const read = unreadChats.user1_id === user.id ? unreadChats.user1Read : unreadChats.user2Read}
+                              {#if !read && profileDropdownOpen}
+                                <span transition:fade={{ delay: 5000 }} class="absolute right-2 top-1/2 flex h-3 w-3 -translate-y-1/2 transition-all delay-1000 duration-300">
+                                  <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-neutral-400 opacity-75" />
+                                  <span class="relative inline-flex h-3 w-3 rounded-full bg-neutral-500" />
+                                </span>
+                              {/if}
+                            {/if}
+                          {/await}
+                        {/await}
+                      {/if}
+                    </DropdownMenu.Item>
                     <DropdownMenu.Separator class="bg-neutral-600" />
                     <DropdownMenu.Item href="/logout" class="cursor-pointer" data-sveltekit-preload-data="off">Sign out</DropdownMenu.Item>
                   </DropdownMenu.Group>
@@ -81,7 +150,7 @@
               </DropdownMenu.Root>
             </div>
           {:else}
-            <div class="hidden md:flex md:flex-shrink-0 md:items-center">
+            <div class="flex flex-shrink-0 items-center">
               <div class="relative ml-3">
                 <div>
                   <a href="/login" class="relative inline-flex items-center rounded-md border border-transparent bg-neutral-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors duration-300 hover:bg-neutral-600 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-2 focus:ring-offset-neutral-800"> Login </a>
