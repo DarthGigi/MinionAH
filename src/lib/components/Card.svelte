@@ -71,7 +71,7 @@
           <HoverCard.Content class="mt-0 -translate-y-44 border-neutral-700 bg-neutral-900">
             <div class="flex w-full justify-center gap-x-4 truncate">
               <Avatar.Root class="h-12 w-12">
-                <Avatar.Image class="pointer-events-none flex-shrink-0 rounded-full bg-neutral-700 object-cover" src={`https://cdn.discordapp.com/avatars/${minion.user.id}/${minion.user.avatar}.png?size=64`} alt={`${minion.user.username}'s avatar`} />
+                <Avatar.Image class="pointer-events-none" src={`https://cdn.discordapp.com/avatars/${minion.user.id}/${minion.user.avatar}.png?size=64`} alt={`${minion.user.username}'s avatar`} />
                 <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-800">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
               </Avatar.Root>
               <div class="space-y-1">

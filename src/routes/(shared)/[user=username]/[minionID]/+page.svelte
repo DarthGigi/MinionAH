@@ -4,6 +4,7 @@
   import type { Seller } from "$lib/types";
   import type { PageData } from "./$types";
   import MinionCopyButton from "$lib/components/MinionCopyButton.svelte";
+  import * as Avatar from "$lib/components/ui/avatar";
 
   export let data: PageData;
 
@@ -47,15 +48,10 @@
     />
 
     <a href="https://discord.com/users/{minion.user.id}" target="_blank" rel="noopener" class="relative z-10 mx-20 mt-5 flex flex-col items-center rounded py-5 transition-all duration-300 hover:scale-110 hover:bg-neutral-600">
-      <img
-        class="mb-3 h-24 w-24 rounded-full shadow-lg"
-        src="https://cdn.discordapp.com/avatars/{minion.user.id}/{minion.user.avatar}?size=1024"
-        alt={minion.user.username}
-        on:error={({ currentTarget }) => {
-          if (!(currentTarget instanceof HTMLImageElement)) return;
-          currentTarget.src = `https://cdn.discordapp.com/embed/avatars/${Number(minion.user.id) % 6}.png?size=1024`;
-        }}
-      />
+      <Avatar.Root class="mb-3 h-24 w-24 rounded-full shadow-lg">
+        <Avatar.Image class="pointer-events-none" src="https://cdn.discordapp.com/avatars/{minion.user.id}/{minion.user.avatar}?size=1024" alt={minion.user.username} />
+        <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-800">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
+      </Avatar.Root>
       <h5 class="mb-1 text-xl font-medium text-white">{minion.user.username}</h5>
       <span class="text-sm text-neutral-400">{minion.user.id}</span>
     </a>

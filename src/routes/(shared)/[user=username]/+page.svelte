@@ -4,6 +4,7 @@
   import CardLoading from "$lib/components/CardLoading.svelte";
   import type { MinionSeller, User } from "@prisma/client";
   import type { PageData } from "./$types";
+  import * as Avatar from "$lib/components/ui/avatar";
 
   export let data: PageData;
   $: userprofile = data.userprofile as User & { minions: MinionSeller[] };
@@ -68,15 +69,10 @@
     </button>
     <div class="absolute right-12 top-3 flex h-8 scale-0 items-center justify-center overflow-hidden rounded-md border border-neutral-700 bg-popover px-2 py-1 text-xs opacity-0 shadow-md transition-all duration-300" class:!scale-100={copied} class:!opacity-100={copied}>Copied Link</div>
     <a href="https://discord.com/users/{userprofile.id}" class="relative mx-20 my-5 flex flex-col items-center rounded py-5 transition-all duration-300 hover:scale-110 hover:bg-neutral-600" target="_blank" rel="noopener">
-      <img
-        class="pointer-events-none mb-3 h-24 w-24 rounded-full shadow-lg"
-        src="https://cdn.discordapp.com/avatars/{userprofile.id}/{userprofile.avatar}?size=1024"
-        alt={userprofile.username}
-        on:error={({ currentTarget }) => {
-          if (!(currentTarget instanceof HTMLImageElement)) return;
-          currentTarget.src = `https://cdn.discordapp.com/embed/avatars/${Number(userprofile.id) % 6}.png?size=1024`;
-        }}
-      />
+      <Avatar.Root class="pointer-events-none mb-3 h-24 w-24 rounded-full shadow-lg">
+        <Avatar.Image src="https://cdn.discordapp.com/avatars/{userprofile.id}/{userprofile.avatar}?size=1024" alt={userprofile.username} />
+        <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-700">{userprofile.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
+      </Avatar.Root>
       <h5 class="mb-1 text-xl font-medium text-white">{userprofile.username}</h5>
       <span class="text-sm text-neutral-400">{userprofile.id}</span>
     </a>

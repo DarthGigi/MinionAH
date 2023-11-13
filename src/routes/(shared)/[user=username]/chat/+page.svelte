@@ -1,8 +1,9 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
+  import * as Avatar from "$lib/components/ui/avatar";
+  import * as Tooltip from "$lib/components/ui/tooltip";
   import { onMount } from "svelte";
   import type { PageData } from "./$types";
-  import * as Tooltip from "$lib/components/ui/tooltip";
 
   export let data: PageData;
 
@@ -63,15 +64,10 @@
     </a>
 
     <div class="flex flex-col items-center justify-center border-neutral-700 p-4" class:border-b-2={data.chat}>
-      <img
-        src={`https://cdn.discordapp.com/avatars/${data.user2?.id}/${data.user2?.avatar}?size=64`}
-        alt={data.user2?.username}
-        class="pointer-events-none h-16 w-16 rounded-full"
-        on:error={({ currentTarget }) => {
-          if (!(currentTarget instanceof HTMLImageElement)) return;
-          currentTarget.src = `https://cdn.discordapp.com/embed/avatars/${Number(data.user2.id) % 6}.png?size=64`;
-        }}
-      />
+      <Avatar.Root class="pointer-events-none h-16 w-16 rounded-full">
+        <Avatar.Image class="pointer-events-none" src="https://cdn.discordapp.com/avatars/{data.user2?.id}/{data.user2?.avatar}?size=64" alt={data.user2?.username} />
+        <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-800">{data.user2?.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
+      </Avatar.Root>
       <h2 class="text-center text-lg font-semibold">{data.user2?.username}</h2>
     </div>
     {#if data.chat}

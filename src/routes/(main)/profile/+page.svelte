@@ -34,18 +34,13 @@
 
       <div class="group w-full rounded-lg border-2 border-neutral-700 border-opacity-40 bg-[#050505] bg-cover bg-center bg-no-repeat px-4 py-5 shadow sm:p-6" style="background-image: url('https://cdn.discordapp.com/banners/{user.id}/{user.banner}?size=1024'); background-color: {user.accent_color ? '#' + user.accent_color : '#050505'};">
         <dt class="hidden truncate text-sm font-medium text-neutral-400">Profile</dt>
-        <dd class="mt-1 text-3xl font-semibold tracking-tight text-neutral-300">
-          <img
-            src="https://cdn.discordapp.com/avatars/{user.id}/{user.avatar}?size=1024"
-            class="inline-block h-10 w-10 rounded-full"
-            alt={user.username}
-            on:error={({ currentTarget }) => {
-              if (!(currentTarget instanceof HTMLImageElement)) return;
-              currentTarget.src = `https://cdn.discordapp.com/embed/avatars/${Number(user.id) % 6}.png?size=64`;
-            }}
-          />
+        <dd class="mt-1 font-semibold tracking-tight text-neutral-300">
+          <Avatar.Root class="inline-block h-10 w-10 rounded-full">
+            <Avatar.Image class="pointer-events-none" src="https://cdn.discordapp.com/avatars/{user.id}/{user.avatar}?size=1024" alt={user.username} />
+            <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-700">{user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
+          </Avatar.Root>
           <br />
-          {user.username}
+          <span class="text-3xl">{user.username}</span>
           <br />
           <span class="text-sm font-normal text-neutral-400 opacity-0 transition-opacity duration-300 group-hover:opacity-100">Not you? <a href="/logout" class="underline">Logout</a></span>
         </dd>
