@@ -25,7 +25,8 @@
                 <DropdownMenu.Label>My Account</DropdownMenu.Label>
                 <DropdownMenu.Separator class="bg-neutral-800" />
                 <DropdownMenu.Item href="/profile" class="cursor-pointer">Profile</DropdownMenu.Item>
-                <DropdownMenu.Item href="/chats" class="cursor-pointer">Messages</DropdownMenu.Item>
+                <DropdownMenu.Item href="/profile/chats" class="cursor-pointer">Messages</DropdownMenu.Item>
+                <DropdownMenu.Separator class="bg-neutral-600" />
                 <DropdownMenu.Item href="/logout" class="cursor-pointer" data-sveltekit-preload-data="off">Sign out</DropdownMenu.Item>
               </DropdownMenu.Group>
             </DropdownMenu.Content>
@@ -72,7 +73,8 @@
                     <DropdownMenu.Label>My Account</DropdownMenu.Label>
                     <DropdownMenu.Separator class="bg-neutral-800" />
                     <DropdownMenu.Item href="/profile" class="cursor-pointer">Profile</DropdownMenu.Item>
-                    <DropdownMenu.Item href="/chats" class="cursor-pointer">Messages</DropdownMenu.Item>
+                    <DropdownMenu.Item href="/profile/chats" class="cursor-pointer">Messages</DropdownMenu.Item>
+                    <DropdownMenu.Separator class="bg-neutral-600" />
                     <DropdownMenu.Item href="/logout" class="cursor-pointer" data-sveltekit-preload-data="off">Sign out</DropdownMenu.Item>
                   </DropdownMenu.Group>
                 </DropdownMenu.Content>
