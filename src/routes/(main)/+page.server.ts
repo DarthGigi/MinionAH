@@ -1,7 +1,65 @@
 import type { PageServerLoad } from "./$types";
 import type { Seller } from "$lib/types";
 
-export const load = (async () => {
+export const load = (async ({ locals }) => {
+  const session = await locals.auth.validate();
+
+  let unreadChats;
+  let user;
+
+  if (session) {
+    user = await prisma.user.findUnique({
+      where: {
+        id: session.user.userId
+      }
+    });
+
+    if (!user) {
+      return;
+    }
+
+    unreadChats = prisma.chat.findFirst({
+      where: {
+        AND: [
+          {
+            OR: [
+              {
+                user1_id: {
+                  equals: user.id
+                }
+              },
+              {
+                user2_id: {
+                  equals: user.id
+                }
+              }
+            ]
+          },
+          {
+            OR: [
+              {
+                user1Read: {
+                  equals: false
+                }
+              },
+              {
+                user2Read: {
+                  equals: false
+                }
+              }
+            ]
+          }
+        ]
+      },
+      select: {
+        user1_id: true,
+        user2_id: true,
+        user1Read: true,
+        user2Read: true
+      }
+    });
+  }
+
   return {
     props: {
       minions: prisma.minionSeller.findMany({
@@ -29,7 +87,9 @@ export const load = (async () => {
             }
           }
         }
-      }) as Promise<Seller[]>
+      }) as Promise<Seller[]>,
+      user,
+      unreadChats
     }
   };
 }) as PageServerLoad;
