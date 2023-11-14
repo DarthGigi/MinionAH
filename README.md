@@ -6,7 +6,7 @@
 <img src="https://img.shields.io/github/license/DarthGigi/MinionAH?style=for-the-badge" alt="license">
 <img src="https://img.shields.io/github/languages/count/DarthGigi/MinionAH?style=for-the-badge" alt="languages">
 <img src="https://img.shields.io/github/languages/top/DarthGigi/MinionAH?style=for-the-badge" alt="top language">
-<img src="https://img.shields.io/website?style=for-the-badge&url=https%3A%2F%2Fminions.mrgigi.me" alt="website status">
+<img src="https://img.shields.io/website?style=for-the-badge&url=https%3A%2F%2Fminionah.com" alt="website status">
 </p>
 
 # 📑 Table of Contents
@@ -53,7 +53,7 @@ That's why I thought, "There must surely be a better way to tackle this problem.
 
 ## 🌐 Community
 
-<a href="https://minions.mrgigi.me/discord">
+<a href="https://discord.minionah.com">
   <img src="https://discordapp.com/api/guilds/1133219625497284638/widget.png?style=banner3" alt="Discord Server" />
 </a>
 

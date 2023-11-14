@@ -21,17 +21,17 @@
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://minions.mrgigi.me/{$page.params.user}" />
+  <meta property="og:url" content="https://minionah.com/{$page.params.user}" />
   <meta property="og:title" content="{userprofile.username}'s MinionAH" />
   <meta property="og:description" content={`Check out ${userprofile.username}'s profile on MinionAH!`} />
-  <meta property="og:image" content="https://minions.mrgigi.me/{$page.params.user}/og" />
+  <meta property="og:image" content="https://minionah.com/{$page.params.user}/og" />
 
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image" />
-  <meta property="twitter:url" content="https://minions.mrgigi.me/{$page.params.user}" />
+  <meta property="twitter:url" content="https://minionah.com/{$page.params.user}" />
   <meta property="twitter:title" content="{userprofile.username}'s MinionAH" />
   <meta property="twitter:description" content={`Check out ${userprofile.username}'s profile on MinionAH!`} />
-  <meta property="twitter:image" content="https://minions.mrgigi.me/{$page.params.user}/og" />
+  <meta property="twitter:image" content="https://minionah.com/{$page.params.user}/og" />
 </svelte:head>
 
 <div id="container" class="flex w-full flex-col justify-center pt-6 md:h-[calc(100vh_-_64px)]">

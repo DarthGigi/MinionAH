@@ -127,7 +127,7 @@ export const GET: RequestHandler = async ({ params, fetch }) => {
           </div>
           <div tw="relative border-l border-r border-neutral-700 -ml-px flex w-0 flex-1 overflow-hidden">
             <span tw="relative w-0 flex-1 items-center justify-center overflow-hidden py-4 text-lg font-medium text-neutral-200 group-hover:scale-125 group-hover:text-neutral-900">
-              <img tw="mr-1 h-6 w-6" src="https://minions.mrgigi.me/assets/images/coin.png" /> ${formatNumber(minion.price)}
+              <img tw="mr-1 h-6 w-6" src="https://minionah.com/assets/images/coin.png" /> ${formatNumber(minion.price)}
               <span tw="ml-1 text-lg text-neutral-200/50 group-hover:ml-0 group-hover:text-neutral-900/0">/</span>
               <span tw="text-lg text-neutral-200/50 group-hover:-ml-0.5 group-hover:text-neutral-900">each</span>
             </span>
