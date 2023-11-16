@@ -1,43 +1,50 @@
-import { auth, discordAuth } from "$lib/server/lucia";
+import { auth, microsoftAuth } from "$lib/server/lucia";
 import { redirect } from "@sveltejs/kit";
 import { OAuthRequestError } from "@lucia-auth/oauth";
 
 import type { RequestHandler } from "@sveltejs/kit";
 
 export const GET: RequestHandler = async ({ cookies, url, locals }) => {
+  // console.log(url.searchParams.toString());
   // get stored state from cookies
-  const storedState = cookies.get("discord_oauth_state");
+  const storedState = cookies.get("microsoft_oauth_state");
+  const storedCodeVerifier = cookies.get("microsoft_oauth_code_verifier");
   // get code and state params from url
 
-  const state = url.searchParams.get("state");
   const code = url.searchParams.get("code");
+  const state = url.searchParams.get("state");
 
   // if no code or state, redirect to login
-  if (!storedState || !state || storedState !== state || !code) {
+  if (!storedState || !state || storedState !== state || !code || !storedCodeVerifier) {
     console.log("no code or state");
     throw redirect(302, "/login");
   }
 
   try {
-    const { getExistingUser, discordUser, createUser } = await discordAuth.validateCallback(code);
+    const { azureADTokens } = await microsoftAuth.validateCallback(code, storedCodeVerifier);
+
+    console.log("azureADTokens: ", azureADTokens);
+    return new Response(null, {
+      status: 200
+    });
 
     const getUser = async () => {
       const existingUser = await getExistingUser();
       if (existingUser) return existingUser;
       // create a new user if the user does not exist
-      const user = await createUser({
-        userId: discordUser.id,
-        attributes: {
-          id: discordUser.id,
-          username: discordUser.username,
-          avatar: discordUser.avatar ?? "",
-          banner: discordUser.banner ?? "",
-          accent_color: discordUser.accent_color ?? undefined,
-          locale: discordUser.locale ?? ""
-        }
-      });
+      // const user = await createUser({
+      //   userId: azureADTokens.,
+      //   attributes: {
+      //     id: discordUser.id,
+      //     username: discordUser.username,
+      //     avatar: discordUser.avatar ?? "",
+      //     banner: discordUser.banner ?? "",
+      //     accent_color: discordUser.accent_color ?? undefined,
+      //     locale: discordUser.locale ?? ""
+      //   }
+      // });
 
-      return user;
+      // return user;
     };
     const user = await getUser();
 
@@ -55,6 +62,7 @@ export const GET: RequestHandler = async ({ cookies, url, locals }) => {
       }
     });
   } catch (e) {
+    console.log(await e.response.json());
     if (e instanceof OAuthRequestError) {
       // invalid code
       return new Response(null, {
