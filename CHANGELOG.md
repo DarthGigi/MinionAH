@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.2] - 2023-11-16
 
+### Added
+
+- Alert when something goes wrong.
+
 ### Changed
 
 - Changed the `loadMinions` API endpoint from `POST` to `GET`.
