@@ -7,12 +7,12 @@ import { RATE_LIMIT_SECRET } from "$env/static/private";
 
 const limiter = new RateLimiter({
   rates: {
-    IP: [60, "h"],
-    IPUA: [60, "h"],
+    IP: [60, "m"],
+    IPUA: [60, "m"],
     cookie: {
       name: "limiterid",
       secret: RATE_LIMIT_SECRET,
-      rate: [60, "h"],
+      rate: [60, "m"],
       preflight: true
     }
   }
