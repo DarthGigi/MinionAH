@@ -3,6 +3,7 @@ import type { Handle } from "@sveltejs/kit";
 import { dev } from "$app/environment";
 import { RateLimiter } from "sveltekit-rate-limiter/server";
 import { error } from "@sveltejs/kit";
+import { RATE_LIMIT_SECRET } from "$env/static/private";
 
 const limiter = new RateLimiter({
   rates: {
@@ -10,7 +11,7 @@ const limiter = new RateLimiter({
     IPUA: [60, "h"],
     cookie: {
       name: "limiterid",
-      secret: "secret",
+      secret: RATE_LIMIT_SECRET,
       rate: [60, "h"],
       preflight: true
     }
