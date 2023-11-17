@@ -7,6 +7,8 @@
   import { Input } from "$lib/components/ui/input";
   import { Label } from "$lib/components/ui/label";
   import { draw } from "svelte/transition";
+  import * as Alert from "$lib/components/ui/alert";
+  import { slide } from "svelte/transition";
 
   export let data: PageData;
   let minions: Seller[] = [];
@@ -15,6 +17,11 @@
   let newMinionAmount: number;
   let initialDispatch = true;
   let initialLoad = true;
+  let alert = {
+    title: "",
+    description: "",
+    open: false
+  };
 
   let search: string | undefined = undefined;
 
@@ -67,12 +74,27 @@
       })
       .catch((err) => {
         console.error(err);
+        alert.open = true;
+        alert.title = "Error";
+        alert.description = "An error occurred while loading minions.";
+        setTimeout(() => {
+          alert.open = false;
+        }, 5000);
       });
 
     newMinionAmount = res.length;
     minions = isMore ? [...minions, ...res] : res;
   }
 </script>
+
+{#if alert.open}
+  <div transition:slide={{ axis: "x" }} class="fixed right-4 top-4 w-80">
+    <Alert.Root class="border-neutral-700 bg-neutral-800">
+      <Alert.Title class="min-w-full truncate">{alert.title}</Alert.Title>
+      <Alert.Description class="min-w-full truncate">{alert.description}</Alert.Description>
+    </Alert.Root>
+  </div>
+{/if}
 
 <div class="mx-auto flex flex-row items-center justify-center gap-4 px-4 py-20 sm:px-6 lg:px-8">
   <div>
