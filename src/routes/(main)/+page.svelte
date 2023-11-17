@@ -49,19 +49,24 @@
       };
     }
 
-    const res = await fetch("/api/loadMinions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        skip: skip,
-        where: where
-      })
-    })
+    const res = await fetch(
+      "/api/loadMinions?" +
+        new URLSearchParams({
+          where: JSON.stringify(where)
+        }),
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    )
       .then((res) => res.json())
       .finally(() => {
         loadingMore = false;
+      })
+      .catch((err) => {
+        console.error(err);
       });
 
     newMinionAmount = res.length;

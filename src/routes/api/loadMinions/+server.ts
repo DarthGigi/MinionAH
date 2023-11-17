@@ -36,16 +36,15 @@ async function getMinions(take: number = 9, skip?: number, orderBy: object = [{ 
   return minions as Seller[];
 }
 
-export const POST: RequestHandler = async ({ request }) => {
-  // Switch from GET to POST
-  const params: Params = await request.json();
+export const GET: RequestHandler = async ({ url }) => {
+  const params: Params = Object.fromEntries(new URLSearchParams(url.search));
 
   let minions;
   try {
-    minions = await getMinions(Math.min(50, params.take || 9), params.skip, params.orderBy, params.distinct, params.where);
+    minions = await getMinions(Math.min(50, params.take || 9), typeof params.skip === "number" ? params.skip : parseInt(params.skip || "0"), params.orderBy, params.distinct, JSON.parse(params.where || "{}"));
   } catch (e) {
     console.log(e);
-    return new Response(null, {
+    return new Response("An error occurred while fetching minions", {
       status: 500
     });
   }
