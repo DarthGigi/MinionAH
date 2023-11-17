@@ -17,7 +17,7 @@ export const auth = lucia({
 const config = {
   clientId: CLIENT_ID,
   clientSecret: CLIENT_SECRET,
-  redirectUri: REDIRECT_URI
+  redirectUri: dev ? "http://localhost:5173/api/oauth/discord" : REDIRECT_URI
 };
 
 export const discordAuth = discord(auth, config);
