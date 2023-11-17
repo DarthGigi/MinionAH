@@ -24,8 +24,8 @@
   }
 </script>
 
-<li in:fade|global={{ delay: 0 }} on:mouseover={() => (hovering = true)} on:mouseout={() => (hovering = false)} on:blur={() => (hovering = false)} on:focus={() => (hovering = true)}>
-  <div class="relative list-item divide-y divide-neutral-700 rounded-lg bg-neutral-800 transition-all duration-300" class:group={isHome} class:hover:bg-neutral-900={isHome}>
+<li in:fade|global={{ delay: 0 }}>
+  <div class="user-select-none relative list-item divide-y divide-neutral-700 rounded-lg bg-neutral-800 transition-all duration-300" class:group={isHome} class:hover:bg-neutral-900={isHome} on:mouseover={() => (hovering = true)} on:mouseout={() => (hovering = false)} on:blur={() => (hovering = false)} on:focus={() => (hovering = true)} role="listitem">
     <div class="flex h-full w-full items-center justify-center gap-x-6 px-4">
       <HoverCard.Root openDelay={150} closeDelay={150}>
         <HoverCard.Trigger href={`https://hypixel-skyblock.fandom.com/wiki/${minion.minion.name.replace(/ [IVX]+$/, "").replace(/ /g, "_")}`} target="_blank" rel="noopener" class="my-2 flex flex-col items-center truncate rounded p-1 transition-all duration-500">
@@ -89,17 +89,17 @@
         <div class="absolute z-0 h-5 w-20 flex-shrink-0 rounded-[50px] bg-neutral-400 transition-all duration-500 group-hover:h-full group-hover:w-full group-hover:rounded-none" />
       </div>
       <div class="relative -ml-px inline-flex w-0 flex-1 overflow-hidden">
-        <span class="relative z-10 inline-flex w-0 flex-1 items-center justify-center overflow-hidden py-4 text-sm font-medium text-neutral-200 transition-all duration-300 group-hover:translate-y-0 group-hover:scale-125 group-hover:text-neutral-900" class:group-hover:translate-y-0={minion.amount ? minion.amount > 1 : false} class:-translate-y-2.5={minion.amount ? minion.amount > 1 : false}>
-          <img class="pointer-events-none mr-1 h-6 w-6" src="/assets/images/coin.png" alt="Coin icon" />
-          <div class="grid">
+        <span class="relative z-10 inline-flex w-0 flex-1 items-center justify-center overflow-hidden py-4 text-sm font-medium transition-all duration-300 group-hover:translate-y-0 group-hover:scale-125" class:group-hover:translate-y-0={minion.amount ? minion.amount > 1 : false}>
+          <img class="pointer-events-none absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 transition-opacity duration-500 group-hover:opacity-0" src="/assets/images/coin.png" alt="Coin icon" />
+          <div class="grid basis-10 transition-all duration-300 group-hover:translate-y-0" class:-translate-y-2.5={minion.amount ? minion.amount > 1 : false}>
             {#if hovering && isHome}
-              <span transition:fade class="[grid-area:1/1]">{formatNumber(minion.price * (minion.amount ?? 1))}</span>
+              <span transition:fade class="text-center text-neutral-200 transition-colors duration-500 [grid-area:1/1] group-hover:text-neutral-900">{formatNumber(minion.price * (minion.amount ?? 1))}</span>
             {:else}
-              <span transition:fade class="[grid-area:1/1]">{formatNumber(minion.price)}</span>
+              <span transition:fade class="text-center text-neutral-200 transition-colors duration-500 [grid-area:1/1] group-hover:text-neutral-900">{formatNumber(minion.price)}</span>
             {/if}
           </div>
           {#if minion.amount ? minion.amount > 1 : false}
-            <span class="absolute -bottom-1 pt-1 text-sm text-neutral-200/50 transition-all duration-300" class:group-hover:opacity-0={isHome}>/each</span>
+            <span class="absolute -bottom-1 pt-1 text-sm text-neutral-200/50 transition-all duration-300" class:group-hover:opacity-0={isHome} class:-translate-y-2.5={minion.amount ? minion.amount > 1 : false}>/each</span>
           {/if}
         </span>
         <div class="absolute z-0 h-0 w-full flex-shrink-0 bg-neutral-400 transition-all duration-500 group-hover:h-full" />
