@@ -55,5 +55,10 @@
     "lucide-svelte": "^0.292.0",
     "tailwind-merge": "^2.0.0",
     "tailwind-variants": "^0.1.18"
+  },
+  "pnpm": {
+    "overrides": {
+      "sharp@<0.32.6": ">=0.32.6"
+    }
   }
 }
