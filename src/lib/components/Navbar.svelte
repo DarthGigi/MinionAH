@@ -82,13 +82,15 @@
             </DropdownMenu.Trigger>
             <DropdownMenu.Content class="w-44 border-neutral-700 bg-neutral-800" transitionConfig={{ duration: 300 }}>
               <DropdownMenu.Group>
-                <DropdownMenu.Item target="_blank" class="hover:cursor-pointer data-[highlighted]:bg-neutral-900" href="https://newsroom.minionah.com/minionah/">About</DropdownMenu.Item>
+                <DropdownMenu.Item class="hover:cursor-pointer data-[highlighted]:bg-neutral-900" href="/">Home</DropdownMenu.Item>
                 <DropdownMenu.Separator class="bg-neutral-700" />
                 <DropdownMenu.Item target="_blank" class="hover:cursor-pointer data-[highlighted]:bg-neutral-900" href="https://newsroom.minionah.com">Newsroom</DropdownMenu.Item>
                 <DropdownMenu.Item target="_blank" class="hover:cursor-pointer data-[highlighted]:bg-neutral-900" href="https://discord.minionah.com">Community</DropdownMenu.Item>
                 <DropdownMenu.Separator class="bg-neutral-700" />
-                <DropdownMenu.Item target="_blank" class="hover:cursor-pointer data-[highlighted]:bg-neutral-900" href="https://newsroom.minionah.com/privacy-policy">Privacy Policy</DropdownMenu.Item>
-                <DropdownMenu.Item target="_blank" class="hover:cursor-pointer data-[highlighted]:bg-neutral-900" href="https://newsroom.minionah.com/terms-of-service">Terms of Service</DropdownMenu.Item>
+                <DropdownMenu.Item target="_blank" class="hover:cursor-pointer data-[highlighted]:bg-neutral-900" href="https://newsroom.minionah.com/minionah/">About</DropdownMenu.Item>
+                <DropdownMenu.Item target="_blank" class="ml-2 hover:cursor-pointer data-[highlighted]:bg-neutral-900" href="https://github.com/DarthGigi/MinionAH">GitHub</DropdownMenu.Item>
+                <DropdownMenu.Item target="_blank" class="ml-2 hover:cursor-pointer data-[highlighted]:bg-neutral-900" href="https://newsroom.minionah.com/privacy-policy">Privacy Policy</DropdownMenu.Item>
+                <DropdownMenu.Item target="_blank" class="ml-2 hover:cursor-pointer data-[highlighted]:bg-neutral-900" href="https://newsroom.minionah.com/terms-of-service">Terms of Service</DropdownMenu.Item>
               </DropdownMenu.Group>
             </DropdownMenu.Content>
           </DropdownMenu.Root>
