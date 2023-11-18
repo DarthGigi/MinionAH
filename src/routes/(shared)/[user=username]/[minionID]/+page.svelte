@@ -12,23 +12,31 @@
 </script>
 
 <svelte:head>
-  <title>{minion.user.username}'s MinionAH</title>
+  <title>{minion.user.username}'s {minion.minion.name.replace(/ [IVX]+$/, "")}{minion.amount && minion.amount > 1 ? "s" : ""} — MinionAH</title>
   <meta name="title" content="{minion.user.username}'s {minion.minion.name.replace(/ [IVX]+$/, '')}{minion.amount && minion.amount > 1 ? 's' : ''} — MinionAH" />
   <meta name="description" content={`${minion.user.username} is selling ${minion.amount ? minion.amount : 0} ${minion.minion.name.replace(/ [IVX]+$/, "")}${minion.amount && minion.amount > 1 ? "s" : ""}. Check out their listing on MinionAH!`} />
   <meta name="theme-color" content={data.color.toString()} />
+  <link rel="canonical" href="https://minionah.com/{$page.params.user}/{$page.params.minionID}" />
 
-  <!-- Open Graph / Facebook -->
+  <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://minionah.com/{$page.params.user}/{$page.params.minionID}" />
   <meta property="og:title" content="{minion.user.username}'s {minion.minion.name.replace(/ [IVX]+$/, '')}{minion.amount && minion.amount > 1 ? 's' : ''} — MinionAH" />
-  <meta property="og:description" content={`${minion.user.username} is selling ${minion.amount ? minion.amount : 0} ${minion.minion.name.replace(/ [IVX]+$/, "")}${minion.amount && minion.amount > 1 ? "s" : ""}. Check out their listing on MinionAH!`} />
+  <meta property="og:description" content={`${minion.user.username} is selling ${minion.amount ? minion.amount : 0} ${minion.minion.name.replace(/ [IVX]+$/, "")}${minion.amount && minion.amount > 1 ? "s" : ""}. Check out their auction on MinionAH!`} />
   <meta property="og:image" content="https://minionah.com/{$page.params.user}/{$page.params.minionID}/og" />
+  <meta property="og:image:secure_url" content="https://minionah.com/{$page.params.user}/{$page.params.minionID}/og" />
+  <meta property="og:image:alt" content="{minion.user.username}'s {minion.minion.name.replace(/ [IVX]+$/, '')}{minion.amount && minion.amount > 1 ? 's' : ''} — MinionAH" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:site_name" content="MinionAH" />
+  <meta property="og:locale" content="en_US" />
 
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image" />
   <meta property="twitter:url" content="https://minionah.com/{$page.params.user}/{$page.params.minionID}" />
   <meta property="twitter:title" content="{minion.user.username}'s {minion.minion.name.replace(/ [IVX]+$/, '')}{minion.amount && minion.amount > 1 ? 's' : ''} — MinionAH" />
-  <meta property="twitter:description" content={`${minion.user.username} is selling ${minion.amount ? minion.amount : 0} ${minion.minion.name.replace(/ [IVX]+$/, "")}${minion.amount && minion.amount > 1 ? "s" : ""}. Check out their listing on MinionAH!`} />
+  <meta property="twitter:description" content={`${minion.user.username} is selling ${minion.amount ? minion.amount : 0} ${minion.minion.name.replace(/ [IVX]+$/, "")}${minion.amount && minion.amount > 1 ? "s" : ""}. Check out their auction on MinionAH!`} />
   <meta property="twitter:image" content="https://minionah.com/{$page.params.user}/{$page.params.minionID}/og" />
 </svelte:head>
 
