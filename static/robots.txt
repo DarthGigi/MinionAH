@@ -1,0 +1,10 @@
+User-agent: *
+Disallow: /api/
+Disallow: /filter/
+Disallow: /resetminions/
+Disallow: /profile/
+
+Allow: /.well-known/
+Allow: /assets/images/
+
+Sitemap: https://minionah.com/sitemap.xml

@@ -119,7 +119,6 @@
           return;
         }
         if (detail.tier === null) {
-          console.log("null");
           currentTier = undefined;
           loadData(currentTier);
           return;
