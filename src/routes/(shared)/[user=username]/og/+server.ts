@@ -7,8 +7,6 @@ import type { RequestHandler } from "./$types";
 //   runtime: "edge"
 // };
 
-//
-
 function formatNumber(num: number) {
   if (num != null) {
     let suffix = "";
@@ -36,7 +34,7 @@ function formatNumber(num: number) {
 const errorTemplate = toReactElement(`
 <div tw="flex h-full w-full text-white text-7xl flex-col items-center justify-center bg-[#131313]">
 <span>Something went wrong</span>
-<span tw="text-3xl mt-10">User not found</span>
+<span tw="text-3xl mt-10">Something went wrong while trying to generate the image</span>
 </div>`);
 
 export const GET: RequestHandler = async ({ params, fetch }) => {
@@ -89,11 +87,11 @@ export const GET: RequestHandler = async ({ params, fetch }) => {
 
   const template = toReactElement(`
   <div tw="flex h-full w-full flex-col items-center justify-center bg-[#131313]">
-    <div tw="flex w-full max-w-sm justify-center rounded-lg border border-neutral-700 bg-neutral-800 shadow">
-      <div tw="mx-auto flex flex-col items-center rounded py-10">
-        <img tw="mb-3 h-24 w-24 rounded-full shadow-lg" src="${avatarUrl}" />
-        <span tw="mb-1 text-xl font-medium text-white">${user.username}</span>
-        <span tw="text-sm text-neutral-400">${user.id}</span>
+    <div tw="flex w-full max-w-2xl justify-center rounded-lg border border-neutral-700 bg-neutral-800 shadow">
+      <div tw="mx-auto flex flex-col items-center rounded py-20">
+        <img tw="mb-3 h-44 w-44 rounded-full shadow-lg" src="${avatarUrl}" />
+        <span tw="mb-1 text-4xl font-medium text-white">@${user.username}</span>
+        <span tw="text-2xl text-neutral-400">${user.id}</span>
       </div>
     </div>
   </div>
@@ -101,8 +99,8 @@ export const GET: RequestHandler = async ({ params, fetch }) => {
 
   try {
     return new ImageResponse(template, {
-      height: 430,
-      width: 819.05,
+      height: 630,
+      width: 1200,
       fonts: [
         {
           name: "Inter",
@@ -120,8 +118,30 @@ export const GET: RequestHandler = async ({ params, fetch }) => {
     });
   } catch (error) {
     console.log(error);
-    return new Response(null, {
-      status: 500
-    });
+    try {
+      return new ImageResponse(errorTemplate, {
+        height: 630,
+        width: 1200,
+        fonts: [
+          {
+            name: "Inter",
+            data: fontData400,
+            weight: 400,
+            style: "normal"
+          },
+          {
+            name: "Inter",
+            data: fontData700,
+            weight: 700,
+            style: "normal"
+          }
+        ]
+      });
+    } catch (error) {
+      console.log(error);
+      return new Response(null, {
+        status: 500
+      });
+    }
   }
 };
