@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.3] - 2023-11-18
 
+### Changed
+
+- Change the default amount of minions that load from 9 to 18.
+
+### Fixed
+
+- Fixed a duplication of minions bug that would occur when loading more minions.
+  - This was introduced by the `loadMinions` API endpoint change in [1.0.2](#102---2023-11-16).
+
+## [1.0.3] - 2023-11-18
+
 ### Added
 
 - SEO improvements.
