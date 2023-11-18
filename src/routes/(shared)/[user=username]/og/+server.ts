@@ -70,7 +70,7 @@ export const GET: RequestHandler = async ({ params, fetch }) => {
         ]
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return new Response(null, {
         status: 500
       });
@@ -117,7 +117,7 @@ export const GET: RequestHandler = async ({ params, fetch }) => {
       ]
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     try {
       return new ImageResponse(errorTemplate, {
         height: 630,
@@ -138,7 +138,7 @@ export const GET: RequestHandler = async ({ params, fetch }) => {
         ]
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return new Response(null, {
         status: 500
       });

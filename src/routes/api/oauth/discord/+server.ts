@@ -14,7 +14,7 @@ export const GET: RequestHandler = async ({ cookies, url, locals }) => {
 
   // if no code or state, redirect to login
   if (!storedState || !state || storedState !== state || !code) {
-    console.log("no code or state");
+    console.info("no code or state");
     throw redirect(302, "/login");
   }
 
@@ -55,13 +55,13 @@ export const GET: RequestHandler = async ({ cookies, url, locals }) => {
       }
     });
   } catch (e) {
+    console.error(e);
     if (e instanceof OAuthRequestError) {
       // invalid code
       return new Response(null, {
         status: 400
       });
     }
-    console.log(e);
     return new Response("Internal Server Error", {
       status: 500
     });

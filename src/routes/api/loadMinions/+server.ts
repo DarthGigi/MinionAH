@@ -43,7 +43,7 @@ export const GET: RequestHandler = async ({ url }) => {
   try {
     minions = await getMinions(Math.min(50, params.take || 9), typeof params.skip === "number" ? params.skip : parseInt(params.skip || "0"), params.orderBy, params.distinct, JSON.parse(params.where || "{}"));
   } catch (e) {
-    console.log(e);
+    console.error(e);
     return new Response("An error occurred while fetching minions", {
       status: 500
     });
