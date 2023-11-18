@@ -59,7 +59,8 @@
     const res = await fetch(
       "/api/loadMinions?" +
         new URLSearchParams({
-          where: JSON.stringify(where)
+          where: JSON.stringify(where),
+          skip: skip?.toString() ?? "0"
         }),
       {
         method: "GET",
@@ -134,7 +135,7 @@
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
     <ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {#await minions}
-        {#each Array(9) as _}
+        {#each Array(18) as _}
           <CardLoading />
         {/each}
       {:then minions}
@@ -143,7 +144,7 @@
         {/each}
 
         {#if loadingMore && initialLoad}
-          {#each Array(9) as _}
+          {#each Array(18) as _}
             <CardLoading />
           {/each}
         {/if}
@@ -151,7 +152,7 @@
     </ul>
     <div class="flex w-full justify-center py-4">
       <!-- check if there are no longer any items in the database -->
-      {#if newMinionAmount === 0 || newMinionAmount < 9 || (minions.length === 0 && !loadingMore)}
+      {#if newMinionAmount === 0 || newMinionAmount < 18 || (minions.length === 0 && !loadingMore)}
         <p class="px-4 py-1 text-center text-sm text-neutral-200 text-opacity-40">No more minions to load.</p>
       {:else}
         <button type="button" on:click={() => loadData(currentTier, minions.length, search, true)} class="rounded p-1 text-sm text-white text-opacity-30 transition-all duration-300 hover:bg-neutral-700 hover:text-opacity-100">
