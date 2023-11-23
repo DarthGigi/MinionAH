@@ -17,14 +17,22 @@
   <title>{userprofile.username}'s MinionAH</title>
   <meta name="title" content="{userprofile.username}'s MinionAH" />
   <meta name="description" content={`Check out ${userprofile.username}'s profile on MinionAH!`} />
-  <meta name="theme-color" content={data.color} />
+  <meta name="theme-color" content={data.color.toString()} />
+  <link rel="canonical" href="https://minionah.com/{$page.params.user}" />
 
-  <!-- Open Graph / Facebook -->
+  <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://minionah.com/{$page.params.user}" />
   <meta property="og:title" content="{userprofile.username}'s MinionAH" />
   <meta property="og:description" content={`Check out ${userprofile.username}'s profile on MinionAH!`} />
   <meta property="og:image" content="https://minionah.com/{$page.params.user}/og" />
+  <meta property="og:image:secure_url" content="https://minionah.com/{$page.params.user}/og" />
+  <meta property="og:image:alt" content="{userprofile.username}'s Profile — MinionAH" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:site_name" content="MinionAH" />
+  <meta property="og:locale" content="en_US" />
 
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image" />

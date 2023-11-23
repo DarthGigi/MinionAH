@@ -7,6 +7,8 @@
   import { Input } from "$lib/components/ui/input";
   import { Label } from "$lib/components/ui/label";
   import { draw } from "svelte/transition";
+  import * as Alert from "$lib/components/ui/alert";
+  import { slide } from "svelte/transition";
 
   export let data: PageData;
   let minions: Seller[] = [];
@@ -15,6 +17,11 @@
   let newMinionAmount: number;
   let initialDispatch = true;
   let initialLoad = true;
+  let alert = {
+    title: "",
+    description: "",
+    open: false
+  };
 
   let search: string | undefined = undefined;
 
@@ -49,25 +56,46 @@
       };
     }
 
-    const res = await fetch("/api/loadMinions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        skip: skip,
-        where: where
-      })
-    })
+    const res = await fetch(
+      "/api/loadMinions?" +
+        new URLSearchParams({
+          where: JSON.stringify(where),
+          skip: skip?.toString() ?? "0"
+        }),
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    )
       .then((res) => res.json())
       .finally(() => {
         loadingMore = false;
+      })
+      .catch((err) => {
+        console.error(err);
+        alert.open = true;
+        alert.title = "Error";
+        alert.description = "An error occurred while loading minions.";
+        setTimeout(() => {
+          alert.open = false;
+        }, 5000);
       });
 
     newMinionAmount = res.length;
     minions = isMore ? [...minions, ...res] : res;
   }
 </script>
+
+{#if alert.open}
+  <div transition:slide={{ axis: "x" }} class="fixed right-4 top-4 w-80">
+    <Alert.Root class="border-neutral-700 bg-neutral-800">
+      <Alert.Title class="min-w-full truncate">{alert.title}</Alert.Title>
+      <Alert.Description class="min-w-full truncate">{alert.description}</Alert.Description>
+    </Alert.Root>
+  </div>
+{/if}
 
 <div class="mx-auto flex flex-row items-center justify-center gap-4 px-4 py-20 sm:px-6 lg:px-8">
   <div>
@@ -92,7 +120,6 @@
           return;
         }
         if (detail.tier === null) {
-          console.log("null");
           currentTier = undefined;
           loadData(currentTier);
           return;
@@ -108,7 +135,7 @@
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
     <ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {#await minions}
-        {#each Array(9) as _}
+        {#each Array(18) as _}
           <CardLoading />
         {/each}
       {:then minions}
@@ -117,7 +144,7 @@
         {/each}
 
         {#if loadingMore && initialLoad}
-          {#each Array(9) as _}
+          {#each Array(18) as _}
             <CardLoading />
           {/each}
         {/if}
@@ -125,7 +152,7 @@
     </ul>
     <div class="flex w-full justify-center py-4">
       <!-- check if there are no longer any items in the database -->
-      {#if newMinionAmount === 0 || newMinionAmount < 9 || (minions.length === 0 && !loadingMore)}
+      {#if newMinionAmount === 0 || newMinionAmount < 18 || (minions.length === 0 && !loadingMore)}
         <p class="px-4 py-1 text-center text-sm text-neutral-200 text-opacity-40">No more minions to load.</p>
       {:else}
         <button type="button" on:click={() => loadData(currentTier, minions.length, search, true)} class="rounded p-1 text-sm text-white text-opacity-30 transition-all duration-300 hover:bg-neutral-700 hover:text-opacity-100">
