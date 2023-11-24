@@ -22,11 +22,8 @@ declare global {
     type DatabaseUserAttributes = {
       id: string;
       username: string;
+      loggedInAt: Date;
       avatar: string;
-      banner?: string;
-      accent_color?: number;
-      locale?: string;
-      minions?: Minion[];
     };
     type DatabaseSessionAttributes = {};
   }
