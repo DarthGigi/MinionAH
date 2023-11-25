@@ -8,7 +8,7 @@ export const GET: RequestHandler = async ({ cookies }) => {
   const [url, codeVerifier, state] = await createOAuth2AuthorizationUrlWithPKCE("https://login.live.com/oauth20_authorize.srf", {
     clientId: AD_CLIENT_ID,
     redirectUri: dev ? "http://localhost:5173/api/oauth/microsoft" : AD_REDIRECT_URI,
-    scope: ["XboxLive.signin", "offline_access"],
+    scope: ["XboxLive.signin"],
     codeChallengeMethod: "S256"
   });
 
