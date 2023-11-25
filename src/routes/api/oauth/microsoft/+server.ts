@@ -50,7 +50,7 @@ export const GET: RequestHandler = async ({ cookies, url, locals }) => {
 
       let avatar: string;
       try {
-        const response = await fetch(`https://mc-heads.net/avatar/${minecraftUser.id}`);
+        const response = await fetch(`https://mc-heads.net/head/${minecraftUser.id}`);
         const avatarBuffer = await response.arrayBuffer();
         avatar = Buffer.from(avatarBuffer).toString("base64");
       } catch (e) {
