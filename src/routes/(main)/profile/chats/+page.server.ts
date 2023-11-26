@@ -4,7 +4,7 @@ import { redirect } from "@sveltejs/kit";
 export const load = (async ({ locals }) => {
   const session = await locals.auth.validate();
   if (!session) {
-    console.log("no session");
+    console.info("no session");
     throw redirect(302, "/login");
   }
   const user = await prisma.user.findUnique({
@@ -14,7 +14,7 @@ export const load = (async ({ locals }) => {
   });
 
   if (!user) {
-    console.log("no user");
+    console.info("no user");
     throw redirect(302, "/login");
   }
 
@@ -85,7 +85,7 @@ export const actions: Actions = {
       }
     });
     if (!chat) {
-      console.log("no chat");
+      console.info("no chat");
       return {
         status: 200,
         body: {
@@ -106,7 +106,7 @@ export const actions: Actions = {
         }
       });
     } catch (error) {
-      console.log(error);
+      console.info(error);
       return {
         status: 200,
         body: {

@@ -12,23 +12,31 @@
 </script>
 
 <svelte:head>
-  <title>{minion.user.username}'s MinionAH</title>
+  <title>{minion.user.username}'s {minion.minion.name.replace(/ [IVX]+$/, "")}{minion.amount && minion.amount > 1 ? "s" : ""} — MinionAH</title>
   <meta name="title" content="{minion.user.username}'s {minion.minion.name.replace(/ [IVX]+$/, '')}{minion.amount && minion.amount > 1 ? 's' : ''} — MinionAH" />
   <meta name="description" content={`${minion.user.username} is selling ${minion.amount ? minion.amount : 0} ${minion.minion.name.replace(/ [IVX]+$/, "")}${minion.amount && minion.amount > 1 ? "s" : ""}. Check out their listing on MinionAH!`} />
   <meta name="theme-color" content={data.color.toString()} />
+  <link rel="canonical" href="https://minionah.com/{$page.params.user}/{$page.params.minionID}" />
 
-  <!-- Open Graph / Facebook -->
+  <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://minionah.com/{$page.params.user}/{$page.params.minionID}" />
   <meta property="og:title" content="{minion.user.username}'s {minion.minion.name.replace(/ [IVX]+$/, '')}{minion.amount && minion.amount > 1 ? 's' : ''} — MinionAH" />
-  <meta property="og:description" content={`${minion.user.username} is selling ${minion.amount ? minion.amount : 0} ${minion.minion.name.replace(/ [IVX]+$/, "")}${minion.amount && minion.amount > 1 ? "s" : ""}. Check out their listing on MinionAH!`} />
+  <meta property="og:description" content={`${minion.user.username} is selling ${minion.amount ? minion.amount : 0} ${minion.minion.name.replace(/ [IVX]+$/, "")}${minion.amount && minion.amount > 1 ? "s" : ""}. Check out their auction on MinionAH!`} />
   <meta property="og:image" content="https://minionah.com/{$page.params.user}/{$page.params.minionID}/og" />
+  <meta property="og:image:secure_url" content="https://minionah.com/{$page.params.user}/{$page.params.minionID}/og" />
+  <meta property="og:image:alt" content="{minion.user.username}'s {minion.minion.name.replace(/ [IVX]+$/, '')}{minion.amount && minion.amount > 1 ? 's' : ''} — MinionAH" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:site_name" content="MinionAH" />
+  <meta property="og:locale" content="en_US" />
 
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image" />
   <meta property="twitter:url" content="https://minionah.com/{$page.params.user}/{$page.params.minionID}" />
   <meta property="twitter:title" content="{minion.user.username}'s {minion.minion.name.replace(/ [IVX]+$/, '')}{minion.amount && minion.amount > 1 ? 's' : ''} — MinionAH" />
-  <meta property="twitter:description" content={`${minion.user.username} is selling ${minion.amount ? minion.amount : 0} ${minion.minion.name.replace(/ [IVX]+$/, "")}${minion.amount && minion.amount > 1 ? "s" : ""}. Check out their listing on MinionAH!`} />
+  <meta property="twitter:description" content={`${minion.user.username} is selling ${minion.amount ? minion.amount : 0} ${minion.minion.name.replace(/ [IVX]+$/, "")}${minion.amount && minion.amount > 1 ? "s" : ""}. Check out their auction on MinionAH!`} />
   <meta property="twitter:image" content="https://minionah.com/{$page.params.user}/{$page.params.minionID}/og" />
 </svelte:head>
 
@@ -47,16 +55,15 @@
       }}
     />
 
-    <a href="https://discord.com/users/{minion.user.id}" target="_blank" rel="noopener" class="relative z-10 mx-20 mt-5 flex flex-col items-center rounded py-5 transition-all duration-300 hover:scale-110 hover:bg-neutral-600">
-      <Avatar.Root class="mb-3 h-24 w-24 rounded-full shadow-lg">
-        <Avatar.Image class="pointer-events-none" src="https://cdn.discordapp.com/avatars/{minion.user.id}/{minion.user.avatar}?size=1024" alt={minion.user.username} />
+    <a href={`/${minion.user.username}/chat`} class="relative z-10 mx-20 mt-5 flex flex-col items-center rounded py-5 transition-all duration-300 hover:scale-110 hover:bg-neutral-600">
+      <Avatar.Root class="mb-3 h-24 w-24 rounded-full bg-neutral-700 shadow-lg">
+        <Avatar.Image class="pointer-events-none h-full w-full p-2" src={`data:image/png;base64,${minion.user.avatar}`} alt={minion.user.username} />
         <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-800">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
       </Avatar.Root>
       <h5 class="mb-1 text-xl font-medium text-white">{minion.user.username}</h5>
-      <span class="text-sm text-neutral-400">{minion.user.id}</span>
     </a>
 
-    <ul>
+    <ul class="mt-2">
       <Card {minion} />
     </ul>
   </div>

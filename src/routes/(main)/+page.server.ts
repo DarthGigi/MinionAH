@@ -63,7 +63,7 @@ export const load = (async ({ locals }) => {
   return {
     props: {
       minions: prisma.minionSeller.findMany({
-        take: 9,
+        take: 18,
         skip: 0,
         orderBy: [
           {
@@ -82,7 +82,7 @@ export const load = (async ({ locals }) => {
               banner: true,
               id: true,
               locale: true,
-              loggedInAt: false,
+              loggedInAt: true,
               username: true
             }
           }

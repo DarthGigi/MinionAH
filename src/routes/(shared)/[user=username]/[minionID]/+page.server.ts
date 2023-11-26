@@ -41,24 +41,12 @@ export const load = (async ({ params, fetch }) => {
     throw redirect(302, "/");
   }
 
-  let color;
-  const avatar = await fetch(`https://cdn.discordapp.com/avatars/${minion.user.id}/${minion.user.avatar}?size=1024`);
-  if (avatar.status === 404) {
-    color = await fetch("/api/getColor", {
-      headers: {
-        imageUrl: `https://cdn.discordapp.com/embed/avatars/${Number(minion.user.id) % 6}.png`
-      }
-    }).then((res) => res.text());
-  } else {
-    color = await fetch("/api/getColor", {
-      headers: {
-        imageUrl: `https://cdn.discordapp.com/avatars/${minion.user.id}/${minion.user.avatar}?size=1024`
-      }
-    }).then((res) => res.text());
-  }
-
   return {
     minion,
-    color
+    color: await fetch("/api/getColor", {
+      headers: {
+        imageUrl: `data:image/png;base64,${minion.user.avatar}`
+      }
+    }).then((res) => res.text())
   };
 }) satisfies PageServerLoad;

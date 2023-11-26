@@ -24,21 +24,21 @@
   }
 </script>
 
-<li in:fade|global={{ delay: 0 }} on:mouseover={() => (hovering = true)} on:mouseout={() => (hovering = false)} on:blur={() => (hovering = false)} on:focus={() => (hovering = true)}>
-  <div class="relative list-item divide-y divide-neutral-700 rounded-lg bg-neutral-800 transition-all duration-300" class:group={isHome} class:hover:bg-neutral-900={isHome}>
+<li in:fade|global={{ delay: 0 }}>
+  <div class="user-select-none relative list-item divide-y divide-neutral-700 rounded-lg bg-neutral-800 transition-all duration-300" class:group={isHome} class:hover:bg-neutral-900={isHome} on:mouseover={() => (hovering = true)} on:mouseout={() => (hovering = false)} on:blur={() => (hovering = false)} on:focus={() => (hovering = true)} role="listitem">
     <div class="flex h-full w-full items-center justify-center gap-x-6 px-4">
       <HoverCard.Root openDelay={150} closeDelay={150}>
         <HoverCard.Trigger href={`https://hypixel-skyblock.fandom.com/wiki/${minion.minion.name.replace(/ [IVX]+$/, "").replace(/ /g, "_")}`} target="_blank" rel="noopener" class="my-2 flex flex-col items-center truncate rounded p-1 transition-all duration-500">
           <Avatar.Root class="h-12 w-12 flex-shrink-0 rounded-full bg-neutral-700">
-            <Avatar.Image class="pointer-events-none object-cover p-1" src={`https://mc-heads.net/head/${minion.minion.texture}`} alt={minion.minion.name} />
-            <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-700">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
+            <Avatar.Image class="pointer-events-none h-full w-full p-1" src={`https://mc-heads.net/head/${minion.minion.texture}`} alt={minion.minion.name} />
+            <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-800">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
           </Avatar.Root>
           <h3 class="truncate text-sm font-medium text-white">{minion.minion.name.replace(/ [IVX]+$/, "")}</h3>
         </HoverCard.Trigger>
         <HoverCard.Content class="mt-0 -translate-y-44 border-neutral-700 bg-neutral-900">
           <div class="flex justify-center gap-x-4">
             <Avatar.Root class="h-12 w-12 flex-shrink-0 rounded-full bg-neutral-700">
-              <Avatar.Image class="pointer-events-none object-cover p-1" src={`https://mc-heads.net/head/${minion.minion.texture}`} alt={minion.minion.name} />
+              <Avatar.Image class="pointer-events-none h-full w-full p-1" src={`https://mc-heads.net/head/${minion.minion.texture}`} alt={minion.minion.name} />
               <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-800">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
             </Avatar.Root>
             <div class="space-y-1">
@@ -60,22 +60,32 @@
       </HoverCard.Root>
       {#if isHome}
         <HoverCard.Root openDelay={150} closeDelay={150}>
-          <HoverCard.Trigger href={`/${minion.user.username}`} class="my-2 flex min-w-[4.75rem] max-w-[8rem] flex-col items-center truncate p-1">
-            <Avatar.Root class="h-12 w-12">
-              <Avatar.Image class="pointer-events-none  flex-shrink-0 rounded-full bg-neutral-700 object-cover" src={`https://cdn.discordapp.com/avatars/${minion.user.id}/${minion.user.avatar}.png?size=64`} alt={`${minion.user.username}'s avatar`} />
-              <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-800">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
+          <HoverCard.Trigger href={`/${minion.user.username}`} class="my-2 flex flex-col items-center truncate rounded p-1 transition-all duration-500">
+            <Avatar.Root class="h-12 w-12 flex-shrink-0 rounded-full bg-neutral-700">
+              <Avatar.Image class="pointer-events-none h-full w-full p-1" src={`data:image/png;base64,${minion.user.avatar}`} alt={`${minion.user.username}'s avatar`} />
+              <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-700">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
             </Avatar.Root>
-            <h3 class="max-w-[8rem] truncate text-sm font-medium text-white">{minion.user.username}</h3>
+            <h3 class="truncate text-sm font-medium text-white">{minion.user.username}</h3>
           </HoverCard.Trigger>
           <HoverCard.Content class="mt-0 -translate-y-44 border-neutral-700 bg-neutral-900">
-            <div class="flex w-full justify-center gap-x-4 truncate">
-              <Avatar.Root class="h-12 w-12">
-                <Avatar.Image class="pointer-events-none" src={`https://cdn.discordapp.com/avatars/${minion.user.id}/${minion.user.avatar}.png?size=64`} alt={`${minion.user.username}'s avatar`} />
+            <div class="flex justify-center gap-x-4">
+              <Avatar.Root class="h-12 w-12 flex-shrink-0 rounded-full bg-neutral-700">
+                <Avatar.Image class="pointer-events-none h-full w-full p-1" src={`data:image/png;base64,${minion.user.avatar}`} alt={`${minion.user.username}'s avatar`} />
                 <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-800">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
               </Avatar.Root>
               <div class="space-y-1">
-                <h4 class="max-w-[8rem] truncate text-sm font-semibold">@{minion.user.username}</h4>
-                <p class="text-xs text-muted-foreground">{minion.user.id}</p>
+                <h4 class="text-sm font-semibold">
+                  {minion.user.username}
+                  <p class="text-xs text-muted-foreground">
+                    Last online: {new Date(minion.user.loggedInAt).toLocaleString(window.navigator.language, {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                      hour: "numeric",
+                      minute: "numeric"
+                    })}
+                  </p>
+                </h4>
               </div>
             </div>
           </HoverCard.Content>
@@ -89,17 +99,17 @@
         <div class="absolute z-0 h-5 w-20 flex-shrink-0 rounded-[50px] bg-neutral-400 transition-all duration-500 group-hover:h-full group-hover:w-full group-hover:rounded-none" />
       </div>
       <div class="relative -ml-px inline-flex w-0 flex-1 overflow-hidden">
-        <span class="relative z-10 inline-flex w-0 flex-1 items-center justify-center overflow-hidden py-4 text-sm font-medium text-neutral-200 transition-all duration-300 group-hover:translate-y-0 group-hover:scale-125 group-hover:text-neutral-900" class:group-hover:translate-y-0={minion.amount ? minion.amount > 1 : false} class:-translate-y-2.5={minion.amount ? minion.amount > 1 : false}>
-          <img class="pointer-events-none mr-1 h-6 w-6" src="/assets/images/coin.png" alt="Coin icon" />
-          <div class="grid">
+        <span class="relative z-10 inline-flex w-0 flex-1 items-center justify-center overflow-hidden py-4 text-sm font-medium transition-all duration-300 group-hover:translate-y-0 group-hover:scale-125" class:group-hover:translate-y-0={minion.amount ? minion.amount > 1 : false}>
+          <img class="pointer-events-none absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 transition-opacity duration-500 group-hover:opacity-0" src="/assets/images/coin.png" alt="Coin icon" />
+          <div class="grid basis-10 transition-all duration-300 group-hover:translate-y-0" class:-translate-y-2.5={minion.amount ? minion.amount > 1 : false}>
             {#if hovering && isHome}
-              <span transition:fade class="[grid-area:1/1]">{formatNumber(minion.price * (minion.amount ?? 1))}</span>
+              <span transition:fade class="text-center text-neutral-200 transition-colors duration-500 [grid-area:1/1] group-hover:text-neutral-900">{formatNumber(minion.price * (minion.amount ?? 1))}</span>
             {:else}
-              <span transition:fade class="[grid-area:1/1]">{formatNumber(minion.price)}</span>
+              <span transition:fade class="text-center text-neutral-200 transition-colors duration-500 [grid-area:1/1] group-hover:text-neutral-900">{formatNumber(minion.price)}</span>
             {/if}
           </div>
           {#if minion.amount ? minion.amount > 1 : false}
-            <span class="absolute -bottom-1 pt-1 text-sm text-neutral-200/50 transition-all duration-300" class:group-hover:opacity-0={isHome}>/each</span>
+            <span class="absolute -bottom-1 pt-1 text-sm text-neutral-200/50 transition-all duration-300" class:group-hover:opacity-0={isHome} class:-translate-y-2.5={minion.amount ? minion.amount > 1 : false}>/each</span>
           {/if}
         </span>
         <div class="absolute z-0 h-0 w-full flex-shrink-0 bg-neutral-400 transition-all duration-500 group-hover:h-full" />
@@ -146,12 +156,3 @@
     {/if}
   </div>
 </li>
-
-<!-- <style>
-  .priceContainer {
-    display: grid;
-  }
-  .priceContainer > * {
-    grid-area: 1 / 1;
-  }
-</style> -->

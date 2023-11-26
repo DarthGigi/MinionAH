@@ -1,52 +1,127 @@
-import { auth, microsoftAuth } from "$lib/server/lucia";
-import { redirect } from "@sveltejs/kit";
-import { OAuthRequestError } from "@lucia-auth/oauth";
-
+import { dev } from "$app/environment";
+import { AD_CLIENT_ID, AD_CLIENT_SECRET, AD_REDIRECT_URI } from "$env/static/private";
+import { auth } from "$lib/server/lucia";
+import { getMinecraftInfo } from "$lib/server/minecraftAuth";
+import { OAuthRequestError, providerUserAuth, validateOAuth2AuthorizationCode } from "@lucia-auth/oauth";
 import type { RequestHandler } from "@sveltejs/kit";
+import { redirect } from "@sveltejs/kit";
+
+type AccessTokenResult = {
+  token_type: string;
+  expires_in: number;
+  scope: string;
+  access_token: string;
+  refresh_token: string;
+  user_id: string;
+};
 
 export const GET: RequestHandler = async ({ cookies, url, locals }) => {
-  // console.log(url.searchParams.toString());
-  // get stored state from cookies
-  const storedState = cookies.get("microsoft_oauth_state");
-  const storedCodeVerifier = cookies.get("microsoft_oauth_code_verifier");
-  // get code and state params from url
-
   const code = url.searchParams.get("code");
   const state = url.searchParams.get("state");
 
-  // if no code or state, redirect to login
-  if (!storedState || !state || storedState !== state || !code || !storedCodeVerifier) {
-    console.log("no code or state");
-    throw redirect(302, "/login");
-  }
+  // get state cookie we set when we got the authorization url
+  const stateCookie = cookies.get("microsoft_oauth_state");
+  const storedCodeVerifier = cookies.get("microsoft_oauth_code_verifier");
+
+  // validate state
+  if (!state || !stateCookie || state !== stateCookie) throw redirect(302, "/login"); // invalid state
+
+  const codeVerifier = cookies.get("microsoft_code_verifier");
+
+  if (!codeVerifier) throw redirect(302, "/login"); // invalid code verifier
 
   try {
-    const { azureADTokens } = await microsoftAuth.validateCallback(code, storedCodeVerifier);
-
-    console.log("azureADTokens: ", azureADTokens);
-    return new Response(null, {
-      status: 200
+    const tokens = await validateOAuth2AuthorizationCode<AccessTokenResult>(code as string, "https://login.live.com/oauth20_token.srf", {
+      clientId: AD_CLIENT_ID,
+      codeVerifier,
+      clientPassword: {
+        clientSecret: AD_CLIENT_SECRET,
+        authenticateWith: "client_secret"
+      },
+      redirectUri: dev ? "http://localhost:5173/api/oauth/microsoft" : AD_REDIRECT_URI
     });
 
-    const getUser = async () => {
-      const existingUser = await getExistingUser();
-      if (existingUser) return existingUser;
-      // create a new user if the user does not exist
-      // const user = await createUser({
-      //   userId: azureADTokens.,
-      //   attributes: {
-      //     id: discordUser.id,
-      //     username: discordUser.username,
-      //     avatar: discordUser.avatar ?? "",
-      //     banner: discordUser.banner ?? "",
-      //     accent_color: discordUser.accent_color ?? undefined,
-      //     locale: discordUser.locale ?? ""
-      //   }
-      // });
+    const minecraftUser = await getMinecraftInfo(tokens.access_token);
 
-      // return user;
+    const minecraftUserAuth = providerUserAuth(auth, "minecraft", minecraftUser.id);
+
+    const getUser = async () => {
+      let existingUser = await minecraftUserAuth.getExistingUser();
+
+      let avatar: string;
+      try {
+        const response = await fetch(`https://mc-heads.net/head/${minecraftUser.id}`);
+        const avatarBuffer = await response.arrayBuffer();
+        avatar = Buffer.from(avatarBuffer).toString("base64");
+      } catch (e) {
+        console.log(e);
+        throw new Error("Failed to get avatar");
+      }
+
+      // get the active skin
+      const skin = minecraftUser.skins.find((skin) => skin.state === "ACTIVE");
+      if (!skin) throw new Error("Failed to get skin");
+      let skinTexture: string;
+
+      try {
+        const response = await fetch(skin.url);
+        const skinBuffer = await response.arrayBuffer();
+        skinTexture = Buffer.from(skinBuffer).toString("base64");
+      } catch (e) {
+        console.log(e);
+        throw new Error("Failed to get skin texture");
+      }
+
+      // get the active cape
+      const cape = minecraftUser.capes.find((cape) => cape.state === "ACTIVE");
+      let capeTexture: string | undefined;
+      if (cape) {
+        try {
+          const response = await fetch(cape.url);
+          const capeBuffer = await response.arrayBuffer();
+          capeTexture = Buffer.from(capeBuffer).toString("base64");
+        } catch (e) {
+          console.log(e);
+        }
+      }
+
+      if (existingUser) {
+        // update user
+        await prisma.user.update({
+          where: {
+            id: existingUser.userId
+          },
+          data: {
+            username: minecraftUser.name,
+            avatar: avatar,
+            skin: skinTexture,
+            cape: capeTexture ? capeTexture : null, // remove cape if it's not set
+            loggedInAt: new Date()
+          }
+        });
+        existingUser = await minecraftUserAuth.getExistingUser();
+        return existingUser;
+      }
+
+      // create a new user if the user does not exist
+      const user = await minecraftUserAuth.createUser({
+        userId: minecraftUser.id,
+        attributes: {
+          id: minecraftUser.id,
+          username: minecraftUser.name,
+          avatar: avatar,
+          skin: skinTexture,
+          cape: capeTexture ? capeTexture : null, // remove cape if it's not set
+          loggedInAt: new Date()
+        }
+      });
+
+      return user;
     };
+
     const user = await getUser();
+
+    if (!user) throw new Error("Failed to get user");
 
     const session = await auth.createSession({
       userId: user.userId,
@@ -55,21 +130,20 @@ export const GET: RequestHandler = async ({ cookies, url, locals }) => {
 
     locals.auth.setSession(session);
 
-    return new Response(null, {
+    return new Response("Redirecting...", {
       status: 302,
       headers: {
         Location: "/profile"
       }
     });
   } catch (e) {
-    console.log(await e.response.json());
+    console.log(e);
     if (e instanceof OAuthRequestError) {
       // invalid code
-      return new Response(null, {
+      return new Response("Invalid Code", {
         status: 400
       });
     }
-    console.log(e);
     return new Response("Internal Server Error", {
       status: 500
     });

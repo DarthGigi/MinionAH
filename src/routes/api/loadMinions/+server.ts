@@ -10,7 +10,7 @@ type Params = {
   where?: any;
 };
 
-async function getMinions(take: number = 9, skip?: number, orderBy: object = [{ timeCreated: "desc" }, { price: "asc" }], distinct?: any, where?: any) {
+async function getMinions(take: number = 18, skip?: number, orderBy: object = [{ timeCreated: "desc" }, { price: "asc" }], distinct?: any, where?: any) {
   let minions = await prisma.minionSeller.findMany({
     take,
     skip,
@@ -26,7 +26,7 @@ async function getMinions(take: number = 9, skip?: number, orderBy: object = [{ 
           banner: true,
           id: true,
           locale: true,
-          loggedInAt: false,
+          loggedInAt: true,
           username: true
         }
       }
@@ -36,16 +36,15 @@ async function getMinions(take: number = 9, skip?: number, orderBy: object = [{ 
   return minions as Seller[];
 }
 
-export const POST: RequestHandler = async ({ request }) => {
-  // Switch from GET to POST
-  const params: Params = await request.json();
+export const GET: RequestHandler = async ({ url }) => {
+  const params: Params = Object.fromEntries(new URLSearchParams(url.search));
 
   let minions;
   try {
-    minions = await getMinions(Math.min(50, params.take || 9), params.skip, params.orderBy, params.distinct, params.where);
+    minions = await getMinions(Math.min(50, params.take || 18), typeof params.skip === "number" ? params.skip : parseInt(params.skip || "0"), params.orderBy, params.distinct, JSON.parse(params.where || "{}"));
   } catch (e) {
-    console.log(e);
-    return new Response(null, {
+    console.error(e);
+    return new Response("An error occurred while fetching minions", {
       status: 500
     });
   }

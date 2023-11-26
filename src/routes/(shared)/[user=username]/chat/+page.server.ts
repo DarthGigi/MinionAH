@@ -4,7 +4,7 @@ import { redirect } from "@sveltejs/kit";
 export const load = (async ({ params, locals }) => {
   const session = await locals.auth.validate();
   if (!session) {
-    console.log("no session");
+    console.info("no session");
     throw redirect(302, "/login");
   }
   const user = await prisma.user.findUnique({
@@ -14,7 +14,7 @@ export const load = (async ({ params, locals }) => {
   });
 
   if (!user) {
-    console.log("no user");
+    console.info("no user");
     throw redirect(302, "/login");
   }
   const username = params.user;
@@ -26,12 +26,12 @@ export const load = (async ({ params, locals }) => {
   });
 
   if (!user2) {
-    console.log("no user2");
+    console.info("no user2");
     throw redirect(302, "/");
   }
 
   if (user.id === user2?.id) {
-    console.log("same user");
+    console.info("same user");
     throw redirect(302, `/${user.username}`);
   }
 

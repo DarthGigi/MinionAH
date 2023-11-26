@@ -5,6 +5,48 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.3] - 2023-11-18
+
+### Changed
+
+- Change the default amount of minions that load from 9 to 18.
+
+### Fixed
+
+- Fixed a duplication of minions bug that would occur when loading more minions.
+  - This was introduced by the `loadMinions` API endpoint change in [1.0.2](#102---2023-11-16).
+
+## [1.0.3] - 2023-11-18
+
+### Added
+
+- SEO improvements.
+  - Updated various meta tags.
+  - Added a robots.txt file.
+  - Added a sitemap.xml route.
+- Added some links in the logo dropdown menu.
+  - Added a Home link.
+  - Added GitHub link.
+
+### Changed
+
+- Changed some links in the logo dropdown menu.
+  - Indented the links under the About link.
+- Changed the OG image generation.
+  - Better failure handling.
+  - Standardized the image size to 1200x630.
+
+## [1.0.2] - 2023-11-16
+
+### Added
+
+- Alert when something goes wrong.
+
+### Changed
+
+- Changed the `loadMinions` API endpoint from `POST` to `GET`.
+- Changed the rate-limiting system.
+
 ## [1.0.1] - 2023-11-15
 
 ### Added
