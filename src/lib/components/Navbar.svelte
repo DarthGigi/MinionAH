@@ -9,67 +9,12 @@
   $: user = $page.data.user;
 
   let profileDropdownOpen = false;
-  let profileDropdownOpenMobile = false;
   let menuDropdownOpen = false;
 </script>
 
 <nav class="bg-neutral-800">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-    <div class="flex h-16 justify-between">
-      <div class="flex items-center justify-center md:hidden">
-        {#if user}
-          <DropdownMenu.Root bind:open={profileDropdownOpenMobile}>
-            <DropdownMenu.Trigger class="relative">
-              <Avatar.Root class="items-center justify-center">
-                <Avatar.Image class="pointer-events-none h-8 w-8 rounded-full" src={`data:image/png;base64,${user.avatar}`} alt={user.username} />
-                <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-700">{user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
-              </Avatar.Root>
-              {#if $page.url.pathname === "/"}
-                {#await $page.data.props.user then user}
-                  {#await $page.data.props.unreadChats then unreadChats}
-                    {#if unreadChats}
-                      {@const read = unreadChats.user1_id === user.id ? unreadChats.user1Read : unreadChats.user2Read}
-                      {#if !read}
-                        <span class="absolute right-0.5 top-0.5 flex h-3 w-3 transition-all duration-300" class:opacity-0={profileDropdownOpenMobile} class:scale-0={profileDropdownOpenMobile}>
-                          <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-neutral-400 opacity-75" />
-                          <span class="relative inline-flex h-3 w-3 rounded-full bg-neutral-500" />
-                        </span>
-                      {/if}
-                    {/if}
-                  {/await}
-                {/await}
-              {/if}
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Content class="translate-x-2  scale-110 border-0 bg-neutral-700">
-              <DropdownMenu.Group>
-                <DropdownMenu.Label>My Account</DropdownMenu.Label>
-                <DropdownMenu.Separator class="bg-neutral-800" />
-                <DropdownMenu.Item href="/profile" class="cursor-pointer">Profile</DropdownMenu.Item>
-                <DropdownMenu.Item href="/profile/chats" class="relative cursor-pointer"
-                  >Messages {#if $page.url.pathname === "/"}
-                    {#await $page.data.props.user then user}
-                      {#await $page.data.props.unreadChats then unreadChats}
-                        {#if unreadChats}
-                          {@const read = unreadChats.user1_id === user.id ? unreadChats.user1Read : unreadChats.user2Read}
-                          {#if !read && profileDropdownOpenMobile}
-                            <span transition:fade={{ delay: 5000 }} class="absolute right-2 top-1/2 flex h-3 w-3 -translate-y-1/2 transition-all delay-1000 duration-300">
-                              <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-neutral-400 opacity-75" />
-                              <span class="relative inline-flex h-3 w-3 rounded-full bg-neutral-500" />
-                            </span>
-                          {/if}
-                        {/if}
-                      {/await}
-                    {/await}
-                  {/if}</DropdownMenu.Item
-                >
-                <DropdownMenu.Separator class="bg-neutral-600" />
-                <DropdownMenu.Item href="/logout" class="cursor-pointer" data-sveltekit-preload-data="off">Sign out</DropdownMenu.Item>
-              </DropdownMenu.Group>
-            </DropdownMenu.Content>
-          </DropdownMenu.Root>
-        {/if}
-      </div>
-
+    <div class="flex h-16 flex-row-reverse justify-between md:flex-row">
       <div class="flex flex-shrink-0 items-center">
         <DropdownMenu.Root bind:open={menuDropdownOpen}>
           <DropdownMenu.Trigger class="flex items-center gap-2 rounded-md px-4 py-2 hover:bg-neutral-900">
@@ -95,7 +40,7 @@
         </DropdownMenu.Root>
       </div>
 
-      <div class="hidden flex-shrink-0 items-center gap-4 md:flex">
+      <div class="flex flex-shrink-0 flex-row-reverse items-center justify-between gap-2 md:flex-row md:gap-4">
         {#if $page.url.pathname !== "/profile" && user}
           <div class="flex-shrink-0">
             <a href="/profile" class="relative inline-flex items-center rounded-md border border-transparent bg-neutral-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors duration-300 hover:bg-neutral-600 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-2 focus:ring-offset-neutral-800">
@@ -108,7 +53,7 @@
           </div>
         {/if}
         {#if user}
-          <div class="hidden md:flex md:flex-shrink-0 md:items-center">
+          <div class="flex flex-shrink-0 items-center">
             <DropdownMenu.Root bind:open={profileDropdownOpen}>
               <DropdownMenu.Trigger class="relative">
                 <Avatar.Root class="items-center justify-center bg-neutral-700">
