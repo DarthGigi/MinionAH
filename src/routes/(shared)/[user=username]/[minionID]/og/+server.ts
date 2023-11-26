@@ -111,7 +111,7 @@ export const GET: RequestHandler = async ({ params, fetch }) => {
       </div>
       <div tw="flex w-full flex-col items-center justify-center rounded">
         <div tw="flex h-24 w-24 rounded-full bg-neutral-700 p-1">
-          <img tw="h-full w-full" src="https://mc-heads.net/head/${minion.minion.texture}" />
+          <img tw="h-full w-full" src="data:image/png;base64,${minion.minion.texture}" />
         </div>
          <span tw="text-3xl mt-3 font-medium text-white">${minion.minion.name.replace(/ [IVX]+$/, "")}</span>
         <div tw="mx-auto mt-4 flex w-full items-center justify-center border-t border-neutral-700">

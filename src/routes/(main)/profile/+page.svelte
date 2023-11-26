@@ -245,7 +245,7 @@
           <div class="relative list-item divide-y divide-neutral-700 rounded-lg bg-neutral-800 transition-all duration-300" class:group={false} class:hover:bg-neutral-900={false}>
             <div class="flex h-full w-full flex-col items-center justify-center gap-x-6 px-4 py-2">
               <Avatar.Root class="h-12 w-12 flex-shrink-0 rounded-full bg-neutral-700 ">
-                <Avatar.Image class="pointer-events-none object-cover p-1" src={`https://mc-heads.net/head/${minionToDelete.minion.texture}`} alt={minionToDelete.minion.name} />
+                <Avatar.Image class="pointer-events-none object-cover p-1" src={`data:image/png;base64,${minionToDelete.minion.texture}`} alt={minionToDelete.minion.name} />
                 <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-700">{minionToDelete.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
               </Avatar.Root>
               <h3 class="truncate text-sm font-medium text-white">{minionToDelete.minion.name.replace(/ [IVX]+$/, "")}</h3>

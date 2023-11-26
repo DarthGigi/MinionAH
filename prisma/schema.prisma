@@ -53,6 +53,8 @@ model Minion {
   generator      String
   generator_tier Int
   texture        String
+  skin           String
+  maxTier        Int
   sellers        MinionSeller[]
 }
 

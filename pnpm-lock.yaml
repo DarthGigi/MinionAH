@@ -82,6 +82,9 @@ devDependencies:
   fast-average-color-node:
     specifier: ^2.6.0
     version: 2.6.0
+  headview3d:
+    specifier: ^2.2.2
+    version: 2.2.2
   lucia:
     specifier: ^2.7.4
     version: 2.7.4
@@ -1050,6 +1053,10 @@ packages:
 
   /@types/stats.js@0.17.3:
     resolution: {integrity: sha512-pXNfAD3KHOdif9EQXZ9deK82HVNaXP5ZIF5RP2QG6OQFNTaY2YIetfrE9t528vEreGQvEPRDDc8muaoYeK0SxQ==}
+    dev: true
+
+  /@types/three@0.136.1:
+    resolution: {integrity: sha512-gzTw6RR4dU8sGf+RpLBWWKHRVIJ4gwKVQPk+IFCgha04Efg/itXYUalX6iBcYeSmaDu0qE5M7uTq0XLQpU4FAg==}
     dev: true
 
   /@types/three@0.156.0:
@@ -2144,6 +2151,14 @@ packages:
     engines: {node: '>= 0.4'}
     dependencies:
       function-bind: 1.1.2
+
+  /headview3d@2.2.2:
+    resolution: {integrity: sha512-nouY+olGmPVWh2cioh/85tko6ZCtVTV+Lf05kSRMPalIJ3guw/ZQKcMvj+2nRx3ppObge1o+GHH0ozM1X6JHKw==}
+    dependencies:
+      '@types/three': 0.136.1
+      skinview-utils: 0.7.1
+      three: 0.136.0
+    dev: true
 
   /hex-rgb@4.3.0:
     resolution: {integrity: sha512-Ox1pJVrDCyGHMG9CFg1tmrRUMRPRsAWYc/PinY0XzJU4K7y7vjNoLKIQ7BR5UJMCxNN8EM1MNDmHWA/B3aZUuw==}
@@ -3315,6 +3330,10 @@ packages:
     resolution: {integrity: sha512-RVZSIV5IG10Hk3enotrhvz0T9em6cyHBLkH/YAZuKqd8hRkKhSfCGIcP2KUY0EPxndzANBmNllzWPwak+bheSw==}
     dependencies:
       any-promise: 1.3.0
+
+  /three@0.136.0:
+    resolution: {integrity: sha512-+fEMX7nYLz2ZesVP/dyifli5Jf8gR3XPAnFJveQ80aMhibFduzrADnjMbARXh8+W9qLK7rshJCjAIL/6cDxC+A==}
+    dev: true
 
   /three@0.156.1:
     resolution: {integrity: sha512-kP7H0FK9d/k6t/XvQ9FO6i+QrePoDcNhwl0I02+wmUJRNSLCUIDMcfObnzQvxb37/0Uc9TDT0T1HgsRRrO6SYQ==}

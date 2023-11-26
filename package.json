@@ -26,6 +26,7 @@
     "@vercel/analytics": "^1.1.1",
     "autoprefixer": "^10.4.16",
     "fast-average-color-node": "^2.6.0",
+    "headview3d": "^2.2.2",
     "lucia": "^2.7.4",
     "numerable": "^0.3.15",
     "postcss": "^8.4.31",

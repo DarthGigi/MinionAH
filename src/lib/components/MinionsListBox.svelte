@@ -31,7 +31,7 @@
     <Button builders={[builder]} variant="outline" role="combobox" aria-expanded={open} class="relative w-40 cursor-default justify-between rounded-md border-none bg-neutral-700 py-1.5 pl-3 text-left text-neutral-200 shadow-sm ring-1 ring-inset ring-transparent hover:bg-neutral-600 hover:text-neutral-200 focus:outline-none focus:ring-2 focus:ring-neutral-500 sm:text-sm sm:leading-6 md:w-44">
       <div class="flex">
         {#if selectedTexture !== null}
-          <img loading="lazy" src={`https://mc-heads.net/head/${selectedTexture}`} class="pointer-events-none mr-2 h-6 w-6" alt={selectedValue} />
+          <img loading="lazy" src={`data:image/png;base64,${selectedTexture}`} class="mr-2 h-6 w-6" alt={selectedValue} />
         {/if}
         <span class:capitalize={selectedValue !== "Select a minion"} class:font-normal={selectedValue === "Select a minion"}>
           {#if selectedValue !== "Select a minion"}
@@ -59,7 +59,7 @@
             class="text-neutral-200 aria-selected:bg-neutral-800 aria-selected:text-neutral-300"
           >
             <Check class={cn("mr-2 h-4 w-4", value !== minionType.generator && "text-transparent")} />
-            <img src={`https://mc-heads.net/head/${minionType.texture}`} class="mr-2 h-6 w-6" alt={minionType.generator} />
+            <img src={`data:image/png;base64,${minionType.texture}`} class="mr-2 h-6 w-6" alt={minionType.generator} />
             <span class="capitalize">
               {minionType.generator.replace(/_/g, " ").toLowerCase().charAt(0).toUpperCase() + minionType.generator.slice(1).toLowerCase().replace(/_/g, " ")}
             </span>
