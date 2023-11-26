@@ -19,7 +19,7 @@
         <DropdownMenu.Root bind:open={menuDropdownOpen}>
           <DropdownMenu.Trigger class="flex items-center gap-2 rounded-md px-4 py-2 hover:bg-neutral-900">
             <img class="pointer-events-none block h-8 w-auto transition-transform duration-300 ease-in-out" src="/assets/images/favicons/favicon.png" alt="Minion AH" class:rotate-45={menuDropdownOpen} />
-            <h1>Minion AH</h1>
+            <h1>MinionAH</h1>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">
               <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
             </svg>
