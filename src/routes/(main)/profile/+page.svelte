@@ -14,7 +14,6 @@
   import { Switch } from "$lib/components/ui/switch";
   import { formatNumber } from "$lib/utilities";
   import type { Minion, MinionSeller as Seller, User } from "@prisma/client";
-  import type { SkinViewer } from "skinview3d";
   import * as skinview3d from "skinview3d";
   import type { PageData } from "./$types";
 
@@ -34,38 +33,37 @@
 
   let canvasIsLoading = true;
 
-  $: minecraftAvatarContainer,
-    onMount(async () => {
-      const minecraftAvatarContainerDimensions = minecraftAvatarContainer.getBoundingClientRect();
-      const viewer = new skinview3d.SkinViewer({
-        canvas: minecraftAvatar,
-        width: minecraftAvatarContainerDimensions.width,
-        height: minecraftAvatarContainerDimensions.height,
-        skin: `data:image/png;base64,${user.skin}`,
-        [user.cape ? "cape" : ""]: `data:image/png;base64,${user.cape}`,
-        enableControls: true,
-        animation: new skinview3d.IdleAnimation(),
-        nameTag: user.username,
-        zoom: 0.7,
-        panorama: "/assets/images/panorama.png",
-        background: "#050505"
-      });
-      // disable zooming
-      viewer.controls.enableZoom = false;
-      // enable damping (smooth dragging)
-      viewer.controls.enableDamping = true;
-      // disable rotation on the y axis
-      viewer.controls.maxPolarAngle = -Math.PI / 2; // upper boundary for the polar angle
-      viewer.controls.minPolarAngle = Math.PI / 2; // lower boundary for the polar angle
-
-      canvasIsLoading = false;
+  onMount(async () => {
+    const minecraftAvatarContainerDimensions = minecraftAvatarContainer.getBoundingClientRect();
+    const viewer = new skinview3d.SkinViewer({
+      canvas: minecraftAvatar,
+      width: minecraftAvatarContainerDimensions.width,
+      height: minecraftAvatarContainerDimensions.height,
+      skin: `data:image/png;base64,${user.skin}`,
+      [user.cape ? "cape" : ""]: `data:image/png;base64,${user.cape}`,
+      enableControls: true,
+      animation: new skinview3d.IdleAnimation(),
+      nameTag: user.username,
+      zoom: 0.7,
+      panorama: "/assets/images/panorama.png",
+      background: "#050505"
     });
+    // disable zooming
+    viewer.controls.enableZoom = false;
+    // enable damping (smooth dragging)
+    viewer.controls.enableDamping = true;
+    // disable rotation on the y axis
+    viewer.controls.maxPolarAngle = -Math.PI / 2; // upper boundary for the polar angle
+    viewer.controls.minPolarAngle = Math.PI / 2; // lower boundary for the polar angle
+
+    canvasIsLoading = false;
+  });
 </script>
 
 <div class="mx-auto flex max-w-xl flex-col justify-center gap-8 self-center px-2 md:px-0">
   <div class="w-full pt-8">
     <div class="relative mt-5">
-      <div bind:this={minecraftAvatarContainer} id="minecraftAvatarContainer" class="relative">
+      <div bind:this={minecraftAvatarContainer} class="relative">
         <MinionCopyButton class="absolute right-3 top-3 z-30" on:click={() => navigator.clipboard.writeText(`${window.location.protocol}/${window.location.host}/${user.username}/`)} />
         {#if canvasIsLoading}
           <div class="absolute h-full w-full animate-pulse rounded-lg bg-[#050505]" />
@@ -179,7 +177,7 @@
             </div>
           </Card.Content>
           <Card.Footer class="justify-end">
-            <button type="submit" class="ml-3 inline-flex justify-center rounded-md border border-transparent bg-neutral-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-2" on:click={() => (viewer.animation = new skinview3d.FlyingAnimation())}>Create</button>
+            <button type="submit" class="ml-3 inline-flex justify-center rounded-md border border-transparent bg-neutral-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-2">Create</button>
           </Card.Footer>
         </form>
       </Card.Root>
