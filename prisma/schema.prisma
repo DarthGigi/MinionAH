@@ -5,18 +5,20 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
-  url      = env("DATABASE_URL")
+  provider  = "mongodb"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_DATABASE_URL")
 }
 
 model User {
   id           String         @id @map("_id")
   auth_session Session[]
-  key     Key[]
+  key          Key[]
   loggedInAt   DateTime       @default(now()) @updatedAt
   username     String         @unique
   avatar       String
+  skin         String
+  cape         String?
   banner       String?
   accent_color Int?
   locale       String?
@@ -70,13 +72,13 @@ model MinionSeller {
 }
 
 model Chat {
-  id       String    @id @default(cuid()) @map("_id")
-  user1_id String
-  user2_id String
-  user1    User      @relation("user1", fields: [user1_id], references: [id])
-  user2    User      @relation("user2", fields: [user2_id], references: [id])
-  messages Message[]
-  createdAt DateTime @default(now())
+  id        String    @id @default(cuid()) @map("_id")
+  user1_id  String
+  user2_id  String
+  user1     User      @relation("user1", fields: [user1_id], references: [id])
+  user2     User      @relation("user2", fields: [user2_id], references: [id])
+  messages  Message[]
+  createdAt DateTime  @default(now())
   user1Read Boolean   @default(false)
   user2Read Boolean   @default(false)
 }
