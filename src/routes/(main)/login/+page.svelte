@@ -10,7 +10,7 @@
     </svg>
   </a>
 </div>
-<div class="mx-auto max-w-xl select-none py-8 text-neutral-700">
+<div class="mx-auto max-w-xl select-none px-4 py-8 text-neutral-700 md:px-0">
   <p>
     MinionAH will never try to steal, sell, or otherwise misuse your Microsoft and/or Minecraft account information. We use the information provided by Microsoft to verify your Minecraft identity and to provide you with a secure, personalized experience.
     <br />
