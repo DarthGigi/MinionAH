@@ -26,7 +26,7 @@ async function getMinions(take: number = 18, skip?: number, orderBy: object = [{
           banner: true,
           id: true,
           locale: true,
-          loggedInAt: false,
+          loggedInAt: true,
           username: true
         }
       }
