@@ -69,12 +69,19 @@
 }
 
 @layer base {
-  * {
+  p * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@font-face {
+  font-family: "Minecraft";
+  src:
+    url("https://minionah.com/assets/fonts/minecraft.woff2") format("woff2"),
+    url("https://beta.minionah.com/assets/fonts/minecraft.woff2") format("woff2");
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */

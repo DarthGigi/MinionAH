@@ -14,7 +14,10 @@
   import { Switch } from "$lib/components/ui/switch";
   import { formatNumber } from "$lib/utilities";
   import type { Minion, MinionSeller as Seller, User } from "@prisma/client";
+  import * as skinview3d from "skinview3d";
   import type { PageData } from "./$types";
+
+  import { onMount } from "svelte";
 
   export let data: PageData;
   $: user = data.user as User;
@@ -24,27 +27,51 @@
 
   let showDelete = false;
   let minionToDelete: Seller & { minion: Minion } & { user: User };
+
+  let minecraftAvatar: HTMLCanvasElement;
+  let minecraftAvatarContainer: HTMLDivElement;
+
+  let canvasIsLoading = true;
+
+  onMount(async () => {
+    const minecraftAvatarContainerDimensions = minecraftAvatarContainer.getBoundingClientRect();
+    const viewer = new skinview3d.SkinViewer({
+      canvas: minecraftAvatar,
+      width: minecraftAvatarContainerDimensions.width,
+      height: minecraftAvatarContainerDimensions.height,
+      skin: `data:image/png;base64,${user.skin}`,
+      [user.cape ? "cape" : ""]: `data:image/png;base64,${user.cape}`,
+      enableControls: true,
+      animation: new skinview3d.IdleAnimation(),
+      nameTag: user.username,
+      zoom: 0.7,
+      panorama: "/assets/images/panorama.png",
+      background: "#050505"
+    });
+    // disable zooming
+    viewer.controls.enableZoom = false;
+    // enable damping (smooth dragging)
+    viewer.controls.enableDamping = true;
+    // disable rotation on the y axis
+    viewer.controls.maxPolarAngle = -Math.PI / 2; // upper boundary for the polar angle
+    viewer.controls.minPolarAngle = Math.PI / 2; // lower boundary for the polar angle
+
+    canvasIsLoading = false;
+  });
 </script>
 
 <div class="mx-auto flex max-w-xl flex-col justify-center gap-8 self-center px-2 md:px-0">
   <div class="w-full pt-8">
-    <dl class="relative mt-5">
-      <MinionCopyButton class="absolute right-3 top-3" on:click={() => navigator.clipboard.writeText(`${window.location.protocol}/${window.location.host}/${user.username}/`)} />
-
-      <div class="group w-full rounded-lg border-2 border-neutral-700 border-opacity-40 bg-[#050505] bg-cover bg-center bg-no-repeat px-4 py-5 shadow sm:p-6" style="background-image: url('https://cdn.discordapp.com/banners/{user.id}/{user.banner}?size=1024'); background-color: {user.accent_color ? '#' + user.accent_color : '#050505'};">
-        <dt class="hidden truncate text-sm font-medium text-neutral-400">Profile</dt>
-        <dd class="mt-1 font-semibold tracking-tight text-neutral-300">
-          <Avatar.Root class="inline-block h-10 w-10 rounded-full">
-            <Avatar.Image class="pointer-events-none" src="https://cdn.discordapp.com/avatars/{user.id}/{user.avatar}?size=1024" alt={user.username} />
-            <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-700">{user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
-          </Avatar.Root>
-          <br />
-          <span class="text-3xl">{user.username}</span>
-          <br />
-          <span class="text-sm font-normal text-neutral-400 opacity-0 transition-opacity duration-300 group-hover:opacity-100">Not you? <a href="/logout" class="underline">Logout</a></span>
-        </dd>
+    <div class="relative mt-5">
+      <div bind:this={minecraftAvatarContainer} class="relative">
+        <MinionCopyButton class="absolute right-3 top-3 z-30" on:click={() => navigator.clipboard.writeText(`${window.location.protocol}/${window.location.host}/${user.username}/`)} />
+        {#if canvasIsLoading}
+          <div class="absolute h-full w-full animate-pulse rounded-lg bg-[#050505]" />
+        {/if}
+        <canvas bind:this={minecraftAvatar} class="relative !h-full !w-full overflow-hidden rounded-lg bg-[#050505] transition-all duration-[3s]" class:opacity-100={!canvasIsLoading} class:opacity-0={canvasIsLoading} />
+        <div class="pointer-events-none absolute inset-0 h-full rounded-lg border-2 border-black border-opacity-50" />
       </div>
-    </dl>
+    </div>
   </div>
   {#await data.streamed.userMinions then userMinions}
     {#if userMinions.length < 9}
@@ -76,6 +103,7 @@
                     id="amount"
                     max="64"
                     min="1"
+                    required
                     class="w-40 ring-offset-0 focus-visible:border-neutral-500 focus-visible:ring-1 focus-visible:ring-neutral-500 focus-visible:ring-offset-0 md:w-44"
                     placeholder="1"
                     on:input={({ currentTarget }) => {
@@ -111,6 +139,7 @@
                     id="formattedPrice"
                     min="1"
                     max="11"
+                    required
                     minlength={1}
                     maxlength={11}
                     class="w-40 ring-offset-0 focus-visible:border-neutral-500 focus-visible:ring-1 focus-visible:ring-neutral-500 focus-visible:ring-offset-0 md:w-44"
@@ -162,7 +191,7 @@
   {/await}
 </div>
 
-<div class="py-8">
+<div class="py-8 max-md:pb-20">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
     <ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {#await data.streamed.userMinions}
@@ -250,7 +279,7 @@
     <AlertDialog.Footer>
       <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
       <form action="?/deleteMinion" use:enhance method="POST">
-        <input type="hidden" name="minion" value={minionToDelete?.id} />
+        <input required type="hidden" name="minion" value={minionToDelete?.id} />
         <AlertDialog.Action type="submit">Delete</AlertDialog.Action>
       </form>
     </AlertDialog.Footer>

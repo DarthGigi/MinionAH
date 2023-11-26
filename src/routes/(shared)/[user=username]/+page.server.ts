@@ -37,25 +37,13 @@ export const load = (async ({ params, fetch }) => {
     }
   });
 
-  let color;
-  const avatar = await fetch(`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}?size=1024`);
-  if (avatar.status === 404) {
-    color = await fetch("/api/getColor", {
-      headers: {
-        imageUrl: `https://cdn.discordapp.com/embed/avatars/${Number(user.id) % 6}.png`
-      }
-    }).then((res) => res.text());
-  } else {
-    color = await fetch("/api/getColor", {
-      headers: {
-        imageUrl: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}?size=1024`
-      }
-    }).then((res) => res.text());
-  }
-
   return {
     userprofile: user,
-    color,
+    color: await fetch("/api/getColor", {
+      headers: {
+        imageUrl: `data:image/png;base64,${user.avatar}`
+      }
+    }).then((res) => res.text()),
     streamed: {
       minions
     }

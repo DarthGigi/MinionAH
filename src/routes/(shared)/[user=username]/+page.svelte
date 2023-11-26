@@ -76,16 +76,15 @@
       {/if}
     </button>
     <div class="absolute right-12 top-3 flex h-8 scale-0 items-center justify-center overflow-hidden rounded-md border border-neutral-700 bg-popover px-2 py-1 text-xs opacity-0 shadow-md transition-all duration-300" class:!scale-100={copied} class:!opacity-100={copied}>Copied Link</div>
-    <a href="https://discord.com/users/{userprofile.id}" class="relative mx-20 my-5 flex flex-col items-center rounded py-5 transition-all duration-300 hover:scale-110 hover:bg-neutral-600" target="_blank" rel="noopener">
-      <Avatar.Root class="pointer-events-none mb-3 h-24 w-24 rounded-full shadow-lg">
-        <Avatar.Image src="https://cdn.discordapp.com/avatars/{userprofile.id}/{userprofile.avatar}?size=1024" alt={userprofile.username} />
+    <a href={`/${userprofile.username}/chat`} class="relative mx-20 my-5 flex flex-col items-center rounded py-5 transition-all duration-300 hover:scale-110 hover:bg-neutral-600">
+      <Avatar.Root class="mb-3 h-24 w-24 rounded-full bg-neutral-700 shadow-lg">
+        <Avatar.Image class="pointer-events-none h-full w-full p-2" src={`data:image/png;base64,${userprofile.avatar}`} alt={userprofile.username} />
         <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-700">{userprofile.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
       </Avatar.Root>
       <h5 class="mb-1 text-xl font-medium text-white">{userprofile.username}</h5>
-      <span class="text-sm text-neutral-400">{userprofile.id}</span>
     </a>
   </div>
-  <div class="py-8">
+  <div class="py-8 max-md:pb-20">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {#await minions}

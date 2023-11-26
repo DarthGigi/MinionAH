@@ -1,5 +1,6 @@
 import type { ParamMatcher } from "@sveltejs/kit";
-const regex = /^(?!.*\.\.)[a-z0-9_.]{2,32}$/;
+
+const regex = /^[a-zA-Z0-9_]{3,16}$/;
 
 export const match = ((param) => {
   return regex.test(param);
