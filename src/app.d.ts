@@ -24,6 +24,8 @@ declare global {
       username: string;
       loggedInAt: Date;
       avatar: string;
+      skin: string;
+      cape: string?;
     };
     type DatabaseSessionAttributes = {};
   }
