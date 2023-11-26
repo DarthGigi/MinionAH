@@ -69,7 +69,7 @@
 }
 
 @layer base {
-  * {
+  p * {
     @apply border-border;
   }
   body {
@@ -79,7 +79,9 @@
 
 @font-face {
   font-family: "Minecraft";
-  src: url("/assets/fonts/minecraft.woff2") format("woff2");
+  src:
+    url("https://minionah.com/assets/fonts/minecraft.woff2") format("woff2"),
+    url("https://beta.minionah.com/assets/fonts/minecraft.woff2") format("woff2");
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
