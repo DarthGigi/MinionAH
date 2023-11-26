@@ -12,7 +12,7 @@
   let menuDropdownOpen = false;
 </script>
 
-<nav class="bg-neutral-800">
+<nav class="bg-neutral-800 max-md:fixed max-md:bottom-0 max-md:z-50 max-md:w-full">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
     <div class="flex h-16 flex-row-reverse justify-between md:flex-row">
       <div class="flex flex-shrink-0 items-center">
