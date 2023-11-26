@@ -77,6 +77,11 @@
   }
 }
 
+@font-face {
+  font-family: "Minecraft";
+  src: url("/assets/fonts/minecraft.woff2") format("woff2");
+}
+
 /* Hide scrollbar for Chrome, Safari and Opera */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
