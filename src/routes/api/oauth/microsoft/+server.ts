@@ -58,6 +58,33 @@ export const GET: RequestHandler = async ({ cookies, url, locals }) => {
         throw new Error("Failed to get avatar");
       }
 
+      // get the active skin
+      const skin = minecraftUser.skins.find((skin) => skin.state === "ACTIVE");
+      if (!skin) throw new Error("Failed to get skin");
+      let skinTexture: string;
+
+      try {
+        const response = await fetch(skin.url);
+        const skinBuffer = await response.arrayBuffer();
+        skinTexture = Buffer.from(skinBuffer).toString("base64");
+      } catch (e) {
+        console.log(e);
+        throw new Error("Failed to get skin texture");
+      }
+
+      // get the active cape
+      const cape = minecraftUser.capes.find((cape) => cape.state === "ACTIVE");
+      let capeTexture: string | undefined;
+      if (cape) {
+        try {
+          const response = await fetch(cape.url);
+          const capeBuffer = await response.arrayBuffer();
+          capeTexture = Buffer.from(capeBuffer).toString("base64");
+        } catch (e) {
+          console.log(e);
+        }
+      }
+
       if (existingUser) {
         // update user
         await prisma.user.update({
@@ -67,6 +94,8 @@ export const GET: RequestHandler = async ({ cookies, url, locals }) => {
           data: {
             username: minecraftUser.name,
             avatar: avatar,
+            skin: skinTexture,
+            cape: capeTexture ? capeTexture : null, // remove cape if it's not set
             loggedInAt: new Date()
           }
         });
@@ -81,6 +110,8 @@ export const GET: RequestHandler = async ({ cookies, url, locals }) => {
           id: minecraftUser.id,
           username: minecraftUser.name,
           avatar: avatar,
+          skin: skinTexture,
+          cape: capeTexture ? capeTexture : null, // remove cape if it's not set
           loggedInAt: new Date()
         }
       });
