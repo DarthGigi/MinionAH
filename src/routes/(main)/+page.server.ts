@@ -82,7 +82,7 @@ export const load = (async ({ locals }) => {
               banner: true,
               id: true,
               locale: true,
-              loggedInAt: false,
+              loggedInAt: true,
               username: true
             }
           }

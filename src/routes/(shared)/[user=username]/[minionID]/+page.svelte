@@ -55,16 +55,15 @@
       }}
     />
 
-    <a href="https://discord.com/users/{minion.user.id}" target="_blank" rel="noopener" class="relative z-10 mx-20 mt-5 flex flex-col items-center rounded py-5 transition-all duration-300 hover:scale-110 hover:bg-neutral-600">
-      <Avatar.Root class="mb-3 h-24 w-24 rounded-full shadow-lg">
-        <Avatar.Image class="pointer-events-none" src="https://cdn.discordapp.com/avatars/{minion.user.id}/{minion.user.avatar}?size=1024" alt={minion.user.username} />
+    <a href={`/${minion.user.username}/chat`} class="relative z-10 mx-20 mt-5 flex flex-col items-center rounded py-5 transition-all duration-300 hover:scale-110 hover:bg-neutral-600">
+      <Avatar.Root class="mb-3 h-24 w-24 rounded-full bg-neutral-700 shadow-lg">
+        <Avatar.Image class="pointer-events-none h-full w-full p-2" src={`data:image/png;base64,${minion.user.avatar}`} alt={minion.user.username} />
         <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-800">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
       </Avatar.Root>
       <h5 class="mb-1 text-xl font-medium text-white">{minion.user.username}</h5>
-      <span class="text-sm text-neutral-400">{minion.user.id}</span>
     </a>
 
-    <ul>
+    <ul class="mt-2">
       <Card {minion} />
     </ul>
   </div>

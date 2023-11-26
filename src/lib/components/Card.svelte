@@ -30,15 +30,15 @@
       <HoverCard.Root openDelay={150} closeDelay={150}>
         <HoverCard.Trigger href={`https://hypixel-skyblock.fandom.com/wiki/${minion.minion.name.replace(/ [IVX]+$/, "").replace(/ /g, "_")}`} target="_blank" rel="noopener" class="my-2 flex flex-col items-center truncate rounded p-1 transition-all duration-500">
           <Avatar.Root class="h-12 w-12 flex-shrink-0 rounded-full bg-neutral-700">
-            <Avatar.Image class="pointer-events-none object-cover p-1" src={`https://mc-heads.net/head/${minion.minion.texture}`} alt={minion.minion.name} />
-            <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-700">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
+            <Avatar.Image class="pointer-events-none h-full w-full p-1" src={`https://mc-heads.net/head/${minion.minion.texture}`} alt={minion.minion.name} />
+            <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-800">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
           </Avatar.Root>
           <h3 class="truncate text-sm font-medium text-white">{minion.minion.name.replace(/ [IVX]+$/, "")}</h3>
         </HoverCard.Trigger>
         <HoverCard.Content class="mt-0 -translate-y-44 border-neutral-700 bg-neutral-900">
           <div class="flex justify-center gap-x-4">
             <Avatar.Root class="h-12 w-12 flex-shrink-0 rounded-full bg-neutral-700">
-              <Avatar.Image class="pointer-events-none object-cover p-1" src={`https://mc-heads.net/head/${minion.minion.texture}`} alt={minion.minion.name} />
+              <Avatar.Image class="pointer-events-none h-full w-full p-1" src={`https://mc-heads.net/head/${minion.minion.texture}`} alt={minion.minion.name} />
               <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-800">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
             </Avatar.Root>
             <div class="space-y-1">
@@ -60,22 +60,32 @@
       </HoverCard.Root>
       {#if isHome}
         <HoverCard.Root openDelay={150} closeDelay={150}>
-          <HoverCard.Trigger href={`/${minion.user.username}`} class="my-2 flex min-w-[4.75rem] max-w-[8rem] flex-col items-center truncate p-1">
-            <Avatar.Root class="h-12 w-12">
-              <Avatar.Image class="pointer-events-none  flex-shrink-0 rounded-full bg-neutral-700 object-cover" src={`https://cdn.discordapp.com/avatars/${minion.user.id}/${minion.user.avatar}.png?size=64`} alt={`${minion.user.username}'s avatar`} />
-              <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-800">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
+          <HoverCard.Trigger href={`/${minion.user.username}`} class="my-2 flex flex-col items-center truncate rounded p-1 transition-all duration-500">
+            <Avatar.Root class="h-12 w-12 flex-shrink-0 rounded-full bg-neutral-700">
+              <Avatar.Image class="pointer-events-none h-full w-full p-1" src={`data:image/png;base64,${minion.user.avatar}`} alt={`${minion.user.username}'s avatar`} />
+              <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-700">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
             </Avatar.Root>
-            <h3 class="max-w-[8rem] truncate text-sm font-medium text-white">{minion.user.username}</h3>
+            <h3 class="truncate text-sm font-medium text-white">{minion.user.username}</h3>
           </HoverCard.Trigger>
           <HoverCard.Content class="mt-0 -translate-y-44 border-neutral-700 bg-neutral-900">
-            <div class="flex w-full justify-center gap-x-4 truncate">
-              <Avatar.Root class="h-12 w-12">
-                <Avatar.Image class="pointer-events-none" src={`https://cdn.discordapp.com/avatars/${minion.user.id}/${minion.user.avatar}.png?size=64`} alt={`${minion.user.username}'s avatar`} />
+            <div class="flex justify-center gap-x-4">
+              <Avatar.Root class="h-12 w-12 flex-shrink-0 rounded-full bg-neutral-700">
+                <Avatar.Image class="pointer-events-none h-full w-full p-1" src={`data:image/png;base64,${minion.user.avatar}`} alt={`${minion.user.username}'s avatar`} />
                 <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-800">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
               </Avatar.Root>
               <div class="space-y-1">
-                <h4 class="max-w-[8rem] truncate text-sm font-semibold">@{minion.user.username}</h4>
-                <p class="text-xs text-muted-foreground">{minion.user.id}</p>
+                <h4 class="text-sm font-semibold">
+                  {minion.user.username}
+                  <p class="text-xs text-muted-foreground">
+                    Last online: {new Date(minion.user.loggedInAt).toLocaleString(window.navigator.language, {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                      hour: "numeric",
+                      minute: "numeric"
+                    })}
+                  </p>
+                </h4>
               </div>
             </div>
           </HoverCard.Content>
@@ -146,12 +156,3 @@
     {/if}
   </div>
 </li>
-
-<!-- <style>
-  .priceContainer {
-    display: grid;
-  }
-  .priceContainer > * {
-    grid-area: 1 / 1;
-  }
-</style> -->
