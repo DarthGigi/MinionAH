@@ -10,7 +10,7 @@
   let chatToDelete: string | null = null;
 </script>
 
-<div class="flex flex-col items-center justify-center">
+<div class="flex flex-col items-center justify-center max-md:pb-20">
   {#await data.streamed.chats then chats}
     {#each chats as chat}
       {@const chatUser = chat.user1_id === data.user.id ? chat.user2 : chat.user1}

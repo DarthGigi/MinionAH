@@ -84,7 +84,7 @@
       <h5 class="mb-1 text-xl font-medium text-white">{userprofile.username}</h5>
     </a>
   </div>
-  <div class="py-8">
+  <div class="py-8 max-md:pb-20">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {#await minions}
