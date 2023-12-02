@@ -2,7 +2,7 @@
   import { page } from "$app/stores";
   import * as Tooltip from "$lib/components/ui/tooltip";
   import type { Seller } from "$lib/types";
-  import { SvelteComponent, createEventDispatcher, onMount } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
   import { fade } from "svelte/transition";
   import MinionCopyButton from "./MinionCopyButton.svelte";
   import { formatNumber } from "$lib/utilities";
@@ -25,67 +25,92 @@
       minion: minionID
     });
   }
+  let userViewer: headview3d.SkinViewer;
+  let minionViewer: headview3d.SkinViewer;
 
-  onMount(async () => {
-    if (!userCanvas) return;
-    if (!minion.user.skin) return;
-    const userCanvasContainerDimensions = (document.getElementById("userCanvasContainer") as HTMLDivElement).getBoundingClientRect();
-    const userViewer = new headview3d.SkinViewer({
-      canvas: userCanvas,
-      width: userCanvasContainerDimensions.width,
-      height: userCanvasContainerDimensions.height,
-      skin: `data:image/png;base64,${minion.user.skin}`,
-      zoom: 2.5,
-      background: "#404040"
-    });
+  $: minionCanvas, createMinionViewer();
+  function createMinionViewer() {
+    if (minionCanvas) {
+      if (!minion.minion.skin) return;
+      const minionCanvasContainerDimensions = (document.getElementById(`minionCanvasContainer_${minion.id}`) as HTMLDivElement).getBoundingClientRect();
+      minionViewer = new headview3d.SkinViewer({
+        canvas: minionCanvas,
+        width: minionCanvasContainerDimensions.width,
+        height: minionCanvasContainerDimensions.height,
+        skin: `data:image/png;base64,${minion.minion.skin}`,
+        zoom: 2.5,
+        background: "#404040"
+      });
+      minionViewer.resetSkin();
+      minionViewer.animations.add(headview3d.RotatingAnimation).speed = 0.5;
+      let control = headview3d.createOrbitControls(minionViewer);
+      control.enableRotate = true;
+      control.enableZoom = false;
+      control.enablePan = false;
+    } else {
+      return;
+    }
+  }
+  $: userCanvas, createUserViewer();
+  function createUserViewer() {
+    if (userCanvas) {
+      if (!minion.user.skin) return;
+      const userCanvasContainerDimensions = (document.getElementById(`userCanvasContainer_${minion.id}`) as HTMLDivElement).getBoundingClientRect();
+      userViewer = new headview3d.SkinViewer({
+        canvas: userCanvas,
+        width: userCanvasContainerDimensions.width,
+        height: userCanvasContainerDimensions.height,
+        skin: `data:image/png;base64,${minion.user.skin}`,
+        zoom: 2.5,
+        background: "#404040"
+      });
 
-    userViewer.animations.add(headview3d.RotatingAnimation).speed = 0.5;
+      userViewer.animations.add(headview3d.RotatingAnimation).speed = 0.5;
 
-    let control = headview3d.createOrbitControls(userViewer);
-    control.enableRotate = true;
-    control.enableZoom = false;
-    control.enablePan = false;
-  });
+      let control = headview3d.createOrbitControls(userViewer);
+      control.enableRotate = true;
+      control.enableZoom = false;
+      control.enablePan = false;
+    } else {
+      return;
+    }
+  }
 
-  onMount(async () => {
-    if (!minionCanvas) return;
-    if (!minion.minion.skin) return;
-    const minionCanvasContainerDimensions = (document.getElementById("minionCanvasContainer") as HTMLDivElement).getBoundingClientRect();
-    const minionViewer = new headview3d.SkinViewer({
-      canvas: minionCanvas,
-      width: minionCanvasContainerDimensions.width,
-      height: minionCanvasContainerDimensions.height,
-      // skin: `data:image/png;base64,${minion.minion.skin}`,
-      zoom: 2.5,
-      background: "#404040"
-    });
-    minionViewer.resetSkin();
-    minionViewer.loadSkin(`data:image/png;base64,${minion.minion.skin}`);
-    minionViewer.animations.add(headview3d.RotatingAnimation).speed = 0.5;
-    let control = headview3d.createOrbitControls(minionViewer);
-    control.enableRotate = true;
-    control.enableZoom = false;
-    control.enablePan = false;
-  });
+  function destroyViewer(viewer: headview3d.SkinViewer) {
+    if (!viewer) return;
+    setTimeout(() => {
+      viewer.dispose();
+      viewer.renderer.forceContextLoss();
+    }, 300);
+  }
+
+  let minionisOpen = false;
+  let userisOpen = false;
+
+  $: if (!minionisOpen && minionViewer) {
+    destroyViewer(minionViewer);
+  }
+  $: if (!userisOpen && userViewer) {
+    destroyViewer(userViewer);
+  }
 </script>
 
 <li in:fade|global={{ delay: 0 }}>
   <div class="user-select-none relative list-item divide-y divide-neutral-700 rounded-lg bg-neutral-800 transition-all duration-300" class:group={isHome} class:hover:bg-neutral-900={isHome} on:mouseover={() => (hovering = true)} on:mouseout={() => (hovering = false)} on:blur={() => (hovering = false)} on:focus={() => (hovering = true)} role="listitem">
     <div class="flex h-full w-full items-center justify-center gap-x-6 px-4">
-      <HoverCard.Root openDelay={150} closeDelay={150}>
-        <!--         <HoverCard.Trigger href={`https://hypixel-skyblock.fandom.com/wiki/${minion.minion.name.replace(/ [IVX]+$/, "").replace(/ /g, "_")}`} target="_blank" rel="noopener" class="my-2 flex flex-col items-center truncate rounded p-1 transition-all duration-500"> -->
-        <HoverCard.Trigger class="my-2 flex cursor-move flex-col items-center truncate rounded p-1 transition-all duration-500">
-          <Avatar.Root id="minionCanvasContainer" class="h-12 w-12 flex-shrink-0 rounded-full ">
-            <canvas bind:this={minionCanvas} class="!h-full !w-full rounded-full" />
-            <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-800">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
+      <HoverCard.Root openDelay={150} closeDelay={150} bind:open={minionisOpen}>
+        <HoverCard.Trigger href={`https://hypixel-skyblock.fandom.com/wiki/${minion.minion.name.replace(/ [IVX]+$/, "").replace(/ /g, "_")}`} target="_blank" rel="noopener" class="my-2 flex flex-col items-center truncate rounded p-1 transition-all duration-500">
+          <Avatar.Root class="h-12 w-12 flex-shrink-0 rounded-full ">
+            <Avatar.Image class="pointer-events-none h-full w-full bg-neutral-700 p-1" src={`data:image/png;base64,${minion.minion.texture}`} alt={minion.minion.name} />
+            <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-700">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
           </Avatar.Root>
           <h3 class="truncate text-sm font-medium text-white">{minion.minion.name.replace(/ [IVX]+$/, "")}</h3>
         </HoverCard.Trigger>
         <HoverCard.Content class="mt-0 -translate-y-44 border-neutral-700 bg-neutral-900">
           <div class="flex justify-center gap-x-4">
-            <Avatar.Root class="h-12 w-12 flex-shrink-0 rounded-full bg-neutral-700">
-              <Avatar.Image class="pointer-events-none h-full w-full p-1" src={`data:image/png;base64,${minion.minion.texture}`} alt={minion.minion.name} />
-              <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-800">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
+            <Avatar.Root id={`minionCanvasContainer_${minion.id}`} class="h-12 w-12 flex-shrink-0 rounded-full bg-neutral-700">
+              <canvas bind:this={minionCanvas} class="!h-full !w-full cursor-move rounded-full" />
+              <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-700">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
             </Avatar.Root>
             <div class="space-y-1">
               <h4 class="text-sm font-semibold">
@@ -105,19 +130,19 @@
         </HoverCard.Content>
       </HoverCard.Root>
       {#if isHome}
-        <HoverCard.Root openDelay={150} closeDelay={150}>
-          <HoverCard.Trigger class="my-2 flex cursor-move flex-col items-center truncate rounded p-1 transition-all duration-500">
-            <Avatar.Root id="userCanvasContainer" class="h-12 w-12 flex-shrink-0 rounded-full ">
-              <canvas bind:this={userCanvas} class="!h-full !w-full rounded-full" />
-              <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-800">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
+        <HoverCard.Root openDelay={150} closeDelay={150} bind:open={userisOpen}>
+          <HoverCard.Trigger class="my-2 flex flex-col items-center truncate rounded p-1 transition-all duration-500">
+            <Avatar.Root class="h-12 w-12 flex-shrink-0 rounded-full ">
+              <Avatar.Image class="pointer-events-none h-full w-full bg-neutral-700 p-1" src={`data:image/png;base64,${minion.user.avatar}`} alt={`${minion.user.username}'s avatar`} />
+              <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-700">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
             </Avatar.Root>
             <h3 class="truncate text-sm font-medium text-white">{minion.user.username}</h3>
           </HoverCard.Trigger>
           <HoverCard.Content class="mt-0 -translate-y-44 border-neutral-700 bg-neutral-900">
             <div class="flex justify-center gap-x-4">
-              <Avatar.Root class="h-12 w-12 flex-shrink-0 rounded-full bg-neutral-700">
-                <Avatar.Image class="pointer-events-none h-full w-full p-1" src={`data:image/png;base64,${minion.user.avatar}`} alt={`${minion.user.username}'s avatar`} />
-                <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-800">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
+              <Avatar.Root id={`userCanvasContainer_${minion.id}`} class="h-12 w-12 flex-shrink-0 rounded-full bg-neutral-700">
+                <canvas bind:this={userCanvas} class="!h-full !w-full cursor-move rounded-full" />
+                <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-700">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
               </Avatar.Root>
               <div class="space-y-1">
                 <h4 class="text-sm font-semibold">
@@ -189,7 +214,7 @@
         {isHome}
         on:click={() => {
           // copy url to clipboard
-          navigator.clipboard.writeText(`${window.location.protocol}//${window.location.host}/${minion.user.username}/${minion.id}/`);
+          navigator.clipboard.writeText(`${window.location.protocol}/${window.location.host}/${minion.user.username}/${minion.id}/`);
         }}
       />
 
