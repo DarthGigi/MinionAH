@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2023-12-04
+
+### Changed
+
+- Changed the OAuth2 provider from Discord to Microsoft.
+- Changed the view of the profile page
+  - Redesigned the profile view.
+    - Added a 3D model view of the user's Minecraft avatar.
+- Changed the hover view of the minion card.
+  - Added a 3D head model view of the minion.
+  - Added a 3D head model view of the user's Minecraft avatar.
+- Changed the navigation bar.
+  - Placed the navigation bar on the bottom of the screen on mobile devices.
+
 ## [1.0.3] - 2023-11-18
 
 ### Changed
