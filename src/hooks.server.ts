@@ -27,5 +27,22 @@ export const handle: Handle = async ({ event, resolve }) => {
 
   event.locals.auth = auth.handleRequest(event);
 
+  const session = await event.locals.auth.validate();
+
+  if (session) {
+    event.locals.session = session;
+    const user = await prisma.user.findUnique({
+      where: {
+        id: session.user.userId
+      }
+    });
+    event.locals.session = session;
+    user ? (event.locals.user = user) : (event.locals.user = null);
+  } else {
+    event.locals.session = null;
+    event.locals.user = null;
+  }
+
+  event.locals.isProtectedRoute = event.route.id?.includes("(protected)") ?? false;
   return await resolve(event);
 };
