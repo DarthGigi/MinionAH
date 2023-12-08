@@ -21,7 +21,7 @@ export const GET: RequestHandler = async () => {
 
   return await sitemap.response({
     origin: "https://minionah.com",
-    excludePatterns: ["/profile.*", ".*\\[user=username\\]/chat.*"],
+    excludePatterns: ["/profile.*", ".*/chat.*", ".*/signup/password.*", "^/api.*"],
     paramValues: {
       "/[user=username]": users.map((user) => user.username),
       "/[user=username]/[minionID]": minions.map((minion) => [minion.user.username, minion.id])
