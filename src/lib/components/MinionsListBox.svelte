@@ -44,9 +44,9 @@
       <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
     </Button>
   </Popover.Trigger>
-  <Popover.Content class="w-[200] border-2 border-neutral-600 bg-neutral-700 p-0">
+  <Popover.Content class="mt-1 w-[200] border-2 border-neutral-600 bg-neutral-700 p-0">
     <Command.Root class="max-h-56 overflow-hidden border-none bg-neutral-700 text-base sm:text-sm">
-      <Command.Input placeholder="Search minion" class="border-none  text-neutral-200 focus:shadow-none focus:outline-0 focus:ring-0" />
+      <Command.Input placeholder="Search minion" class="border-none border-green-500 text-neutral-200 focus:shadow-none focus:outline-0 focus:ring-0" />
       <Command.Empty>No minion found.</Command.Empty>
       <Command.Group class="overflow-scroll">
         {#each minionType as minionType}
