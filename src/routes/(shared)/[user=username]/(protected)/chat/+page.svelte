@@ -65,7 +65,7 @@
 
     <div class="flex flex-col items-center justify-center border-neutral-700 p-4" class:border-b-2={data.chat}>
       <Avatar.Root class="pointer-events-none h-16 w-16 rounded-full bg-neutral-700">
-        <Avatar.Image class="pointer-events-none h-full w-full p-2" src={`data:image/png;base64,${data.user?.avatar}`} alt={data.user2?.username} />
+        <Avatar.Image class="pointer-events-none h-full w-full p-2" src={`data:image/png;base64,${data.user2?.avatar}`} alt={data.user2?.username} />
         <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-800">{data.user2?.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
       </Avatar.Root>
       <h2 class="text-center text-lg font-semibold">{data.user2?.username}</h2>

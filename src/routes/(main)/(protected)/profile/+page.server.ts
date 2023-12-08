@@ -5,24 +5,6 @@ import prisma from "$lib/server/prisma";
 import type { Seller } from "$lib/types";
 
 export const load = (async ({ locals }) => {
-  const session = await locals.auth.validate();
-  if (!session) {
-    console.info("no session");
-    throw redirect(302, "/login");
-  }
-
-  // Load user profile data from database
-
-  const user = await prisma.user.findUnique({
-    where: {
-      id: session.user.userId
-    }
-  });
-
-  if (!user) {
-    throw redirect(302, "/login");
-  }
-
   // Load all generator types, only 1 minion per type
   const minionTypes = await prisma.minion.findMany({
     select: {
@@ -36,13 +18,13 @@ export const load = (async ({ locals }) => {
   });
 
   return {
-    user,
+    user: locals.user,
     streamed: {
       minionTypes,
       userMinions: prisma.minionSeller.findMany({
         where: {
           user: {
-            id: user.id
+            id: locals.user!.id
           }
         },
         include: {
@@ -59,16 +41,11 @@ export const load = (async ({ locals }) => {
 
 export const actions = {
   createMinion: async ({ locals, request }) => {
-    const session = await locals.auth.validate();
-    if (!session) {
-      throw redirect(302, "/login");
-    }
-
     let user;
     try {
       user = await prisma.user.findUnique({
         where: {
-          id: session.user.userId
+          id: locals.user!.id
         }
       });
 
