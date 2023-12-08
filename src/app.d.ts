@@ -1,4 +1,5 @@
-import type { Minion, PrismaClient } from "@prisma/client";
+import type { Minion, PrismaClient, User } from "@prisma/client";
+import type { Session } from "lucia";
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
 
@@ -10,6 +11,9 @@ declare global {
       validateUser: import("@lucia-auth/sveltekit").ValidateUser;
       setSession: import("@lucia-auth/sveltekit").SetSession;
       auth: import("lucia").AuthRequest;
+      user: User | null;
+      session: Session | null;
+      isProtectedRoute: boolean;
     }
     // interface PageData {}
     // interface Platform {}

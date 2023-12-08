@@ -1,37 +1,20 @@
 import type { PageServerLoad, Actions } from "./$types";
-import { redirect } from "@sveltejs/kit";
 
 export const load = (async ({ locals }) => {
-  const session = await locals.auth.validate();
-  if (!session) {
-    console.info("no session");
-    throw redirect(302, "/login");
-  }
-  const user = await prisma.user.findUnique({
-    where: {
-      id: session.user.userId
-    }
-  });
-
-  if (!user) {
-    console.info("no user");
-    throw redirect(302, "/login");
-  }
-
   return {
-    user,
+    user: locals.user,
     streamed: {
       chats: prisma.chat.findMany({
         where: {
           OR: [
             {
               user1_id: {
-                equals: user.id
+                equals: locals.user!.id
               }
             },
             {
               user2_id: {
-                equals: user.id
+                equals: locals.user!.id
               }
             }
           ]
@@ -62,19 +45,6 @@ export const load = (async ({ locals }) => {
 
 export const actions: Actions = {
   deleteChat: async ({ locals, request }) => {
-    const session = await locals.auth.validate();
-    if (!session) {
-      throw redirect(302, "/login");
-    }
-    const user = await prisma.user.findUnique({
-      where: {
-        id: session.user.userId
-      }
-    });
-    if (!user) {
-      throw redirect(302, "/login");
-    }
-
     const data = await request.formData();
     const chatid = data.get("chatId");
     const chat = await prisma.chat.findFirst({
