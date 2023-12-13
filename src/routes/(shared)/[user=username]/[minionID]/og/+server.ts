@@ -4,9 +4,9 @@ import { ImageResponse } from "@vercel/og";
 import type { RequestHandler } from "./$types";
 import { formatNumber } from "$lib/utilities";
 
-// export const config: Config = {
-//   runtime: "edge"
-// };
+export const config: Config = {
+  runtime: "edge"
+};
 
 const errorTemplate = toReactElement(`
 <div tw="flex h-full w-full text-white text-7xl flex-col items-center justify-center bg-[#131313]">
