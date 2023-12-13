@@ -9,8 +9,8 @@ overrides:
 
 dependencies:
   '@ethercorps/svelte-h2j':
-    specifier: ^0.1.0
-    version: 0.1.0(svelte@4.2.8)
+    specifier: ^4.0.0
+    version: 4.0.0(svelte@4.2.8)
   '@ethercorps/sveltekit-og':
     specifier: ^2.0.2
     version: 2.0.2(svelte@4.2.8)
@@ -40,7 +40,7 @@ dependencies:
     version: 0.294.0(svelte@4.2.8)
   sveltekit-superforms:
     specifier: ^1.11.0
-    version: 1.11.0(@sveltejs/kit@1.30.1)(svelte@4.2.8)(zod@3.22.4)
+    version: 1.11.0(@sveltejs/kit@1.30.2)(svelte@4.2.8)(zod@3.22.4)
   tailwind-merge:
     specifier: ^2.1.0
     version: 2.1.0
@@ -69,10 +69,10 @@ devDependencies:
     version: 0.6.2(@prisma/client@5.7.0)
   '@sveltejs/adapter-vercel':
     specifier: ^3.1.0
-    version: 3.1.0(@sveltejs/kit@1.30.1)
+    version: 3.1.0(@sveltejs/kit@1.30.2)
   '@sveltejs/kit':
-    specifier: ^1.30.1
-    version: 1.30.1(svelte@4.2.8)(vite@5.0.8)
+    specifier: ^1.30.2
+    version: 1.30.2(svelte@4.2.8)(vite@5.0.8)
   '@tailwindcss/forms':
     specifier: ^0.5.7
     version: 0.5.7(tailwindcss@3.3.6)
@@ -129,7 +129,7 @@ devDependencies:
     version: 3.6.2(postcss@8.4.32)(svelte@4.2.8)
   sveltekit-rate-limiter:
     specifier: ^0.4.1
-    version: 0.4.1(@sveltejs/kit@1.30.1)
+    version: 0.4.1(@sveltejs/kit@1.30.2)
   tailwindcss:
     specifier: ^3.3.6
     version: 3.3.6
@@ -578,8 +578,8 @@ packages:
     requiresBuild: true
     optional: true
 
-  /@ethercorps/svelte-h2j@0.1.0(svelte@4.2.8):
-    resolution: {integrity: sha512-0cs5FgGgiJRgHr2paR3/49Fv/KsOjqbLEPbgZjJtdBiqUD3awZwgoK6ynwTA3zBq+KfHqAJjJU1XWbCwQMih3Q==}
+  /@ethercorps/svelte-h2j@4.0.0(svelte@4.2.8):
+    resolution: {integrity: sha512-2U56wEIys5MoFqQ863FCxRvu8rQjA3Esix/RpI5FktrbEBSXLoHYalYPeqZM1mPHSVOBAOHgcbmLONmhZa5zbQ==}
     peerDependencies:
       svelte: ^4.0.0
     dependencies:
@@ -696,7 +696,7 @@ packages:
       detect-libc: 2.0.2
       https-proxy-agent: 5.0.1
       make-dir: 3.1.0
-      node-fetch: 2.7.0
+      node-fetch: 2.6.9
       nopt: 5.0.0
       npmlog: 5.0.1
       rimraf: 3.0.2
@@ -926,12 +926,12 @@ packages:
       string.prototype.codepointat: 0.2.1
     dev: false
 
-  /@sveltejs/adapter-vercel@3.1.0(@sveltejs/kit@1.30.1):
+  /@sveltejs/adapter-vercel@3.1.0(@sveltejs/kit@1.30.2):
     resolution: {integrity: sha512-AkG7GuqPj/70zxfuOV7QbxXVuYFPUlyFEPlGUSXynDbIBTYu1Er+c676M2egnAyw0flB+kpj6nlxJIElRLKAaA==}
     peerDependencies:
       '@sveltejs/kit': ^1.5.0
     dependencies:
-      '@sveltejs/kit': 1.30.1(svelte@4.2.8)(vite@5.0.8)
+      '@sveltejs/kit': 1.30.2(svelte@4.2.8)(vite@5.0.8)
       '@vercel/nft': 0.24.4
       esbuild: 0.18.20
     transitivePeerDependencies:
@@ -939,8 +939,8 @@ packages:
       - supports-color
     dev: true
 
-  /@sveltejs/kit@1.30.1(svelte@4.2.8)(vite@5.0.8):
-    resolution: {integrity: sha512-N4hMFTRmnkB0q1uB93wfM8As2q4zYI2FQ01K8dQOCAWbm2y6mB0pmF12ILO+zbEim13csBLO0JyAWJRSd101hQ==}
+  /@sveltejs/kit@1.30.2(svelte@4.2.8)(vite@5.0.8):
+    resolution: {integrity: sha512-+Sc9K2XklJMKG5K++MTl3fZpCE7uuEQs2Yk82RQHdVxfEe69j1QWuK3w+7qx2ILHiBQpwtQVxtjiQMxgSlGm5g==}
     engines: {node: ^16.14 || >=18}
     hasBin: true
     requiresBuild: true
@@ -2089,7 +2089,7 @@ packages:
       zod: ^3.22.2
     dependencies:
       svelte: 4.2.8
-      sveltekit-superforms: 1.11.0(@sveltejs/kit@1.30.1)(svelte@4.2.8)(zod@3.22.4)
+      sveltekit-superforms: 1.11.0(@sveltejs/kit@1.30.2)(svelte@4.2.8)(zod@3.22.4)
       zod: 3.22.4
     dev: false
 
@@ -2505,7 +2505,6 @@ packages:
         optional: true
     dependencies:
       whatwg-url: 5.0.0
-    dev: false
 
   /node-fetch@2.7.0:
     resolution: {integrity: sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A==}
@@ -2517,6 +2516,7 @@ packages:
         optional: true
     dependencies:
       whatwg-url: 5.0.0
+    dev: true
 
   /node-gyp-build@4.7.1:
     resolution: {integrity: sha512-wTSrZ+8lsRRa3I3H8Xr65dLWSgCvY2l4AOnaeKdPA9TB/WYMPaTcrzf3rXvFoVvjKNVnu0CcWSx54qq9GKRUYg==}
@@ -3232,23 +3232,23 @@ packages:
       magic-string: 0.30.5
       periscopic: 3.1.0
 
-  /sveltekit-rate-limiter@0.4.1(@sveltejs/kit@1.30.1):
+  /sveltekit-rate-limiter@0.4.1(@sveltejs/kit@1.30.2):
     resolution: {integrity: sha512-h9WsgLCqPiJwHx3+oO3XjAiRpJ0G43Xz4yws+J4PQSNjAFmKt8dy/y5DJxz3W3BNYw7Z9PAQYizf2cJagyNyBA==}
     peerDependencies:
       '@sveltejs/kit': 1.x
     dependencies:
       '@isaacs/ttlcache': 1.4.1
-      '@sveltejs/kit': 1.30.1(svelte@4.2.8)(vite@5.0.8)
+      '@sveltejs/kit': 1.30.2(svelte@4.2.8)(vite@5.0.8)
     dev: true
 
-  /sveltekit-superforms@1.11.0(@sveltejs/kit@1.30.1)(svelte@4.2.8)(zod@3.22.4):
+  /sveltekit-superforms@1.11.0(@sveltejs/kit@1.30.2)(svelte@4.2.8)(zod@3.22.4):
     resolution: {integrity: sha512-43hhy34Eb57erD2b+3Z6A97NBQHQ+ePXmGxeOqOATd7OeI1Vo/fw+vd5yGE9w/ql8DGDUqW1LKb4D3rJXdxSYg==}
     peerDependencies:
       '@sveltejs/kit': 1.x
       svelte: 3.x || 4.x
       zod: 3.x
     dependencies:
-      '@sveltejs/kit': 1.30.1(svelte@4.2.8)(vite@5.0.8)
+      '@sveltejs/kit': 1.30.2(svelte@4.2.8)(vite@5.0.8)
       svelte: 4.2.8
       zod: 3.22.4
     dev: false

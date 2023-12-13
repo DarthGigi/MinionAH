@@ -20,7 +20,7 @@
     "@prisma/client": "5.7.0",
     "@prisma/extension-accelerate": "^0.6.2",
     "@sveltejs/adapter-vercel": "^3.1.0",
-    "@sveltejs/kit": "^1.30.1",
+    "@sveltejs/kit": "^1.30.2",
     "@tailwindcss/forms": "^0.5.7",
     "@types/cookie": "^0.6.0",
     "@types/node": "^20.10.4",
@@ -47,7 +47,7 @@
   },
   "type": "module",
   "dependencies": {
-    "@ethercorps/svelte-h2j": "^0.1.0",
+    "@ethercorps/svelte-h2j": "^4.0.0",
     "@ethercorps/sveltekit-og": "^2.0.2",
     "@vercel/node": "^3.0.12",
     "@vercel/og": "^0.6.1",

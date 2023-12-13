@@ -23,7 +23,6 @@ export const load = (async ({ params, locals }) => {
   }
 
   if (user.id === user2?.id) {
-    console.info("same user");
     throw redirect(302, `/${user.username}`);
   }
 
