@@ -9,7 +9,7 @@ import type { PageServerLoad } from "./$types";
 export const load = (async ({ params, fetch }) => {
   const username = params.user;
 
-  const user = await prisma.user.findUnique({
+  const minionuser = await prisma.user.findUnique({
     where: {
       username: username
     },
@@ -18,14 +18,14 @@ export const load = (async ({ params, fetch }) => {
     }
   });
 
-  if (!user) {
+  if (!minionuser) {
     throw redirect(302, "/");
   }
 
   const minions = prisma.minionSeller.findMany({
     where: {
       user: {
-        id: user.id
+        id: minionuser.id
       }
     },
     include: {
@@ -38,10 +38,10 @@ export const load = (async ({ params, fetch }) => {
   });
 
   return {
-    userprofile: user,
+    minionuser,
     color: await fetch("/api/getColor", {
       headers: {
-        imageUrl: `data:image/png;base64,${user.avatar}`
+        imageUrl: `data:image/png;base64,${minionuser.avatar}`
       }
     }).then((res) => res.text()),
     streamed: {
