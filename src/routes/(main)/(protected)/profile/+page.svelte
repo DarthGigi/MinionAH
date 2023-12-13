@@ -24,9 +24,9 @@
 
   let submittingCreate = false;
   let submittingDelete = false;
-  let showFormDialog = false;
+  let showFormStatusDialog = false;
 
-  let showDelete = false;
+  let showDeleteFormDialog = false;
   let minionToDelete: Seller & { minion: Minion } & { user: User };
 
   let minecraftAvatar: HTMLCanvasElement;
@@ -92,11 +92,11 @@
           },
           onUpdated: () => {
             submittingCreate = false;
-            showFormDialog = true;
+            showFormStatusDialog = true;
           },
           onError: () => {
             submittingCreate = false;
-            showFormDialog = true;
+            showFormStatusDialog = true;
           }
         }}
         form={data.formCreate}
@@ -279,7 +279,7 @@
           <MinionCard
             minion={seller}
             on:openDeleteModal={() => {
-              showDelete = true;
+              showDeleteFormDialog = true;
               minionToDelete = seller;
             }}
             class="only:col-start-2"
@@ -293,22 +293,17 @@
 <Form.Root
   options={{
     onSubmit: () => {
-      console.log("onSubmit");
       submittingDelete = true;
     },
     onResult: () => {
-      console.log("onResult");
-    },
-    onUpdate: () => {
-      console.log("onUpdate");
+      showDeleteFormDialog = false;
     },
     onUpdated: () => {
-      console.log("onUpdated");
-      showFormDialog = true;
+      showFormStatusDialog = true;
     },
     onError: () => {
       console.log("onError");
-      showFormDialog = true;
+      showFormStatusDialog = true;
     }
   }}
   form={data.formDelete}
@@ -324,7 +319,7 @@
   </Form.Field>
 </Form.Root>
 
-<AlertDialog.Root bind:open={showFormDialog}>
+<AlertDialog.Root bind:open={showFormStatusDialog}>
   <AlertDialog.Content>
     <AlertDialog.Header>
       {#if $page.form && $page.form.form && $page.form.form.message}
@@ -342,7 +337,7 @@
   </AlertDialog.Content>
 </AlertDialog.Root>
 
-<AlertDialog.Root bind:open={showDelete} closeOnEscape={!submittingDelete} closeOnOutsideClick={!submittingDelete}>
+<AlertDialog.Root bind:open={showDeleteFormDialog} closeOnEscape={!submittingDelete} closeOnOutsideClick={!submittingDelete}>
   <AlertDialog.Content>
     <AlertDialog.Header>
       <AlertDialog.Title>Warning</AlertDialog.Title>
@@ -360,8 +355,7 @@
           e.preventDefault();
           const deleteForm = document.getElementById("deleteForm");
           if (!(deleteForm instanceof HTMLFormElement)) return;
-          submittingDelete = true;
-          deleteForm.submit();
+          deleteForm.requestSubmit();
         }}
       >
         {#if !submittingDelete}
