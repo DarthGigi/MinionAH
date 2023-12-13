@@ -128,7 +128,7 @@
           maxlength={32}
           on:input={({ currentTarget }) => {
             if (!(currentTarget instanceof HTMLInputElement)) return;
-            if (currentTarget.value.length <= 3) return;
+            if (currentTarget.value.length <= 3 && currentTarget.value.length !== 0) return;
             search = currentTarget.value;
             loadData(currentTier, undefined, search);
           }}
