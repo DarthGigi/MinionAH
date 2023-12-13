@@ -45,10 +45,6 @@ export const actions = {
   createMinion: async ({ locals, request }) => {
     const user = locals.user;
 
-    if (!user) {
-      throw redirect(302, "/login");
-    }
-
     const formCreate = await superValidate(request, formSchemaCreate, { id: "formCreate" });
 
     if (!formCreate.valid) {
@@ -91,7 +87,7 @@ export const actions = {
           hasInfusion: formCreate.data.infusion,
           user: {
             connect: {
-              id: user.id
+              id: user!.id
             }
           },
           minion: {
@@ -111,12 +107,6 @@ export const actions = {
     }
   },
   deleteMinion: async ({ locals, request }) => {
-    const user = locals.user;
-
-    if (!user) {
-      throw redirect(302, "/login");
-    }
-
     const formDelete = await superValidate(request, formSchemaDelete, { id: "formDelete" });
 
     if (!formDelete.valid) {

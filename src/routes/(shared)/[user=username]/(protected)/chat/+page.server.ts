@@ -95,11 +95,6 @@ export const load = (async ({ params, locals }) => {
 
 export const actions: Actions = {
   default: async ({ locals, request, params }) => {
-    const session = await locals.auth.validate();
-    if (!session) {
-      throw redirect(302, "/login");
-    }
-
     const data = await request.formData();
 
     const body = Object.fromEntries(data.entries());
@@ -113,7 +108,7 @@ export const actions: Actions = {
 
     const user = await prisma.user.findUnique({
       where: {
-        id: session.user.userId
+        id: locals.session!.user.userId
       }
     });
 
