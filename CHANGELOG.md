@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1] - 2023-12-13
+
+### Changed
+
+- Changed components to use forms.
+  - Wrapped the Tier selector component in a form.
+  - Wrapped the Minion selector component in a form.
+- Changed all the forms to use [superforms](https://superforms.rocks/)
+  - Added better status messages.
+  - Added better error handling.
+- Refactored code to be more efficient and robust.
+
+### Removed
+
+- Removed unused Minecraft auth/token code.
+
 ## [1.2.0] - 2023-12-08
 
 ### Changed
