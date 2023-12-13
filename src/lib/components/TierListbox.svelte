@@ -1,34 +1,48 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import { Label } from "$lib/components/ui/label";
-  import * as Select from "$lib/components/ui/select";
+  import * as Form from "$lib/components/ui/form";
   import { createEventDispatcher } from "svelte";
 
   const dispatch = createEventDispatcher();
 
-  let tiers: number[] = Array(12)
-    .fill(0)
-    .map((_, i) => i + 1);
-  let selectedTier: { disabled: boolean; label: string; value: number } = { disabled: false, label: "", value: 0 };
-  $: selectedTier &&
-    dispatch("filterTier", {
-      tier: selectedTier.value
-    });
+  export let maxtier: number = 12;
+  export let config: any;
+  export let disabled: boolean = false;
+  export let showValidation: boolean = true;
+
+  let tiers: number[];
+
+  $: maxtier,
+    (tiers = Array(maxtier)
+      .fill(0)
+      .map((_, i) => i + 1));
+
+  let showAny = false;
 </script>
 
-<Select.Root bind:selected={selectedTier}>
-  <Label for="tier" class="block text-base font-normal">Tier</Label>
-  <Select.Trigger id="tier" class="w-40 border-none bg-neutral-700 focus:border-neutral-600 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-0 md:w-44">
-    <Select.Value placeholder={selectedTier.value == 0 ? "Select tier" : `${["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"][selectedTier.value - 1]} (${selectedTier.label})`} />
-  </Select.Trigger>
-  <Select.Content class="max-h-56 overflow-scroll border-2 border-neutral-600 bg-neutral-700 text-neutral-200">
-    {#if selectedTier.value !== 0 && $page.url.pathname !== "/profile"}
-      <Select.Item value={0} class="data-[highlighted]:bg-neutral-800 data-[highlighted]:text-neutral-300">Any</Select.Item>
-    {/if}
+<Form.Field {config} name="tier">
+  <Form.Item class="flex flex-col">
+    <Form.Label>Tier</Form.Label>
+    <Form.Select
+      {disabled}
+      onSelectedChange={(v) => {
+        dispatch("filterTier", { tier: v ? v.value : undefined });
+        if ($page.url.pathname !== "/profile" && v?.value !== 0) showAny = true;
+      }}
+    >
+      <Form.SelectTrigger placeholder="Select tier" class="w-40 border-none bg-neutral-700 focus:border-neutral-600 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-0 md:w-44"></Form.SelectTrigger>
+      <Form.SelectContent class="max-h-56 overflow-scroll border-2 border-neutral-600 bg-neutral-700 text-neutral-200">
+        {#if showAny}
+          <Form.SelectItem label="Any" value={0} class="data-[highlighted]:bg-neutral-800 data-[highlighted]:text-neutral-300">Any</Form.SelectItem>
+        {/if}
 
-    {#each tiers as tier}
-      <Select.Item value={tier} class="data-[highlighted]:bg-neutral-800 data-[highlighted]:text-neutral-300">{`${["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"][tier - 1]} (${tier})`}</Select.Item>
-    {/each}
-  </Select.Content>
-  <input type="hidden" name="tier" bind:value={selectedTier.value} />
-</Select.Root>
+        {#each tiers as tier}
+          <Form.SelectItem label={`${["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"][tier - 1]} (${tier})`} value={tier} class="data-[highlighted]:bg-neutral-800 data-[highlighted]:text-neutral-300">{`${["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"][tier - 1]} (${tier})`}</Form.SelectItem>
+        {/each}
+      </Form.SelectContent>
+    </Form.Select>
+    {#if showValidation}
+      <Form.Validation class="w-40 md:w-44" />
+    {/if}
+  </Form.Item>
+</Form.Field>
