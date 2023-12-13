@@ -10,6 +10,7 @@
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "lint": "prettier --check .",
     "format": "prettier --write .",
+    "update:shadcn": "pnpm dlx shadcn-svelte update -a && prettier --write ./src/lib/components/ui",
     "postinstall": "prisma generate --no-engine"
   },
   "devDependencies": {
