@@ -4,6 +4,7 @@ import { dev } from "$app/environment";
 import { RateLimiter } from "sveltekit-rate-limiter/server";
 import { error } from "@sveltejs/kit";
 import { RATE_LIMIT_SECRET } from "$env/static/private";
+import prisma from "$lib/server/prisma";
 
 const limiter = new RateLimiter({
   rates: {
