@@ -2,21 +2,13 @@ import type { PageServerLoad, Actions } from "./$types";
 import { redirect } from "@sveltejs/kit";
 
 export const load = (async ({ params, locals }) => {
-  const session = await locals.auth.validate();
-  if (!session) {
-    console.info("no session");
-    throw redirect(302, "/login");
-  }
-  const user = await prisma.user.findUnique({
-    where: {
-      id: session.user.userId
-    }
-  });
+  const user = locals.user;
 
   if (!user) {
     console.info("no user");
     throw redirect(302, "/login");
   }
+
   const username = params.user;
 
   const user2 = await prisma.user.findUnique({
