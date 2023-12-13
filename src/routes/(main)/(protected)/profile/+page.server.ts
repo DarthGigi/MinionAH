@@ -1,32 +1,34 @@
-import type { PageServerLoad, Actions } from "./$types";
-import { redirect } from "@sveltejs/kit";
 import prisma from "$lib/server/prisma";
-
-import type { Seller } from "$lib/types";
+import { fail, redirect } from "@sveltejs/kit";
+import { message, superValidate } from "sveltekit-superforms/server";
+import type { Actions, PageServerLoad } from "./$types";
+import { formSchemaCreate, formSchemaDelete } from "./schema";
 
 export const load = (async ({ locals }) => {
-  // Load all generator types, only 1 minion per type
-  const minionTypes = await prisma.minion.findMany({
-    select: {
-      generator: true,
-      texture: true
-    },
-    distinct: ["generator"],
-    orderBy: {
-      generator: "asc"
-    }
-  });
-
   return {
-    user: locals.user,
+    formCreate: await superValidate(formSchemaCreate, { id: "formCreate" }),
+    formDelete: await superValidate(formSchemaDelete, { id: "formDelete" }),
     streamed: {
-      minionTypes,
+      // Load all generator types, only 1 minion per type
+      minionTypes: prisma.minion.findMany({
+        select: {
+          id: true,
+          generator: true,
+          texture: true,
+          maxTier: true
+        },
+        distinct: ["generator"],
+        orderBy: {
+          generator: "asc"
+        }
+      }),
       userMinions: prisma.minionSeller.findMany({
         where: {
           user: {
             id: locals.user!.id
           }
         },
+        take: 2,
         include: {
           minion: true,
           user: true
@@ -34,35 +36,25 @@ export const load = (async ({ locals }) => {
         orderBy: {
           timeCreated: "desc"
         }
-      }) as Promise<Seller[]>
+      })
     }
   };
 }) satisfies PageServerLoad;
 
 export const actions = {
   createMinion: async ({ locals, request }) => {
-    let user;
-    try {
-      user = await prisma.user.findUnique({
-        where: {
-          id: locals.user!.id
-        }
-      });
+    const user = locals.user;
 
-      if (!user) {
-        throw redirect(302, "/login");
-      }
-    } catch (e) {
-      console.error(e);
-      throw redirect(302, "/login");
+    const formCreate = await superValidate(request, formSchemaCreate, { id: "formCreate" });
+
+    if (!formCreate.valid) {
+      return fail(400, {
+        formCreate
+      });
     }
 
-    const formData = await request.formData();
-    const minionType = formData.get("minionType") as string;
-    const amount = Number(formData.get("amount")) as number;
-    const price = Number(formData.get("price")) as number;
-    const tier = Number(formData.get("tier")) as number;
-    const infused = (formData.get("infusion") as string) === "on";
+    const minionType = formCreate.data.type as string;
+    const tier = Number(formCreate.data.tier) as number;
 
     let minion;
     try {
@@ -83,24 +75,19 @@ export const actions = {
       }
     } catch (e) {
       console.error(e);
-      return {
-        status: 400,
-        body: {
-          error: "Minion not found"
-        }
-      };
+      return message(formCreate, { title: "Couldn't find the minion", description: "We couldn't find the minion you selected. Please try again. <br/>If this issue keeps happening, please contact us." }, { status: 400 });
     }
 
     // create the minion in the database
     try {
       const createdMinion = await prisma.minionSeller.create({
         data: {
-          amount,
-          price,
-          hasInfusion: infused,
+          amount: formCreate.data.amount,
+          price: Number(formCreate.data.price),
+          hasInfusion: formCreate.data.infusion,
           user: {
             connect: {
-              id: user.id
+              id: user!.id
             }
           },
           minion: {
@@ -110,52 +97,25 @@ export const actions = {
           }
         }
       });
-
       if (!createdMinion) {
         throw new Error("Something went wrong");
       }
-
-      return {
-        status: 200,
-        body: {
-          success: true,
-          message: "Your minion has successfully been created!"
-        }
-      };
+      return message(formCreate, { title: "Your minion has been created!", description: "Your minion has successfully been created on the auction house." });
     } catch (e) {
       console.error(e);
-      return {
-        status: 400,
-        body: {
-          error: "Something went wrong"
-        }
-      };
+      return message(formCreate, { title: "Unable to create your minion.", description: "We couldn't create your minion. Please try again. <br/>If this issue keeps happening, please contact us." }, { status: 400 });
     }
   },
   deleteMinion: async ({ locals, request }) => {
-    const session = await locals.auth.validate();
-    if (!session) {
-      throw redirect(302, "/login");
-    }
+    const formDelete = await superValidate(request, formSchemaDelete, { id: "formDelete" });
 
-    let user;
-    try {
-      user = await prisma.user.findUnique({
-        where: {
-          id: session.user.userId
-        }
+    if (!formDelete.valid) {
+      return fail(400, {
+        formDelete
       });
-
-      if (!user) {
-        throw redirect(302, "/login");
-      }
-    } catch (e) {
-      console.error(e);
-      throw redirect(302, "/login");
     }
 
-    const formData = await request.formData();
-    const minionId = formData.get("minion") as string;
+    const minionId = formDelete.data.id as string;
 
     try {
       const deletedMinion = await prisma.minionSeller.delete({
@@ -168,21 +128,10 @@ export const actions = {
         throw new Error("Something went wrong");
       }
 
-      return {
-        status: 200,
-        body: {
-          success: true,
-          message: "Your minion has successfully been deleted!"
-        }
-      };
+      return message(formDelete, { title: "Your minion has been deleted!", description: "Your minion has successfully been deleted from the auction house." });
     } catch (e) {
       console.error(e);
-      return {
-        status: 400,
-        body: {
-          error: "Something went wrong"
-        }
-      };
+      return message(formDelete, { title: "Unable to delete your minion.", description: "We couldn't delete your minion. Please try again. <br/>If this issue keeps happening, please contact us." }, { status: 400 });
     }
   }
 } satisfies Actions;

@@ -1,22 +1,17 @@
 import type { PageServerLoad } from "./$types";
 import type { Seller } from "$lib/types";
+import { superValidate } from "sveltekit-superforms/server";
+import { formSchema } from "./schema";
 
 export const load = (async ({ locals }) => {
-  const session = await locals.auth.validate();
+  const session = locals.session;
 
   let unreadChats;
-  let user;
 
   if (session) {
-    user = await prisma.user.findUnique({
-      where: {
-        id: session.user.userId
-      }
-    });
+    const user = locals.user;
 
-    if (!user) {
-      return;
-    }
+    if (!user) return;
 
     unreadChats = prisma.chat.findFirst({
       where: {
@@ -61,7 +56,7 @@ export const load = (async ({ locals }) => {
   }
 
   return {
-    props: {
+    streamed: {
       minions: prisma.minionSeller.findMany({
         take: 18,
         skip: 0,
@@ -89,8 +84,8 @@ export const load = (async ({ locals }) => {
           }
         }
       }) as Promise<Seller[]>,
-      user,
-      unreadChats
+      unreadChats,
+      form: superValidate(formSchema)
     }
   };
 }) as PageServerLoad;

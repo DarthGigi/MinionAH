@@ -6,10 +6,8 @@ import type { Actions, PageServerLoad } from "./$types";
 import { formSchema } from "./schema";
 
 export const load = (async () => {
-  const superValidatedFormSchema = await superValidate(formSchema);
-
   return {
-    form: superValidatedFormSchema
+    form: await superValidate(formSchema)
   };
 }) satisfies PageServerLoad;
 

@@ -10,7 +10,7 @@ export const load = (async ({ params, fetch }) => {
   const minionID = params.minionID;
   const username = params.user;
 
-  const minion = await prisma.minionSeller.findUnique({
+  const userMinion = await prisma.minionSeller.findUnique({
     where: {
       id: minionID,
       AND: [
@@ -23,29 +23,19 @@ export const load = (async ({ params, fetch }) => {
     },
     include: {
       minion: true,
-      user: {
-        select: {
-          accent_color: true,
-          avatar: true,
-          banner: true,
-          id: true,
-          locale: true,
-          loggedInAt: false,
-          username: true
-        }
-      }
+      user: true
     }
   });
 
-  if (!minion) {
+  if (!userMinion) {
     throw redirect(302, "/");
   }
 
   return {
-    minion,
+    userMinion,
     color: await fetch("/api/getColor", {
       headers: {
-        imageUrl: `data:image/png;base64,${minion.user.avatar}`
+        imageUrl: `data:image/png;base64,${userMinion.user.avatar}`
       }
     }).then((res) => res.text())
   };

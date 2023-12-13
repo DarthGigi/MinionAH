@@ -2,7 +2,6 @@
   import { page } from "$app/stores";
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
   import * as Avatar from "$lib/components/ui/avatar";
-  import type { User } from "@prisma/client";
   import { fade } from "svelte/transition";
 
   let profileDropdownOpen = false;
@@ -39,18 +38,18 @@
 
       <div class="flex flex-shrink-0 flex-row-reverse items-center justify-between gap-2 md:flex-row md:gap-4">
         {#await $page.data.user then user}
-          {#if $page.url.pathname !== "/profile" && user}
-            <div class="flex-shrink-0">
-              <a href="/profile" class="relative inline-flex items-center rounded-md border border-transparent bg-neutral-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors duration-300 hover:bg-neutral-600 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-2 focus:ring-offset-neutral-800">
-                <!-- Heroicon name: mini/plus -->
-                <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
-                </svg>
-                <span>New Minion</span>
-              </a>
-            </div>
-          {/if}
           {#if user}
+            {#if $page.url.pathname !== "/profile"}
+              <div class="flex-shrink-0">
+                <a href="/profile" class="relative inline-flex items-center rounded-md border border-transparent bg-neutral-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors duration-300 hover:bg-neutral-600 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-2 focus:ring-offset-neutral-800">
+                  <!-- Heroicon name: mini/plus -->
+                  <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+                  </svg>
+                  <span>New Minion</span>
+                </a>
+              </div>
+            {/if}
             <div class="flex flex-shrink-0 items-center">
               <DropdownMenu.Root bind:open={profileDropdownOpen}>
                 <DropdownMenu.Trigger class="relative">
@@ -59,18 +58,16 @@
                     <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-800">{user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
                   </Avatar.Root>
                   {#if $page.url.pathname === "/"}
-                    {#await $page.data.props.user then user}
-                      {#await $page.data.props.unreadChats then unreadChats}
-                        {#if unreadChats}
-                          {@const read = unreadChats.user1_id === user.id ? unreadChats.user1Read : unreadChats.user2Read}
-                          {#if !read}
-                            <span class="absolute right-0.5 top-0.5 flex h-3 w-3 transition-all duration-300" class:opacity-0={profileDropdownOpen} class:scale-0={profileDropdownOpen}>
-                              <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-neutral-400 opacity-75" />
-                              <span class="relative inline-flex h-3 w-3 rounded-full bg-neutral-500" />
-                            </span>
-                          {/if}
+                    {#await $page.data.streamed.unreadChats then unreadChats}
+                      {#if unreadChats}
+                        {@const read = unreadChats.user1_id === user.id ? unreadChats.user1Read : unreadChats.user2Read}
+                        {#if !read}
+                          <span class="absolute right-0.5 top-0.5 flex h-3 w-3 transition-all duration-300" class:opacity-0={profileDropdownOpen} class:scale-0={profileDropdownOpen}>
+                            <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-neutral-400 opacity-75" />
+                            <span class="relative inline-flex h-3 w-3 rounded-full bg-neutral-500" />
+                          </span>
                         {/if}
-                      {/await}
+                      {/if}
                     {/await}
                   {/if}
                 </DropdownMenu.Trigger>
@@ -82,8 +79,8 @@
                     <DropdownMenu.Item href="/profile/chats" class="relative cursor-pointer"
                       >Messages
                       {#if $page.url.pathname === "/"}
-                        {#await $page.data.props.user then user}
-                          {#await $page.data.props.unreadChats then unreadChats}
+                        {#await $page.data.streamed.user then user}
+                          {#await $page.data.streamed.unreadChats then unreadChats}
                             {#if unreadChats}
                               {@const read = unreadChats.user1_id === user.id ? unreadChats.user1Read : unreadChats.user2Read}
                               {#if !read && profileDropdownOpen}

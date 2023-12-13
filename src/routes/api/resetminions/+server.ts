@@ -12,7 +12,7 @@ export const GET: RequestHandler = async ({ fetch }) => {
 
   await prisma.minion.deleteMany();
 
-  const itemsList = await fetch("/filter");
+  const itemsList = await fetch("/api/filter");
   const items = (await itemsList.json()) as Minion[];
 
   // maxTier, for each minion generator category get the highest tier from generator_tier and store it in a new column named "maxTier"

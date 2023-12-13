@@ -6,11 +6,15 @@
   import TierListbox from "$lib/components/TierListbox.svelte";
   import { Input } from "$lib/components/ui/input";
   import { Label } from "$lib/components/ui/label";
+  import * as Select from "$lib/components/ui/select";
   import { draw } from "svelte/transition";
   import * as Alert from "$lib/components/ui/alert";
   import { slide } from "svelte/transition";
+  import * as Form from "$lib/components/ui/form";
+  import { formSchema, type FormSchema } from "./schema";
 
   export let data: PageData;
+
   let minions: Seller[] = [];
   let loadingMore = true;
   let currentTier: number | undefined = undefined;
@@ -26,7 +30,7 @@
   let search: string | undefined = undefined;
 
   (async function () {
-    minions = await data.props.minions;
+    minions = await data.streamed.minions;
     loadingMore = false;
     initialLoad = false;
   })();
@@ -97,23 +101,43 @@
   </div>
 {/if}
 
-<div class="mx-auto flex flex-row items-center justify-center gap-4 px-4 py-20 sm:px-6 lg:px-8">
-  <div>
-    <Label for="search" class="text-base font-normal">Search</Label>
-    <Input
-      type="text"
-      class="w-44 border-2 border-none bg-neutral-700 text-white placeholder-white placeholder-opacity-30 focus-visible:border-neutral-600 focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-0"
-      placeholder="Search..."
-      maxlength={32}
-      on:input={({ currentTarget }) => {
-        if (!(currentTarget instanceof HTMLInputElement)) return;
-        search = currentTarget.value;
-        loadData(currentTier, undefined, search);
-      }}
-    />
+{#await data.streamed.form}
+  <div class="mx-auto flex flex-row items-center justify-center gap-4 px-4 py-20 sm:px-6 lg:px-8">
+    <div class="flex flex-col justify-center space-y-2">
+      <span class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Search</span>
+      <Input type="text" placeholder="Minion or user" disabled class="w-44 animate-pulse border-2 border-none bg-neutral-700 text-white placeholder-white placeholder-opacity-30 focus-visible:border-neutral-600 focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-0 disabled:opacity-100" />
+    </div>
+    <div class="flex flex-col justify-center space-y-2">
+      <span class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Tier</span>
+      <Select.Root disabled>
+        <Select.Trigger class="w-40 animate-pulse border-none bg-neutral-700 focus:border-neutral-600 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-0 disabled:opacity-100 md:w-44">
+          <Select.Value placeholder="Select tier" />
+        </Select.Trigger>
+      </Select.Root>
+    </div>
   </div>
-  <div>
+{:then form}
+  <Form.Root method="POST" {form} schema={formSchema} let:config class="mx-auto flex flex-row items-center justify-center gap-4 px-4 py-20 sm:px-6 lg:px-8">
+    <Form.Field {config} name="search">
+      <Form.Item class="flex flex-col justify-center">
+        <Form.Label>Search</Form.Label>
+        <Form.Input
+          type="text"
+          class="w-44 border-2 border-none bg-neutral-700 text-white placeholder-white placeholder-opacity-30 focus-visible:border-neutral-600 focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-0"
+          placeholder="Minion or user"
+          maxlength={32}
+          on:input={({ currentTarget }) => {
+            if (!(currentTarget instanceof HTMLInputElement)) return;
+            if (currentTarget.value.length <= 3) return;
+            search = currentTarget.value;
+            loadData(currentTier, undefined, search);
+          }}
+        />
+      </Form.Item>
+    </Form.Field>
     <TierListbox
+      {config}
+      showValidation={false}
       on:filterTier={({ detail }) => {
         if (initialDispatch) {
           initialDispatch = false;
@@ -128,8 +152,8 @@
         loadData(currentTier);
       }}
     />
-  </div>
-</div>
+  </Form.Root>
+{/await}
 
 <div class="py-8 max-md:pb-20">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
