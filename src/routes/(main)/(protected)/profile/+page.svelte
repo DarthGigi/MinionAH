@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { enhance } from "$app/forms";
   import { page } from "$app/stores";
   import MinionCard from "$lib/components/Card.svelte";
   import CardLoading from "$lib/components/CardLoading.svelte";
@@ -7,23 +6,25 @@
   import MinionsListBox from "$lib/components/MinionsListBox.svelte";
   import TierListbox from "$lib/components/TierListbox.svelte";
   import * as AlertDialog from "$lib/components/ui/alert-dialog";
-  import * as Avatar from "$lib/components/ui/avatar";
+  import { Button } from "$lib/components/ui/button";
   import * as Card from "$lib/components/ui/card";
-  import { Input } from "$lib/components/ui/input";
+  import * as Form from "$lib/components/ui/form";
   import { Label } from "$lib/components/ui/label";
-  import { Switch } from "$lib/components/ui/switch";
   import { formatNumber } from "$lib/utilities";
   import type { Minion, MinionSeller as Seller, User } from "@prisma/client";
+  import { ChevronsUpDown, Loader2 } from "lucide-svelte";
+  import { parse } from "numerable";
   import * as skinview3d from "skinview3d";
-  import type { PageData } from "./$types";
-
   import { onMount } from "svelte";
-
+  import type { PageData } from "./$types";
+  import { formSchemaCreate, formSchemaDelete } from "./schema";
   export let data: PageData;
-  $: user = data.user as User;
 
   let moreThan1 = false;
-  let hiddenPrice: HTMLInputElement;
+
+  let submittingCreate = false;
+  let submittingDelete = false;
+  let showFormDialog = false;
 
   let showDelete = false;
   let minionToDelete: Seller & { minion: Minion } & { user: User };
@@ -33,17 +34,23 @@
 
   let canvasIsLoading = true;
 
+  let maxtier: number = 12;
+
+  let tierListDisabled = true;
+
+  let priceValue: number;
+
   onMount(async () => {
     const minecraftAvatarContainerDimensions = minecraftAvatarContainer.getBoundingClientRect();
     const viewer = new skinview3d.SkinViewer({
       canvas: minecraftAvatar,
       width: minecraftAvatarContainerDimensions.width,
       height: minecraftAvatarContainerDimensions.height,
-      skin: `data:image/png;base64,${user.skin}`,
-      [user.cape ? "cape" : ""]: `data:image/png;base64,${user.cape}`,
+      skin: `data:image/png;base64,${data.user!.skin}`,
+      [data.user!.cape ? "cape" : ""]: `data:image/png;base64,${data.user!.cape}`,
       enableControls: true,
       animation: new skinview3d.IdleAnimation(),
-      nameTag: user.username,
+      nameTag: data.user!.username,
       zoom: 0.7,
       panorama: "/assets/images/panorama.png",
       background: "#050505"
@@ -64,7 +71,7 @@
   <div class="w-full pt-8">
     <div class="relative mt-5">
       <div bind:this={minecraftAvatarContainer} class="relative">
-        <MinionCopyButton class="absolute right-3 top-3 z-30" on:click={() => navigator.clipboard.writeText(`${window.location.protocol}/${window.location.host}/${user.username}/`)} />
+        <MinionCopyButton class="absolute right-3 top-3 z-30" on:click={() => navigator.clipboard.writeText(`${window.location.protocol}/${window.location.host}/${data.user?.username}/`)} />
         {#if canvasIsLoading}
           <div class="absolute h-full w-full animate-pulse rounded-lg bg-[#050505]" />
         {/if}
@@ -73,114 +80,183 @@
       </div>
     </div>
   </div>
-  {#await data.streamed.userMinions then userMinions}
+  {#await data.streamed.userMinions}
+    <div class="h-[28.75rem] animate-pulse rounded-lg border-2 border-neutral-700 border-opacity-40 bg-[#050505] text-neutral-200 shadow-sm"></div>
+  {:then userMinions}
     {#if userMinions.length < 9}
-      <Card.Root class="border-2 border-neutral-700 border-opacity-40 bg-[#050505] text-neutral-200">
-        <form id="createForm" use:enhance method="POST" action="?/createMinion">
+      <Form.Root
+        options={{
+          resetForm: true,
+          onSubmit: () => {
+            submittingCreate = true;
+          },
+          onUpdated: () => {
+            submittingCreate = false;
+            showFormDialog = true;
+          },
+          onError: () => {
+            submittingCreate = false;
+            showFormDialog = true;
+          }
+        }}
+        form={data.formCreate}
+        schema={formSchemaCreate}
+        method="POST"
+        action="?/createMinion"
+        class="space-y-6"
+        let:config
+      >
+        <Card.Root class="border-2 border-neutral-700 border-opacity-40 bg-[#050505] text-neutral-200">
           <Card.Header>
             <Card.Title>Minions</Card.Title>
             <Card.Description>Auction a minion</Card.Description>
           </Card.Header>
           <Card.Content>
-            <div class="grid w-full items-center justify-center gap-4">
-              <div class="flex gap-4">
-                <div>
-                  {#await data.streamed.minionTypes then minionType}
-                    <MinionsListBox {minionType} />
+            <div class="flex w-full flex-col items-center justify-center gap-4">
+              <div class="mx-auto flex flex-col gap-4">
+                <div class="flex gap-4">
+                  {#await data.streamed.minionTypes}
+                    <div class="flex flex-col space-y-2">
+                      <Label>Minion</Label>
+                      <Button variant="outline" role="combobox" type="button" class="relative w-40 cursor-default justify-between rounded-md border-none bg-neutral-700 py-1.5 pl-3 text-left text-muted-foreground shadow-sm ring-1 ring-inset ring-transparent hover:bg-neutral-600 hover:text-neutral-200 focus:outline-none focus:ring-2 focus:ring-neutral-500 sm:text-sm sm:leading-6 md:w-44">
+                        <span>Loading...</span>
+                        <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </div>
+                  {:then minionTypes}
+                    <MinionsListBox
+                      {config}
+                      on:onSelect={({ detail }) => {
+                        maxtier = detail;
+                        if (detail > 0 && detail <= 12) tierListDisabled = false;
+                      }}
+                      minionType={minionTypes}
+                    />
                   {/await}
+                  <TierListbox {config} bind:disabled={tierListDisabled} bind:maxtier />
                 </div>
-                <div>
-                  <TierListbox />
+                <div class="flex gap-4">
+                  <div class="mt-1 inline-flex flex-col rounded-md shadow-sm">
+                    <Form.Field {config} name="amount">
+                      <Form.Item class="flex w-40 flex-col md:w-44">
+                        <Form.Label>Amount</Form.Label>
+                        <Form.Input
+                          type="number"
+                          class="ring-offset-0 focus-visible:border-neutral-500 focus-visible:ring-1 focus-visible:ring-neutral-500 focus-visible:ring-offset-0"
+                          placeholder="Amount of minions"
+                          max={64}
+                          on:input={({ currentTarget }) => {
+                            if (!(currentTarget instanceof HTMLInputElement)) return;
+                            if (currentTarget.valueAsNumber > 1) {
+                              moreThan1 = true;
+                            } else {
+                              moreThan1 = false;
+                            }
+                          }}
+                          on:keydown={(e) => {
+                            if (e.key === "e" || e.key === "." || e.key === "-" || e.key === "+" || e.key === "E" || e.key === " " || e.key === ",") {
+                              e.preventDefault();
+                            }
+                          }}
+                          on:paste={(e) => {
+                            e.preventDefault();
+                          }}
+                        />
+                        <Form.Validation />
+                      </Form.Item>
+                    </Form.Field>
+                  </div>
+                  <div class="mt-1 inline-flex flex-col rounded-md shadow-sm">
+                    <Form.Field {config} name="price">
+                      <Form.Item class="flex w-40 flex-col md:w-44">
+                        <Form.Label>Price <span class="inline text-neutral-200/50 opacity-0 transition-opacity duration-500" class:opacity-100={moreThan1}>(each)</span></Form.Label>
+                        <Form.Input
+                          type="text"
+                          class="w-40 ring-offset-0 focus-visible:border-neutral-500 focus-visible:ring-1 focus-visible:ring-neutral-500 focus-visible:ring-offset-0 md:w-44"
+                          placeholder={moreThan1 ? "Price of each minion" : "Price of minion"}
+                          on:keydown={(e) => {
+                            // check for ctrl + v, cmd + v, ctrl + a, cmd + a, ctrl + x, cmd + x, backspace and delete
+                            if ((e.key === "v" && (e.ctrlKey || e.metaKey)) || (e.key === "a" && (e.ctrlKey || e.metaKey)) || (e.key === "x" && (e.ctrlKey || e.metaKey)) || e.key === "Backspace" || e.key === "Delete") {
+                              return;
+                            }
+                            // check for k, m, b, t
+                            if (e.key === "k" || e.key === "m" || e.key === "b" || e.key === "t") {
+                              e.preventDefault();
+                              if (isNaN(Number(e.currentTarget.value))) {
+                                return;
+                              }
+                              let value = Number(e.currentTarget.value);
+                              switch (e.key) {
+                                case "k":
+                                  value *= 1000;
+                                  break;
+                                case "m":
+                                  value *= 1000000;
+                                  break;
+                                case "b":
+                                  value *= 1000000000;
+                                  break;
+                                case "t":
+                                  value *= 1000000000000;
+                                  break;
+                              }
+                              if (value > 9999999999999) {
+                                return;
+                              }
+                              e.currentTarget.value = value.toString();
+                            }
+                            if (isNaN(Number(e.key))) {
+                              e.preventDefault();
+                            }
+                          }}
+                          on:paste={(e) => {
+                            if (!(e.currentTarget instanceof HTMLInputElement)) return;
+                            if (isNaN(Number(e.clipboardData?.getData("text/plain")))) e.preventDefault();
+                          }}
+                          on:change={({ currentTarget }) => {
+                            if (!(currentTarget instanceof HTMLInputElement)) return;
+                            if (Number(currentTarget.value) <= 0) {
+                              currentTarget.value = "1";
+                            }
+                            currentTarget.value = parse(currentTarget.value)?.toString() ?? "1";
+                            priceValue = Number(currentTarget.value);
+                          }}
+                        />
+                        {#if priceValue}
+                          {#if priceValue >= 1000}
+                            <Form.Description>{parse(priceValue)} = {formatNumber(priceValue)}</Form.Description>
+                          {/if}
+                        {/if}
+                        <Form.Validation />
+                      </Form.Item>
+                    </Form.Field>
+                  </div>
                 </div>
               </div>
-
               <div class="flex gap-4">
-                <div class="mt-1 inline-flex flex-col rounded-md shadow-sm">
-                  <Label for="amount" class="block text-base font-normal">Amount of minions</Label>
-                  <Input
-                    type="number"
-                    name="amount"
-                    id="amount"
-                    max="64"
-                    min="1"
-                    required
-                    class="w-40 ring-offset-0 focus-visible:border-neutral-500 focus-visible:ring-1 focus-visible:ring-neutral-500 focus-visible:ring-offset-0 md:w-44"
-                    placeholder="1"
-                    on:input={({ currentTarget }) => {
-                      if (!(currentTarget instanceof HTMLInputElement)) return;
-                      if (currentTarget.valueAsNumber > 64) {
-                        currentTarget.value = "64";
-                      }
-                      if (currentTarget.valueAsNumber < 1) {
-                        currentTarget.value = "1";
-                      }
-                      if (currentTarget.valueAsNumber > 1) {
-                        moreThan1 = true;
-                      } else {
-                        moreThan1 = false;
-                      }
-                    }}
-                    on:keydown={(e) => {
-                      if (e.key === "e" || e.key === "." || e.key === "-" || e.key === "+" || e.key === "E" || e.key === " " || e.key === ",") {
-                        e.preventDefault();
-                      }
-                    }}
-                    on:paste={(e) => {
-                      e.preventDefault();
-                    }}
-                  />
-                </div>
-                <div class="mt-1 inline-flex flex-col rounded-md shadow-sm">
-                  <Label for="formattedPrice" class="block text-base font-normal">Price <span class="text-xs text-neutral-200/50 opacity-0 transition-opacity duration-500" class:opacity-100={moreThan1}>(each)</span></Label>
-                  <input type="hidden" name="price" bind:this={hiddenPrice} />
-                  <Input
-                    type="text"
-                    name="formattedPrice"
-                    id="formattedPrice"
-                    min="1"
-                    max="11"
-                    required
-                    minlength={1}
-                    maxlength={11}
-                    class="w-40 ring-offset-0 focus-visible:border-neutral-500 focus-visible:ring-1 focus-visible:ring-neutral-500 focus-visible:ring-offset-0 md:w-44"
-                    placeholder="100"
-                    on:keydown={(e) => {
-                      // check for ctrl + v, cmd + v, ctrl + a, cmd + a, ctrl + x, cmd + x, backspace and delete
-                      if ((e.key === "v" && (e.ctrlKey || e.metaKey)) || (e.key === "a" && (e.ctrlKey || e.metaKey)) || (e.key === "x" && (e.ctrlKey || e.metaKey)) || e.key === "Backspace" || e.key === "Delete") {
-                        return;
-                      }
-                      if (isNaN(Number(e.key))) {
-                        e.preventDefault();
-                      }
-                    }}
-                    on:paste={(e) => {
-                      if (!(e.currentTarget instanceof HTMLInputElement)) return;
-                      if (isNaN(Number(e.clipboardData?.getData("text/plain")))) e.preventDefault();
-                    }}
-                    on:change={({ currentTarget }) => {
-                      if (!(currentTarget instanceof HTMLInputElement)) return;
-                      if (currentTarget.valueAsNumber <= 0) {
-                        currentTarget.value = "1";
-                      }
-                      hiddenPrice.value = currentTarget.value;
-                      currentTarget.value = formatNumber(currentTarget.value);
-                    }}
-                  />
-                </div>
-              </div>
-              <div>
-                <div class="inline-flex flex-col">
-                  <Label for="infusion" class="inline-flex text-base font-normal">Mithril Infused</Label>
-                  <Switch id="infusion" name="infusion" class="data-[state=checked]:bg-neutral-800 data-[state=unchecked]:bg-neutral-700" />
-                </div>
+                <Form.Field {config} name="infusion">
+                  <Form.Item class="flex flex-row items-center justify-between gap-6 rounded-lg border border-neutral-800 bg-[#050505] p-4">
+                    <div class="select-none space-y-0.5">
+                      <Form.Label>Mithril Infused</Form.Label>
+                      <Form.Description><a href="https://hypixel-skyblock.fandom.com/wiki/Mithril_Infusion" target="_blank" class="underline underline-offset-2">Mithril Infusion</a> is a minion upgrade which <br /> increases a minion's speed by 10% permanently.</Form.Description>
+                    </div>
+                    <Form.Switch />
+                  </Form.Item>
+                </Form.Field>
               </div>
             </div>
           </Card.Content>
           <Card.Footer class="justify-end">
-            <button type="submit" class="ml-3 inline-flex justify-center rounded-md border border-transparent bg-neutral-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-2">Create</button>
+            <Form.Button disabled={submittingCreate} class="bg-neutral-600 text-white transition-all duration-300 hover:bg-neutral-700">
+              {#if !submittingCreate}
+                Create
+              {:else}
+                <Loader2 class="h-4 w-4 animate-spin" />
+              {/if}
+            </Form.Button>
           </Card.Footer>
-        </form>
-      </Card.Root>
+        </Card.Root>
+      </Form.Root>
     {:else}
       <div class="space-y-8 divide-y divide-neutral-800 rounded-lg border-2 border-neutral-700 border-opacity-40 bg-[#050505] px-6 py-8">
         <div class="space-y-8 divide-y divide-neutral-800">
@@ -193,7 +269,7 @@
 
 <div class="py-8 max-md:pb-20">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-    <ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <ul role="list" class="grid grid-cols-1 justify-center gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {#await data.streamed.userMinions}
         {#each Array(9) as _}
           <CardLoading />
@@ -204,9 +280,9 @@
             minion={seller}
             on:openDeleteModal={() => {
               showDelete = true;
-              // @ts-ignore
               minionToDelete = seller;
             }}
+            class="only:col-start-2"
           />
         {/each}
       {/await}
@@ -214,74 +290,86 @@
   </div>
 </div>
 
-{#if $page.form}
-  <AlertDialog.Root open={true} closeOnEscape={true} closeOnOutsideClick={true}>
-    <AlertDialog.Content>
-      {#if $page.form.status == 200}
-        <AlertDialog.Header>
-          <AlertDialog.Title>Success</AlertDialog.Title>
-          <AlertDialog.Description>{$page.form.body.message}</AlertDialog.Description>
-        </AlertDialog.Header>
-      {:else if $page.form.status == 400}
-        <AlertDialog.Header>
-          <AlertDialog.Title>Oops</AlertDialog.Title>
-          <AlertDialog.Description>{$page.form.body.error}</AlertDialog.Description>
-        </AlertDialog.Header>
-      {/if}
-      <AlertDialog.Footer>
-        <AlertDialog.Cancel>Close</AlertDialog.Cancel>
-      </AlertDialog.Footer>
-    </AlertDialog.Content>
-  </AlertDialog.Root>
-{/if}
+<Form.Root
+  options={{
+    onSubmit: () => {
+      console.log("onSubmit");
+      submittingDelete = true;
+    },
+    onResult: () => {
+      console.log("onResult");
+    },
+    onUpdate: () => {
+      console.log("onUpdate");
+    },
+    onUpdated: () => {
+      console.log("onUpdated");
+      showFormDialog = true;
+    },
+    onError: () => {
+      console.log("onError");
+      showFormDialog = true;
+    }
+  }}
+  form={data.formDelete}
+  schema={formSchemaDelete}
+  let:config
+  action="?/deleteMinion"
+  class="hidden"
+  method="POST"
+  id="deleteForm"
+>
+  <Form.Field {config} name="id">
+    <Form.Input type="hidden" value={minionToDelete?.id} />
+  </Form.Field>
+</Form.Root>
 
-<AlertDialog.Root bind:open={showDelete} closeOnEscape={true} closeOnOutsideClick={true}>
+<AlertDialog.Root bind:open={showFormDialog}>
+  <AlertDialog.Content>
+    <AlertDialog.Header>
+      {#if $page.form && $page.form.form && $page.form.form.message}
+        <AlertDialog.Title>
+          {$page.form.form.message.title}
+        </AlertDialog.Title>
+        <AlertDialog.Description>
+          {@html $page.form.form.message.description}
+        </AlertDialog.Description>
+      {/if}
+    </AlertDialog.Header>
+    <AlertDialog.Footer>
+      <AlertDialog.Cancel>Close</AlertDialog.Cancel>
+    </AlertDialog.Footer>
+  </AlertDialog.Content>
+</AlertDialog.Root>
+
+<AlertDialog.Root bind:open={showDelete} closeOnEscape={!submittingDelete} closeOnOutsideClick={!submittingDelete}>
   <AlertDialog.Content>
     <AlertDialog.Header>
       <AlertDialog.Title>Warning</AlertDialog.Title>
       <AlertDialog.Description>Are you sure you want to delete this minion?</AlertDialog.Description>
       <ul>
-        <li>
-          <div class="relative list-item divide-y divide-neutral-700 rounded-lg bg-neutral-800 transition-all duration-300" class:group={false} class:hover:bg-neutral-900={false}>
-            <div class="flex h-full w-full flex-col items-center justify-center gap-x-6 px-4 py-2">
-              <Avatar.Root class="h-12 w-12 flex-shrink-0 rounded-full bg-neutral-700 ">
-                <Avatar.Image class="pointer-events-none object-cover p-1" src={`data:image/png;base64,${minionToDelete.minion.texture}`} alt={minionToDelete.minion.name} />
-                <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-700">{minionToDelete.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
-              </Avatar.Root>
-              <h3 class="truncate text-sm font-medium text-white">{minionToDelete.minion.name.replace(/ [IVX]+$/, "")}</h3>
-            </div>
-
-            <div class="-mt-px flex divide-x divide-neutral-700">
-              <div class="relative inline-flex w-0 flex-1 items-center justify-center overflow-hidden rounded-bl-lg text-sm font-medium text-neutral-200">
-                <span class="z-10 inline-block flex-shrink-0 rounded-full px-2 py-0.5 text-xs font-medium text-neutral-800 transition-transform duration-300 group-hover:scale-125 group-hover:text-neutral-900">{` Tier ${["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"][minionToDelete.minion.generator_tier - 1]} (${minionToDelete.minion.generator_tier})`}</span>
-                <div class="absolute z-0 h-5 w-20 flex-shrink-0 rounded-[50px] bg-neutral-400 transition-all duration-500 group-hover:h-full group-hover:w-full group-hover:rounded-none" />
-              </div>
-              <div class="relative -ml-px inline-flex w-0 flex-1 overflow-hidden">
-                <span class="relative z-10 inline-flex w-0 flex-1 items-center justify-center overflow-hidden py-4 text-sm font-medium text-neutral-200 transition-all duration-300 group-hover:scale-125 group-hover:text-neutral-900">
-                  <img class="pointer-events-none mr-1 h-6 w-6" src="/assets/images/coin.png" alt="Coin icon" />
-                  {formatNumber(minionToDelete.price)}
-                  {#if minionToDelete.amount ? minionToDelete.amount > 1 : false}
-                    <span class="ml-1 text-sm text-neutral-200/50 transition-all duration-300 group-hover:ml-0 group-hover:text-neutral-900/0">/</span>
-                    <span class="text-sm text-neutral-200/50 transition-all duration-300 group-hover:-ml-0.5 group-hover:text-neutral-900">each</span>
-                  {/if}
-                </span>
-                <div class="absolute z-0 h-0 w-full flex-shrink-0 bg-neutral-400 transition-all duration-500 group-hover:h-full" />
-              </div>
-              <div class="relative inline-flex w-0 flex-1 items-center justify-center overflow-hidden rounded-br-lg text-sm font-medium text-neutral-200">
-                <span class="z-10 inline-block flex-shrink-0 rounded-full px-2 py-0.5 text-xs font-medium text-neutral-800 transition-transform duration-300 group-hover:scale-125 group-hover:text-neutral-900">{` Amount: ${minionToDelete.amount}`}</span>
-                <div class="absolute z-0 h-5 w-20 flex-shrink-0 rounded-[50px] bg-neutral-400 transition-all duration-500 group-hover:h-full group-hover:w-full group-hover:rounded-none" />
-              </div>
-            </div>
-          </div>
-        </li>
+        <MinionCard minion={minionToDelete} showButtons={false} />
       </ul>
     </AlertDialog.Header>
     <AlertDialog.Footer>
-      <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-      <form action="?/deleteMinion" use:enhance method="POST">
-        <input required type="hidden" name="minion" value={minionToDelete?.id} />
-        <AlertDialog.Action type="submit">Delete</AlertDialog.Action>
-      </form>
+      <AlertDialog.Cancel class="transition-all duration-300" disabled={submittingDelete}>Cancel</AlertDialog.Cancel>
+      <AlertDialog.Action
+        class="transition-all duration-300"
+        disabled={submittingDelete}
+        on:click={(e) => {
+          e.preventDefault();
+          const deleteForm = document.getElementById("deleteForm");
+          if (!(deleteForm instanceof HTMLFormElement)) return;
+          submittingDelete = true;
+          deleteForm.submit();
+        }}
+      >
+        {#if !submittingDelete}
+          Delete
+        {:else}
+          <Loader2 class="h-4 w-4 animate-spin" />
+        {/if}
+      </AlertDialog.Action>
     </AlertDialog.Footer>
   </AlertDialog.Content>
 </AlertDialog.Root>
