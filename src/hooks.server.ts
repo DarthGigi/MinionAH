@@ -5,6 +5,7 @@ import { RateLimiter } from "sveltekit-rate-limiter/server";
 import { error } from "@sveltejs/kit";
 import { RATE_LIMIT_SECRET } from "$env/static/private";
 import prisma from "$lib/server/prisma";
+import { redirect } from "@sveltejs/kit";
 
 const limiter = new RateLimiter({
   rates: {
@@ -44,6 +45,29 @@ export const handle: Handle = async ({ event, resolve }) => {
     event.locals.user = null;
   }
 
-  event.locals.isProtectedRoute = event.route.id?.includes("(protected)") ?? false;
+  const isProtectedRoute = event.route.id?.includes("(protected)") ?? false;
+  const path = event.url.pathname;
+
+  if ((path === "/login" || path === "/signup") && (event.locals.session || event.locals.user)) {
+    throw redirect(302, "/profile");
+  }
+
+  if (isProtectedRoute && (!event.locals.session || !event.locals.user)) {
+    throw redirect(302, "/login");
+  }
+
+  if (path === "/signup/password" && event.locals.session) {
+    if (!event.locals.user) throw redirect(302, "/login");
+    const userKey = await prisma.key.findFirst({
+      where: {
+        id: "username:" + event.locals.user.username.toLocaleLowerCase()
+      }
+    });
+
+    if (userKey && userKey.hashed_password) {
+      throw redirect(302, "/profile");
+    }
+  }
+
   return await resolve(event);
 };
