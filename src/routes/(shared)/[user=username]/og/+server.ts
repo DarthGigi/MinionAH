@@ -7,30 +7,6 @@ import type { RequestHandler } from "./$types";
 //   runtime: "edge"
 // };
 
-function formatNumber(num: number) {
-  if (num != null) {
-    let suffix = "";
-    if (num >= 1000000) {
-      num = num / 1000000;
-      suffix = "m";
-    } else if (num >= 1000) {
-      num = num / 1000;
-      suffix = "k";
-    }
-    if (suffix) {
-      if (num % 1 === 0) {
-        return num.toFixed(0) + suffix;
-      } else {
-        return num.toFixed(num < 10 ? 1 : 2) + suffix;
-      }
-    } else {
-      return num.toString();
-    }
-  } else {
-    return "N/A";
-  }
-}
-
 const errorTemplate = toReactElement(`
 <div tw="flex h-full w-full text-white text-7xl flex-col items-center justify-center bg-[#131313]">
 <span>Something went wrong</span>
