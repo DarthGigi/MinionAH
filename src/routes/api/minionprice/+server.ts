@@ -50,19 +50,14 @@ function getRecipeItemsPrices(recipeItems: { [key: string]: number }, pricingIte
     pricingItems.add(item);
     let itemPrice;
 
-    try {
+    console.log(`Getting recipe items prices for ${item}`);
+    console.log(items[item]);
+    if (items[item]) {
       itemPrice = items[item].quick_status.sellPrice;
-    } catch (error) {
-      const itemRecipe = recipe[item].recipe;
-      const itemRecipeItems = getRecipeItems(itemRecipe);
-      const itemRecipeItemsPrices = getRecipeItemsPrices(itemRecipeItems, pricingItems);
-      for (const itemRecipeItem in itemRecipeItemsPrices) {
-        if (!itemPrice) {
-          itemPrice = itemRecipeItemsPrices[itemRecipeItem] * itemRecipeItems[itemRecipeItem];
-        } else {
-          itemPrice += itemRecipeItemsPrices[itemRecipeItem] * itemRecipeItems[itemRecipeItem];
-        }
-      }
+    } else {
+      const itemRecipe = getRecipeItems(recipe[item].recipe);
+      const itemRecipeItemsPrices = getRecipeItemsPrices(itemRecipe, pricingItems);
+      itemPrice = addRecipeItemsPrices(itemRecipeItemsPrices);
     }
     recipeItemsPrices[item] = itemPrice;
     pricingItems.delete(item);
