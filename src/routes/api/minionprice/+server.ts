@@ -53,7 +53,7 @@ function getRecipeItemsPrices(recipeItems: { [key: string]: number }, pricingIte
     console.log(`Getting recipe items prices for ${item}`);
     console.log(items[item]);
     if (items[item]) {
-      itemPrice = items[item].quick_status.sellPrice;
+      itemPrice = items[item].quick_status.buyPrice;
     } else {
       const itemRecipe = getRecipeItems(recipe[item].recipe);
       const itemRecipeItemsPrices = getRecipeItemsPrices(itemRecipe, pricingItems);
