@@ -47,6 +47,6 @@ export const actions: Actions = {
         }
       );
     }
-    throw redirect(302, "/profile");
+    redirect(302, "/profile");
   }
 };

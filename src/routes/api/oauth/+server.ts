@@ -26,5 +26,5 @@ export const GET: RequestHandler = async ({ cookies }) => {
   });
 
   // redirect to authorization url
-  throw redirect(302, url.href);
+  redirect(302, url.href);
 };

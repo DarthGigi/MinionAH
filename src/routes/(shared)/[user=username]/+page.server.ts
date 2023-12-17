@@ -19,7 +19,7 @@ export const load = (async ({ params, fetch }) => {
   });
 
   if (!minionuser) {
-    throw redirect(302, "/");
+    redirect(302, "/");
   }
 
   const minions = prisma.minionSeller.findMany({

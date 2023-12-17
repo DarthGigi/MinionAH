@@ -28,7 +28,7 @@ export const load = (async ({ params, fetch }) => {
   });
 
   if (!userMinion) {
-    throw redirect(302, "/");
+    redirect(302, "/");
   }
 
   return {

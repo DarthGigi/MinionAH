@@ -6,7 +6,7 @@ export const load = (async ({ params, locals }) => {
 
   if (!user) {
     console.info("no user");
-    throw redirect(302, "/login");
+    redirect(302, "/login");
   }
 
   const username = params.user;
@@ -19,11 +19,11 @@ export const load = (async ({ params, locals }) => {
 
   if (!user2) {
     console.info("no user2");
-    throw redirect(302, "/");
+    redirect(302, "/");
   }
 
   if (user.id === user2?.id) {
-    throw redirect(302, `/${user.username}`);
+    redirect(302, `/${user.username}`);
   }
 
   const chat = await prisma.chat.findFirst({
@@ -112,7 +112,7 @@ export const actions: Actions = {
     });
 
     if (!user) {
-      throw redirect(302, "/login");
+      redirect(302, "/login");
     }
 
     const username = params.user;

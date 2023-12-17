@@ -90,7 +90,7 @@ try {
 } catch (e) {
   // Log the error and throw a new one if any of the fetch operations fail
   console.error("Failed to fetch data:", e);
-  throw error(500, "Failed to fetch data");
+  error(500, "Failed to fetch data");
 }
 
 // Declare a record to store the cost of each recipe
