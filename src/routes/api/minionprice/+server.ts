@@ -1,167 +1,240 @@
 import type { RequestHandler } from "./$types";
-const recipe = await (await fetch(`https://raw.githubusercontent.com/kr45732/skyblock-plus-data/main/InternalNameMappings.json`)).json();
-const items = await (await fetch(`https://api.slothpixel.me/api/skyblock/bazaar`)).json();
+import { CRON_SECRET } from "$env/static/private";
+import { error } from "@sveltejs/kit";
 
-function getRecipeItems(recipe: { [key: string]: string }) {
-  const recipeItems: { [key: string]: number } = {};
-  // remove duplicate items
-  for (const item in recipe) {
-    if (Object.values(recipe).filter((i) => i === recipe[item]).length > 1) {
-      delete recipe[item];
-    }
-  }
+type Minion = {
+  [key: string]: {
+    name: string;
+    wiki: string;
+    base_rarity: string;
+    recipe?: {
+      A1?: string;
+      A2?: string;
+      A3?: string;
+      B1?: string;
+      B2?: string;
+      B3?: string;
+      C1?: string;
+      C2?: string;
+      C3?: string;
+    };
+    npc_buy?: {
+      cost: string[];
+    };
+  };
+};
 
-  // remove all items with empty values
-  for (const item in recipe) {
-    if (recipe[item] === "") {
-      delete recipe[item];
-    }
-  }
-
-  // Replace every '-' with '_', except the last one if there is more than one '-'. Replace the last '-' with ':'
-  for (const item in recipe) {
-    const itemSplit = recipe[item].split("-");
-    if (itemSplit.length > 1) {
-      const lastElement = itemSplit.pop();
-      recipe[item] = itemSplit.join("_") + ":" + lastElement;
-    }
-  }
-
-  for (const item in recipe) {
-    let itemID = recipe[item].split(":")[0];
-    const itemAmount = recipe[item].split(":")[1];
-    // console.log(`Getting recipe items for ${itemID}`);
-    recipeItems[itemID] = Number(itemAmount);
-  }
-
-  return recipeItems;
+interface MinionPrices {
+  [key: string]: {
+    recipeIngredients: { [key: string]: number };
+    cost?: number;
+  };
 }
 
-let skipItems = ["FLOWER_GENERATOR_1", "SNOW_GENERATOR_1", "SPOOKY_HELMET"];
+let allItems: any;
+let allItemPrices: any;
+try {
+  /**
+   * Fetches the items response and items price response from the specified URLs.
+   *
+   * @returns A promise that resolves to an array containing the items response and items price response.
+   */
+  const [itemsResponse, itemsPriceResponse] = await Promise.all([fetch(`https://raw.githubusercontent.com/kr45732/skyblock-plus-data/main/InternalNameMappings.json`), fetch(`https://api.slothpixel.me/api/skyblock/bazaar`)]);
 
-function getRecipeItemsPrices(recipeItems: { [key: string]: number }, pricingItems: Set<string> = new Set()) {
-  const recipeItemsPrices: { [key: string]: number } = {};
-  for (const item in recipeItems) {
-    if (skipItems.includes(item)) continue;
-
-    if (pricingItems.has(item)) {
-      continue; // Skip items that are currently being priced to prevent infinite loops
-    }
-    pricingItems.add(item);
-    let itemPrice;
-
-    console.log(`Getting recipe items prices for ${item}`);
-    console.log(items[item]);
-    if (items[item]) {
-      itemPrice = items[item].quick_status.buyPrice;
-    } else {
-      const itemRecipe = getRecipeItems(recipe[item].recipe);
-      const itemRecipeItemsPrices = getRecipeItemsPrices(itemRecipe, pricingItems);
-      itemPrice = addRecipeItemsPrices(itemRecipeItemsPrices);
-    }
-    recipeItemsPrices[item] = itemPrice;
-    pricingItems.delete(item);
-  }
-  return recipeItemsPrices;
+  allItems = await itemsResponse.json();
+  allItemPrices = await itemsPriceResponse.json();
+} catch (e) {
+  console.error("Failed to fetch data:", e);
+  throw error(500, "Failed to fetch data");
 }
 
-function multiplyRecipeItemsPrices(recipeItemsPrices: { [key: string]: number }, recipeItems: { [key: string]: number }) {
-  const recipeItemsPricesMultiplied: { [key: string]: number } = {};
-  for (const item in recipeItemsPrices) {
-    recipeItemsPricesMultiplied[item] = recipeItemsPrices[item] * recipeItems[item];
-  }
-  return recipeItemsPricesMultiplied;
-}
+/**
+ * Filters the items in allItems to include only those with "GENERATOR" in their key,
+ * and creates a new object with the filtered items.
+ * @param {Object} allItems - The object containing all items.
+ * @returns {Minion} The collection of minions.
+ */
+const minions: Minion = Object.keys(allItems)
+  .filter((key) => key.includes("GENERATOR"))
+  .reduce((acc: Minion, key) => {
+    acc[key] = allItems[key];
+    return acc;
+  }, {});
 
-function addRecipeItemsPrices(recipeItemsPrices: { [key: string]: number }) {
-  let recipeItemsPricesAdded = 0;
-  for (const item in recipeItemsPrices) {
-    recipeItemsPricesAdded += recipeItemsPrices[item];
-  }
-  return recipeItemsPricesAdded;
-}
+/**
+ * Calculates the prices of minions based on their recipes and item costs.
+ *
+ * @param minionSet - The set of minions to calculate prices for.
+ * @returns An object containing the calculated minion prices.
+ */
+const getMinionPrices = (minionSet: Minion) => {
+  let minionPrices: MinionPrices = {};
 
-export const GET: RequestHandler = async () => {
-  const minionPrices: { [key: string]: number } = {};
-  const minions = await prisma.minion.findMany({
-    select: {
-      id: true
-    },
-    orderBy: {
-      id: "asc"
+  // loop through all the minions
+  for (const [minion, data] of Object.entries(minionSet)) {
+    // create an object to store the recipe ingredients
+    const recipeIngredients: { [key: string]: number } = {};
+
+    // assign an object with recipeIngredients to the current minion in minionPrices
+    minionPrices[minion] = {
+      recipeIngredients: recipeIngredients
+    };
+
+    // loop through all the recipe ingredients or the cost of the recipe or the cost of the npc_buy if one of them exists
+    for (const [_, slotdata] of Object.entries(data.recipe || data.npc_buy?.cost || {})) {
+      // split the slot data into item and amount
+      const [item, amount] = slotdata.split(":");
+      // replace - with : in the item name to match the item name format
+      const filterdItem = item.replace("-", ":");
+
+      // if the item is already in the recipe ingredients, add the current amount to the existing value
+      // if the item is not in the recipe ingredients, set its value to the current amount
+      recipeIngredients[filterdItem] = recipeIngredients[filterdItem] ? recipeIngredients[filterdItem] + Number(amount) : Number(amount);
     }
-    // take: 1
+  }
+
+  // Create a sorted list from the keys of the minionPrices object
+  const sortedList = Object.keys(minionPrices).sort((a, b) => {
+    // Split the key string on underscore and get the last element, then parse it to an integer
+    const numA = parseInt(a.split("_").pop() as string);
+    // Do the same for the second key
+    const numB = parseInt(b.split("_").pop() as string);
+    // Subtract the two numbers to determine the sort order
+    return numA - numB;
   });
-  // Then, for each minion, get the recipe from https://raw.githubusercontent.com/kr45732/skyblock-plus-data/main/InternalNameMappings.json
-  // Example data:
-  /*
-    "ACACIA_GENERATOR_1": {
-    "name": "Acacia Minion I",
-    "recipe": {
-      "A1": "LOG_2:10",
-      "A2": "LOG_2:10",
-      "A3": "LOG_2:10",
-      "B1": "LOG_2:10",
-      "B2": "WOOD_AXE:1",
-      "B3": "LOG_2:10",
-      "C1": "LOG_2:10",
-      "C2": "LOG_2:10",
-      "C3": "LOG_2:10"
-    },
-    "wiki": "https://wiki.hypixel.net/Acacia_Minion",
-    "base_rarity": "RARE"
-  },
-  */
-  // Then, for each recipe item, get the raw craft cost from the hypixel skyblock bazaar api using slothpixel api https://api.slothpixel.me/api/skyblock/bazaar/LOG_2
-  // Example data:
-  /*
-{
-  "product_id": "LOG_2",
-    "quick_status": {
-    "productId": "LOG_2",
-    "sellPrice": 5.4,
-    "sellVolume": 882356,
-    "sellMovingWeek": 10466133,
-    "sellOrders": 38,
-    "buyPrice": 15.105951093737005,
-    "buyVolume": 1390954,
-    "buyMovingWeek": 2397359,
-    "buyOrders": 266
-  },
-}
-  */
 
-  // Then, for each recipe item, get the total item cost by multiplying the amount of each item in the recipe by the cost of the item
-  // Then, add all the item costs together to get the total minion cost
+  // Initialize an object to serve as a cache. This object will store minion names as keys and their corresponding costs as values.
+  // The purpose of this cache is to avoid redundant calculations or lookups for the cost of minions that have already been processed.
+  const cachedMinion: { [key: string]: number } = {};
 
-  for (const minion of minions) {
-    // console.log(`Getting raw craft cost for ${minion.id}`);
-    const minionRecipe = recipe[minion.id].recipe;
+  // Loop through all minions in the sorted list
+  for (const minion of sortedList) {
+    // Get the recipe ingredients for the current minion
+    const ingredients = minionPrices[minion].recipeIngredients;
+    // Initialize a variable to hold the total cost of the ingredients
+    let total = 0;
+    // Loop through each ingredient and its amount
+    for (const [item, amount] of Object.entries(ingredients)) {
+      // If the ingredient is another minion, its cost should already be calculated due to the sorted list, so add that cost to the total
+      if (item in cachedMinion) {
+        total += cachedMinion[item];
+      }
+      // If the ingredient is not another minion, find its price in the bazaar
+      else {
+        let itemPrice: number;
+        // If the item is a Skyblock coin, its value is 1
+        if (item === "SKYBLOCK_COIN") {
+          itemPrice = 1;
+        } else {
+          // Otherwise, get the buy price from the allItemPrices object
+          itemPrice = allItemPrices[item]?.quick_status?.buyPrice;
+        }
+        // If the item price exists, add the total cost of the ingredient to the total
+        if (itemPrice) {
+          total += itemPrice * Number(amount);
+        } else {
+          // If the item price does not exist, that means the item is not in the bazaar, but it may be purchasable from an NPC. So get its cost from the npc_buy object
+          allItems[item]?.npc_buy?.cost?.forEach((item: { split: (arg0: string) => [any, any] }) => {
+            const [itemID, itemAmount] = item.split(":");
+            // If the item is a Skyblock coin, add its amount to the total
+            if (itemID === "SKYBLOCK_COIN") {
+              total += Number(itemAmount) * Number(amount);
+            }
+          });
+        }
+      }
+    }
 
-    const minionRecipeItems = getRecipeItems(minionRecipe);
-    // console.log(minionRecipeItems);
+    // Add the total cost of the current minion to the cachedMinion object for future reference
+    cachedMinion[minion] = total;
 
-    // Get the single price of each item in the recipe
-    const minionRecipeItemsPrices = getRecipeItemsPrices(minionRecipeItems);
-    // console.log(minionRecipeItemsPrices);
-
-    // Multiply the single price of each item in the recipe by the amount of each item in the recipe
-    const minionRecipeItemsPricesMultiplied = multiplyRecipeItemsPrices(minionRecipeItemsPrices, minionRecipeItems);
-    // console.log(minionRecipeItemsPricesMultiplied);
-
-    const minionTotalPrice = addRecipeItemsPrices(minionRecipeItemsPricesMultiplied);
-    // console.log(minionTotalPrice);
-
-    minionPrices[minion.id] = minionTotalPrice;
-    // console.log(`Got raw craft cost for ${minion.id},\nprocessed ${minions.indexOf(minion) + 1}/${minions.length}`);
+    // Update the cost of the current minion in the minionPrices object
+    minionPrices[minion].cost = total;
   }
 
-  // return minionPrices;
+  // Return the minionPrices object sorted and restructured
+  return (minionPrices = Object.keys(minionPrices)
+    // Sort the keys of the minionPrices object
+    .sort((a, b) => {
+      // Split each key into parts by underscore
+      const splitA = a.split("_");
+      const splitB = b.split("_");
+      // Join all parts except the last one to get the type of minion
+      const typeA = splitA.slice(0, -1).join("_");
+      const typeB = splitB.slice(0, -1).join("_");
+      // Parse the last part of each key to get the number of the minion
+      const numA = parseInt(splitA.pop() as string);
+      const numB = parseInt(splitB.pop() as string);
 
-  // return formatted json of minionPrices
-  return new Response(JSON.stringify(minionPrices).replace(/,/g, ",\n  ").replace(/{/g, "{\n  ").replace(/}/g, "\n}"), {
+      // Compare the types of minions. If they are different, sort by type
+      if (typeA < typeB) return -1;
+      if (typeA > typeB) return 1;
+      // If the types are the same, sort by number
+      return numA - numB;
+    })
+    // Reduce the sorted keys into a new object with the same structure as minionPrices
+    .reduce((acc: { [key: string]: any }, key) => {
+      // Add each key-value pair to the accumulator object
+      acc[key] = minionPrices[key];
+      // Return the accumulator for the next iteration
+      return acc;
+    }, {}));
+};
+
+export const GET: RequestHandler = async ({ request }) => {
+  const authHeader = request.headers.get("authorization");
+  const minionPrices = getMinionPrices(minions);
+  // Results:
+  /*
+  {
+    "ACACIA_GENERATOR_1": {
+"recipeIngredients": {
+"LOG_2": 80,
+"WOOD_AXE": 1
+},
+"cost": 1132.3052837573387
+},
+...etc
+  }
+  */
+
+  const test = Object.entries(minionPrices).map(([key, value]) => ({
+    where: {
+      name: key
+    },
+    data: {
+      cost: value.cost
+    }
+  }));
+
+  if (authHeader !== `Bearer ${CRON_SECRET}`) {
+    // for (const [key, value] of Object.entries(minionPrices)) {
+    //   await prisma.minion.update({
+    //     where: {
+    //       id: key
+    //     },
+    //     data: {
+    //       craftCost: value.cost
+    //     }
+    //   });
+    // }
+
+    return new Response(JSON.stringify({ success: true }), {
+      status: 200,
+      headers: {
+        "content-type": "application/json"
+      }
+    });
+  }
+
+  // Call the getMinionPrices function with the minions data as argument
+  // The function returns an object with minion prices
+  // Convert the object to a JSON string
+  // Return a new Response object with the JSON string as body
+  return new Response(JSON.stringify(minionPrices), {
+    // Set the content-type header to "application/json"
     headers: {
-      "content-type": "application/json;charset=UTF-8"
+      "content-type": "application/json"
     }
   });
 };
