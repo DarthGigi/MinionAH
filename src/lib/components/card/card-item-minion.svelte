@@ -1,6 +1,7 @@
 <script lang="ts">
   import * as Avatar from "$lib/components/ui/avatar";
   import * as HoverCard from "$lib/components/ui/hover-card";
+  import * as Tooltip from "$lib/components/ui/tooltip";
   import type { Seller } from "$lib/types";
   import { formatNumber } from "$lib/utilities";
   import * as headview3d from "headview3d";
@@ -58,7 +59,7 @@
     </Avatar.Root>
     <h3 class="truncate text-sm font-medium text-white">{minion.minion.name.replace(/ [IVX]+$/, "")}</h3>
   </HoverCard.Trigger>
-  <HoverCard.Content class="mt-0 -translate-y-44 border-neutral-700 bg-neutral-900">
+  <HoverCard.Content class="mt-0 w-80 -translate-y-44 border-neutral-700 bg-neutral-900">
     <div class="flex justify-center gap-x-4">
       <Avatar.Root id={`minionCanvasContainer_${minion.id}`} class="h-12 w-12 flex-shrink-0 rounded-full bg-neutral-700">
         <canvas bind:this={minionCanvas} class="!h-full !w-full cursor-move rounded-full" />
@@ -76,7 +77,14 @@
               minute: "numeric"
             })}
             <br />
-            Raw Craft Cost ~{formatNumber(minion.minion.craftCost)}
+            <Tooltip.Root openDelay={150}>
+              <Tooltip.Trigger class="font-minecraft cursor-help text-[#FEFF55]">
+                Raw Craft Cost: <span class="text-[#FEAB00]">{formatNumber(minion.minion.craftCost)} coins</span>
+              </Tooltip.Trigger>
+              <Tooltip.Content class="border-neutral-700 bg-neutral-900 text-neutral-200">
+                <p>Raw Craft Cost is not 100% accurate.</p>
+              </Tooltip.Content>
+            </Tooltip.Root>
           </p>
         </h4>
       </div>
