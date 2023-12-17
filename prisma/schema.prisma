@@ -55,6 +55,7 @@ model Minion {
   texture        String
   skin           String
   maxTier        Int
+  craftCost      Int           @default(0)
   sellers        MinionSeller[]
 }
 

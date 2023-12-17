@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { PageData } from "./$types";
-  import Card from "$lib/components/Card.svelte";
+  import { MinionCard } from "$lib/components/card";
   import type { Seller } from "$lib/types";
   import CardLoading from "$lib/components/CardLoading.svelte";
   import TierListbox from "$lib/components/TierListbox.svelte";
@@ -164,7 +164,7 @@
         {/each}
       {:then minions}
         {#each minions as seller}
-          <Card minion={seller} />
+          <MinionCard minion={seller} />
         {/each}
 
         {#if loadingMore && initialLoad}
