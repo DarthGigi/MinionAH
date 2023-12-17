@@ -24,7 +24,10 @@ export const actions: Actions = {
         attributes: {}
       });
       const sessionCookie = auth.createSessionCookie(session);
-      cookies.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+      cookies.set(sessionCookie.name, sessionCookie.value, {
+        ...sessionCookie.attributes,
+        path: sessionCookie.attributes.path || "/"
+      });
     } catch (e) {
       if (e instanceof LuciaError && (e.message === "AUTH_INVALID_KEY_ID" || e.message === "AUTH_INVALID_PASSWORD")) {
         // user does not exist
