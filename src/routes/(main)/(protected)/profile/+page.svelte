@@ -1,8 +1,8 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import MinionCard from "$lib/components/Card.svelte";
+  import MinionCard from "$lib/components/card/cardminion.svelte";
   import CardLoading from "$lib/components/CardLoading.svelte";
-  import MinionCopyButton from "$lib/components/MinionCopyButton.svelte";
+  import CopyButton from "$lib/components/CopyButton.svelte";
   import MinionsListBox from "$lib/components/MinionsListBox.svelte";
   import TierListbox from "$lib/components/TierListbox.svelte";
   import * as AlertDialog from "$lib/components/ui/alert-dialog";
@@ -71,7 +71,7 @@
   <div class="w-full pt-8">
     <div class="relative mt-5">
       <div bind:this={minecraftAvatarContainer} class="relative">
-        <MinionCopyButton class="absolute right-3 top-3 z-30" on:click={() => navigator.clipboard.writeText(`${window.location.protocol}/${window.location.host}/${data.user?.username}/`)} />
+        <CopyButton class="absolute right-3 top-3 z-30" on:click={() => navigator.clipboard.writeText(`${window.location.protocol}/${window.location.host}/${data.user?.username}/`)} />
         {#if canvasIsLoading}
           <div class="absolute h-full w-full animate-pulse rounded-lg bg-[#050505]" />
         {/if}
