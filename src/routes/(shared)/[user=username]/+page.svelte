@@ -1,6 +1,6 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import Card from "$lib/components/Card.svelte";
+  import { MinionCard } from "$lib/components/card";
   import CardLoading from "$lib/components/CardLoading.svelte";
   import * as Avatar from "$lib/components/ui/avatar";
   import type { PageData } from "./$types";
@@ -91,7 +91,7 @@
         {:then minions}
           {#if minions.length !== 0}
             {#each minions as minion (minion.id)}
-              <Card {minion} />
+              <MinionCard {minion} />
             {/each}
           {:else}
             {void (
