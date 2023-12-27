@@ -1,19 +1,21 @@
 import { auth } from "$lib/server/lucia";
 import type { Handle } from "@sveltejs/kit";
 import { dev } from "$app/environment";
+// import { RateLimiter } from "$lib/server/limiter";
 import { RateLimiter } from "sveltekit-rate-limiter/server";
+
 import { error } from "@sveltejs/kit";
 import { RATE_LIMIT_SECRET } from "$env/static/private";
 import prisma from "$lib/server/prisma";
 import { redirect } from "@sveltejs/kit";
 
-async function digestMessage(message: string) {
-  const msgUint8 = new TextEncoder().encode(message); // encode as (utf-8) Uint8Array
-  const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8); // hash the message
-  const hashArray = Array.from(new Uint8Array(hashBuffer)); // convert buffer to byte array
-  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join(""); // convert bytes to hex string
-  return hashHex;
-}
+// async function digestMessage(message: string) {
+//   const msgUint8 = new TextEncoder().encode(message); // encode as (utf-8) Uint8Array
+//   const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8); // hash the message
+//   const hashArray = Array.from(new Uint8Array(hashBuffer)); // convert buffer to byte array
+//   const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join(""); // convert bytes to hex string
+//   return hashHex;
+// }
 
 const limiter = new RateLimiter({
   rates: {
@@ -25,8 +27,7 @@ const limiter = new RateLimiter({
       rate: [60, "m"],
       preflight: true
     }
-  },
-  hashFunction: digestMessage
+  }
 });
 
 export const handle: Handle = async ({ event, resolve }) => {
