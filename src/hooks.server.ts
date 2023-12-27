@@ -7,6 +7,14 @@ import { RATE_LIMIT_SECRET } from "$env/static/private";
 import prisma from "$lib/server/prisma";
 import { redirect } from "@sveltejs/kit";
 
+async function digestMessage(message: string) {
+  const msgUint8 = new TextEncoder().encode(message); // encode as (utf-8) Uint8Array
+  const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8); // hash the message
+  const hashArray = Array.from(new Uint8Array(hashBuffer)); // convert buffer to byte array
+  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join(""); // convert bytes to hex string
+  return hashHex;
+}
+
 const limiter = new RateLimiter({
   rates: {
     IP: [60, "m"],
@@ -17,14 +25,15 @@ const limiter = new RateLimiter({
       rate: [60, "m"],
       preflight: true
     }
-  }
+  },
+  hashFunction: digestMessage
 });
 
 export const handle: Handle = async ({ event, resolve }) => {
   if (!dev) {
     await limiter.cookieLimiter?.preflight(event);
 
-    if (await limiter.isLimited(event)) error(429, "You have made too many requests");
+    if (await limiter.isLimited(event)) throw error(429, "You have made too many requests");
   }
 
   event.locals.auth = auth.handleRequest(event);
@@ -49,15 +58,15 @@ export const handle: Handle = async ({ event, resolve }) => {
   const path = event.url.pathname;
 
   if ((path === "/login" || path === "/signup") && (event.locals.session || event.locals.user)) {
-    redirect(302, "/profile");
+    throw redirect(302, "/profile");
   }
 
   if (isProtectedRoute && (!event.locals.session || !event.locals.user)) {
-    redirect(302, "/login");
+    throw redirect(302, "/login");
   }
 
   if (path === "/signup/password" && event.locals.session) {
-    if (!event.locals.user) redirect(302, "/login");
+    if (!event.locals.user) throw redirect(302, "/login");
     const userKey = await prisma.key.findFirst({
       where: {
         id: "username:" + event.locals.user.username.toLocaleLowerCase()
@@ -65,7 +74,7 @@ export const handle: Handle = async ({ event, resolve }) => {
     });
 
     if (userKey && userKey.hashed_password) {
-      redirect(302, "/profile");
+      throw redirect(302, "/profile");
     }
   }
 
