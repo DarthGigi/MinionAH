@@ -33,11 +33,11 @@ dependencies:
     specifier: ^2.3.1
     version: 2.3.1
   formsnap:
-    specifier: ^0.4.1
-    version: 0.4.1(svelte@4.2.8)(sveltekit-superforms@1.13.1)(zod@3.22.4)
+    specifier: ^0.4.2
+    version: 0.4.2(svelte@4.2.8)(sveltekit-superforms@1.13.1)(zod@3.22.4)
   lucide-svelte:
-    specifier: ^0.300.0
-    version: 0.300.0(svelte@4.2.8)
+    specifier: ^0.302.0
+    version: 0.302.0(svelte@4.2.8)
   sveltekit-superforms:
     specifier: ^1.13.1
     version: 1.13.1(@sveltejs/kit@2.0.6)(svelte@4.2.8)(zod@3.22.4)
@@ -122,8 +122,8 @@ devDependencies:
     specifier: ^3.0.1
     version: 3.0.1
   super-sitemap:
-    specifier: ^0.14.12
-    version: 0.14.12(svelte@4.2.8)
+    specifier: ^0.14.13
+    version: 0.14.13(svelte@4.2.8)
   svelte:
     specifier: ^4.2.8
     version: 4.2.8
@@ -1925,8 +1925,8 @@ packages:
       cross-spawn: 7.0.3
       signal-exit: 4.1.0
 
-  /formsnap@0.4.1(svelte@4.2.8)(sveltekit-superforms@1.13.1)(zod@3.22.4):
-    resolution: {integrity: sha512-hUOaDKb+KoBi4PamJRnxRqIQW3msp2BKPqohoqjHUuBb+vgBrhoaz0WYEFkXG4bzVQS3JngG55m/zX5ciZTyeA==}
+  /formsnap@0.4.2(svelte@4.2.8)(sveltekit-superforms@1.13.1)(zod@3.22.4):
+    resolution: {integrity: sha512-iUhGDUcjUW9tCOYLZ1rbNR1wkjtEbrXDxhUnl7+zPKjP5K8ikDfhZWH1cquKdUcHJoSE7M/Rruvg0fNQMjSNtA==}
     peerDependencies:
       svelte: ^4.0.0
       sveltekit-superforms: ^1.7.1
@@ -2200,8 +2200,8 @@ packages:
     resolution: {integrity: sha512-xyRkNtevf0DUM4nGC6F2nCFFNphZ1qqBrfWwAgPa9zkpQsVJ/hN32I8zAY+pm+ZKWPPS/C/Sqqmo2LreSCzg7w==}
     dev: true
 
-  /lucide-svelte@0.300.0(svelte@4.2.8):
-    resolution: {integrity: sha512-oRWQR+ESh1zedKipUir8aXxbPeThrJ32OYJzcVpTMA2fj9mZUhG9Gn9MDFSLapKpzBF63XvA91eaxqeAhQ0icQ==}
+  /lucide-svelte@0.302.0(svelte@4.2.8):
+    resolution: {integrity: sha512-sDC/dmrmFT8jRKVbxsA51QaIdUhj17Q7E8Et+3pNjseLnVvysNQhGb+TFwKtAai2kfGVpt3/lHYPatQi1ILmlg==}
     peerDependencies:
       svelte: '>=3 <5'
     dependencies:
@@ -2544,10 +2544,10 @@ packages:
       postcss: ^8.2.14
     dependencies:
       postcss: 8.4.32
-      postcss-selector-parser: 6.0.13
+      postcss-selector-parser: 6.0.14
 
-  /postcss-selector-parser@6.0.13:
-    resolution: {integrity: sha512-EaV1Gl4mUEV4ddhDnv/xtj7sxwrwxdetHdWUGnT4VJQf+4d05v6lHYZr8N573k5Z0BViss7BDhfWtKS3+sfAqQ==}
+  /postcss-selector-parser@6.0.14:
+    resolution: {integrity: sha512-65xXYsT40i9GyWzlHQ5ShZoK7JZdySeOozi/tz2EezDo6c04q6+ckYMeoY7idaie1qp2dT5KoYQ2yky6JuoHnA==}
     engines: {node: '>=4'}
     dependencies:
       cssesc: 3.0.0
@@ -3012,8 +3012,8 @@ packages:
       pirates: 4.0.6
       ts-interface-checker: 0.1.13
 
-  /super-sitemap@0.14.12(svelte@4.2.8):
-    resolution: {integrity: sha512-gM39OKPfZVJX+yLcw6O/ZwCCsHqIReN6Tib3OA7qO2qrTnJAUcySzKWll8hmLy1g3zTabCqw/P9o3atLzzw3xQ==}
+  /super-sitemap@0.14.13(svelte@4.2.8):
+    resolution: {integrity: sha512-kdEnHFmsQCBHwIIXFr8KAKC6Z+VzOssdjfbUSz31hId0cS7kkRRr29N+aKt9PDLHC3AOcsnJt59AUbe+0uifRw==}
     peerDependencies:
       svelte: ^4.0.0
     dependencies:
@@ -3213,7 +3213,7 @@ packages:
       postcss-js: 4.0.1(postcss@8.4.32)
       postcss-load-config: 4.0.2(postcss@8.4.32)
       postcss-nested: 6.0.1(postcss@8.4.32)
-      postcss-selector-parser: 6.0.13
+      postcss-selector-parser: 6.0.14
       resolve: 1.22.8
       sucrase: 3.35.0
     transitivePeerDependencies:
