@@ -98,16 +98,8 @@
               {@const lines = message.content.split("\n")}
               <li class="self-end">
                 <Tooltip.Root>
-                  <Tooltip.Trigger class={`cursor-default self-end rounded-full !rounded-br-none bg-[#3C83F7] px-4 py-2 text-left text-[#FDFDFD] ${lines.length > 1 ? "!rounded-3xl" : ""}`}>
-                    <p
-                      class="no-scrollbar max-w-[18rem] overflow-scroll"
-                      on:mousewheel={(e) => {
-                        if (!(e.currentTarget instanceof HTMLParagraphElement)) return;
-                        // scroll horizontally back and forth when the mouse wheel is used
-                        e.preventDefault();
-                        e.currentTarget.scrollLeft += e.deltaY;
-                      }}
-                    >
+                  <Tooltip.Trigger class={`max-w-[18rem] cursor-default self-end rounded-full !rounded-br-none bg-[#3C83F7] px-4 py-2 text-left text-[#FDFDFD] ${lines.length > 1 || message.content.length >= 25 ? "!rounded-3xl" : ""}`}>
+                    <p class="no-scrollbar min-w-0 select-text break-words">
                       {#each lines as line}
                         {line}
                         {#if lines.length > 1 && line !== lines[lines.length - 1]}
@@ -125,16 +117,8 @@
               {@const lines = message.content.split("\n")}
               <li class="self-start">
                 <Tooltip.Root>
-                  <Tooltip.Trigger class={`max-w-full cursor-default self-start truncate rounded-full !rounded-bl-none bg-[#3B3B3D] px-4 py-2 text-left text-[#FDFDFD] ${lines.length > 1 ? "!rounded-3xl" : ""}`}>
-                    <p
-                      class="no-scrollbar max-w-[18rem] overflow-scroll"
-                      on:mousewheel={(e) => {
-                        if (!(e.currentTarget instanceof HTMLParagraphElement)) return;
-                        // scroll horizontally back and forth when the mouse wheel is used
-                        e.preventDefault();
-                        e.currentTarget.scrollLeft += e.deltaY;
-                      }}
-                    >
+                  <Tooltip.Trigger class={`max-w-[18rem] cursor-default self-start rounded-full !rounded-bl-none bg-[#3B3B3D] px-4 py-2 text-left text-[#FDFDFD] ${lines.length > 1 || message.content.length >= 25 ? "!rounded-3xl" : ""}`}>
+                    <p class="no-scrollbar min-w-0 select-text break-words">
                       {#each lines as line}
                         {line}
                         {#if lines.length > 1 && line !== lines[lines.length - 1]}

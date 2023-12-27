@@ -1,8 +1,8 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import MinionCard from "$lib/components/Card.svelte";
+  import MinionCard from "$lib/components/card/cardminion.svelte";
   import CardLoading from "$lib/components/CardLoading.svelte";
-  import MinionCopyButton from "$lib/components/MinionCopyButton.svelte";
+  import CopyButton from "$lib/components/CopyButton.svelte";
   import MinionsListBox from "$lib/components/MinionsListBox.svelte";
   import TierListbox from "$lib/components/TierListbox.svelte";
   import * as AlertDialog from "$lib/components/ui/alert-dialog";
@@ -24,9 +24,9 @@
 
   let submittingCreate = false;
   let submittingDelete = false;
-  let showFormDialog = false;
+  let showFormStatusDialog = false;
 
-  let showDelete = false;
+  let showDeleteFormDialog = false;
   let minionToDelete: Seller & { minion: Minion } & { user: User };
 
   let minecraftAvatar: HTMLCanvasElement;
@@ -71,7 +71,7 @@
   <div class="w-full pt-8">
     <div class="relative mt-5">
       <div bind:this={minecraftAvatarContainer} class="relative">
-        <MinionCopyButton class="absolute right-3 top-3 z-30" on:click={() => navigator.clipboard.writeText(`${window.location.protocol}/${window.location.host}/${data.user?.username}/`)} />
+        <CopyButton class="absolute right-3 top-3 z-30" on:click={() => navigator.clipboard.writeText(`${window.location.protocol}/${window.location.host}/${data.user?.username}/`)} />
         {#if canvasIsLoading}
           <div class="absolute h-full w-full animate-pulse rounded-lg bg-[#050505]" />
         {/if}
@@ -92,11 +92,11 @@
           },
           onUpdated: () => {
             submittingCreate = false;
-            showFormDialog = true;
+            showFormStatusDialog = true;
           },
           onError: () => {
             submittingCreate = false;
-            showFormDialog = true;
+            showFormStatusDialog = true;
           }
         }}
         form={data.formCreate}
@@ -279,7 +279,7 @@
           <MinionCard
             minion={seller}
             on:openDeleteModal={() => {
-              showDelete = true;
+              showDeleteFormDialog = true;
               minionToDelete = seller;
             }}
             class="only:col-start-2"
@@ -293,22 +293,17 @@
 <Form.Root
   options={{
     onSubmit: () => {
-      console.log("onSubmit");
       submittingDelete = true;
     },
     onResult: () => {
-      console.log("onResult");
-    },
-    onUpdate: () => {
-      console.log("onUpdate");
+      showDeleteFormDialog = false;
     },
     onUpdated: () => {
-      console.log("onUpdated");
-      showFormDialog = true;
+      showFormStatusDialog = true;
     },
     onError: () => {
       console.log("onError");
-      showFormDialog = true;
+      showFormStatusDialog = true;
     }
   }}
   form={data.formDelete}
@@ -324,7 +319,7 @@
   </Form.Field>
 </Form.Root>
 
-<AlertDialog.Root bind:open={showFormDialog}>
+<AlertDialog.Root bind:open={showFormStatusDialog}>
   <AlertDialog.Content>
     <AlertDialog.Header>
       {#if $page.form && $page.form.form && $page.form.form.message}
@@ -342,7 +337,7 @@
   </AlertDialog.Content>
 </AlertDialog.Root>
 
-<AlertDialog.Root bind:open={showDelete} closeOnEscape={!submittingDelete} closeOnOutsideClick={!submittingDelete}>
+<AlertDialog.Root bind:open={showDeleteFormDialog} closeOnEscape={!submittingDelete} closeOnOutsideClick={!submittingDelete}>
   <AlertDialog.Content>
     <AlertDialog.Header>
       <AlertDialog.Title>Warning</AlertDialog.Title>
@@ -360,8 +355,7 @@
           e.preventDefault();
           const deleteForm = document.getElementById("deleteForm");
           if (!(deleteForm instanceof HTMLFormElement)) return;
-          submittingDelete = true;
-          deleteForm.submit();
+          deleteForm.requestSubmit();
         }}
       >
         {#if !submittingDelete}

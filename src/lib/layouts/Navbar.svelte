@@ -73,8 +73,6 @@
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content class="border-0 bg-neutral-700">
                   <DropdownMenu.Group>
-                    <DropdownMenu.Label>My Account</DropdownMenu.Label>
-                    <DropdownMenu.Separator class="bg-neutral-800" />
                     <DropdownMenu.Item href="/profile" class="cursor-pointer">Profile</DropdownMenu.Item>
                     <DropdownMenu.Item href="/profile/chats" class="relative cursor-pointer"
                       >Messages

@@ -24,7 +24,7 @@ export const handle: Handle = async ({ event, resolve }) => {
   if (!dev) {
     await limiter.cookieLimiter?.preflight(event);
 
-    if (await limiter.isLimited(event)) throw error(429, "You have made too many requests");
+    if (await limiter.isLimited(event)) error(429, "You have made too many requests");
   }
 
   event.locals.auth = auth.handleRequest(event);
@@ -49,15 +49,15 @@ export const handle: Handle = async ({ event, resolve }) => {
   const path = event.url.pathname;
 
   if ((path === "/login" || path === "/signup") && (event.locals.session || event.locals.user)) {
-    throw redirect(302, "/profile");
+    redirect(302, "/profile");
   }
 
   if (isProtectedRoute && (!event.locals.session || !event.locals.user)) {
-    throw redirect(302, "/login");
+    redirect(302, "/login");
   }
 
   if (path === "/signup/password" && event.locals.session) {
-    if (!event.locals.user) throw redirect(302, "/login");
+    if (!event.locals.user) redirect(302, "/login");
     const userKey = await prisma.key.findFirst({
       where: {
         id: "username:" + event.locals.user.username.toLocaleLowerCase()
@@ -65,7 +65,7 @@ export const handle: Handle = async ({ event, resolve }) => {
     });
 
     if (userKey && userKey.hashed_password) {
-      throw redirect(302, "/profile");
+      redirect(302, "/profile");
     }
   }
 

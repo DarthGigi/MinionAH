@@ -28,7 +28,6 @@ export const load = (async ({ locals }) => {
             id: locals.user!.id
           }
         },
-        take: 2,
         include: {
           minion: true,
           user: true

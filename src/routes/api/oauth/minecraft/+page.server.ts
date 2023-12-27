@@ -80,12 +80,12 @@ export const load = (async ({ cookies, url, locals }) => {
   cookies.delete("minecraft_oauth_state", { path: "/" });
 
   // validate state
-  if (!state || !stateCookie || state !== stateCookie) throw redirect(302, "/login"); // invalid state
+  if (!state || !stateCookie || state !== stateCookie) redirect(302, "/login"); // invalid state
 
   const codeVerifier = cookies.get("minecraft_code_verifier");
   cookies.delete("minecraft_code_verifier", { path: "/" });
 
-  if (!codeVerifier) throw redirect(302, "/login"); // invalid code verifier
+  if (!codeVerifier) redirect(302, "/login"); // invalid code verifier
 
   try {
     const tokens = await validateOAuth2AuthorizationCode<MCAuthResponseSuccess | MCAuthResponseError>(code as string, "https://mc-auth.com/oAuth2/token", {
@@ -100,7 +100,7 @@ export const load = (async ({ cookies, url, locals }) => {
 
     if ("error" in tokens) {
       console.error(tokens.error, tokens.message);
-      throw error(500, "Error getting MC profile");
+      error(500, "Error getting MC profile");
     }
 
     const minecraftUser = await getMinecraftInfo(tokens.access_token);
@@ -117,7 +117,7 @@ export const load = (async ({ cookies, url, locals }) => {
         skin = Buffer.from(avatarBuffer).toString("base64");
       } catch (e) {
         console.log(e);
-        throw error(500, "Failed to get skin");
+        error(500, "Failed to get skin");
       }
 
       let avatar: string;
@@ -127,7 +127,7 @@ export const load = (async ({ cookies, url, locals }) => {
         avatar = Buffer.from(avatarBuffer).toString("base64");
       } catch (e) {
         console.log(e);
-        throw error(500, "Failed to get avatar");
+        error(500, "Failed to get avatar");
       }
 
       let cape: string | null;
@@ -138,7 +138,7 @@ export const load = (async ({ cookies, url, locals }) => {
           const avatarBuffer = await response.arrayBuffer();
           cape = Buffer.from(avatarBuffer).toString("base64");
         } catch (e) {
-          throw error(500, "Failed to get cape");
+          error(500, "Failed to get cape");
         }
       } else {
         cape = null;
@@ -191,10 +191,10 @@ export const load = (async ({ cookies, url, locals }) => {
     console.log(e);
     if (e instanceof OAuthRequestError) {
       // invalid code
-      throw error(400, "Invalid Code");
+      error(400, "Invalid Code");
     }
 
-    throw error(500, "Internal Server Error");
+    error(500, "Internal Server Error");
   }
-  throw redirect(302, "/signup/password");
+  redirect(302, "/signup/password");
 }) satisfies PageServerLoad;
