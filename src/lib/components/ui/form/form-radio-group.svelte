@@ -15,8 +15,7 @@
     onValueChange?.(v);
     setValue(v);
   }}
-  {...$$restProps}
->
+  {...$$restProps}>
   <slot />
   <input hidden {name} value={$value} />
 </RadioGroup.Root>

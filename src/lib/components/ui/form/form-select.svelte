@@ -13,8 +13,7 @@
     onSelectedChange?.(v);
     setValue(v ? v.value : undefined);
   }}
-  {...$$restProps}
->
+  {...$$restProps}>
   <slot />
   <input hidden {name} value={$value} />
 </Select.Root>

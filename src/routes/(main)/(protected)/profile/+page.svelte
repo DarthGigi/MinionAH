@@ -104,8 +104,7 @@
         method="POST"
         action="?/createMinion"
         class="space-y-6"
-        let:config
-      >
+        let:config>
         <Card.Root class="border-2 border-neutral-700 border-opacity-40 bg-[#050505] text-neutral-200">
           <Card.Header>
             <Card.Title>Minions</Card.Title>
@@ -130,8 +129,7 @@
                         maxtier = detail;
                         if (detail > 0 && detail <= 12) tierListDisabled = false;
                       }}
-                      minionType={minionTypes}
-                    />
+                      minionType={minionTypes} />
                   {/await}
                   <TierListbox {config} bind:disabled={tierListDisabled} bind:maxtier />
                 </div>
@@ -160,8 +158,7 @@
                           }}
                           on:paste={(e) => {
                             e.preventDefault();
-                          }}
-                        />
+                          }} />
                         <Form.Validation />
                       </Form.Item>
                     </Form.Field>
@@ -220,8 +217,7 @@
                             }
                             currentTarget.value = parse(currentTarget.value)?.toString() ?? "1";
                             priceValue = Number(currentTarget.value);
-                          }}
-                        />
+                          }} />
                         {#if priceValue}
                           {#if priceValue >= 1000}
                             <Form.Description>{parse(priceValue)} = {formatNumber(priceValue)}</Form.Description>
@@ -282,8 +278,7 @@
               showDeleteFormDialog = true;
               minionToDelete = seller;
             }}
-            class="only:col-start-2"
-          />
+            class="only:col-start-2" />
         {/each}
       {/await}
     </ul>
@@ -312,8 +307,7 @@
   action="?/deleteMinion"
   class="hidden"
   method="POST"
-  id="deleteForm"
->
+  id="deleteForm">
   <Form.Field {config} name="id">
     <Form.Input type="hidden" value={minionToDelete?.id} />
   </Form.Field>
@@ -356,8 +350,7 @@
           const deleteForm = document.getElementById("deleteForm");
           if (!(deleteForm instanceof HTMLFormElement)) return;
           deleteForm.requestSubmit();
-        }}
-      >
+        }}>
         {#if !submittingDelete}
           Delete
         {:else}

@@ -70,8 +70,7 @@
           on:click={() => {
             // copy url to clipboard
             navigator.clipboard.writeText(`${window.location.protocol}/${window.location.host}/${minion.user.username}/${minion.id}/`);
-          }}
-        />
+          }} />
 
         <a href={`${minion.user.username}/${minion.id}`} class="group absolute left-2 top-12 rounded-lg !border-0 bg-neutral-700 bg-opacity-0 p-1.5 text-sm text-neutral-400 transition-all duration-300 hover:bg-opacity-100 focus:outline-none focus:ring-4 focus:ring-transparent group-hover:opacity-100" class:opacity-0={isHome} class:!bg-opacity-100={!isHome}>
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 transition-colors duration-300 group-hover:text-white">

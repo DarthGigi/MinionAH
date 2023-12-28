@@ -131,8 +131,7 @@
             if (currentTarget.value.length <= 3 && currentTarget.value.length !== 0) return;
             search = currentTarget.value;
             loadData(currentTier, undefined, search);
-          }}
-        />
+          }} />
       </Form.Item>
     </Form.Field>
     <TierListbox
@@ -150,8 +149,7 @@
         }
         currentTier = detail.tier;
         loadData(currentTier);
-      }}
-    />
+      }} />
   </Form.Root>
 {/await}
 

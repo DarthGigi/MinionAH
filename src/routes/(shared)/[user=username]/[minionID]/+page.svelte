@@ -49,8 +49,7 @@
       on:click={() => {
         // copy url to clipboard
         navigator.clipboard.writeText(`${window.location.href}/`);
-      }}
-    />
+      }} />
 
     <a href={`/${data.userMinion.user.username}/chat`} class="relative z-10 mx-20 mt-5 flex flex-col items-center rounded py-5 transition-all duration-300 hover:scale-110 hover:bg-neutral-600">
       <Avatar.Root class="mb-3 h-24 w-24 rounded-full bg-neutral-700 shadow-lg">
