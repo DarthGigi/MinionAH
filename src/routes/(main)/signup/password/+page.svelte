@@ -51,8 +51,7 @@
           } else {
             passwordConfirmInputIsValid = false;
           }
-        }}
-      />
+        }} />
       <Form.Validation class="pb-2" />
     </Form.Item>
   </Form.Field>
@@ -71,13 +70,11 @@
     if (open === false) {
       $message = undefined;
     }
-  }}
->
+  }}>
   <AlertDialog.Content>
     <AlertDialog.Header>
       <AlertDialog.Title
-        >{#if $message}{$message.title}{/if}</AlertDialog.Title
-      >
+        >{#if $message}{$message.title}{/if}</AlertDialog.Title>
       <AlertDialog.Description>
         {#if $message}{@html $message.description}{/if}
       </AlertDialog.Description>

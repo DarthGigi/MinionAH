@@ -43,8 +43,7 @@
           } else {
             passwordInputIsValid = false;
           }
-        }}
-      />
+        }} />
       <Form.Validation />
     </Form.Item>
   </Form.Field>
@@ -75,8 +74,7 @@
     if (open === false) {
       $message = undefined;
     }
-  }}
->
+  }}>
   <AlertDialog.Content>
     <AlertDialog.Header>
       <AlertDialog.Title>

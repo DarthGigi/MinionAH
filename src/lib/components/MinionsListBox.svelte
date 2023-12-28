@@ -63,8 +63,7 @@
                   dispatch("onSelect", minionType.maxTier);
                   closeAndFocusTrigger(ids.trigger);
                 }}
-                class="text-neutral-200 aria-selected:bg-neutral-800 aria-selected:text-neutral-300"
-              >
+                class="text-neutral-200 aria-selected:bg-neutral-800 aria-selected:text-neutral-300">
                 <Check class={cn("mr-2 h-4 w-4", value !== minionType.generator && "text-transparent")} />
                 <img src={`data:image/png;base64,${minionType.texture}`} class="mr-2 h-6 w-6" alt={minionType.generator} />
                 <span class="capitalize">

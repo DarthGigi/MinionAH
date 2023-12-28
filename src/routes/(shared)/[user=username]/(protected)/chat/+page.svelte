@@ -192,8 +192,7 @@
                 currentTarget.rows = 5;
                 break;
             }
-          }}
-        />
+          }} />
         <span class="translate-x absolute bottom-1/2 right-2 translate-y-1/2 text-xs text-neutral-500 transition-all duration-300" class:-translate-x-8={textValue} class:!-translate-y-2={newLines > 0} class:!bottom-1={newLines > 0} class:duration-0={newLines > 0}>{textValue && textValue.length ? textValue.length : ""}/1000</span>
 
         <div class="pointer-events-none w-32" />

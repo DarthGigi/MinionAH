@@ -21,6 +21,5 @@
   }}
   {...$$restProps}
   on:click
-  on:keydown
-/>
+  on:keydown />
 <input hidden {name} value={$value} />

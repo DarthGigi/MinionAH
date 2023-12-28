@@ -78,7 +78,7 @@
             })}
             <br />
             <Tooltip.Root openDelay={150}>
-              <Tooltip.Trigger class="font-minecraft cursor-help text-[#FEFF55]">
+              <Tooltip.Trigger class="cursor-help font-minecraft text-[#FEFF55]">
                 Raw Craft Cost: <span class="text-[#FEAB00]">{formatNumber(minion.minion.craftCost)} coins</span>
               </Tooltip.Trigger>
               <Tooltip.Content class="border-neutral-700 bg-neutral-900 text-neutral-200">
