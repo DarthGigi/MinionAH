@@ -54,7 +54,7 @@
         <Command.Root class="max-h-56 overflow-hidden border-none bg-neutral-700 text-base sm:text-sm">
           <Command.Input autofocus placeholder="Search minion" class="border-none border-green-500 text-neutral-200 focus:shadow-none focus:outline-0 focus:ring-0" />
           <Command.Empty>No minion found.</Command.Empty>
-          <Command.Group class="overflow-scroll">
+          <Command.Group class="overflow-y-auto overflow-x-clip">
             {#each minionType as minionType}
               <Command.Item
                 value={minionType.generator}
