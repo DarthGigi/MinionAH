@@ -215,9 +215,12 @@ export const GET: RequestHandler = async ({ params }) => {
 
     // If the item object is empty, return a 404 response with an error message
     if (Object.keys(item).length === 0) {
-      return new Response(JSON.stringify({ error: `Item not found`, message: `The item '${internalName}' was not found. Please check 'InternalNameMappings.json' for a list of all Hypixel Skyblock items.`, item: internalName, url: nameMappingsUrl }, null, 2), {
+      return new Response(JSON.stringify({ error: `Item not found`, message: `The item '${internalName}' was not found. Please check 'InternalNameMappings.json' for a list of all Hypixel Skyblock items. Consult the documentation for more information: https://minionah.com/api/craftcost/docs.`, item: internalName, url: nameMappingsUrl }, null, 2), {
         headers: {
-          "content-type": "application/json"
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET",
+          "Cache-Control": "max-age=3600"
         },
         status: 404,
         statusText: "Item not found"
@@ -257,7 +260,10 @@ export const GET: RequestHandler = async ({ params }) => {
     // If the item object is not empty, return a 200 response with the item data
     return new Response(JSON.stringify(item, null, 2), {
       headers: {
-        "content-type": "application/json"
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET",
+        "Cache-Control": "max-age=3600"
       },
       status: 200,
       statusText: "OK"
@@ -267,7 +273,10 @@ export const GET: RequestHandler = async ({ params }) => {
     console.error("Something went wrong", e);
     return new Response(JSON.stringify({ error: "Something went wrong" }), {
       headers: {
-        "content-type": "application/json"
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET",
+        "Cache-Control": "max-age=3600"
       },
       status: 500,
       statusText: "Internal Server Error"
