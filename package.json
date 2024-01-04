@@ -16,7 +16,6 @@
   "devDependencies": {
     "@lucia-auth/adapter-prisma": "3.0.2",
     "@lucia-auth/oauth": "^3.5.0",
-    "@lucia-auth/sveltekit": "^0.6.11",
     "@sveltejs/adapter-vercel": "^4.0.4",
     "@sveltejs/kit": "^2.0.6",
     "@sveltejs/vite-plugin-svelte": "^3.0.1",
@@ -65,10 +64,5 @@
     "tailwind-merge": "^2.2.0",
     "tailwind-variants": "^0.1.20",
     "zod": "^3.22.4"
-  },
-  "pnpm": {
-    "overrides": {
-      "sharp@<0.32.6": "0.32.6"
-    }
   }
 }
