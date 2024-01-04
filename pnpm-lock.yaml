@@ -4,9 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  sharp@<0.32.6: 0.32.6
-
 dependencies:
   '@ethercorps/svelte-h2j':
     specifier: ^4.0.0
