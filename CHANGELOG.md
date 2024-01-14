@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.3] - 2024-01-14
+
+### Changed
+
+- Changed code to improve Accessibility and Best Practices score in Lighthouse
+
+### Fixed
+
+- Fixed the new message indicator not showing up
+- Fixed the last login time not being updated
+
+### Security
+
+- Updated dependencies
+- Added CSP and CSRF configurations
+
 ## [1.2.2] - 2023-12-17
 
 ### Added

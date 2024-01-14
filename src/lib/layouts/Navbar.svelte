@@ -62,7 +62,7 @@
                       {#if unreadChats}
                         {@const read = unreadChats.user1_id === user.id ? unreadChats.user1Read : unreadChats.user2Read}
                         {#if !read}
-                          <span class="absolute right-0.5 top-0.5 flex h-3 w-3 transition-all duration-300" class:opacity-0={profileDropdownOpen} class:scale-0={profileDropdownOpen}>
+                          <span class="absolute -right-0.5 top-0.5 flex h-3 w-3 transition-all duration-300" class:opacity-0={profileDropdownOpen} class:scale-0={profileDropdownOpen}>
                             <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-neutral-400 opacity-75" />
                             <span class="relative inline-flex h-3 w-3 rounded-full bg-neutral-500" />
                           </span>
@@ -77,18 +77,16 @@
                     <DropdownMenu.Item href="/profile/chats" class="relative cursor-pointer"
                       >Messages
                       {#if $page.url.pathname === "/"}
-                        {#await $page.data.streamed.user then user}
-                          {#await $page.data.streamed.unreadChats then unreadChats}
-                            {#if unreadChats}
-                              {@const read = unreadChats.user1_id === user.id ? unreadChats.user1Read : unreadChats.user2Read}
-                              {#if !read && profileDropdownOpen}
-                                <span transition:fade={{ delay: 5000 }} class="absolute right-2 top-1/2 flex h-3 w-3 -translate-y-1/2 transition-all delay-1000 duration-300">
-                                  <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-neutral-400 opacity-75" />
-                                  <span class="relative inline-flex h-3 w-3 rounded-full bg-neutral-500" />
-                                </span>
-                              {/if}
+                        {#await $page.data.streamed.unreadChats then unreadChats}
+                          {#if unreadChats}
+                            {@const read = unreadChats.user1_id === user.id ? unreadChats.user1Read : unreadChats.user2Read}
+                            {#if !read && profileDropdownOpen}
+                              <span class="absolute right-2 top-1/2 flex h-3 w-3 -translate-y-1/2 transition-all delay-1000 duration-300">
+                                <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-neutral-400 opacity-75" />
+                                <span class="relative inline-flex h-3 w-3 rounded-full bg-neutral-500" />
+                              </span>
                             {/if}
-                          {/await}
+                          {/if}
                         {/await}
                       {/if}
                     </DropdownMenu.Item>
