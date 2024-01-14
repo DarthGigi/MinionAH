@@ -66,24 +66,38 @@
 
     --ring: 0 0% 83.1%;
   }
-}
-
-@layer base {
-  p * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-  html {
-    @apply scroll-smooth;
-  }
 
   @font-face {
     font-family: "Minecraft";
     src:
       url("https://minionah.com/assets/fonts/minecraft.woff2") format("woff2"),
       url("https://beta.minionah.com/assets/fonts/minecraft.woff2") format("woff2");
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    /* Ensure that the body fills the entire viewport. */
+    min-height: 100dvh;
+  }
+  html {
+    @apply scroll-smooth;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    /* Balance headings across multiple lines into an even block. */
+    text-wrap: balance;
+  }
+
+  p {
+    /* Prevent text orphans (single words on last line). */
+    text-wrap: pretty;
+  }
+
+  p * {
+    @apply border-border;
   }
 
   /* Hide scrollbar for Chrome, Safari and Opera */
