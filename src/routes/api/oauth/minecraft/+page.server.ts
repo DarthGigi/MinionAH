@@ -154,8 +154,7 @@ export const load = (async ({ cookies, url, locals }) => {
             username: minecraftUser.name,
             avatar,
             skin,
-            cape,
-            loggedInAt: new Date()
+            cape
           }
         });
         existingUser = await minecraftUserAuth.getExistingUser();
