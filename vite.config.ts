@@ -3,5 +3,8 @@ import { defineConfig } from "vite";
 import { vitePluginSvelteH2J } from "@ethercorps/svelte-h2j/vite";
 
 export default defineConfig({
-  plugins: [sveltekit(), vitePluginSvelteH2J()]
+  plugins: [sveltekit(), vitePluginSvelteH2J()],
+  build: {
+    sourcemap: true
+  }
 });
