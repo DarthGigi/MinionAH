@@ -40,6 +40,20 @@ export const handle: Handle = async ({ event, resolve }) => {
     });
     event.locals.session = session;
     user ? (event.locals.user = user) : (event.locals.user = null);
+    if (user) {
+      // if the time difference is more than an hour, update the loggedInAt time
+      const timeDifference = new Date().getTime() - user.loggedInAt.getTime();
+      if (timeDifference > 3600000) {
+        await prisma.user.update({
+          where: {
+            id: user.id
+          },
+          data: {
+            loggedInAt: new Date()
+          }
+        });
+      }
+    }
   } else {
     event.locals.session = null;
     event.locals.user = null;
