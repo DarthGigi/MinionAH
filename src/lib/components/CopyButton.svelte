@@ -9,6 +9,7 @@
   class:opacity-0={isHome}
   class:!bg-opacity-100={!isHome}
   type="button"
+  aria-label="Copy minion link"
   on:click={() => {
     copied = true;
     setTimeout(() => {

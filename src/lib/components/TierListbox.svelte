@@ -29,7 +29,7 @@
         dispatch("filterTier", { tier: v ? v.value : undefined });
         if ($page.url.pathname !== "/profile" && v?.value !== 0) showAny = true;
       }}>
-      <Form.SelectTrigger placeholder="Select tier" class="w-40 border-none bg-neutral-700 focus:border-neutral-600 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-0 md:w-44"></Form.SelectTrigger>
+      <Form.SelectTrigger placeholder="Select tier" class="w-40 border-none bg-neutral-700 focus:border-neutral-600 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-0 md:w-44" aria-label="Select tier"></Form.SelectTrigger>
       <Form.SelectContent class="scrollbar max-h-56 overflow-y-auto overflow-x-clip border-2 border-neutral-600 bg-neutral-700 text-neutral-200">
         {#if showAny}
           <Form.SelectItem label="Any" value={0} class="data-[highlighted]:bg-neutral-800 data-[highlighted]:text-neutral-300">Any</Form.SelectItem>
