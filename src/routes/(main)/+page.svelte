@@ -1,17 +1,15 @@
 <script lang="ts">
-  import type { PageData } from "./$types";
   import { MinionCard } from "$lib/components/card";
-  import type { Seller } from "$lib/types";
   import CardLoading from "$lib/components/CardLoading.svelte";
   import TierListbox from "$lib/components/TierListbox.svelte";
-  import { Input } from "$lib/components/ui/input";
-  import { Label } from "$lib/components/ui/label";
-  import * as Select from "$lib/components/ui/select";
-  import { draw } from "svelte/transition";
   import * as Alert from "$lib/components/ui/alert";
-  import { slide } from "svelte/transition";
   import * as Form from "$lib/components/ui/form";
-  import { formSchema, type FormSchema } from "./schema";
+  import { Input } from "$lib/components/ui/input";
+  import * as Select from "$lib/components/ui/select";
+  import type { Seller } from "$lib/types";
+  import { draw, slide } from "svelte/transition";
+  import type { PageData } from "./$types";
+  import { formSchema } from "./schema";
 
   export let data: PageData;
 
@@ -21,6 +19,7 @@
   let newMinionAmount: number;
   let initialDispatch = true;
   let initialLoad = true;
+  let lastSearch = "";
   let alert = {
     title: "",
     description: "",
@@ -73,7 +72,11 @@
         }
       }
     )
-      .then((res) => res.json())
+      .then((res) => {
+        // reset the minions
+        minions = [];
+        return res.json();
+      })
       .finally(() => {
         loadingMore = false;
       })
@@ -88,7 +91,7 @@
       });
 
     newMinionAmount = res.length;
-    minions = isMore ? [...minions, ...res] : res;
+    minions = [...minions, ...res];
   }
 </script>
 
@@ -100,6 +103,8 @@
     </Alert.Root>
   </div>
 {/if}
+
+<h2 class="sr-only">MinionAH | Auction House for Hypixel Skyblock Minions</h2>
 
 {#await data.streamed.form}
   <div class="mx-auto flex flex-row items-center justify-center gap-4 px-4 py-20 sm:px-6 lg:px-8">
@@ -128,7 +133,18 @@
           maxlength={32}
           on:input={({ currentTarget }) => {
             if (!(currentTarget instanceof HTMLInputElement)) return;
-            if (currentTarget.value.length <= 3 && currentTarget.value.length !== 0) return;
+            if (currentTarget.value === lastSearch) return;
+            // every third character
+            if (currentTarget.value.length % 4 !== 0 && currentTarget.value.length !== 0) return;
+            lastSearch = currentTarget.value;
+            search = currentTarget.value;
+            loadData(currentTier, undefined, search);
+          }}
+          on:keypress={({ key, currentTarget }) => {
+            if (key !== "Enter") return;
+            if (!(currentTarget instanceof HTMLInputElement)) return;
+            if (currentTarget.value === lastSearch) return;
+            lastSearch = currentTarget.value;
             search = currentTarget.value;
             loadData(currentTier, undefined, search);
           }} />
@@ -177,7 +193,7 @@
       {#if newMinionAmount === 0 || newMinionAmount < 18 || (minions.length === 0 && !loadingMore)}
         <p class="px-4 py-1 text-center text-sm text-neutral-200 text-opacity-40">No more minions to load.</p>
       {:else}
-        <button type="button" on:click={() => loadData(currentTier, minions.length, search, true)} class="rounded p-1 text-sm text-white text-opacity-30 transition-all duration-300 hover:bg-neutral-700 hover:text-opacity-100">
+        <button type="button" on:click={() => loadData(currentTier, minions.length, search, true)} class="rounded p-1 text-sm text-white text-opacity-30 transition-all duration-300 hover:bg-neutral-700 hover:text-opacity-100" aria-label="Load more minions">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6" class:animate-spin={loadingMore}>
             {#if loadingMore}
               <path in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
