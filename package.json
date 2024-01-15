@@ -59,6 +59,7 @@
     "prisma": "^5.8.1",
     "skinview3d": "^3.0.1",
     "super-sitemap": "^0.14.13",
+    "svelte-persisted-store": "^0.9.0",
     "sveltekit-rate-limiter": "^0.4.2",
     "sveltekit-superforms": "^1.13.3",
     "tailwind-merge": "^2.2.0",
