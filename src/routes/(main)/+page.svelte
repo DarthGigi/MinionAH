@@ -17,7 +17,6 @@
   let loadingMore = true;
   let currentTier: number | undefined = undefined;
   let newMinionAmount: number;
-  let initialDispatch = true;
   let initialLoad = true;
   let lastSearch = "";
   let alert = {
@@ -154,10 +153,6 @@
       {config}
       showValidation={false}
       on:filterTier={({ detail }) => {
-        if (initialDispatch) {
-          initialDispatch = false;
-          return;
-        }
         if (detail.tier === null) {
           currentTier = undefined;
           loadData(currentTier);
