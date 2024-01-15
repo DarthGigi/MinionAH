@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { MinionCard } from "$lib/components/card";
   import CardLoading from "$lib/components/CardLoading.svelte";
   import TierListbox from "$lib/components/TierListbox.svelte";
+  import { MinionCard } from "$lib/components/card";
   import * as Alert from "$lib/components/ui/alert";
   import * as Form from "$lib/components/ui/form";
   import { Input } from "$lib/components/ui/input";
@@ -17,7 +17,6 @@
   let loadingMore = true;
   let currentTier: number | undefined = undefined;
   let newMinionAmount: number;
-  let initialDispatch = true;
   let initialLoad = true;
   let lastSearch = "";
   let alert = {
@@ -154,10 +153,6 @@
       {config}
       showValidation={false}
       on:filterTier={({ detail }) => {
-        if (initialDispatch) {
-          initialDispatch = false;
-          return;
-        }
         if (detail.tier === null) {
           currentTier = undefined;
           loadData(currentTier);

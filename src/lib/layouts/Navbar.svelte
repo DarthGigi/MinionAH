@@ -1,11 +1,17 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
   import * as Avatar from "$lib/components/ui/avatar";
-  import { fade } from "svelte/transition";
+  import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
+  import { Label } from "$lib/components/ui/label";
+  import * as Popover from "$lib/components/ui/popover";
+  import { Switch } from "$lib/components/ui/switch";
+  import * as Tooltip from "$lib/components/ui/tooltip";
+  import { preferences } from "$lib/stores/preferences";
+  import { Info, Settings } from "lucide-svelte";
 
   let profileDropdownOpen = false;
   let menuDropdownOpen = false;
+  let settingsOpen = false;
 </script>
 
 <nav class="bg-neutral-800 max-md:fixed max-md:bottom-0 max-md:z-50 max-md:w-full">
@@ -71,10 +77,10 @@
                     {/await}
                   {/if}
                 </DropdownMenu.Trigger>
-                <DropdownMenu.Content class="border-0 bg-neutral-700">
+                <DropdownMenu.Content class="border-neutral-700 bg-neutral-800">
                   <DropdownMenu.Group>
-                    <DropdownMenu.Item href="/profile" class="cursor-pointer">Profile</DropdownMenu.Item>
-                    <DropdownMenu.Item href="/profile/chats" class="relative cursor-pointer"
+                    <DropdownMenu.Item href="/profile" class="cursor-pointer data-[highlighted]:bg-neutral-700">Profile</DropdownMenu.Item>
+                    <DropdownMenu.Item href="/profile/chats" class="relative cursor-pointer data-[highlighted]:bg-neutral-700"
                       >Messages
                       {#if $page.url.pathname === "/"}
                         {#await $page.data.streamed.unreadChats then unreadChats}
@@ -90,8 +96,8 @@
                         {/await}
                       {/if}
                     </DropdownMenu.Item>
-                    <DropdownMenu.Separator class="bg-neutral-600" />
-                    <DropdownMenu.Item href="/logout" class="cursor-pointer" data-sveltekit-preload-data="off">Sign out</DropdownMenu.Item>
+                    <DropdownMenu.Separator class="bg-neutral-700" />
+                    <DropdownMenu.Item href="/logout" class="cursor-pointer data-[highlighted]:bg-neutral-700" data-sveltekit-preload-data="off">Sign out</DropdownMenu.Item>
                   </DropdownMenu.Group>
                 </DropdownMenu.Content>
               </DropdownMenu.Root>
@@ -106,6 +112,44 @@
             </div>
           {/if}
         {/await}
+        <Popover.Root bind:open={settingsOpen}>
+          <Popover.Trigger><Settings class={`text-neutral-600 transition-all duration-300 hover:text-white ${settingsOpen ? "rotate-45 !text-white" : ""}`} /></Popover.Trigger>
+          <Popover.Content sideOffset={8} class="border-neutral-700 bg-neutral-800">
+            <div class="flex flex-col gap-4">
+              <div class="space-y-2">
+                <h4 class="font-medium leading-none">Preferences</h4>
+
+                <p class="text-xs text-muted-foreground">Set your preferences for MinionAH.</p>
+              </div>
+              <div class="grid gap-2">
+                <div class="grid w-full grid-cols-2 items-center justify-between gap-4">
+                  <Label>Roman Numerals</Label>
+                  <Switch
+                    class="data-[state=unchecked]:bg-neutral-700"
+                    checked={$preferences.romanNumerals}
+                    onCheckedChange={(checked) => {
+                      preferences.update((state) => ({ ...state, romanNumerals: checked }));
+                    }} />
+                </div>
+                <div class="grid w-full grid-cols-2 items-center justify-between gap-4">
+                  <Label>Minecraft Font</Label>
+                  <Switch
+                    class="data-[state=unchecked]:bg-neutral-700"
+                    checked={$preferences.minecraftFont}
+                    onCheckedChange={(checked) => {
+                      preferences.update((state) => ({ ...state, minecraftFont: checked }));
+                    }} />
+                </div>
+              </div>
+            </div>
+            <Tooltip.Root closeDelay={0} openDelay={0} closeOnPointerDown={false}>
+              <Tooltip.Trigger class="absolute right-1 top-2 text-neutral-600 hover:text-white"><Info class="h-4" /></Tooltip.Trigger>
+              <Tooltip.Content class="border-neutral-700 bg-neutral-800">
+                <p>These preferences are saved in your browser</p>
+              </Tooltip.Content>
+            </Tooltip.Root>
+          </Popover.Content>
+        </Popover.Root>
       </div>
     </div>
   </div>

@@ -2,6 +2,7 @@
   import { page } from "$app/stores";
   import * as Form from "$lib/components/ui/form";
   import { createEventDispatcher } from "svelte";
+  import { preferences } from "$lib/stores/preferences";
 
   const dispatch = createEventDispatcher();
 
@@ -36,7 +37,9 @@
         {/if}
 
         {#each tiers as tier}
-          <Form.SelectItem label={`${["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"][tier - 1]} (${tier})`} value={tier} class="data-[highlighted]:bg-neutral-800 data-[highlighted]:text-neutral-300">{`${["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"][tier - 1]} (${tier})`}</Form.SelectItem>
+          <Form.SelectItem label={`${$preferences.romanNumerals ? ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"][tier - 1] : tier} `} value={tier} class="data-[highlighted]:bg-neutral-800 data-[highlighted]:text-neutral-300">
+            {`${$preferences.romanNumerals ? ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"][tier - 1] : tier}`}
+          </Form.SelectItem>
         {/each}
       </Form.SelectContent>
     </Form.Select>

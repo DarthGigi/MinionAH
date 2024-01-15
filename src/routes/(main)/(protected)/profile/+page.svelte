@@ -1,10 +1,10 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import MinionCard from "$lib/components/card/cardminion.svelte";
   import CardLoading from "$lib/components/CardLoading.svelte";
   import CopyButton from "$lib/components/CopyButton.svelte";
   import MinionsListBox from "$lib/components/MinionsListBox.svelte";
   import TierListbox from "$lib/components/TierListbox.svelte";
+  import MinionCard from "$lib/components/card/cardminion.svelte";
   import * as AlertDialog from "$lib/components/ui/alert-dialog";
   import { Button } from "$lib/components/ui/button";
   import * as Card from "$lib/components/ui/card";
@@ -19,7 +19,6 @@
   import type { PageData } from "./$types";
   import { formSchemaCreate, formSchemaDelete } from "./schema";
   export let data: PageData;
-
   let moreThan1 = false;
 
   let submittingCreate = false;
@@ -71,7 +70,9 @@
   <div class="w-full pt-8">
     <div class="relative mt-5">
       <div bind:this={minecraftAvatarContainer} class="relative">
-        <CopyButton class="absolute right-3 top-3 z-30" on:click={() => navigator.clipboard.writeText(`${window.location.protocol}/${window.location.host}/${data.user?.username}/`)} />
+        <div class="absolute right-3 top-3 z-30 flex flex-col gap-2">
+          <CopyButton on:click={() => navigator.clipboard.writeText(`${window.location.protocol}/${window.location.host}/${data.user?.username}/`)} />
+        </div>
         {#if canvasIsLoading}
           <div class="absolute h-full w-full animate-pulse rounded-lg bg-[#050505]" />
         {/if}

@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.4] - 2024-01-15
+
+### Added
+
+- Added the ability to set preferences for MinionAH
+  - Added a setting dropdown to navbar to set
+    - Roman numerals, on or off
+    - Minecraft font, on or off
+
+### Changed
+
+- Changed the profile dropdown styling to match the other dropdown styles
+
+### Fixed
+
+- Fixed the tier selector on the home page not triggering a search the first time
+
 ## [1.2.3] - 2024-01-14
 
 ### Changed
