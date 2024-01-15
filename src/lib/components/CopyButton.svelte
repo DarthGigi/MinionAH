@@ -1,15 +1,15 @@
 <script lang="ts">
+  import { page } from "$app/stores";
+  import { Button } from "$lib/components/ui/button";
   import { draw } from "svelte/transition";
-  export let isHome = false;
+  const isHome = $page.url.pathname === "/";
   let copied = false;
 </script>
 
-<button
-  class={`group rounded-lg !border-0 bg-neutral-700 bg-opacity-0 p-1.5 text-sm text-neutral-400 transition-all duration-300 hover:bg-opacity-100 focus:outline-none focus:ring-0 focus:ring-transparent group-hover:opacity-100 ${$$props.class}`}
-  class:opacity-0={isHome}
-  class:!bg-opacity-100={!isHome}
+<Button
+  class={`group h-auto rounded-lg !border-0 bg-neutral-700 bg-opacity-0 p-1.5 text-sm text-neutral-400 transition-all duration-300 hover:bg-neutral-700 hover:bg-opacity-100 hover:opacity-100 focus:outline-none focus:ring-0 focus:ring-transparent group-hover:opacity-100 ${$$props.class} ${isHome ? "opacity-0" : ""} ${!isHome ? "bg-opacity-100" : ""}`}
   type="button"
-  aria-label="Copy minion link"
+  aria-label="Copy link"
   on:click={() => {
     copied = true;
     setTimeout(() => {
@@ -17,11 +17,16 @@
     }, 2000);
   }}
   on:click>
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 transition-colors duration-300" class:text-green-400={copied} class:group-hover:text-white={!copied} class:delay-500={copied}>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5 transition-colors" class:text-green-400={copied} class:group-hover:text-white={!copied} class:delay-500={copied}>
     {#if !copied}
-      <path in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
+      <circle in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} cx="18" cy="5" r="3" />
+      <circle in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} cx="6" cy="12" r="3" />
+      <circle in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} cx="18" cy="19" r="3" />
+      <line in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} x1="8.59" x2="15.42" y1="13.51" y2="17.49" />
+      <line in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} x1="15.41" x2="8.59" y1="6.51" y2="10.49" />
     {:else}
-      <path in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      <circle in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} cx="12" cy="12" r="10" />
+      <path in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} d="m9 12 2 2 4-4" />
     {/if}
   </svg>
-</button>
+</Button>
