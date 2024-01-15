@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { MinionCard } from "$lib/components/card";
   import CardLoading from "$lib/components/CardLoading.svelte";
   import TierListbox from "$lib/components/TierListbox.svelte";
+  import { MinionCard } from "$lib/components/card";
   import * as Alert from "$lib/components/ui/alert";
   import * as Form from "$lib/components/ui/form";
   import { Input } from "$lib/components/ui/input";
