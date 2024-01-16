@@ -8,15 +8,13 @@ import prisma from "$lib/server/prisma";
 import { redirect } from "@sveltejs/kit";
 
 const limiter = new RateLimiter({
-  rates: {
-    IP: [60, "m"],
-    IPUA: [60, "m"],
-    cookie: {
-      name: "limiterid",
-      secret: RATE_LIMIT_SECRET,
-      rate: [60, "m"],
-      preflight: true
-    }
+  IP: [60, "s"],
+  IPUA: [60, "s"],
+  cookie: {
+    name: "limiterid",
+    secret: RATE_LIMIT_SECRET,
+    rate: [60, "s"],
+    preflight: true
   }
 });
 
