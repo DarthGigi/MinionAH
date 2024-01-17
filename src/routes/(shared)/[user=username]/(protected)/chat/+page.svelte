@@ -1,20 +1,59 @@
 <script lang="ts">
-  import { enhance } from "$app/forms";
+  import ChatDate from "$lib/components/chat/chat-date.svelte";
+  import ChatLoading from "$lib/components/chat/chat-loading.svelte";
+  import Message from "$lib/components/chat/message.svelte";
   import * as Avatar from "$lib/components/ui/avatar";
-  import * as Tooltip from "$lib/components/ui/tooltip";
   import { onMount } from "svelte";
+  import { draw, fade } from "svelte/transition";
   import type { PageData } from "./$types";
+  import { ArrowUp } from "lucide-svelte";
+
+  interface Message {
+    id?: string;
+    chat_id?: string;
+    user_id?: string;
+    content: string;
+    createdAt: Date;
+  }
 
   export let data: PageData;
 
-  let submitButton: HTMLButtonElement;
+  let sendButton: HTMLButtonElement;
 
   let newLines = 0;
   let textValue: string;
-  let messageForm: HTMLFormElement;
+  let messageDiv: HTMLDivElement;
   let ulMessages: HTMLUListElement;
 
-  onMount(() => {
+  let newChats: Message[] = [];
+  let messages: Message[];
+  let sentMessageSuccess: boolean | undefined;
+
+  $: newChats;
+  $: messages;
+  let loading = true;
+  onMount(async () => {
+    const messagesData = await fetch(`${window.location.href}/api`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Requested-With": "fetch"
+      }
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        return res.map((message: any) => {
+          return {
+            ...message,
+            createdAt: new Date(message.createdAt)
+          };
+        });
+      })
+      .finally(() => {
+        loading = false;
+      });
+
+    messages = [...messagesData];
     if (!ulMessages) return;
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
@@ -22,7 +61,7 @@
           if (mutation.addedNodes.length > 0) {
             mutation.addedNodes.forEach((node) => {
               if (node instanceof HTMLLIElement) {
-                node.scrollIntoView({ behavior: "instant" });
+                node.scrollIntoView({ behavior: "smooth" });
               }
             });
           }
@@ -35,23 +74,50 @@
     });
   });
 
-  function formatDate(createdAt: Date) {
-    const messageDate = createdAt;
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(today.getDate() - 1);
+  async function sendMessage() {
+    if (!textValue || !textValue.length) return;
+    const message = {
+      content: textValue,
+      createdAt: new Date(),
+      user_id: data.user.id,
+      id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+    };
+    newChats = [...newChats, message];
 
-    if (isSameDay(messageDate, today)) {
-      return "Today";
-    } else if (isSameDay(messageDate, yesterday)) {
-      return "Yesterday";
+    textValue = "";
+
+    const res = await fetch(`${window.location.href}/api`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Requested-With": "fetch"
+      },
+      body: JSON.stringify(message)
+    });
+
+    const sentMessage = await res.json().then((res) => {
+      return {
+        ...res,
+        createdAt: new Date(res.createdAt)
+      };
+    });
+
+    if (res.status !== 201) {
+      sentMessageSuccess = false;
+      setTimeout(() => {
+        sentMessageSuccess = undefined;
+        newChats = newChats.filter((message) => message.id === sentMessage.id);
+        messages = [...messages, sentMessage];
+      }, 1000);
+      console.error("Error sending message");
     } else {
-      return messageDate.toLocaleDateString();
+      sentMessageSuccess = true;
+      setTimeout(() => {
+        sentMessageSuccess = undefined;
+        newChats = newChats.filter((message) => message.id === sentMessage.id);
+        messages = [...messages, sentMessage];
+      }, 1000);
     }
-  }
-
-  function isSameDay(date1: Date, date2: Date) {
-    return date1.getDate() === date2.getDate() && date1.getMonth() === date2.getMonth() && date1.getFullYear() === date2.getFullYear();
   }
 </script>
 
@@ -72,75 +138,44 @@
     </div>
     {#if data.chat}
       <ul bind:this={ulMessages} class="no-scrollbar flex max-h-72 w-full max-w-full flex-col gap-2 overflow-x-hidden overflow-y-scroll px-6 py-6">
-        {#await data.streamed.messages}
-          <li class="animate-pulse self-end rounded-full rounded-br-none bg-[#3C83F7] px-4 py-2">
-            <div class="h-4 w-16" />
-          </li>
-          <li class="animate-pulse self-start rounded-full rounded-bl-none bg-[#3B3B3D] px-4 py-2">
-            <div class="h-4 w-16" />
-          </li>
-          <li class="animate-pulse self-end rounded-full rounded-br-none bg-[#3C83F7] px-4 py-2">
-            <div class="h-4 w-16" />
-          </li>
-          <li class="animate-pulse self-start rounded-full rounded-bl-none bg-[#3B3B3D] px-4 py-2">
-            <div class="h-4 w-16" />
-          </li>
-          <li class="animate-pulse self-end rounded-full rounded-br-none bg-[#3C83F7] px-4 py-2">
-            <div class="h-4 w-16" />
-          </li>
-        {:then messages}
+        {#if loading}
+          <ChatLoading />
+        {:else if messages}
           {#each messages as message, i}
             {#if i === 0 || new Date(message.createdAt).getDate() !== new Date(messages[i - 1].createdAt).getDate()}
-              <li class="text-center text-xs text-neutral-500">{formatDate(message.createdAt)}</li>
+              <ChatDate date={message.createdAt} />
             {/if}
-
             {#if message.user_id === data.user.id}
-              {@const lines = message.content.split("\n")}
-              <li class="self-end">
-                <Tooltip.Root>
-                  <Tooltip.Trigger class={`max-w-[18rem] cursor-default self-end rounded-full !rounded-br-none bg-[#3C83F7] px-4 py-2 text-left text-[#FDFDFD] ${lines.length > 1 || message.content.length >= 25 ? "!rounded-3xl" : ""}`}>
-                    <p class="no-scrollbar min-w-0 select-text break-words">
-                      {#each lines as line}
-                        {line}
-                        {#if lines.length > 1 && line !== lines[lines.length - 1]}
-                          <br />
-                        {/if}
-                      {/each}
-                    </p>
-                  </Tooltip.Trigger>
-                  <Tooltip.Content class="border-2 border-neutral-600 bg-neutral-700 text-white">
-                    <time datetime={message.createdAt.toDateString()} class="text-xs">{new Date(message.createdAt).toLocaleTimeString()}</time>
-                  </Tooltip.Content>
-                </Tooltip.Root>
-              </li>
+              <Message {message} self={true} />
             {:else}
-              {@const lines = message.content.split("\n")}
-              <li class="self-start">
-                <Tooltip.Root>
-                  <Tooltip.Trigger class={`max-w-[18rem] cursor-default self-start rounded-full !rounded-bl-none bg-[#3B3B3D] px-4 py-2 text-left text-[#FDFDFD] ${lines.length > 1 || message.content.length >= 25 ? "!rounded-3xl" : ""}`}>
-                    <p class="no-scrollbar min-w-0 select-text break-words">
-                      {#each lines as line}
-                        {line}
-                        {#if lines.length > 1 && line !== lines[lines.length - 1]}
-                          <br />
-                        {/if}
-                      {/each}
-                    </p>
-                  </Tooltip.Trigger>
-                  <Tooltip.Content class="border-2 border-neutral-600 bg-neutral-700 text-white">
-                    <time datetime={message.createdAt.toDateString()} class="text-xs">{new Date(message.createdAt).toLocaleTimeString()}</time>
-                  </Tooltip.Content>
-                </Tooltip.Root>
-              </li>
+              <Message {message} self={false} />
             {/if}
           {/each}
-        {/await}
+        {/if}
+        {#each newChats as message}
+          <Message {message} self={true} class="animate-pulse" />
+        {/each}
       </ul>
     {/if}
-    <div class="border-t-2 border-neutral-700 p-4">
-      <form method="POST" class="relative flex rounded-[30px] border-2 border-neutral-600 bg-neutral-700 transition-all duration-300" class:!rounded-2xl={newLines > 0} use:enhance bind:this={messageForm}>
+    <div class="relative border-t border-neutral-700 p-4">
+      {#if newChats.length > 0}
+        <div transition:fade class="absolute -top-8 right-1 rounded bg-neutral-700 p-0.5">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 transition-colors delay-300 duration-300" class:animate-spin={sentMessageSuccess === undefined && newChats.length > 0} class:text-blue-500={sentMessageSuccess === undefined && newChats.length > 0} class:text-green-500={sentMessageSuccess === true} class:text-red-500={sentMessageSuccess === false}>
+            {#if sentMessageSuccess === undefined && newChats.length > 0}
+              <path in:draw={{ delay: 300, duration: 300 }} out:draw={{ duration: 300 }} d="M21 12a9 9 0 1 1-6.219-8.56" />
+            {:else if sentMessageSuccess}
+              <circle in:draw={{ delay: 300, duration: 300 }} out:draw={{ duration: 300 }} cx="12" cy="12" r="10" /><path in:draw={{ delay: 300, duration: 300 }} out:draw d="m9 12 2 2 4-4" />
+            {:else}
+              <circle in:draw={{ delay: 300, duration: 300 }} out:draw={{ duration: 300 }} cx="12" cy="12" r="10" /><path in:draw={{ delay: 300, duration: 300 }} out:draw d="m15 9-6 6" /><path in:draw={{ delay: 300, duration: 300 }} out:draw={{ duration: 300 }} d="m9 9 6 6" />
+            {/if}
+          </svg>
+        </div>
+      {/if}
+      <div class="relative flex rounded-[30px] border-2 border-neutral-600 bg-neutral-700 transition-all duration-300" class:!rounded-2xl={newLines > 0} bind:this={messageDiv}>
+        <!-- svelte-ignore a11y-autofocus -->
         <textarea
           bind:value={textValue}
+          data-sveltekit-keepfocus
           cols="1"
           rows="1"
           maxlength="1000"
@@ -148,27 +183,29 @@
           class:!rounded-2xl={newLines > 0}
           name="message"
           placeholder={data.chat ? "Message" : "Send a message to start a chat"}
+          autofocus
           required
+          disabled={newChats.length > 2}
           on:keydown={(e) => {
             if (e.shiftKey && e.key === "Enter") {
               return;
             }
             if (e.key === "Enter") {
               e.preventDefault();
-              submitButton.click();
+              sendButton.click();
             }
           }}
           on:focus={() => {
-            messageForm.classList.add("!border-blue-500");
+            messageDiv.classList.add("!border-blue-500");
           }}
           on:focusout={() => {
-            messageForm.classList.remove("!border-blue-500");
+            messageDiv.classList.remove("!border-blue-500");
           }}
           on:input={({ currentTarget }) => {
             if (!(currentTarget instanceof HTMLTextAreaElement)) return;
             newLines = (textValue.match(/\n/g) || []).length;
             if (newLines > 0) {
-              messageForm.classList.add("!rounded-2xl");
+              messageDiv.classList.add("!rounded-2xl");
             }
 
             switch (newLines) {
@@ -196,13 +233,10 @@
         <span class="translate-x absolute bottom-1/2 right-2 translate-y-1/2 text-xs text-neutral-500 transition-all duration-300" class:-translate-x-8={textValue} class:!-translate-y-2={newLines > 0} class:!bottom-1={newLines > 0} class:duration-0={newLines > 0}>{textValue && textValue.length ? textValue.length : ""}/1000</span>
 
         <div class="pointer-events-none w-32" />
-        <button type="submit" class="group absolute bottom-1/2 right-1 translate-y-1/2 overflow-hidden opacity-0 transition-opacity duration-300" bind:this={submitButton} class:!bottom-1={newLines > 0} class:!translate-y-0={newLines > 0} class:opacity-100={textValue}>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="relative z-10 h-8 w-8 rounded-full text-blue-500 transition-all duration-300">
-            <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm.53 5.47a.75.75 0 00-1.06 0l-3 3a.75.75 0 101.06 1.06l1.72-1.72v5.69a.75.75 0 001.5 0v-5.69l1.72 1.72a.75.75 0 101.06-1.06l-3-3z" clip-rule="evenodd" />
-          </svg>
-          <div class="pointer-events-none absolute bottom-1/2 right-1 h-6 w-6 translate-y-1/2 rounded-full bg-white" />
+        <button type="button" class="group absolute bottom-1/2 right-1 translate-y-1/2 overflow-hidden opacity-0 transition-opacity duration-300" bind:this={sendButton} class:!bottom-1={newLines > 0} class:!translate-y-0={newLines > 0} class:opacity-100={textValue} on:click={sendMessage}>
+          <ArrowUp class="relative z-10 h-6 w-6 rounded-full bg-blue-500 text-white transition-all duration-300" />
         </button>
-      </form>
+      </div>
     </div>
   </div>
   <span class="mt-1 text-xs opacity-25"> Messages are not end-to-end encrypted and are stored in plaintext. </span>

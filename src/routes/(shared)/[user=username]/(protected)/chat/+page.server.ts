@@ -1,7 +1,7 @@
 import type { PageServerLoad, Actions } from "./$types";
 import { redirect } from "@sveltejs/kit";
 
-export const load = (async ({ params, locals }) => {
+export const load = (async ({ params, locals, fetch }) => {
   const user = locals.user;
 
   if (!user) {
@@ -49,47 +49,7 @@ export const load = (async ({ params, locals }) => {
     }
   });
 
-  if (!chat) {
-    return { chat, user, user2 };
-  }
-
-  if (chat.user1_id === user.id) {
-    await prisma.chat.update({
-      where: {
-        id: chat.id
-      },
-      data: {
-        user1Read: true
-      }
-    });
-  } else {
-    await prisma.chat.update({
-      where: {
-        id: chat.id
-      },
-      data: {
-        user2Read: true
-      }
-    });
-  }
-
-  return {
-    chat,
-    user,
-    user2,
-    streamed: {
-      messages: prisma.message.findMany({
-        where: {
-          chat_id: {
-            equals: chat.id
-          }
-        },
-        orderBy: {
-          createdAt: "asc"
-        }
-      })
-    }
-  };
+  return { chat, user, user2 };
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
