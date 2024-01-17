@@ -113,7 +113,7 @@
           {/if}
         {/await}
         <Popover.Root bind:open={settingsOpen}>
-          <Popover.Trigger><Settings class={`text-neutral-600 transition-all duration-300 hover:text-white ${settingsOpen ? "rotate-45 !text-white" : ""}`} /></Popover.Trigger>
+          <Popover.Trigger aria-label="Settings"><Settings class={`text-neutral-600 transition-all duration-300 hover:text-white ${settingsOpen ? "rotate-45 !text-white" : ""}`} /></Popover.Trigger>
           <Popover.Content sideOffset={8} class="border-neutral-700 bg-neutral-800">
             <div class="flex flex-col gap-4">
               <div class="space-y-2">
