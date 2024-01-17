@@ -22,8 +22,8 @@
   <meta property="og:url" content="https://minionah.com/{$page.params.user}" />
   <meta property="og:title" content="{data.minionuser.username}'s MinionAH" />
   <meta property="og:description" content={`Check out ${data.minionuser.username}'s profile on MinionAH!`} />
-  <meta property="og:image" content="https://minionah.com/{$page.params.user}/og" />
-  <meta property="og:image:secure_url" content="https://minionah.com/{$page.params.user}/og" />
+  <meta property="og:image" content="https://og.minionah.com/user/{$page.params.user}" />
+  <meta property="og:image:secure_url" content="https://og.minionah.com/user/{$page.params.user}" />
   <meta property="og:image:alt" content="{data.minionuser.username}'s Profile — MinionAH" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -36,7 +36,7 @@
   <meta property="twitter:url" content="https://minionah.com/{$page.params.user}" />
   <meta property="twitter:title" content="{data.minionuser.username}'s MinionAH" />
   <meta property="twitter:description" content={`Check out ${data.minionuser.username}'s profile on MinionAH!`} />
-  <meta property="twitter:image" content="https://minionah.com/{$page.params.user}/og" />
+  <meta property="twitter:image" content="https://og.minionah.com/user/{$page.params.user}" />
 </svelte:head>
 
 <div id="container" class="flex w-full flex-col justify-center pt-6 md:h-[calc(100vh_-_64px)]">
