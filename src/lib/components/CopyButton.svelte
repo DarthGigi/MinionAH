@@ -17,7 +17,7 @@
     }, 2000);
   }}
   on:click>
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5 transition-colors" class:text-green-400={copied} class:group-hover:text-white={!copied} class:delay-500={copied}>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share-2 h-5 w-5 transition-colors" class:text-green-400={copied} class:group-hover:text-white={!copied} class:delay-500={copied}>
     {#if !copied}
       <circle in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} cx="18" cy="5" r="3" />
       <circle in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} cx="6" cy="12" r="3" />

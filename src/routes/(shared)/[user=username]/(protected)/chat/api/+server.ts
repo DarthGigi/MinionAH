@@ -88,7 +88,7 @@ export const GET: RequestHandler = async ({ params, locals, request, url }) => {
       }
     },
     orderBy: {
-      createdAt: "asc"
+      createdAt: "desc"
     }
   });
 

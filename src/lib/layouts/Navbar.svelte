@@ -7,7 +7,7 @@
   import { Switch } from "$lib/components/ui/switch";
   import * as Tooltip from "$lib/components/ui/tooltip";
   import { preferences } from "$lib/stores/preferences";
-  import { Info, Settings } from "lucide-svelte";
+  import { ChevronDown, Info, Plus, Settings } from "lucide-svelte";
 
   let profileDropdownOpen = false;
   let menuDropdownOpen = false;
@@ -22,9 +22,7 @@
           <DropdownMenu.Trigger class="flex items-center gap-2 rounded-md px-4 py-2 hover:bg-neutral-900">
             <img class="pointer-events-none block h-8 w-auto transition-transform duration-300 ease-in-out" src="/assets/images/favicons/favicon.png" alt="Minion AH" class:rotate-45={menuDropdownOpen} class:max-md:-rotate-45={menuDropdownOpen} />
             <h1>MinionAH</h1>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-            </svg>
+            <ChevronDown class="h-4 w-4" />
           </DropdownMenu.Trigger>
           <DropdownMenu.Content class="w-44 border-neutral-700 bg-neutral-800" transitionConfig={{ duration: 300 }}>
             <DropdownMenu.Group>
@@ -48,10 +46,7 @@
             {#if $page.url.pathname !== "/profile"}
               <div class="flex-shrink-0">
                 <a href="/profile" class="relative inline-flex items-center rounded-md border border-transparent bg-neutral-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors duration-300 hover:bg-neutral-600 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-2 focus:ring-offset-neutral-800">
-                  <!-- Heroicon name: mini/plus -->
-                  <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
-                  </svg>
+                  <Plus class="-ml-1 mr-2 h-5 w-5" />
                   <span>New Minion</span>
                 </a>
               </div>

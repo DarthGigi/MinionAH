@@ -6,7 +6,7 @@
   import { onMount } from "svelte";
   import { draw, fade } from "svelte/transition";
   import type { PageData } from "./$types";
-  import { ArrowUp } from "lucide-svelte";
+  import { ArrowLeftCircle, ArrowUp } from "lucide-svelte";
 
   interface Message {
     id?: string;
@@ -23,7 +23,6 @@
   let newLines = 0;
   let textValue: string;
   let messageDiv: HTMLDivElement;
-  let ulMessages: HTMLUListElement;
 
   let newChats: Message[] = [];
   let messages: Message[];
@@ -54,24 +53,6 @@
       });
 
     messages = [...messagesData];
-    if (!ulMessages) return;
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.type === "childList") {
-          if (mutation.addedNodes.length > 0) {
-            mutation.addedNodes.forEach((node) => {
-              if (node instanceof HTMLLIElement) {
-                node.scrollIntoView({ behavior: "smooth" });
-              }
-            });
-          }
-        }
-      });
-    });
-
-    observer.observe(ulMessages, {
-      childList: true
-    });
   });
 
   async function sendMessage() {
@@ -82,7 +63,7 @@
       user_id: data.user.id,
       id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
     };
-    newChats = [...newChats, message];
+    newChats = [message, ...newChats];
 
     textValue = "";
 
@@ -107,7 +88,7 @@
       setTimeout(() => {
         sentMessageSuccess = undefined;
         newChats = newChats.filter((message) => message.id === sentMessage.id);
-        messages = [...messages, sentMessage];
+        messages = [sentMessage, ...messages];
       }, 1000);
       console.error("Error sending message");
     } else {
@@ -115,7 +96,7 @@
       setTimeout(() => {
         sentMessageSuccess = undefined;
         newChats = newChats.filter((message) => message.id === sentMessage.id);
-        messages = [...messages, sentMessage];
+        messages = [sentMessage, ...messages];
       }, 1000);
     }
   }
@@ -124,9 +105,7 @@
 <div class="flex h-[calc(100vh-64px)] w-screen flex-col items-center justify-center">
   <div class="relative w-full max-w-sm rounded-lg border border-neutral-700 bg-neutral-800 shadow">
     <a href={`/${data.user2.username}`} class="absolute left-2 top-2 rounded-lg bg-neutral-700 bg-opacity-0 p-1.5 text-sm text-neutral-400 opacity-30 transition-all duration-300 hover:bg-opacity-100 hover:opacity-100">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 9l-3 3m0 0l3 3m-3-3h7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
+      <ArrowLeftCircle class="h-6 w-6" />
     </a>
 
     <div class="flex flex-col items-center justify-center border-neutral-700 p-4" class:border-b-2={data.chat}>
@@ -137,14 +116,14 @@
       <h2 class="text-center text-lg font-semibold">{data.user2?.username}</h2>
     </div>
     {#if data.chat}
-      <ul bind:this={ulMessages} class="no-scrollbar flex max-h-72 w-full max-w-full flex-col gap-2 overflow-x-hidden overflow-y-scroll px-6 py-6">
+      <div class="no-scrollbar flex max-h-72 w-full max-w-full flex-col-reverse gap-2 overflow-y-auto px-6 py-6">
         {#if loading}
           <ChatLoading />
         {:else if messages}
+          {#each newChats as message}
+            <Message {message} self={true} class="animate-pulse" />
+          {/each}
           {#each messages as message, i}
-            {#if i === 0 || new Date(message.createdAt).getDate() !== new Date(messages[i - 1].createdAt).getDate()}
-              <ChatDate date={message.createdAt} />
-            {/if}
             {#if message.user_id === data.user.id}
               <Message {message} self={true} />
             {:else}
@@ -152,15 +131,12 @@
             {/if}
           {/each}
         {/if}
-        {#each newChats as message}
-          <Message {message} self={true} class="animate-pulse" />
-        {/each}
-      </ul>
+      </div>
     {/if}
     <div class="relative border-t border-neutral-700 p-4">
       {#if newChats.length > 0}
         <div transition:fade class="absolute -top-8 right-1 rounded bg-neutral-700 p-0.5">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 transition-colors delay-300 duration-300" class:animate-spin={sentMessageSuccess === undefined && newChats.length > 0} class:text-blue-500={sentMessageSuccess === undefined && newChats.length > 0} class:text-green-500={sentMessageSuccess === true} class:text-red-500={sentMessageSuccess === false}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-loader-2 h-6 w-6 transition-colors delay-300 duration-300" class:animate-spin={sentMessageSuccess === undefined && newChats.length > 0} class:text-blue-500={sentMessageSuccess === undefined && newChats.length > 0} class:text-green-500={sentMessageSuccess === true} class:text-red-500={sentMessageSuccess === false}>
             {#if sentMessageSuccess === undefined && newChats.length > 0}
               <path in:draw={{ delay: 300, duration: 300 }} out:draw={{ duration: 300 }} d="M21 12a9 9 0 1 1-6.219-8.56" />
             {:else if sentMessageSuccess}
