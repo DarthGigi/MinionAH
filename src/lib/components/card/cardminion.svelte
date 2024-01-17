@@ -67,7 +67,7 @@
         class="absolute left-2 top-2"
         on:click={() => {
           // copy url to clipboard
-          navigator.clipboard.writeText(`${window.location.protocol}/${window.location.host}/${minion.user.username}/${minion.id}/`);
+          navigator.clipboard.writeText(`${window.location.origin}/${minion.user.username}/${minion.id}`);
         }} />
 
       <Button variant="link" href={`${minion.user.username}/${minion.id}`} class={`group absolute left-2 top-12 h-auto rounded-lg !border-0 bg-neutral-700 bg-opacity-0 p-1.5 text-sm text-neutral-400 transition-all duration-300 hover:bg-opacity-100 focus:outline-none focus:ring-4 focus:ring-transparent group-hover:opacity-100  ${isHome ? "opacity-0" : ""} ${!isHome ? "bg-opacity-100" : ""} `} aria-label="View {minion.user.username}'s {minion.minion.generator.replace(/_/g, ' ').toLowerCase().charAt(0) + minion.minion.generator.slice(1).toLowerCase().replace(/_/g, ' ')} minion">

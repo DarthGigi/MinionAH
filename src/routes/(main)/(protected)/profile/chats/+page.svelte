@@ -13,9 +13,8 @@
 <div class="flex flex-col items-center justify-center max-md:pb-20">
   {#await data.streamed.chats then chats}
     {#each chats as chat}
-      {@const chatUser = chat.user1_id === data.user.id ? chat.user2 : chat.user1}
-      {@const chatUserID = chat.user1_id === data.user.id ? chat.user2_id : chat.user1_id}
-      {@const read = chat.user1_id === data.user.id ? chat.user1Read : chat.user2Read}
+      {@const chatUser = chat.user1_id === data.user?.id ? chat.user2 : chat.user1}
+      {@const read = chat.user1_id === data.user?.id ? chat.user1Read : chat.user2Read}
 
       <div class="group relative mt-3">
         <a href="/{chatUser.username}/chat" data-sveltekit-preload-data="off" class="relative flex w-64 justify-between gap-x-4 truncate rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none">
