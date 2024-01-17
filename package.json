@@ -40,12 +40,9 @@
   },
   "type": "module",
   "dependencies": {
-    "@ethercorps/svelte-h2j": "^4.0.0",
-    "@ethercorps/sveltekit-og": "^3.0.0",
     "@prisma/client": "5.8.1",
     "@prisma/extension-accelerate": "^0.6.2",
     "@vercel/node": "^3.0.16",
-    "@vercel/og": "^0.6.2",
     "bits-ui": "^0.14.0",
     "clsx": "^2.1.0",
     "cmdk-sv": "^0.0.13",
