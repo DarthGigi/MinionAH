@@ -1,12 +1,11 @@
 <script lang="ts">
-  import ChatDate from "$lib/components/chat/chat-date.svelte";
   import ChatLoading from "$lib/components/chat/chat-loading.svelte";
   import Message from "$lib/components/chat/message.svelte";
   import * as Avatar from "$lib/components/ui/avatar";
+  import { ArrowLeftCircle, ArrowUp } from "lucide-svelte";
   import { onMount } from "svelte";
   import { draw, fade } from "svelte/transition";
   import type { PageData } from "./$types";
-  import { ArrowLeftCircle, ArrowUp } from "lucide-svelte";
 
   interface Message {
     id?: string;
@@ -83,6 +82,10 @@
       };
     });
 
+    if (res.statusText === "Created") {
+      window.location.reload();
+      return;
+    }
     if (res.status !== 201) {
       sentMessageSuccess = false;
       setTimeout(() => {
