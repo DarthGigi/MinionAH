@@ -1,10 +1,5 @@
-import type { Config } from "@sveltejs/adapter-vercel";
 import { redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
-
-// export let config: Config = {
-//   runtime: "edge"
-// };
 
 export const load = (async ({ params, fetch }) => {
   const minionID = params.minionID;
