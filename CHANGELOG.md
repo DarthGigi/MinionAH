@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.6] - 2024-01-17
+
+### Added
+
+- Added a status indicator for the chat message being sent
+- Added more fluid animations to the chat system
+- A new API endpoint to get or create chat messages
+
+### Changed
+
+- Refactored the chat code to be more efficient, consistent, and robust
+- Changed the chat system to use the new API endpoint instead of forms and SvelteKit actions
+
 ## [1.2.5] - 2024-01-17
 
 ### Added
