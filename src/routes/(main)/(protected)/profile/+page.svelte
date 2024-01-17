@@ -71,7 +71,7 @@
     <div class="relative mt-5">
       <div bind:this={minecraftAvatarContainer} class="relative">
         <div class="absolute right-3 top-3 z-30 flex flex-col gap-2">
-          <CopyButton on:click={() => navigator.clipboard.writeText(`${window.location.protocol}/${window.location.host}/${data.user?.username}/`)} />
+          <CopyButton on:click={() => navigator.clipboard.writeText(`${window.location.origin}/${data.user?.username}`)} />
         </div>
         {#if canvasIsLoading}
           <div class="absolute h-full w-full animate-pulse rounded-lg bg-[#050505]" />
