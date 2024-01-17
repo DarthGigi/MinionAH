@@ -23,7 +23,6 @@
   let newLines = 0;
   let textValue: string;
   let messageDiv: HTMLDivElement;
-  let ulMessages: HTMLUListElement;
 
   let newChats: Message[] = [];
   let messages: Message[];
@@ -54,24 +53,6 @@
       });
 
     messages = [...messagesData];
-    if (!ulMessages) return;
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.type === "childList") {
-          if (mutation.addedNodes.length > 0) {
-            mutation.addedNodes.forEach((node) => {
-              if (node instanceof HTMLLIElement) {
-                node.scrollIntoView({ behavior: "smooth" });
-              }
-            });
-          }
-        }
-      });
-    });
-
-    observer.observe(ulMessages, {
-      childList: true
-    });
   });
 
   async function sendMessage() {
@@ -82,7 +63,7 @@
       user_id: data.user.id,
       id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
     };
-    newChats = [...newChats, message];
+    newChats = [message, ...newChats];
 
     textValue = "";
 
@@ -107,7 +88,7 @@
       setTimeout(() => {
         sentMessageSuccess = undefined;
         newChats = newChats.filter((message) => message.id === sentMessage.id);
-        messages = [...messages, sentMessage];
+        messages = [sentMessage, ...messages];
       }, 1000);
       console.error("Error sending message");
     } else {
@@ -115,7 +96,7 @@
       setTimeout(() => {
         sentMessageSuccess = undefined;
         newChats = newChats.filter((message) => message.id === sentMessage.id);
-        messages = [...messages, sentMessage];
+        messages = [sentMessage, ...messages];
       }, 1000);
     }
   }
@@ -135,14 +116,14 @@
       <h2 class="text-center text-lg font-semibold">{data.user2?.username}</h2>
     </div>
     {#if data.chat}
-      <ul bind:this={ulMessages} class="no-scrollbar flex max-h-72 w-full max-w-full flex-col gap-2 overflow-x-hidden overflow-y-scroll px-6 py-6">
+      <div class="no-scrollbar flex max-h-72 w-full max-w-full flex-col-reverse gap-2 overflow-y-auto px-6 py-6">
         {#if loading}
           <ChatLoading />
         {:else if messages}
+          {#each newChats as message}
+            <Message {message} self={true} class="animate-pulse" />
+          {/each}
           {#each messages as message, i}
-            {#if i === 0 || new Date(message.createdAt).getDate() !== new Date(messages[i - 1].createdAt).getDate()}
-              <ChatDate date={message.createdAt} />
-            {/if}
             {#if message.user_id === data.user.id}
               <Message {message} self={true} />
             {:else}
@@ -150,10 +131,7 @@
             {/if}
           {/each}
         {/if}
-        {#each newChats as message}
-          <Message {message} self={true} class="animate-pulse" />
-        {/each}
-      </ul>
+      </div>
     {/if}
     <div class="relative border-t border-neutral-700 p-4">
       {#if newChats.length > 0}
