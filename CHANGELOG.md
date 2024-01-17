@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.5] - 2024-01-17
+
+### Added
+
+- Added the Inter font and set it as a default font if the Minecraft font isn't used
+
+### Changed
+
+- Changed the OG image generation
+  - Change URLs to use [MinionAH OG](https://og.minionah.com) instead
+
+### Removed
+
+- Removed the code of the OG image generation
+- Removed unused packages
+
+### Fixed
+
+- Fixed the rate limits rules
+- Fixed the copy button not copying the right URLs
+
 ## [1.2.4] - 2024-01-15
 
 ### Added
