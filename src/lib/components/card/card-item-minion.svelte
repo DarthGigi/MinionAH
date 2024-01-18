@@ -9,14 +9,16 @@
   import { Info, Search } from "lucide-svelte";
   import { getContext } from "svelte";
 
-  function handleSearchSignal(search: string) {
-    searchSignal.update(() => search);
-  }
   const minion = getContext<Seller>("minion");
+  const isHome = getContext<boolean>("isHome");
 
   let minionCanvas: HTMLCanvasElement;
 
   let minionViewer: headview3d.SkinViewer;
+
+  function handleSearchSignal(search: string) {
+    searchSignal.update(() => search);
+  }
 
   $: minionCanvas, createMinionViewer();
   function createMinionViewer() {
@@ -98,13 +100,15 @@
         <a href={`https://hypixel-skyblock.fandom.com/wiki/${minion.minion.name.replace(/ [IVX]+$/, "").replace(/ /g, "_")}`} target="_blank" rel="noopener" class="group rounded bg-neutral-700 p-1 text-sm text-neutral-400 focus:outline-none focus:ring-4 focus:ring-transparent">
           <Info class="h-5 w-5 transition-colors duration-300 group-hover:text-white" />
         </a>
-        <button
-          class="group rounded bg-neutral-700 p-1 text-sm text-neutral-400 focus:outline-none focus:ring-4 focus:ring-transparent"
-          on:click={() => {
-            handleSearchSignal(minion.minion.generator.replace(/_/g, " ").toLowerCase().charAt(0).toUpperCase() + minion.minion.generator.slice(1).toLowerCase().replace(/_/g, " "));
-          }}>
-          <Search class="h-5 w-5 transition-colors duration-300 group-hover:text-white" />
-        </button>
+        {#if isHome}
+          <button
+            class="group rounded bg-neutral-700 p-1 text-sm text-neutral-400 focus:outline-none focus:ring-4 focus:ring-transparent"
+            on:click={() => {
+              handleSearchSignal(minion.minion.generator.replace(/_/g, " ").toLowerCase().charAt(0).toUpperCase() + minion.minion.generator.slice(1).toLowerCase().replace(/_/g, " "));
+            }}>
+            <Search class="h-5 w-5 transition-colors duration-300 group-hover:text-white" />
+          </button>
+        {/if}
       </div>
     </div>
   </HoverCard.Content>
