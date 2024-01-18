@@ -2,15 +2,23 @@
   import * as Avatar from "$lib/components/ui/avatar";
   import * as HoverCard from "$lib/components/ui/hover-card";
   import * as Tooltip from "$lib/components/ui/tooltip";
+  import { searchSignal } from "$lib/stores/signals";
   import type { Seller } from "$lib/types";
   import { formatNumber } from "$lib/utilities";
   import * as headview3d from "headview3d";
+  import { Info, Search } from "lucide-svelte";
   import { getContext } from "svelte";
+
   const minion = getContext<Seller>("minion");
+  const isHome = getContext<boolean>("isHome");
 
   let minionCanvas: HTMLCanvasElement;
 
   let minionViewer: headview3d.SkinViewer;
+
+  function handleSearchSignal(search: string) {
+    searchSignal.update(() => search);
+  }
 
   $: minionCanvas, createMinionViewer();
   function createMinionViewer() {
@@ -59,34 +67,48 @@
     </Avatar.Root>
     <h3 class="truncate text-sm font-medium text-white">{minion.minion.name.replace(/ [IVX]+$/, "")}</h3>
   </HoverCard.Trigger>
-  <HoverCard.Content class="mt-0 w-80 -translate-y-44 border-neutral-700 bg-neutral-900">
-    <div class="flex justify-center gap-x-4">
-      <Avatar.Root id={`minionCanvasContainer_${minion.id}`} class="h-12 w-12 flex-shrink-0 rounded-full bg-neutral-700">
+  <HoverCard.Content class="mt-0 w-80 -translate-y-44 gap-x-2 border-neutral-700 bg-neutral-900">
+    <div class="flex items-center justify-center gap-x-2">
+      <Avatar.Root id={`minionCanvasContainer_${minion.id}`} class="h-12 w-12  rounded-full bg-neutral-700">
         <canvas bind:this={minionCanvas} class="!h-full !w-full cursor-move rounded-full" />
         <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-700">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
       </Avatar.Root>
-      <div class="space-y-1">
+      <div>
         <h4 class="text-sm font-semibold">
           {minion.minion.name}
-          <p class="text-xs text-muted-foreground">
-            Created on {new Date(minion.timeCreated).toLocaleString(window.navigator.language, {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-              hour: "numeric",
-              minute: "numeric"
-            })}
-            <br />
-            <Tooltip.Root openDelay={150}>
-              <Tooltip.Trigger class="cursor-help font-minecraft text-[#FEFF55]">
-                Raw Craft Cost: <span class="text-[#FEAB00]">{formatNumber(minion.minion.craftCost)} coins</span>
-              </Tooltip.Trigger>
-              <Tooltip.Content class="border-neutral-700 bg-neutral-900 text-neutral-200">
-                <p>Raw Craft Cost is not 100% accurate.</p>
-              </Tooltip.Content>
-            </Tooltip.Root>
-          </p>
         </h4>
+        <p class="text-xs text-muted-foreground">
+          Created on {new Date(minion.timeCreated).toLocaleString(window.navigator.language, {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric"
+          })}
+          <br />
+          <Tooltip.Root openDelay={150}>
+            <Tooltip.Trigger class="cursor-help text-[#FEFF55]">
+              Raw Craft Cost: <span class="text-[#FEAB00]">{formatNumber(minion.minion.craftCost)} coins</span>
+            </Tooltip.Trigger>
+            <Tooltip.Content class="border-neutral-700 bg-neutral-900 text-neutral-200">
+              <p>Raw Craft Cost is <span class="font-semibold underline">not</span> 100% accurate.</p>
+            </Tooltip.Content>
+          </Tooltip.Root>
+        </p>
+      </div>
+      <div class="flex flex-col gap-2">
+        <a href={`https://hypixel-skyblock.fandom.com/wiki/${minion.minion.name.replace(/ [IVX]+$/, "").replace(/ /g, "_")}`} target="_blank" rel="noopener" class="group rounded bg-neutral-700 p-1 text-sm text-neutral-400 focus:outline-none focus:ring-4 focus:ring-transparent">
+          <Info class="h-5 w-5 transition-colors duration-300 group-hover:text-white" />
+        </a>
+        {#if isHome}
+          <button
+            class="group rounded bg-neutral-700 p-1 text-sm text-neutral-400 focus:outline-none focus:ring-4 focus:ring-transparent"
+            on:click={() => {
+              handleSearchSignal(minion.minion.generator.replace(/_/g, " ").toLowerCase().charAt(0).toUpperCase() + minion.minion.generator.slice(1).toLowerCase().replace(/_/g, " "));
+            }}>
+            <Search class="h-5 w-5 transition-colors duration-300 group-hover:text-white" />
+          </button>
+        {/if}
       </div>
     </div>
   </HoverCard.Content>

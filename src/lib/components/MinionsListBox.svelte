@@ -63,12 +63,14 @@
                   dispatch("onSelect", minionType.maxTier);
                   closeAndFocusTrigger(ids.trigger);
                 }}
-                class="text-neutral-200 aria-selected:bg-neutral-800 aria-selected:text-neutral-300">
+                class="justify-between text-neutral-200 aria-selected:bg-neutral-800 aria-selected:text-neutral-300">
+                <div class="inline-flex items-center">
+                  <img src={`data:image/png;base64,${minionType.texture}`} class="mr-2 h-6 w-6" alt={minionType.generator} />
+                  <span class="capitalize">
+                    {minionType.generator.replace(/_/g, " ").toLowerCase().charAt(0).toUpperCase() + minionType.generator.slice(1).toLowerCase().replace(/_/g, " ")}
+                  </span>
+                </div>
                 <Check class={cn("mr-2 h-4 w-4", value !== minionType.generator && "text-transparent")} />
-                <img src={`data:image/png;base64,${minionType.texture}`} class="mr-2 h-6 w-6" alt={minionType.generator} />
-                <span class="capitalize">
-                  {minionType.generator.replace(/_/g, " ").toLowerCase().charAt(0).toUpperCase() + minionType.generator.slice(1).toLowerCase().replace(/_/g, " ")}
-                </span>
               </Command.Item>
             {/each}
           </Command.Group>

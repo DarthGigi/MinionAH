@@ -132,7 +132,9 @@
                       }}
                       minionType={minionTypes} />
                   {/await}
-                  <TierListbox {config} bind:disabled={tierListDisabled} bind:maxtier />
+                  {#key maxtier}
+                    <TierListbox {config} bind:disabled={tierListDisabled} bind:maxtier />
+                  {/key}
                 </div>
                 <div class="flex gap-4">
                   <div class="mt-1 inline-flex flex-col rounded-md shadow-sm">
