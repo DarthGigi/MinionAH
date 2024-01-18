@@ -48,7 +48,7 @@
   {#if minion.hasInfusion}
     <Tooltip.Root>
       <Tooltip.Trigger class="absolute right-2 top-2 m-0 flex h-10 w-10 items-center justify-center rounded-lg !border-2 !border-black/30 bg-neutral-700 p-2 transition-all duration-300 group-hover:!border-black/0 group-hover:bg-neutral-900">
-        <img class="pointer-events-none h-auto w-full" src="https://mc-heads.net/head/7e051df4dd2151481f5145b93fb7a9aa62888fbcb90add9890ad07caf1faca73" alt="Mithril Infusion" />
+        <img class="pointer-events-none h-auto w-full" src="/assets/images/mithril.png" alt="Mithril Infusion" />
       </Tooltip.Trigger>
       <Tooltip.Content class="border-neutral-700 bg-neutral-900 text-neutral-200">
         <p>Mithril Infused</p>
