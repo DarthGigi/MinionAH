@@ -10,6 +10,8 @@
   import { draw, slide } from "svelte/transition";
   import type { PageData } from "./$types";
   import { formSchema } from "./schema";
+  import { searchSignal } from "$lib/stores/signals";
+  import { onDestroy } from "svelte";
 
   export let data: PageData;
 
@@ -19,13 +21,23 @@
   let newMinionAmount: number;
   let initialLoad = true;
   let lastSearch = "";
+  let search: string | undefined = undefined;
+  let searchValue = "";
   let alert = {
     title: "",
     description: "",
     open: false
   };
 
-  let search: string | undefined = undefined;
+  let searchSignalUnsubscribe = searchSignal.subscribe((search) => {
+    if (search === searchValue || search === lastSearch || search === "") return;
+    searchValue = search;
+    loadData(currentTier, undefined, search);
+  });
+
+  onDestroy(() => {
+    searchSignalUnsubscribe();
+  });
 
   (async function () {
     minions = await data.streamed.minions;
@@ -73,7 +85,7 @@
     )
       .then((res) => {
         // reset the minions
-        minions = [];
+        if (!isMore) minions = [];
         return res.json();
       })
       .finally(() => {
@@ -90,6 +102,7 @@
       });
 
     newMinionAmount = res.length;
+
     minions = [...minions, ...res];
   }
 </script>
@@ -130,6 +143,7 @@
           class="w-44 border-2 border-none bg-neutral-700 text-white placeholder-white placeholder-opacity-30 focus-visible:border-neutral-600 focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-0"
           placeholder="Minion or user"
           maxlength={32}
+          value={searchValue}
           on:input={({ currentTarget }) => {
             if (!(currentTarget instanceof HTMLInputElement)) return;
             if (currentTarget.value === lastSearch) return;
