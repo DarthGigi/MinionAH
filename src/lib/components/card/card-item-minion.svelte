@@ -60,7 +60,7 @@
     <h3 class="truncate text-sm font-medium text-white">{minion.minion.name.replace(/ [IVX]+$/, "")}</h3>
   </HoverCard.Trigger>
   <HoverCard.Content class="mt-0 w-80 -translate-y-44 border-neutral-700 bg-neutral-900">
-    <div class="flex justify-center gap-x-4">
+    <div class="flex items-center justify-center gap-x-4">
       <Avatar.Root id={`minionCanvasContainer_${minion.id}`} class="h-12 w-12 flex-shrink-0 rounded-full bg-neutral-700">
         <canvas bind:this={minionCanvas} class="!h-full !w-full cursor-move rounded-full" />
         <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-700">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
@@ -78,7 +78,7 @@
             })}
             <br />
             <Tooltip.Root openDelay={150}>
-              <Tooltip.Trigger class="cursor-help font-minecraft text-[#FEFF55]">
+              <Tooltip.Trigger class="cursor-help text-[#FEFF55]">
                 Raw Craft Cost: <span class="text-[#FEAB00]">{formatNumber(minion.minion.craftCost)} coins</span>
               </Tooltip.Trigger>
               <Tooltip.Content class="border-neutral-700 bg-neutral-900 text-neutral-200">
