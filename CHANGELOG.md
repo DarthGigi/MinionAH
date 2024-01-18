@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.8] - 2024-01-19
+
+### Added
+
+- Added new buttons to the minion popup when you hover over a minion on the minion card
+  - Added a button to view more info about the minion, this takes you to the wiki page of the minion
+  - Added a button to quickly search for the same type of minion on the home page
+- Added new buttons to the user popup when you hover over a user on the minion card
+  - Added a button to view more info about the user, this takes you to the SkyCrypt page of the user
+  - Added a button to quickly start a chat with the user
+- When you click on a user on the minion card it will take open their profile page
+
+### Changed
+
+- Changed the layout of the minion picker
+- Changed the Mithril icon to use a local image instead of an external image
+
+### Fixed
+
+- Fixed the issue where the tier list isn't reset when a minion is re-selected on the profile page
+
 ## [1.2.7] - 2024-01-17
 
 ### Changed
