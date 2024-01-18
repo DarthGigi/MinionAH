@@ -61,26 +61,6 @@ export const GET: RequestHandler = async ({ params, locals, request, url }) => {
     });
   }
 
-  if (chat.user1_id === user.id) {
-    await prisma.chat.update({
-      where: {
-        id: chat.id
-      },
-      data: {
-        user1Read: true
-      }
-    });
-  } else {
-    await prisma.chat.update({
-      where: {
-        id: chat.id
-      },
-      data: {
-        user2Read: true
-      }
-    });
-  }
-
   const messages = await prisma.message.findMany({
     where: {
       chat_id: {
@@ -151,8 +131,9 @@ export const POST: RequestHandler = async ({ locals, request, params, url }) => 
     }
   });
 
+  let newChat;
   if (!chat) {
-    await prisma.chat.create({
+    newChat = await prisma.chat.create({
       data: {
         user1: {
           connect: {
@@ -205,6 +186,7 @@ export const POST: RequestHandler = async ({ locals, request, params, url }) => 
 
   return new Response(JSON.stringify(message), {
     status: 201,
+    statusText: newChat ? "Created" : "OK",
     headers: {
       "content-type": "application/json"
     }

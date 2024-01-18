@@ -1,19 +1,18 @@
 import { auth } from "$lib/server/lucia";
 import type { Handle } from "@sveltejs/kit";
 import { dev } from "$app/environment";
-import { RateLimiter } from "sveltekit-rate-limiter/server";
-import { error } from "@sveltejs/kit";
+import { RetryAfterRateLimiter } from "sveltekit-rate-limiter/server";
 import { RATE_LIMIT_SECRET } from "$env/static/private";
 import prisma from "$lib/server/prisma";
 import { redirect } from "@sveltejs/kit";
 
-const limiter = new RateLimiter({
-  IP: [60, "m"],
-  IPUA: [60, "m"],
+const limiter = new RetryAfterRateLimiter({
+  IP: [60, "15m"],
+  IPUA: [40, "m"],
   cookie: {
     name: "limiterid",
     secret: RATE_LIMIT_SECRET,
-    rate: [60, "m"],
+    rate: [15, "10s"],
     preflight: true
   }
 });
@@ -22,7 +21,20 @@ export const handle: Handle = async ({ event, resolve }) => {
   if (!dev) {
     await limiter.cookieLimiter?.preflight(event);
 
-    if (await limiter.isLimited(event)) error(429, "You have made too many requests");
+    const status = await limiter.check(event);
+    console.log(status);
+    if (status.limited) {
+      event.setHeaders({
+        "Retry-After": status.retryAfter.toString()
+      });
+      return new Response("Too many requests", {
+        status: 429,
+        headers: {
+          "Retry-After": status.retryAfter.toString()
+        },
+        statusText: "You have made too many requests, please try again later."
+      });
+    }
   }
 
   event.locals.auth = auth.handleRequest(event);

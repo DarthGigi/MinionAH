@@ -169,6 +169,7 @@
                       <Form.Item class="flex w-40 flex-col md:w-44">
                         <Form.Label>Price <span class="inline text-neutral-200/50 opacity-0 transition-opacity duration-500" class:opacity-100={moreThan1}>(each)</span></Form.Label>
                         <Form.Input
+                          bind:value={priceValue}
                           type="text"
                           class="w-40 ring-offset-0 focus-visible:border-neutral-500 focus-visible:ring-1 focus-visible:ring-neutral-500 focus-visible:ring-offset-0 md:w-44"
                           placeholder={moreThan1 ? "Price of each minion" : "Price of minion"}
