@@ -33,6 +33,7 @@
     if (search === searchValue || search === lastSearch || search === "") return;
     searchValue = search;
     loadData(currentTier, undefined, search);
+    searchSignal.update(() => "");
   });
 
   onDestroy(() => {
