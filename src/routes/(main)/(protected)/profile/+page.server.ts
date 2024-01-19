@@ -119,7 +119,14 @@ export const actions = {
     try {
       const deletedMinion = await prisma.minionSeller.delete({
         where: {
-          id: minionId
+          id: minionId,
+          AND: [
+            {
+              user: {
+                id: locals.user!.id
+              }
+            }
+          ]
         }
       });
 

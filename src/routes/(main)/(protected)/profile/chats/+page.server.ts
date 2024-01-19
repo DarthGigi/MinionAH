@@ -49,9 +49,23 @@ export const actions: Actions = {
     const chatid = data.get("chatId");
     const chat = await prisma.chat.findFirst({
       where: {
-        id: {
-          equals: chatid?.toString()
-        }
+        id: chatid?.toString(),
+        AND: [
+          {
+            OR: [
+              {
+                user1_id: {
+                  equals: locals.user!.id
+                }
+              },
+              {
+                user2_id: {
+                  equals: locals.user!.id
+                }
+              }
+            ]
+          }
+        ]
       }
     });
     if (!chat) {
@@ -64,7 +78,7 @@ export const actions: Actions = {
       };
     }
     try {
-      await prisma.message.deleteMany({
+      await prisma.message.findMany({
         where: {
           chat_id: chat.id
         }
@@ -72,7 +86,23 @@ export const actions: Actions = {
 
       await prisma.chat.delete({
         where: {
-          id: chat.id
+          id: chat.id,
+          AND: [
+            {
+              OR: [
+                {
+                  user1_id: {
+                    equals: locals.user!.id
+                  }
+                },
+                {
+                  user2_id: {
+                    equals: locals.user!.id
+                  }
+                }
+              ]
+            }
+          ]
         }
       });
     } catch (error) {
