@@ -18,12 +18,12 @@
   }
 </script>
 
-<Form.Root method="POST" form={data.form} schema={formSchema} on:submit={() => (submitting = true)} let:config class="mx-auto flex h-1/2 max-w-md flex-col justify-center">
+<Form.Root method="POST" form={data.form} schema={formSchema} on:submit={() => (submitting = true)} let:config class="mx-auto flex h-1/2 max-w-md flex-col justify-center px-4 md:px-0">
   <Form.Field {config} name="username">
     <Form.Item>
       <Form.Label>Username</Form.Label>
       <Form.Description>This is your Minecraft username.</Form.Description>
-      <Form.Input tabindex={-1} type="text" aria-readonly readonly class="pointer-events-none select-none border-2 border-neutral-700 read-only:cursor-not-allowed read-only:opacity-50 focus:border-neutral-700 focus:shadow-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-transparent focus-visible:ring-offset-0" autocomplete="username" name="username" id="username" />
+      <Form.Input tabindex={-1} type="text" aria-readonly readonly class="pointer-events-none select-none border-2 border-accent read-only:cursor-not-allowed read-only:opacity-50 focus:border-accent focus:shadow-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-transparent focus-visible:ring-offset-0" autocomplete="username" name="username" id="username" />
       <Form.Validation />
     </Form.Item>
   </Form.Field>
@@ -31,7 +31,7 @@
     <Form.Item>
       <Form.Label for="new-password">New Password</Form.Label>
       <Form.Description>Create a password for your account.</Form.Description>
-      <Form.Input type="password" name="new-password" id="new-password" autocomplete="new-password" passwordrules="minlength: 8;" class="border-2 border-neutral-700 transition-all duration-300 focus:border-neutral-400 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[invalid]:border-red-700/40 focus:data-[invalid]:border-red-700" />
+      <Form.Input type="password" name="new-password" id="new-password" autocomplete="new-password" passwordrules="minlength: 8;" class="border-2 border-accent transition-all duration-300 focus:border-muted-foreground focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[invalid]:border-destructive/40 focus:data-[invalid]:border-destructive" />
       <Form.Validation />
     </Form.Item>
   </Form.Field>
@@ -44,7 +44,7 @@
         id="confirm-password"
         autocomplete="new-password"
         passwordrules="minlength: 8;"
-        class="border-2 border-neutral-700 transition-all duration-300 focus:border-neutral-400 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[invalid]:border-red-700/40 focus:data-[invalid]:border-red-700"
+        class="border-2 border-accent transition-all duration-300 focus:border-muted-foreground focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[invalid]:border-destructive/40 focus:data-[invalid]:border-destructive"
         on:input={({ currentTarget }) => {
           if (currentTarget.attributes.getNamedItem("data-invalid") === null && currentTarget.attributes.getNamedItem("aria-invalid") === null && currentTarget.value.length >= 8) {
             passwordConfirmInputIsValid = true;
