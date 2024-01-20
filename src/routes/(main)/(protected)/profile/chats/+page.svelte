@@ -2,6 +2,7 @@
   import { enhance } from "$app/forms";
   import * as AlertDialog from "$lib/components/ui/alert-dialog";
   import * as Avatar from "$lib/components/ui/avatar";
+  import { checkReadStatus } from "$lib/utilities";
   import { Info, Trash2 } from "lucide-svelte";
   import type { PageData } from "./$types";
 
@@ -15,7 +16,7 @@
   {#await data.streamed.chats then chats}
     {#each chats as chat}
       {@const chatUser = chat.user1_id === data.user?.id ? chat.user2 : chat.user1}
-      {@const read = chat.user1_id === data.user?.id ? chat.user1Read : chat.user2Read}
+      {@const read = checkReadStatus(chat, data.user?.id)}
 
       <div class="relative flex w-80 items-center justify-between gap-x-4 !overflow-visible truncate rounded-md bg-background text-popover-foreground shadow-md outline-none">
         <a href="/{chatUser.username}/chat" class="group flex items-center justify-between gap-x-4 py-4 pl-4">

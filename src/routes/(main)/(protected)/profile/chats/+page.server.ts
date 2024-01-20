@@ -22,14 +22,18 @@ export const load = (async ({ locals }) => {
         include: {
           user1: {
             select: {
+              id: true,
               username: true,
-              avatar: true
+              avatar: true,
+              loggedInAt: true
             }
           },
           user2: {
             select: {
+              id: true,
               username: true,
-              avatar: true
+              avatar: true,
+              loggedInAt: true
             }
           },
           _count: {
@@ -78,12 +82,6 @@ export const actions: Actions = {
       };
     }
     try {
-      await prisma.message.findMany({
-        where: {
-          chat_id: chat.id
-        }
-      });
-
       await prisma.chat.delete({
         where: {
           id: chat.id,

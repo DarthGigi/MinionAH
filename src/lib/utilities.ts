@@ -1,3 +1,4 @@
+import type { Chat } from "@prisma/client";
 import { format } from "numerable";
 
 export function formatNumber(num: number | string): string {
@@ -22,5 +23,15 @@ export function formatNumber(num: number | string): string {
     return format(num, formatPattern);
   } else {
     return format(num, "0a");
+  }
+}
+
+export function checkReadStatus(chat: Chat, loggedInUserId: string | undefined) {
+  if (chat.user1_id === loggedInUserId) {
+    return chat.user1Read;
+  } else if (chat.user2_id === loggedInUserId) {
+    return chat.user2Read;
+  } else {
+    throw new Error("Logged in user is not part of this chat");
   }
 }

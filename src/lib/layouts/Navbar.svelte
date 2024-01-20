@@ -58,18 +58,15 @@
                     <Avatar.Image class="pointer-events-none h-full w-full p-1" src={`data:image/png;base64,${user.avatar}`} alt={user.username} />
                     <Avatar.Fallback class="border-2 border-border bg-accent">{user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
                   </Avatar.Root>
-                  {#if $page.url.pathname === "/"}
-                    {#await $page.data.streamed.unreadChats then unreadChats}
-                      {#if unreadChats}
-                        {@const read = unreadChats.user1_id === user.id ? unreadChats.user1Read : unreadChats.user2Read}
-                        {#if !read}
-                          <span class="absolute -right-0.5 top-0.5 flex h-3 w-3 transition-all duration-300" class:opacity-0={profileDropdownOpen} class:scale-0={profileDropdownOpen}>
+                  {#if !$page.url.pathname.includes("chat")}
+                    {#if user._count.chatsAsUser1 > 0 || user._count.chatsAsUser2 > 0}
+                      {#if !profileDropdownOpen}
+                        <span class="absolute -right-0.5 top-0.5 flex h-3 w-3 transition-all duration-300" class:opacity-0={profileDropdownOpen} class:scale-0={profileDropdownOpen}>
                           <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-muted-foreground opacity-75" />
                           <span class="relative inline-flex h-3 w-3 rounded-full bg-ring" />
-                          </span>
-                        {/if}
+                        </span>
                       {/if}
-                    {/await}
+                    {/if}
                   {/if}
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content class="border-border bg-popover">
@@ -77,18 +74,15 @@
                     <DropdownMenu.Item href="/profile" class="cursor-pointer data-[highlighted]:bg-background">Profile</DropdownMenu.Item>
                     <DropdownMenu.Item href="/profile/chats" class="relative cursor-pointer data-[highlighted]:bg-background"
                       >Messages
-                      {#if $page.url.pathname === "/"}
-                        {#await $page.data.streamed.unreadChats then unreadChats}
-                          {#if unreadChats}
-                            {@const read = unreadChats.user1_id === user.id ? unreadChats.user1Read : unreadChats.user2Read}
-                            {#if !read && profileDropdownOpen}
-                              <span class="absolute right-2 top-1/2 flex h-3 w-3 -translate-y-1/2 transition-all delay-1000 duration-300">
+                      {#if !$page.url.pathname.includes("chat")}
+                        {#if user._count.chatsAsUser1 > 0 || user._count.chatsAsUser2 > 0}
+                          {#if profileDropdownOpen}
+                            <span class="absolute right-2 top-1/2 flex h-3 w-3 -translate-y-1/2 transition-all delay-1000 duration-300">
                               <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-muted-foreground opacity-75" />
                               <span class="relative inline-flex h-3 w-3 rounded-full bg-ring" />
-                              </span>
-                            {/if}
+                            </span>
                           {/if}
-                        {/await}
+                        {/if}
                       {/if}
                     </DropdownMenu.Item>
                     <DropdownMenu.Separator class="bg-border" />
