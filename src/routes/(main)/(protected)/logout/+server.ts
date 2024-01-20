@@ -1,6 +1,5 @@
-import type { RequestHandler } from "./$types";
-import { redirect } from "@sveltejs/kit";
 import { auth } from "$lib/server/lucia";
+import type { RequestHandler } from "./$types";
 
 export const GET: RequestHandler = async ({ locals, cookies }) => {
   await auth.invalidateSession(locals.session!.sessionId);

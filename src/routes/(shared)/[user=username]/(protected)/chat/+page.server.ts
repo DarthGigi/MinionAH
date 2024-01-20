@@ -1,5 +1,5 @@
-import type { PageServerLoad, Actions } from "./$types";
 import { redirect } from "@sveltejs/kit";
+import type { Actions, PageServerLoad } from "./$types";
 
 export const load = (async ({ params, locals, fetch }) => {
   const user = locals.user;

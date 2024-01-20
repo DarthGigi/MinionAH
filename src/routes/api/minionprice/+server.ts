@@ -1,5 +1,5 @@
-import type { RequestHandler } from "./$types";
 import { CRON_SECRET } from "$env/static/private";
+import type { RequestHandler } from "./$types";
 
 export const GET: RequestHandler = async ({ request, fetch }) => {
   if (!CRON_SECRET || request.headers.get("Authorization") !== `Bearer ${CRON_SECRET}`) {

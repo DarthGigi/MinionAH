@@ -1,4 +1,4 @@
-import type { Minion, PrismaClient, User } from "@prisma/client";
+import type { PrismaClient, User } from "@prisma/client";
 import type { Session } from "lucia";
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
@@ -8,7 +8,15 @@ declare global {
     // interface Error {}
     interface Locals {
       auth: import("lucia").AuthRequest;
-      user: User | null;
+      user:
+        | (User & {
+            _count: {
+              chatsAsUser1: number;
+              chatsAsUser2: number;
+              key: number;
+            };
+          })
+        | null;
       session: Session | null;
       isProtectedRoute: boolean;
     }

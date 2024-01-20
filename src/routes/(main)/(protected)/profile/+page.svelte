@@ -16,6 +16,7 @@
   import { parse } from "numerable";
   import * as skinview3d from "skinview3d";
   import { onMount } from "svelte";
+  import { slide } from "svelte/transition";
   import type { PageData } from "./$types";
   import { formSchemaCreate, formSchemaDelete } from "./schema";
   export let data: PageData;
@@ -74,15 +75,14 @@
           <CopyButton on:click={() => navigator.clipboard.writeText(`${window.location.origin}/${data.user?.username}`)} />
         </div>
         {#if canvasIsLoading}
-          <div class="absolute h-full w-full animate-pulse rounded-lg bg-[#050505]" />
+          <div class="absolute h-full w-full animate-pulse rounded-lg bg-background" />
         {/if}
-        <canvas bind:this={minecraftAvatar} class="relative !h-full !w-full overflow-hidden rounded-lg bg-[#050505] transition-all duration-[3s]" class:opacity-100={!canvasIsLoading} class:opacity-0={canvasIsLoading} />
-        <div class="pointer-events-none absolute inset-0 h-full rounded-lg border-2 border-black border-opacity-50" />
+        <canvas bind:this={minecraftAvatar} class="relative !h-full !w-full overflow-hidden rounded-lg bg-background transition-all duration-[3s]" class:opacity-100={!canvasIsLoading} class:opacity-0={canvasIsLoading} />
       </div>
     </div>
   </div>
   {#await data.streamed.userMinions}
-    <div class="h-[28.75rem] animate-pulse rounded-lg border-2 border-neutral-700 border-opacity-40 bg-[#050505] text-neutral-200 shadow-sm"></div>
+    <div class="h-[28.75rem] animate-pulse rounded-lg border-0 bg-background shadow-sm"></div>
   {:then userMinions}
     {#if userMinions.length < 9}
       <Form.Root
@@ -106,7 +106,7 @@
         action="?/createMinion"
         class="space-y-6"
         let:config>
-        <Card.Root class="border-2 border-neutral-700 border-opacity-40 bg-[#050505] text-neutral-200">
+        <Card.Root class="border-0 bg-background text-primary">
           <Card.Header>
             <Card.Title>Minions</Card.Title>
             <Card.Description>Auction a minion</Card.Description>
@@ -118,7 +118,7 @@
                   {#await data.streamed.minionTypes}
                     <div class="flex flex-col space-y-2">
                       <Label>Minion</Label>
-                      <Button variant="outline" role="combobox" type="button" class="relative w-40 cursor-default justify-between rounded-md border-none bg-neutral-700 py-1.5 pl-3 text-left text-muted-foreground shadow-sm ring-1 ring-inset ring-transparent hover:bg-neutral-600 hover:text-neutral-200 focus:outline-none focus:ring-2 focus:ring-neutral-500 sm:text-sm sm:leading-6 md:w-44">
+                      <Button variant="outline" role="combobox" type="button" class="relative w-40 cursor-default justify-between rounded-md border-none bg-accent py-1.5 pl-3 text-left text-muted-foreground shadow-sm ring-1 ring-inset ring-transparent hover:bg-accent hover:text-primary focus:outline-none focus:ring-2 focus:ring-ring sm:text-sm sm:leading-6 md:w-44">
                         <span>Loading...</span>
                         <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
                       </Button>
@@ -137,21 +137,29 @@
                   {/key}
                 </div>
                 <div class="flex gap-4">
-                  <div class="mt-1 inline-flex flex-col rounded-md shadow-sm">
-                    <Form.Field {config} name="amount">
+                  <div class="mt-1 inline-flex flex-col rounded-md">
+                    <Form.Field {config} name="amount" let:setValue>
                       <Form.Item class="flex w-40 flex-col md:w-44">
                         <Form.Label>Amount</Form.Label>
                         <Form.Input
                           type="number"
-                          class="ring-offset-0 focus-visible:border-neutral-500 focus-visible:ring-1 focus-visible:ring-neutral-500 focus-visible:ring-offset-0"
+                          class="ring-offset-0 focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0"
                           placeholder="Amount of minions"
                           max={64}
+                          min={1}
                           on:input={({ currentTarget }) => {
                             if (!(currentTarget instanceof HTMLInputElement)) return;
                             if (currentTarget.valueAsNumber > 1) {
                               moreThan1 = true;
                             } else {
                               moreThan1 = false;
+                            }
+                            if (currentTarget.valueAsNumber > 64) {
+                              currentTarget.value = "64";
+                              setValue(currentTarget.valueAsNumber);
+                            } else if (currentTarget.valueAsNumber < 1) {
+                              currentTarget.value = "1";
+                              setValue(currentTarget.valueAsNumber);
                             }
                           }}
                           on:keydown={(e) => {
@@ -166,12 +174,11 @@
                       </Form.Item>
                     </Form.Field>
                   </div>
-                  <div class="mt-1 inline-flex flex-col rounded-md shadow-sm">
-                    <Form.Field {config} name="price">
+                  <div class="mt-1 inline-flex flex-col rounded-md">
+                    <Form.Field {config} name="price" let:setValue let:value>
                       <Form.Item class="flex w-40 flex-col md:w-44">
                         <Form.Label>Price <span class="inline text-neutral-200/50 opacity-0 transition-opacity duration-500" class:opacity-100={moreThan1}>(each)</span></Form.Label>
                         <Form.Input
-                          bind:value={priceValue}
                           type="text"
                           class="w-40 ring-offset-0 focus-visible:border-neutral-500 focus-visible:ring-1 focus-visible:ring-neutral-500 focus-visible:ring-offset-0 md:w-44"
                           placeholder={moreThan1 ? "Price of each minion" : "Price of minion"}
@@ -204,7 +211,7 @@
                               if (value > 9999999999999) {
                                 return;
                               }
-                              e.currentTarget.value = value.toString();
+                              setValue(value);
                             }
                             if (isNaN(Number(e.key))) {
                               e.preventDefault();
@@ -218,15 +225,20 @@
                             if (!(currentTarget instanceof HTMLInputElement)) return;
                             if (Number(currentTarget.value) <= 0) {
                               currentTarget.value = "1";
+                              setValue(currentTarget.value);
                             }
-                            currentTarget.value = parse(currentTarget.value)?.toString() ?? "1";
+                            setValue(currentTarget.value);
                             priceValue = Number(currentTarget.value);
                           }} />
+
                         {#if priceValue}
-                          {#if priceValue >= 1000}
-                            <Form.Description>{parse(priceValue)} = {formatNumber(priceValue)}</Form.Description>
+                          {#if Number(value) >= 1000}
+                            <div transition:slide|global={{ axis: "y" }}>
+                              <Form.Description>{parse(value)} = {formatNumber(value)}</Form.Description>
+                            </div>
                           {/if}
                         {/if}
+
                         <Form.Validation />
                       </Form.Item>
                     </Form.Field>
@@ -235,7 +247,7 @@
               </div>
               <div class="flex gap-4">
                 <Form.Field {config} name="infusion">
-                  <Form.Item class="flex flex-row items-center justify-between gap-6 rounded-lg border border-neutral-800 bg-[#050505] p-4">
+                  <Form.Item class="flex flex-row items-center justify-between gap-6 rounded-lg bg-muted p-4">
                     <div class="select-none space-y-0.5">
                       <Form.Label>Mithril Infused</Form.Label>
                       <Form.Description><a href="https://hypixel-skyblock.fandom.com/wiki/Mithril_Infusion" target="_blank" class="underline underline-offset-2">Mithril Infusion</a> is a minion upgrade which <br /> increases a minion's speed by 10% permanently.</Form.Description>
@@ -247,7 +259,7 @@
             </div>
           </Card.Content>
           <Card.Footer class="justify-end">
-            <Form.Button disabled={submittingCreate} class="bg-neutral-600 text-white transition-all duration-300 hover:bg-neutral-700">
+            <Form.Button disabled={submittingCreate}>
               {#if !submittingCreate}
                 Create
               {:else}
@@ -258,8 +270,8 @@
         </Card.Root>
       </Form.Root>
     {:else}
-      <div class="space-y-8 divide-y divide-neutral-800 rounded-lg border-2 border-neutral-700 border-opacity-40 bg-[#050505] px-6 py-8">
-        <div class="space-y-8 divide-y divide-neutral-800">
+      <div class="space-y-8 divide-y divide-secondary rounded-lg bg-background px-6 py-8 text-primary">
+        <div class="space-y-8 divide-y divide-secondary">
           <div>You can't have more than 9 minions on the AH. Delete a few in order to make a new one</div>
         </div>
       </div>
@@ -301,7 +313,6 @@
       showFormStatusDialog = true;
     },
     onError: () => {
-      console.log("onError");
       showFormStatusDialog = true;
     }
   }}

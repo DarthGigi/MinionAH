@@ -1,5 +1,5 @@
 import prisma from "$lib/server/prisma";
-import { fail, redirect } from "@sveltejs/kit";
+import { fail } from "@sveltejs/kit";
 import { message, superValidate } from "sveltekit-superforms/server";
 import type { Actions, PageServerLoad } from "./$types";
 import { formSchemaCreate, formSchemaDelete } from "./schema";

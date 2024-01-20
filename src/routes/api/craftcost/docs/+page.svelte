@@ -72,10 +72,10 @@
 </svelte:head>
 
 <main class="relative overflow-hidden py-8">
-  <article class="relative mx-auto mt-6 max-w-2xl px-4 py-4 text-lg text-neutral-300 sm:px-4 lg:px-6">
+  <article class="relative mx-auto mt-6 max-w-2xl px-4 py-4 text-lg text-foreground sm:px-4 lg:px-6">
     <div class="mx-auto mb-5 mt-0">
       <div class="mx-auto">
-        <div class="relative z-50 text-xs font-bold text-neutral-300">
+        <div class="relative z-50 text-xs font-bold text-foreground">
           <span class="relative z-50 block uppercase">Documentation</span>
           <span class="relative z-50 mt-1 block text-sm font-semibold">
             <time datetime="2023-12-28T00:00:00.000Z" class="text-xs md:text-sm"> December 28, 2023 </time>

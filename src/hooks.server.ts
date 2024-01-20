@@ -1,10 +1,10 @@
-import { auth } from "$lib/server/lucia";
-import type { Handle } from "@sveltejs/kit";
 import { dev } from "$app/environment";
-import { RetryAfterRateLimiter } from "sveltekit-rate-limiter/server";
 import { RATE_LIMIT_SECRET } from "$env/static/private";
+import { auth } from "$lib/server/lucia";
 import prisma from "$lib/server/prisma";
+import type { Handle } from "@sveltejs/kit";
 import { redirect } from "@sveltejs/kit";
+import { RetryAfterRateLimiter } from "sveltekit-rate-limiter/server";
 
 const limiter = new RetryAfterRateLimiter({
   IP: [60, "15m"],
@@ -22,7 +22,7 @@ export const handle: Handle = async ({ event, resolve }) => {
     await limiter.cookieLimiter?.preflight(event);
 
     const status = await limiter.check(event);
-    console.log(status);
+
     if (status.limited) {
       event.setHeaders({
         "Retry-After": status.retryAfter.toString()
@@ -46,8 +46,36 @@ export const handle: Handle = async ({ event, resolve }) => {
     const user = await prisma.user.findUnique({
       where: {
         id: session.user.userId
+      },
+      include: {
+        _count: {
+          select: {
+            chatsAsUser1: {
+              where: {
+                user1Read: false
+              }
+            },
+            chatsAsUser2: {
+              where: {
+                user2Read: false
+              }
+            },
+            key: {
+              //where id starts with username:
+              where: {
+                id: {
+                  startsWith: "username:"
+                },
+                hashed_password: {
+                  equals: null
+                }
+              }
+            }
+          }
+        }
       }
     });
+
     event.locals.session = session;
     user ? (event.locals.user = user) : (event.locals.user = null);
     if (user) {
@@ -62,6 +90,9 @@ export const handle: Handle = async ({ event, resolve }) => {
             loggedInAt: new Date()
           }
         });
+      }
+      if (user._count.key > 0 && event.url.pathname !== "/signup/password") {
+        redirect(302, "/signup/password");
       }
     }
   } else {
@@ -82,13 +113,8 @@ export const handle: Handle = async ({ event, resolve }) => {
 
   if (path === "/signup/password" && event.locals.session) {
     if (!event.locals.user) redirect(302, "/login");
-    const userKey = await prisma.key.findFirst({
-      where: {
-        id: "username:" + event.locals.user.username.toLocaleLowerCase()
-      }
-    });
 
-    if (userKey && userKey.hashed_password) {
+    if (event.locals.user._count.key < 1) {
       redirect(302, "/profile");
     }
   }

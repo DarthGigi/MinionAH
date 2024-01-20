@@ -1,6 +1,6 @@
-import type { RequestHandler } from "./$types";
-import type { Seller } from "$lib/types";
 import prisma from "$lib/server/prisma";
+import type { Seller } from "$lib/types";
+import type { RequestHandler } from "./$types";
 
 type Params = {
   take?: number;

@@ -7,7 +7,7 @@
 </script>
 
 <Button
-  class={`group h-auto rounded-lg !border-0 bg-neutral-700 bg-opacity-0 p-1.5 text-sm text-neutral-400 transition-all duration-300 hover:bg-neutral-700 hover:bg-opacity-100 hover:opacity-100 focus:outline-none focus:ring-0 focus:ring-transparent group-hover:opacity-100 ${$$props.class} ${isHome ? "opacity-0" : ""} ${!isHome ? "bg-opacity-100" : ""}`}
+  class={`group h-auto rounded-lg !border-0 bg-accent bg-opacity-0 p-1.5 text-sm text-muted-foreground transition-all duration-300 hover:bg-accent hover:bg-opacity-100 hover:opacity-100 focus:outline-none focus:ring-0 focus:ring-transparent group-hover:opacity-100 ${$$props.class} ${isHome ? "opacity-0" : "bg-opacity-100"}`}
   type="button"
   aria-label="Copy link"
   on:click={() => {

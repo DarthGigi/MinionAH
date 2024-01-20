@@ -23,7 +23,7 @@
         <ChatDate {self} date={message.createdAt} />
       {/if}
     </Tooltip.Trigger>
-    <Tooltip.Content class="border-2 border-neutral-600 bg-neutral-700 text-white">
+    <Tooltip.Content class="border-2 border-accent bg-accent text-white">
       <time datetime={message.createdAt.toDateString()} class="text-xs">{new Date(message.createdAt).toLocaleTimeString()}</time>
     </Tooltip.Content>
   </Tooltip.Root>

@@ -1,9 +1,9 @@
-import type { PageServerLoad } from "./$types";
 import { dev } from "$app/environment";
 import { MC_AUTH_CLIENT_ID, MC_AUTH_CLIENT_SECRET, MC_AUTH_REDIRECT_URI } from "$env/static/private";
 import { auth } from "$lib/server/lucia";
 import { OAuthRequestError, providerUserAuth, validateOAuth2AuthorizationCode } from "@lucia-auth/oauth";
 import { error, redirect } from "@sveltejs/kit";
+import type { PageServerLoad } from "./$types";
 
 async function getMinecraftInfo(access_token: string): Promise<MCAuthProfile> {
   const res = await fetch("https://mc-auth.com/api/v2/profile ", {
@@ -116,7 +116,7 @@ export const load = (async ({ cookies, url, locals }) => {
         const avatarBuffer = await response.arrayBuffer();
         skin = Buffer.from(avatarBuffer).toString("base64");
       } catch (e) {
-        console.log(e);
+        console.error(e);
         error(500, "Failed to get skin");
       }
 
@@ -126,7 +126,7 @@ export const load = (async ({ cookies, url, locals }) => {
         const avatarBuffer = await response.arrayBuffer();
         avatar = Buffer.from(avatarBuffer).toString("base64");
       } catch (e) {
-        console.log(e);
+        console.error(e);
         error(500, "Failed to get avatar");
       }
 
@@ -180,6 +180,13 @@ export const load = (async ({ cookies, url, locals }) => {
 
     if (!user) throw new Error("Failed to get user");
 
+    const key = await auth.createKey({
+      providerId: "username",
+      providerUserId: user.username.toLocaleLowerCase(),
+      password: null,
+      userId: user.userId
+    });
+
     const session = await auth.createSession({
       userId: user.userId,
       attributes: {}
@@ -187,7 +194,7 @@ export const load = (async ({ cookies, url, locals }) => {
 
     locals.auth.setSession(session);
   } catch (e: any) {
-    console.log(e);
+    console.error(e);
     if (e instanceof OAuthRequestError) {
       // invalid code
       error(400, "Invalid Code");
