@@ -22,6 +22,7 @@
   let newLines = 0;
   let textValue: string;
   let messageDiv: HTMLDivElement;
+  let showChat = false;
 
   let newChats: Message[] = [];
   let messages: Message[];
@@ -82,10 +83,6 @@
       };
     });
 
-    if (res.statusText === "Created") {
-      window.location.reload();
-      return;
-    }
     if (res.status !== 201) {
       sentMessageSuccess = false;
       setTimeout(() => {
@@ -95,6 +92,10 @@
       }, 1000);
       console.error("Error sending message");
     } else {
+      if (res.headers.get("x-created-chat") === "true") {
+        loading = false;
+        showChat = true;
+      }
       sentMessageSuccess = true;
       setTimeout(() => {
         sentMessageSuccess = undefined;
@@ -118,7 +119,7 @@
       </Avatar.Root>
       <h2 class="text-center text-lg font-semibold">{data.user2?.username}</h2>
     </div>
-    {#if data.chat}
+    {#if data.chat || showChat}
       <div class="no-scrollbar flex max-h-72 w-full max-w-full flex-col-reverse gap-2 overflow-y-auto scroll-smooth px-6 py-6">
         {#if loading}
           <ChatLoading />
