@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2024-01-20
+
+### Added
+
+- Added an info button on the chats overview page on each chat to view more info about the user
+- Added the last login time of the user on the chats overview page
+
+### Changed
+
+- Changed the overall design of everything to be consistent and match the design language of the website
+- Changed the loading animation of chat messages
+- Changed the chat message animation
+- Changed the chat message date position, hover over the chat message to see the date
+- Changed the chat logic to be more smooth, it no longer reloads the page when you send a message
+- Changed the signup process so that as long you don't have a password set you can't leave the password creation page
+- Changed the delete button on the chats on the chats overview page to always be visible
+
+### Fixed
+
+- Fixed the unread message indicator not showing up when you have at least one unread message
+- Fixed the chat unread status for the other person not being updated when you send a message
+- Fixed various bugs for the input field for the amount of minions
+- Fixed various bugs for the input field for the price of minions
+
 ## [1.2.9] - 2024-01-19
 
 ### Security
