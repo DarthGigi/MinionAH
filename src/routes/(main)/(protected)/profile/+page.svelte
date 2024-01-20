@@ -16,6 +16,7 @@
   import { parse } from "numerable";
   import * as skinview3d from "skinview3d";
   import { onMount } from "svelte";
+  import { slide } from "svelte/transition";
   import type { PageData } from "./$types";
   import { formSchemaCreate, formSchemaDelete } from "./schema";
   export let data: PageData;
@@ -145,12 +146,20 @@
                           class="ring-offset-0 focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0"
                           placeholder="Amount of minions"
                           max={64}
+                          min={1}
                           on:input={({ currentTarget }) => {
                             if (!(currentTarget instanceof HTMLInputElement)) return;
                             if (currentTarget.valueAsNumber > 1) {
                               moreThan1 = true;
                             } else {
                               moreThan1 = false;
+                            }
+                            if (currentTarget.valueAsNumber > 64) {
+                              currentTarget.value = "64";
+                              setValue(currentTarget.valueAsNumber);
+                            } else if (currentTarget.valueAsNumber < 1) {
+                              currentTarget.value = "1";
+                              setValue(currentTarget.valueAsNumber);
                             }
                           }}
                           on:keydown={(e) => {
@@ -170,7 +179,6 @@
                       <Form.Item class="flex w-40 flex-col md:w-44">
                         <Form.Label>Price <span class="inline text-neutral-200/50 opacity-0 transition-opacity duration-500" class:opacity-100={moreThan1}>(each)</span></Form.Label>
                         <Form.Input
-                          bind:value={priceValue}
                           type="text"
                           class="w-40 ring-offset-0 focus-visible:border-neutral-500 focus-visible:ring-1 focus-visible:ring-neutral-500 focus-visible:ring-offset-0 md:w-44"
                           placeholder={moreThan1 ? "Price of each minion" : "Price of minion"}
@@ -203,7 +211,7 @@
                               if (value > 9999999999999) {
                                 return;
                               }
-                              e.currentTarget.value = value.toString();
+                              setValue(value);
                             }
                             if (isNaN(Number(e.key))) {
                               e.preventDefault();
@@ -217,15 +225,20 @@
                             if (!(currentTarget instanceof HTMLInputElement)) return;
                             if (Number(currentTarget.value) <= 0) {
                               currentTarget.value = "1";
+                              setValue(currentTarget.value);
                             }
-                            currentTarget.value = parse(currentTarget.value)?.toString() ?? "1";
+                            setValue(currentTarget.value);
                             priceValue = Number(currentTarget.value);
                           }} />
+
                         {#if priceValue}
-                          {#if priceValue >= 1000}
-                            <Form.Description>{parse(priceValue)} = {formatNumber(priceValue)}</Form.Description>
+                          {#if Number(value) >= 1000}
+                            <div transition:slide|global={{ axis: "y" }}>
+                              <Form.Description>{parse(value)} = {formatNumber(value)}</Form.Description>
+                            </div>
                           {/if}
                         {/if}
+
                         <Form.Validation />
                       </Form.Item>
                     </Form.Field>
@@ -257,7 +270,7 @@
         </Card.Root>
       </Form.Root>
     {:else}
-      <div class="space-y-8 divide-y divide-neutral-800 rounded-lg border-2 border-neutral-700 border-opacity-40 bg-[#050505] px-6 py-8">
+      <div class="space-y-8 divide-y divide-secondary rounded-lg bg-background px-6 py-8 text-primary">
         <div class="space-y-8 divide-y divide-secondary">
           <div>You can't have more than 9 minions on the AH. Delete a few in order to make a new one</div>
         </div>
