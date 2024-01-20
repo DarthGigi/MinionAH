@@ -21,7 +21,6 @@ export const actions: Actions = {
 
     try {
       const user = await auth.updateKeyPassword("username", locals.user!.username.toLocaleLowerCase(), form.data["new-password"]);
-      console.log(user);
       if (!user || !user.passwordDefined) {
         console.error("Failed to create account");
         return message(

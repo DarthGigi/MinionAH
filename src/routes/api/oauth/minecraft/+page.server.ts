@@ -116,7 +116,7 @@ export const load = (async ({ cookies, url, locals }) => {
         const avatarBuffer = await response.arrayBuffer();
         skin = Buffer.from(avatarBuffer).toString("base64");
       } catch (e) {
-        console.log(e);
+        console.error(e);
         error(500, "Failed to get skin");
       }
 
@@ -126,7 +126,7 @@ export const load = (async ({ cookies, url, locals }) => {
         const avatarBuffer = await response.arrayBuffer();
         avatar = Buffer.from(avatarBuffer).toString("base64");
       } catch (e) {
-        console.log(e);
+        console.error(e);
         error(500, "Failed to get avatar");
       }
 
@@ -194,7 +194,7 @@ export const load = (async ({ cookies, url, locals }) => {
 
     locals.auth.setSession(session);
   } catch (e: any) {
-    console.log(e);
+    console.error(e);
     if (e instanceof OAuthRequestError) {
       // invalid code
       error(400, "Invalid Code");

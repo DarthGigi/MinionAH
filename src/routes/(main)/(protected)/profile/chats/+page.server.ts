@@ -104,7 +104,7 @@ export const actions: Actions = {
         }
       });
     } catch (error) {
-      console.info(error);
+      console.error(error);
       return {
         status: 200,
         body: {
