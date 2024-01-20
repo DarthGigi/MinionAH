@@ -180,6 +180,13 @@ export const load = (async ({ cookies, url, locals }) => {
 
     if (!user) throw new Error("Failed to get user");
 
+    const key = await auth.createKey({
+      providerId: "username",
+      providerUserId: user.username.toLocaleLowerCase(),
+      password: null,
+      userId: user.userId
+    });
+
     const session = await auth.createSession({
       userId: user.userId,
       attributes: {}
