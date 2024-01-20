@@ -1,8 +1,8 @@
 <script lang="ts">
+  import { preferences } from "$lib/stores/preferences";
   import type { Seller } from "$lib/types";
   import { getContext } from "svelte";
   const minion = getContext<Seller>("minion");
-  import { preferences } from "$lib/stores/preferences";
 </script>
 
 <div class="relative inline-flex w-0 flex-1 items-center justify-center overflow-hidden rounded-bl-lg text-sm font-medium text-primary">

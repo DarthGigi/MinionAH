@@ -1,11 +1,11 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button";
   import * as Command from "$lib/components/ui/command";
+  import * as Form from "$lib/components/ui/form";
   import * as Popover from "$lib/components/ui/popover";
   import { cn } from "$lib/utils";
   import { Check, ChevronsUpDown } from "lucide-svelte";
   import { createEventDispatcher, tick } from "svelte";
-  import * as Form from "$lib/components/ui/form";
 
   export let minionType: { id: string; generator: string; texture: string; maxTier: number }[];
   export let config: any;

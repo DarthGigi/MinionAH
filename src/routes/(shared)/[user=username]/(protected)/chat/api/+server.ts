@@ -1,5 +1,5 @@
-import type { RequestHandler } from "./$types";
 import { redirect } from "@sveltejs/kit";
+import type { RequestHandler } from "./$types";
 
 export const GET: RequestHandler = async ({ params, locals, request, url }) => {
   if (request.headers.get("X-Requested-With") !== "fetch") {

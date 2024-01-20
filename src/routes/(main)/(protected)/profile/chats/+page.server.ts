@@ -1,4 +1,4 @@
-import type { PageServerLoad, Actions } from "./$types";
+import type { Actions, PageServerLoad } from "./$types";
 
 export const load = (async ({ locals }) => {
   return {

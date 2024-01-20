@@ -1,4 +1,4 @@
-import type { MinionSeller, Minion, User } from "@prisma/client";
+import type { Minion, MinionSeller, User } from "@prisma/client";
 
 // extend the MinionSeller type to include the user and minion
 interface Seller extends MinionSeller {
@@ -6,4 +6,4 @@ interface Seller extends MinionSeller {
   minion: Minion;
 }
 
-export type { MinionSeller, Minion, Seller };
+export type { Minion, MinionSeller, Seller };

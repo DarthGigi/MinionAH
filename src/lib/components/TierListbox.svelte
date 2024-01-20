@@ -1,8 +1,8 @@
 <script lang="ts">
   import { page } from "$app/stores";
   import * as Form from "$lib/components/ui/form";
-  import { createEventDispatcher } from "svelte";
   import { preferences } from "$lib/stores/preferences";
+  import { createEventDispatcher } from "svelte";
 
   const dispatch = createEventDispatcher();
 

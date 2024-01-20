@@ -1,9 +1,9 @@
-import type { PageServerLoad } from "./$types";
 import { dev } from "$app/environment";
 import { MC_AUTH_CLIENT_ID, MC_AUTH_CLIENT_SECRET, MC_AUTH_REDIRECT_URI } from "$env/static/private";
 import { auth } from "$lib/server/lucia";
 import { OAuthRequestError, providerUserAuth, validateOAuth2AuthorizationCode } from "@lucia-auth/oauth";
 import { error, redirect } from "@sveltejs/kit";
+import type { PageServerLoad } from "./$types";
 
 async function getMinecraftInfo(access_token: string): Promise<MCAuthProfile> {
   const res = await fetch("https://mc-auth.com/api/v2/profile ", {

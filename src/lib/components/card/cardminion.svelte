@@ -3,7 +3,7 @@
   import { Button } from "$lib/components/ui/button";
   import * as Tooltip from "$lib/components/ui/tooltip";
   import type { Seller } from "$lib/types";
-  import { Trash2, Eye } from "lucide-svelte";
+  import { Eye, Trash2 } from "lucide-svelte";
   import { createEventDispatcher, setContext } from "svelte";
   import { fade } from "svelte/transition";
   import MinionCopyButton from "../CopyButton.svelte";

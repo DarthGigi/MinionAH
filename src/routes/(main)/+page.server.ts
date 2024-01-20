@@ -1,6 +1,6 @@
-import type { PageServerLoad } from "./$types";
 import type { Seller } from "$lib/types";
 import { superValidate } from "sveltekit-superforms/server";
+import type { PageServerLoad } from "./$types";
 import { formSchema } from "./schema";
 
 export const load = (async ({ locals }) => {

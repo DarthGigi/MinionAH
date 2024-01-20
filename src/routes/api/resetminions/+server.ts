@@ -1,6 +1,6 @@
-import type { RequestHandler } from "./$types";
-import type { Minion } from "@prisma/client";
 import prisma from "$lib/server/prisma";
+import type { Minion } from "@prisma/client";
+import type { RequestHandler } from "./$types";
 
 export const GET: RequestHandler = async ({ fetch }) => {
   return new Response(null, {

@@ -1,4 +1,4 @@
-import type { Minion, PrismaClient, User } from "@prisma/client";
+import type { PrismaClient, User } from "@prisma/client";
 import type { Session } from "lucia";
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces

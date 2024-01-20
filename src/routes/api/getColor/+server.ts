@@ -1,6 +1,5 @@
-import { get } from "http";
-import type { RequestHandler } from "./$types";
 import { getAverageColor } from "fast-average-color-node";
+import type { RequestHandler } from "./$types";
 
 export const GET: RequestHandler = async ({ request }) => {
   const imageUrl = request.headers.get("imageUrl");

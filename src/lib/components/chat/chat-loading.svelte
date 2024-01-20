@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { fly, slide } from "svelte/transition";
+  import { fly } from "svelte/transition";
 
   let chats: { number: number; show: boolean }[] = Array.from({ length: 5 }, (_, i) => ({ number: i, show: false }));
 

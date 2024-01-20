@@ -1,10 +1,10 @@
-import { auth } from "$lib/server/lucia";
-import type { Handle } from "@sveltejs/kit";
 import { dev } from "$app/environment";
-import { RetryAfterRateLimiter } from "sveltekit-rate-limiter/server";
 import { RATE_LIMIT_SECRET } from "$env/static/private";
+import { auth } from "$lib/server/lucia";
 import prisma from "$lib/server/prisma";
+import type { Handle } from "@sveltejs/kit";
 import { redirect } from "@sveltejs/kit";
+import { RetryAfterRateLimiter } from "sveltekit-rate-limiter/server";
 
 const limiter = new RetryAfterRateLimiter({
   IP: [60, "15m"],

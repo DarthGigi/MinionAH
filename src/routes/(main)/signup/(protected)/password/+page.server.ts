@@ -1,9 +1,8 @@
-import { redirect } from "@sveltejs/kit";
-import type { PageServerLoad, Actions } from "./$types";
 import { auth } from "$lib/server/lucia";
+import { fail, redirect } from "@sveltejs/kit";
 import { message, superValidate } from "sveltekit-superforms/server";
+import type { Actions, PageServerLoad } from "./$types";
 import { formSchema } from "./schema";
-import { fail } from "@sveltejs/kit";
 
 export const load = (async ({ locals }) => {
   const superValidatedFormSchema = await superValidate(formSchema);
