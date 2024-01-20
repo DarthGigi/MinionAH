@@ -6,12 +6,12 @@
   import * as Form from "$lib/components/ui/form";
   import { Input } from "$lib/components/ui/input";
   import * as Select from "$lib/components/ui/select";
+  import { searchSignal } from "$lib/stores/signals";
   import type { Seller } from "$lib/types";
+  import { onDestroy } from "svelte";
   import { draw, slide } from "svelte/transition";
   import type { PageData } from "./$types";
   import { formSchema } from "./schema";
-  import { searchSignal } from "$lib/stores/signals";
-  import { onDestroy } from "svelte";
 
   export let data: PageData;
 
@@ -110,7 +110,7 @@
 
 {#if alert.open}
   <div transition:slide={{ axis: "x" }} class="fixed right-4 top-4 w-80">
-    <Alert.Root class="border-neutral-700 bg-neutral-800">
+    <Alert.Root class="border-accent bg-secondary">
       <Alert.Title class="min-w-full truncate">{alert.title}</Alert.Title>
       <Alert.Description class="min-w-full truncate">{alert.description}</Alert.Description>
     </Alert.Root>
@@ -123,12 +123,12 @@
   <div class="mx-auto flex flex-row items-center justify-center gap-4 px-4 py-20 sm:px-6 lg:px-8">
     <div class="flex flex-col justify-center space-y-2">
       <span class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Search</span>
-      <Input type="text" placeholder="Minion or user" disabled class="w-44 animate-pulse border-2 border-none bg-neutral-700 text-white placeholder-white placeholder-opacity-30 focus-visible:border-neutral-600 focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-0 disabled:opacity-100" />
+      <Input type="text" placeholder="Minion or user" disabled class="w-44 animate-pulse border-2 border-none bg-accent text-white placeholder-white placeholder-opacity-30 focus-visible:border-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0 disabled:opacity-100" />
     </div>
     <div class="flex flex-col justify-center space-y-2">
       <span class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Tier</span>
       <Select.Root disabled>
-        <Select.Trigger class="w-40 animate-pulse border-none bg-neutral-700 focus:border-neutral-600 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-0 disabled:opacity-100 md:w-44">
+        <Select.Trigger class="w-40 animate-pulse border-none bg-accent focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-0 disabled:opacity-100 md:w-44">
           <Select.Value placeholder="Select tier" />
         </Select.Trigger>
       </Select.Root>
@@ -141,7 +141,7 @@
         <Form.Label>Search</Form.Label>
         <Form.Input
           type="text"
-          class="w-44 border-2 border-none bg-neutral-700 text-white placeholder-white placeholder-opacity-30 focus-visible:border-neutral-600 focus-visible:ring-2 focus-visible:ring-neutral-500 focus-visible:ring-offset-0"
+          class="w-44 border-2 border-none bg-accent text-white placeholder-white placeholder-opacity-30 focus-visible:border-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0"
           placeholder="Minion or user"
           maxlength={32}
           value={searchValue}
@@ -199,11 +199,10 @@
       {/await}
     </ul>
     <div class="flex w-full justify-center py-4">
-      <!-- check if there are no longer any items in the database -->
       {#if newMinionAmount === 0 || newMinionAmount < 18 || (minions.length === 0 && !loadingMore)}
-        <p class="px-4 py-1 text-center text-sm text-neutral-200 text-opacity-40">No more minions to load.</p>
+        <p class="px-4 py-1 text-center text-sm text-primary text-opacity-40">No more minions to load.</p>
       {:else}
-        <button type="button" on:click={() => loadData(currentTier, minions.length, search, true)} class="rounded p-1 text-sm text-neutral-600 transition-all duration-300 hover:bg-neutral-700 hover:text-white" aria-label="Load more minions">
+        <button type="button" on:click={() => loadData(currentTier, minions.length, search, true)} class="rounded p-1 text-sm text-accent transition-all duration-300 hover:bg-accent hover:text-white" aria-label="Load more minions">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down h-6 w-6" class:animate-spin={loadingMore}>
             {#if loadingMore}
               <path in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />

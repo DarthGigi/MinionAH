@@ -42,8 +42,8 @@
 </svelte:head>
 
 <div id="container" class="flex w-full flex-col justify-center pt-6 md:h-[calc(100vh_-_64px)]">
-  <div class="relative mx-auto w-full max-w-sm rounded-lg border border-neutral-700 bg-neutral-800 shadow">
-    <a href={`/${data.minionuser.username}/chat`} class="group absolute left-3 top-3 rounded-lg bg-neutral-700 p-1.5 text-sm text-neutral-400 focus:outline-none focus:ring-4 focus:ring-transparent">
+  <div class="relative mx-auto w-full max-w-sm rounded-lg border border-accent bg-secondary shadow">
+    <a href={`/${data.minionuser.username}/chat`} class="group absolute left-3 top-3 rounded-lg bg-accent p-1.5 text-sm text-muted-foreground focus:outline-none focus:ring-4 focus:ring-transparent">
       <MessagesSquare class="h-5 w-5 transition-colors duration-300 group-hover:text-white" />
     </a>
     <CopyButton
@@ -52,11 +52,11 @@
         // copy url to clipboard
         navigator.clipboard.writeText(`${window.location.href}`);
       }} />
-    <div class="absolute right-12 top-3 flex h-8 scale-0 items-center justify-center overflow-hidden rounded-md border border-neutral-700 bg-popover px-2 py-1 text-xs opacity-0 shadow-md transition-all duration-300" class:!scale-100={copied} class:!opacity-100={copied}>Copied Link</div>
-    <a href={`/${data.minionuser.username}/chat`} class="relative mx-20 my-5 flex flex-col items-center rounded py-5 transition-all duration-300 hover:scale-110 hover:bg-neutral-600">
-      <Avatar.Root class="mb-3 h-24 w-24 rounded-full bg-neutral-700 shadow-lg">
+    <div class="absolute right-12 top-3 flex h-8 scale-0 items-center justify-center overflow-hidden rounded-md border border-accent bg-popover px-2 py-1 text-xs opacity-0 shadow-md transition-all duration-300" class:!scale-100={copied} class:!opacity-100={copied}>Copied Link</div>
+    <a href={`/${data.minionuser.username}/chat`} class="relative mx-20 my-5 flex flex-col items-center rounded py-5 transition-all duration-300 hover:scale-110 hover:bg-accent">
+      <Avatar.Root class="mb-3 h-24 w-24 rounded-full bg-accent shadow-lg">
         <Avatar.Image class="pointer-events-none h-full w-full p-2" src={`data:image/png;base64,${data.minionuser.avatar}`} alt={data.minionuser.username} />
-        <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-700">{data.minionuser.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
+        <Avatar.Fallback class="border-2 border-accent bg-accent">{data.minionuser.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
       </Avatar.Root>
       <h5 class="mb-1 text-xl font-medium text-white">{data.minionuser.username}</h5>
     </a>
@@ -79,7 +79,7 @@
               document.getElementById("container").classList.add("h-[calc(100vh_-_64px)]")
             ) ?? ""}
             <div class="col-span-3 flex w-full items-center justify-center">
-              <h3 class="font-semibold text-neutral-200/40">{data.minionuser.username} has no minions</h3>
+              <h3 class="font-semibold text-primary/40">{data.minionuser.username} has no minions</h3>
             </div>
           {/if}
         {/await}

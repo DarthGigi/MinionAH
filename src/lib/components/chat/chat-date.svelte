@@ -23,4 +23,4 @@
   }
 </script>
 
-<div transition:slide|global={{ axis: "x" }} class="self-center text-center text-xs text-neutral-500" class:ml-2={self} class:mr-2={!self}>{formatDate(date)}</div>
+<div transition:slide|global={{ axis: "x" }} class="self-center text-center text-xs text-ring" class:ml-2={self} class:mr-2={!self}>{formatDate(date)}</div>

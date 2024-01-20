@@ -31,7 +31,7 @@
     <Popover.Root bind:open let:ids>
       <Popover.Trigger asChild let:builder>
         <Form.Control id={ids.trigger} let:attrs>
-          <Button builders={[builder]} {...attrs} variant="outline" role="combobox" type="button" class={cn("relative w-40 cursor-default justify-between rounded-md border-none bg-neutral-700 py-1.5 pl-3 text-left text-neutral-200 shadow-sm ring-1 ring-inset ring-transparent hover:bg-neutral-600 hover:text-neutral-200 focus:outline-none focus:ring-2 focus:ring-neutral-500 sm:text-sm sm:leading-6 md:w-44", !value && "text-muted-foreground")} aria-label="Select a minion" aria-haspopup="listbox" aria-expanded={open}>
+          <Button builders={[builder]} {...attrs} variant="outline" role="combobox" type="button" class={cn("relative w-40 cursor-default justify-between rounded-md border-none bg-accent py-1.5 pl-3 text-left shadow-sm focus:outline-none focus:ring-2 focus:ring-ring sm:text-sm sm:leading-6 md:w-44", !value && "text-muted-foreground")} aria-label="Select a minion" aria-haspopup="listbox" aria-expanded={open}>
             <div class="flex">
               {#if minionType.find((f) => f.generator === value)}
                 <img loading="lazy" src={`data:image/png;base64,${minionType.find((f) => f.generator === value)?.texture}`} class="mr-2 h-6 w-6" alt={value} />
@@ -50,9 +50,9 @@
           </Button>
         </Form.Control>
       </Popover.Trigger>
-      <Popover.Content class="mt-1 w-[200] border-2 border-neutral-600 bg-neutral-700 p-0">
-        <Command.Root class="max-h-56 overflow-hidden border-none bg-neutral-700 text-base sm:text-sm">
-          <Command.Input autofocus placeholder="Search minion" class="border-none border-green-500 text-neutral-200 focus:shadow-none focus:outline-0 focus:ring-0" />
+      <Popover.Content class="mt-1 w-[200] border border-border bg-popover p-0">
+        <Command.Root class="max-h-56 overflow-hidden border-none bg-popover text-base sm:text-sm">
+          <Command.Input autofocus placeholder="Search minion" class="border-0 text-popover-foreground focus:shadow-none focus:outline-0 focus:ring-0" />
           <Command.Empty>No minion found.</Command.Empty>
           <Command.Group class="overflow-y-auto overflow-x-clip">
             {#each minionType as minionType}
@@ -63,7 +63,7 @@
                   dispatch("onSelect", minionType.maxTier);
                   closeAndFocusTrigger(ids.trigger);
                 }}
-                class="justify-between text-neutral-200 aria-selected:bg-neutral-800 aria-selected:text-neutral-300">
+                class="justify-between text-popover-foreground aria-selected:bg-background">
                 <div class="inline-flex items-center">
                   <img src={`data:image/png;base64,${minionType.texture}`} class="mr-2 h-6 w-6" alt={minionType.generator} />
                   <span class="capitalize">

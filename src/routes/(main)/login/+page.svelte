@@ -1,12 +1,12 @@
 <script lang="ts">
   import { page } from "$app/stores";
+  import * as AlertDialog from "$lib/components/ui/alert-dialog";
   import * as Form from "$lib/components/ui/form";
+  import { Loader2 } from "lucide-svelte";
+  import { superForm } from "sveltekit-superforms/client";
   import type { PageData } from "./$types";
   import { formSchema } from "./schema";
   export let data: PageData;
-  import { Loader2 } from "lucide-svelte";
-  import * as AlertDialog from "$lib/components/ui/alert-dialog";
-  import { superForm } from "sveltekit-superforms/client";
   const { message } = superForm(data.form, { warnings: { duplicateId: false } });
 
   let passwordInputIsValid = false;
@@ -17,12 +17,12 @@
   }
 </script>
 
-<Form.Root method="POST" form={data.form} on:submit={() => (submitting = true)} schema={formSchema} let:config class="relative mx-auto flex h-1/2 max-w-md flex-col justify-center self-center">
+<Form.Root method="POST" form={data.form} on:submit={() => (submitting = true)} schema={formSchema} let:config class="relative mx-auto flex h-1/2 max-w-md flex-col justify-center self-center px-4 md:px-0">
   <Form.Field {config} name="username">
     <Form.Item>
       <Form.Label for="username">Username</Form.Label>
       <Form.Description>This is your Minecraft username.</Form.Description>
-      <Form.Input maxlength={16} type="text" class="border-2 border-neutral-700 transition-all duration-300 focus:border-neutral-400 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[invalid]:border-red-700/40 focus:data-[invalid]:border-red-700" autocomplete="username" name="username" id="username" />
+      <Form.Input maxlength={16} type="text" class="border-2 border-accent transition-all duration-300 focus:border-muted-foreground focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[invalid]:border-destructive/40 focus:data-[invalid]:border-destructive" autocomplete="username" name="username" id="username" />
       <Form.Validation />
     </Form.Item>
   </Form.Field>
@@ -36,7 +36,7 @@
         id="current-password"
         autocomplete="current-password"
         passwordrules="minlength: 8;"
-        class="border-2 border-neutral-700 transition-all duration-300 focus:border-neutral-400 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[invalid]:border-red-700/40 focus:data-[invalid]:border-red-700"
+        class="border-2 border-accent transition-all duration-300 focus:border-muted-foreground focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[invalid]:border-destructive/40 focus:data-[invalid]:border-destructive"
         on:input={({ currentTarget }) => {
           if (currentTarget.attributes.getNamedItem("data-invalid") === null && currentTarget.attributes.getNamedItem("aria-invalid") === null && currentTarget.value.length >= 8) {
             passwordInputIsValid = true;

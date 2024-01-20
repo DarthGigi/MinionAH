@@ -8,7 +8,7 @@
     Sign up with MC-Auth
   </Button>
 </div>
-<div class="mx-auto max-w-xl select-none px-4 py-8 text-neutral-700 max-md:pb-20 md:px-0">
+<div class="mx-auto max-w-xl select-none px-4 py-8 text-accent max-md:pb-20 md:px-0">
   <p>
     MinionAH will never try to steal, sell, or otherwise misuse your Minecraft account information. We use the information provided by MC-Auth to verify your Minecraft identity.
     <br />

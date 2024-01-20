@@ -32,7 +32,7 @@
   }
 </script>
 
-<li in:fade|global={{ delay: 0 }} {...$$restProps} class="user-select-none relative list-item divide-y divide-neutral-700 rounded-lg bg-neutral-800 transition-all duration-300" class:group={isHome} class:hover:bg-neutral-900={isHome} on:mouseover={() => (hovering = true)} on:mouseout={() => (hovering = false)} on:blur={() => (hovering = false)} on:focus={() => (hovering = true)} role="listitem">
+<li in:fade|global={{ delay: 0 }} {...$$restProps} class="user-select-none relative list-item divide-y divide-accent rounded-lg bg-background transition-all duration-300" class:group={isHome} class:hover:bg-muted={isHome} on:mouseover={() => (hovering = true)} on:mouseout={() => (hovering = false)} on:blur={() => (hovering = false)} on:focus={() => (hovering = true)} role="listitem">
   <div class="flex w-full items-center justify-center gap-x-6 px-4">
     <CardItemMinion />
     {#if isHome}
@@ -40,24 +40,24 @@
     {/if}
   </div>
 
-  <div class="-mt-px flex divide-x divide-neutral-700">
+  <div class="-mt-px flex divide-x divide-accent">
     <CardMinionTier />
     <CardMinionPrice bind:hovering />
     <CardMinionAmount />
   </div>
   {#if minion.hasInfusion}
     <Tooltip.Root>
-      <Tooltip.Trigger class="absolute right-2 top-2 m-0 flex h-10 w-10 items-center justify-center rounded-lg !border-2 !border-black/30 bg-neutral-700 p-2 transition-all duration-300 group-hover:!border-black/0 group-hover:bg-neutral-900">
-        <img class="pointer-events-none h-auto w-full" src="/assets/images/mithril.png" alt="Mithril Infusion" />
+      <Tooltip.Trigger class="absolute right-2 top-2 m-0 flex items-center justify-center rounded-lg !border-0 bg-accent p-1.5 transition-all duration-300 group-hover:bg-opacity-0">
+        <img class="pointer-events-none h-full w-5" src="/assets/images/mithril.png" alt="Mithril Infusion" />
       </Tooltip.Trigger>
-      <Tooltip.Content class="border-neutral-700 bg-neutral-900 text-neutral-200">
+      <Tooltip.Content class="border-border bg-popover text-popover-foreground">
         <p>Mithril Infused</p>
       </Tooltip.Content>
     </Tooltip.Root>
   {/if}
   {#if showButtons}
     {#if $page.url.pathname === "/profile"}
-      <Button class="group absolute left-12 top-2 h-auto rounded-lg !border-0 bg-neutral-700 p-1.5 text-sm text-neutral-400 transition-all duration-300 hover:bg-red-600 hover:text-red-200 focus:outline-none focus:ring-4 focus:ring-transparent group-hover:opacity-100" type="button" on:click={() => openModal(minion.id)} aria-label="Delete minion">
+      <Button class="group absolute left-12 top-2 h-auto rounded-lg !border-0 bg-accent p-1.5 text-sm text-muted-foreground transition-all duration-300 hover:bg-destructive hover:text-destructive-foreground focus:outline-none focus:ring-4 focus:ring-transparent group-hover:opacity-100" type="button" on:click={() => openModal(minion.id)} aria-label="Delete minion">
         <Trash2 class="h-5 w-5" />
       </Button>
     {/if}
@@ -70,7 +70,7 @@
           navigator.clipboard.writeText(`${window.location.origin}/${minion.user.username}/${minion.id}`);
         }} />
 
-      <Button variant="link" href={`${minion.user.username}/${minion.id}`} class={`group absolute left-2 top-12 h-auto rounded-lg !border-0 bg-neutral-700 bg-opacity-0 p-1.5 text-sm text-neutral-400 transition-all duration-300 hover:bg-opacity-100 focus:outline-none focus:ring-4 focus:ring-transparent group-hover:opacity-100  ${isHome ? "opacity-0" : ""} ${!isHome ? "bg-opacity-100" : ""} `} aria-label="View {minion.user.username}'s {minion.minion.generator.replace(/_/g, ' ').toLowerCase().charAt(0) + minion.minion.generator.slice(1).toLowerCase().replace(/_/g, ' ')} minion">
+      <Button variant="link" href={`${minion.user.username}/${minion.id}`} class={`group absolute left-2 top-12 h-auto rounded-lg !border-0 bg-accent bg-opacity-0 p-1.5 text-sm text-muted-foreground transition-all duration-300 hover:bg-accent hover:bg-opacity-100 hover:opacity-100 focus:outline-none focus:ring-0 focus:ring-transparent group-hover:opacity-100 ${isHome ? "opacity-0" : "bg-opacity-100"}`} aria-label="View {minion.user.username}'s {minion.minion.generator.replace(/_/g, ' ').toLowerCase().charAt(0) + minion.minion.generator.slice(1).toLowerCase().replace(/_/g, ' ')} minion">
         <Eye class="h-5 w-5 transition-colors duration-300 group-hover:text-white" />
       </Button>
     {/if}

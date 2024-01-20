@@ -1,7 +1,7 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import { MinionCard } from "$lib/components/card";
   import CopyButton from "$lib/components/CopyButton.svelte";
+  import { MinionCard } from "$lib/components/card";
   import * as Avatar from "$lib/components/ui/avatar";
   import { ArrowLeftCircle } from "lucide-svelte";
   import type { PageData } from "./$types";
@@ -39,8 +39,8 @@
 </svelte:head>
 
 <div class="flex h-[calc(100vh-64px)] w-screen items-center justify-center">
-  <div class="relative w-full max-w-sm rounded-lg border border-neutral-700 bg-neutral-800 shadow">
-    <a href={`/${data.userMinion.user.username}`} class="absolute left-2 top-2 rounded-lg bg-neutral-700 bg-opacity-0 p-1.5 text-sm text-neutral-400 opacity-30 transition-all duration-300 hover:bg-opacity-100 hover:opacity-100">
+  <div class="relative w-full max-w-sm rounded-lg border border-accent bg-secondary shadow">
+    <a href={`/${data.userMinion.user.username}`} class="absolute left-2 top-2 rounded-lg bg-accent bg-opacity-0 p-1.5 text-sm text-muted-foreground opacity-30 transition-all duration-300 hover:bg-opacity-100 hover:opacity-100">
       <ArrowLeftCircle class="h-6 w-6" />
     </a>
     <CopyButton
@@ -50,10 +50,10 @@
         navigator.clipboard.writeText(`${window.location.href}`);
       }} />
 
-    <a href={`/${data.userMinion.user.username}/chat`} class="relative z-10 mx-20 mt-5 flex flex-col items-center rounded py-5 transition-all duration-300 hover:scale-110 hover:bg-neutral-600">
-      <Avatar.Root class="mb-3 h-24 w-24 rounded-full bg-neutral-700 shadow-lg">
+    <a href={`/${data.userMinion.user.username}/chat`} class="relative z-10 mx-20 mt-5 flex flex-col items-center rounded py-5 transition-all duration-300 hover:scale-110 hover:bg-accent">
+      <Avatar.Root class="mb-3 h-24 w-24 rounded-full bg-accent shadow-lg">
         <Avatar.Image class="pointer-events-none h-full w-full p-2" src={`data:image/png;base64,${data.userMinion.user.avatar}`} alt={data.userMinion.user.username} />
-        <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-800">{data.userMinion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
+        <Avatar.Fallback class="border-2 border-accent bg-secondary">{data.userMinion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
       </Avatar.Root>
       <h5 class="mb-1 text-xl font-medium text-white">{data.userMinion.user.username}</h5>
     </a>

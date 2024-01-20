@@ -106,20 +106,20 @@
 </script>
 
 <div class="flex h-[calc(100vh-64px)] w-screen flex-col items-center justify-center">
-  <div class="relative w-full max-w-sm rounded-lg border border-neutral-700 bg-neutral-800 shadow">
-    <a href={`/${data.user2.username}`} class="absolute left-2 top-2 rounded-lg bg-neutral-700 bg-opacity-0 p-1.5 text-sm text-neutral-400 opacity-30 transition-all duration-300 hover:bg-opacity-100 hover:opacity-100">
+  <div class="relative w-full max-w-sm rounded-lg border border-border bg-secondary shadow">
+    <a href={`/${data.user2.username}`} class="absolute left-2 top-2 rounded-lg bg-accent bg-opacity-0 p-1.5 text-sm text-muted-foreground opacity-30 transition-all duration-300 hover:bg-opacity-100 hover:opacity-100">
       <ArrowLeftCircle class="h-6 w-6" />
     </a>
 
-    <div class="flex flex-col items-center justify-center border-neutral-700 p-4" class:border-b-2={data.chat}>
-      <Avatar.Root class="pointer-events-none h-16 w-16 rounded-full bg-neutral-700">
+    <div class="flex flex-col items-center justify-center border-border p-4" class:border-b={data.chat || showChat}>
+      <Avatar.Root class="pointer-events-none h-16 w-16 rounded-full bg-accent">
         <Avatar.Image class="pointer-events-none h-full w-full p-2" src={`data:image/png;base64,${data.user2?.avatar}`} alt={data.user2?.username} />
-        <Avatar.Fallback class="border-2 border-neutral-600 bg-neutral-800">{data.user2?.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
+        <Avatar.Fallback class="border-2 border-border bg-secondary">{data.user2?.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
       </Avatar.Root>
       <h2 class="text-center text-lg font-semibold">{data.user2?.username}</h2>
     </div>
     {#if data.chat}
-      <div class="no-scrollbar flex max-h-72 w-full max-w-full flex-col-reverse gap-2 overflow-y-auto px-6 py-6">
+      <div class="no-scrollbar flex max-h-72 w-full max-w-full flex-col-reverse gap-2 overflow-y-auto scroll-smooth px-6 py-6">
         {#if loading}
           <ChatLoading />
         {:else if messages}
@@ -136,9 +136,9 @@
         {/if}
       </div>
     {/if}
-    <div class="relative border-t border-neutral-700 p-4">
+    <div class="relative border-t border-accent p-4">
       {#if newChats.length > 0}
-        <div transition:fade class="absolute -top-8 right-1 rounded bg-neutral-700 p-0.5">
+        <div transition:fade class="absolute -top-8 right-1 rounded bg-accent p-0.5">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-loader-2 h-6 w-6 transition-colors delay-300 duration-300" class:animate-spin={sentMessageSuccess === undefined && newChats.length > 0} class:text-blue-500={sentMessageSuccess === undefined && newChats.length > 0} class:text-green-500={sentMessageSuccess === true} class:text-red-500={sentMessageSuccess === false}>
             {#if sentMessageSuccess === undefined && newChats.length > 0}
               <path in:draw={{ delay: 300, duration: 300 }} out:draw={{ duration: 300 }} d="M21 12a9 9 0 1 1-6.219-8.56" />
@@ -150,7 +150,7 @@
           </svg>
         </div>
       {/if}
-      <div class="relative flex rounded-[30px] border-2 border-neutral-600 bg-neutral-700 transition-all duration-300" class:!rounded-2xl={newLines > 0} bind:this={messageDiv}>
+      <div class="relative flex rounded-[30px] border-2 border-accent bg-accent transition-all duration-300" class:!rounded-2xl={newLines > 0} bind:this={messageDiv}>
         <!-- svelte-ignore a11y-autofocus -->
         <textarea
           bind:value={textValue}
@@ -158,7 +158,7 @@
           cols="1"
           rows="1"
           maxlength="1000"
-          class="no-scrollbar h-full w-full resize-none rounded-full border-none bg-transparent placeholder-neutral-500 focus-visible:border-none focus-visible:ring-0"
+          class="no-scrollbar h-full w-full resize-none rounded-full border-none bg-transparent placeholder-ring focus-visible:border-none focus-visible:ring-0"
           class:!rounded-2xl={newLines > 0}
           name="message"
           placeholder={data.chat ? "Message" : "Send a message to start a chat"}
@@ -209,7 +209,7 @@
                 break;
             }
           }} />
-        <span class="translate-x absolute bottom-1/2 right-2 translate-y-1/2 text-xs text-neutral-500 transition-all duration-300" class:-translate-x-8={textValue} class:!-translate-y-2={newLines > 0} class:!bottom-1={newLines > 0} class:duration-0={newLines > 0}>{textValue && textValue.length ? textValue.length : ""}/1000</span>
+        <span class="translate-x absolute bottom-1/2 right-2 translate-y-1/2 text-xs text-ring transition-all duration-300" class:-translate-x-8={textValue} class:!-translate-y-2={newLines > 0} class:!bottom-1={newLines > 0} class:duration-0={newLines > 0}>{textValue && textValue.length ? textValue.length : ""}/1000</span>
 
         <div class="pointer-events-none w-32" />
         <button type="button" class="group absolute bottom-1/2 right-1 translate-y-1/2 overflow-hidden opacity-0 transition-opacity duration-300" bind:this={sendButton} class:!bottom-1={newLines > 0} class:!translate-y-0={newLines > 0} class:opacity-100={textValue} on:click={sendMessage}>

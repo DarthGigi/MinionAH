@@ -10,7 +10,7 @@
   export let value: string = "";
 </script>
 
-<div class="flex items-center border-b-2 border-neutral-600 px-2" data-cmdk-input-wrapper="">
-  <Search class="mr-2 h-4 w-4 shrink-0 text-neutral-200 opacity-50" />
+<div class="flex items-center border-b border-border px-2" data-cmdk-input-wrapper="">
+  <Search class="mr-2 h-4 w-4 shrink-0 opacity-50" />
   <CommandPrimitive.Input class={cn("flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50", className)} {...$$restProps} bind:value />
 </div>
