@@ -3,19 +3,27 @@
   import Message from "$lib/components/chat/message.svelte";
   import * as Avatar from "$lib/components/ui/avatar";
   import { ArrowLeftCircle, ArrowUp } from "lucide-svelte";
-  import { onMount } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import { draw, fade } from "svelte/transition";
   import type { PageData } from "./$types";
+  import Pusher from "pusher-js";
+  import { PUBLIC_key, PUBLIC_cluster } from "$env/static/public";
+  import { beforeNavigate } from "$app/navigation";
+  export let data: PageData;
+
+  const pusher = new Pusher(PUBLIC_key, {
+    cluster: PUBLIC_cluster
+  });
+
+  const channel = pusher.subscribe(`chat-${data.chat.id}`);
 
   interface Message {
     id?: string;
-    chat_id?: string;
-    user_id?: string;
+    chat_id: string;
+    user_id: string;
     content: string;
     createdAt: Date;
   }
-
-  export let data: PageData;
 
   let sendButton: HTMLButtonElement;
 
@@ -26,11 +34,27 @@
 
   let newChats: Message[] = [];
   let messages: Message[];
-  let sentMessageSuccess: boolean | undefined;
+  let sentMessageSuccess: boolean | undefined | null = null;
 
   $: newChats;
   $: messages;
   let loading = true;
+
+  function disconnect() {
+    channel.unsubscribe();
+    channel.unbind_all();
+    channel.disconnect();
+    pusher.unsubscribe(data.chat.id);
+    pusher.unbind_all();
+    pusher.disconnect();
+  }
+
+  beforeNavigate(() => {
+    updateRead();
+    disconnect();
+  });
+
+  let updateRead = () => {};
   onMount(async () => {
     const messagesData = await fetch(`${window.location.href}/api`, {
       method: "GET",
@@ -53,6 +77,16 @@
       });
 
     messages = [...messagesData];
+
+    updateRead = async () => {
+      await fetch(`${window.location.href}/api`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Requested-With": "fetch"
+        }
+      });
+    };
   });
 
   async function sendMessage() {
@@ -61,13 +95,15 @@
       content: textValue,
       createdAt: new Date(),
       user_id: data.user.id,
-      id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+      id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
+      chat_id: data.chat.id
     };
     newChats = [message, ...newChats];
+    sentMessageSuccess = undefined;
 
     textValue = "";
 
-    const res = await fetch(`${window.location.href}/api`, {
+    await fetch(`${window.location.href}/api`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -75,35 +111,27 @@
       },
       body: JSON.stringify(message)
     });
+  }
 
-    const sentMessage = await res.json().then((res) => {
-      return {
-        ...res,
-        createdAt: new Date(res.createdAt)
-      };
-    });
-
-    if (res.status !== 201) {
-      sentMessageSuccess = false;
-      setTimeout(() => {
-        sentMessageSuccess = undefined;
-        newChats = newChats.filter((message) => message.id === sentMessage.id);
-        messages = [sentMessage, ...messages];
-      }, 1000);
-      console.error("Error sending message");
-    } else {
-      if (res.headers.get("x-created-chat") === "true") {
-        loading = false;
-        showChat = true;
-      }
+  channel.bind("new-message", (new_message: Message) => {
+    new_message.createdAt = new Date(new_message.createdAt);
+    if (new_message.user_id === data.user.id) {
+      messages = [new_message, ...messages];
+      newChats = newChats.filter((message) => message.id === new_message.id);
       sentMessageSuccess = true;
       setTimeout(() => {
-        sentMessageSuccess = undefined;
-        newChats = newChats.filter((message) => message.id === sentMessage.id);
-        messages = [sentMessage, ...messages];
+        sentMessageSuccess = null;
       }, 1000);
+    } else {
+      messages = [new_message, ...messages];
     }
-  }
+    textValue = "";
+  });
+
+  onDestroy(() => {
+    updateRead();
+    disconnect();
+  });
 </script>
 
 <div class="flex h-[calc(100vh-64px)] w-screen flex-col items-center justify-center">
@@ -138,7 +166,7 @@
       </div>
     {/if}
     <div class="relative border-t border-accent p-4">
-      {#if newChats.length > 0}
+      {#if sentMessageSuccess !== null}
         <div transition:fade class="absolute -top-8 right-1 rounded bg-accent p-0.5">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-loader-2 h-6 w-6 transition-colors delay-300 duration-300" class:animate-spin={sentMessageSuccess === undefined && newChats.length > 0} class:text-blue-500={sentMessageSuccess === undefined && newChats.length > 0} class:text-green-500={sentMessageSuccess === true} class:text-red-500={sentMessageSuccess === false}>
             {#if sentMessageSuccess === undefined && newChats.length > 0}
