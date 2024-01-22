@@ -8,12 +8,88 @@
   import * as Select from "$lib/components/ui/select";
   import { searchSignal } from "$lib/stores/signals";
   import type { Seller } from "$lib/types";
-  import { onDestroy } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import { draw, slide } from "svelte/transition";
   import type { PageData } from "./$types";
   import { formSchema } from "./schema";
+  import * as PusherPushNotifications from "@pusher/push-notifications-web";
+  import * as AlertDialog from "$lib/components/ui/alert-dialog";
+  import { preferences } from "$lib/stores/preferences";
 
   export let data: PageData;
+  onMount(async () => {
+    if (Notification.permission === "denied") return;
+    // if ($preferences.notifications === false) return;
+    if (!("serviceWorker" in window.navigator)) return;
+    window.navigator.serviceWorker.ready.then(async (serviceWorkerRegistration) => {
+      console.log(serviceWorkerRegistration);
+      const beamsClient = new PusherPushNotifications.Client({
+        instanceId: "99e26b7b-77dd-42cc-b188-437431917f07",
+        serviceWorkerRegistration: serviceWorkerRegistration
+      });
+
+      if (data.user) {
+        const beamsTokenProvider = new PusherPushNotifications.TokenProvider({
+          url: "/api/pusher/beams-auth"
+        });
+
+        const registrationState = await beamsClient.getRegistrationState().then(async (state) => {
+          switch (state) {
+            case "PERMISSION_PROMPT_REQUIRED":
+              console.log("Permissions required");
+              notificationAlert = true;
+              await beamsClient.stop();
+              return "PERMISSION_PROMPT_REQUIRED";
+            case "PERMISSION_DENIED":
+              console.log("Permissions denied");
+              await beamsClient.stop();
+              return "PERMISSION_DENIED";
+            default:
+              console.log("Permissions granted");
+              return "PERMISSION_GRANTED";
+          }
+        });
+
+        if (registrationState === "PERMISSION_PROMPT_REQUIRED" || registrationState === "PERMISSION_DENIED") return;
+
+        await beamsClient
+          .start()
+          .then(() => beamsClient.setUserId(data.user.id, beamsTokenProvider))
+          .then(() => console.log("Successfully registered and subscribed!"))
+          .catch(console.error);
+
+        await beamsClient
+          .getUserId()
+          .then((userId) => {
+            if (userId !== data.user.id) {
+              console.log("Not logged in");
+              return beamsClient.stop();
+            }
+          })
+          .catch(console.error);
+      } else {
+        console.log("Not logged in");
+        await beamsClient.stop().catch(console.error);
+      }
+    });
+  });
+
+  preferences.subscribe((state) => {
+    if (typeof window === "undefined") return;
+    if (state.notifications === false) return;
+    // console.log("Requesting permission...");
+    // requestNotificationPermission();
+  });
+
+  async function requestNotificationPermission() {
+    if (window.Notification.permission === "granted") return;
+    const permission = await window.Notification.requestPermission();
+    if (permission === "granted") {
+      window.location.reload();
+    } else {
+      preferences.update((state) => ({ ...state, notifications: false }));
+    }
+  }
 
   let minions: Seller[] = [];
   let loadingMore = true;
@@ -28,6 +104,7 @@
     description: "",
     open: false
   };
+  let notificationAlert = false;
 
   let searchSignalUnsubscribe = searchSignal.subscribe((search) => {
     if (search === searchValue || search === lastSearch || search === "") return;
@@ -218,3 +295,19 @@
     </div>
   </div>
 </div>
+
+<AlertDialog.Root bind:open={notificationAlert}>
+  <AlertDialog.Content>
+    <AlertDialog.Header>
+      <AlertDialog.Title>Notifications</AlertDialog.Title>
+      <AlertDialog.Description>Would you like to receive notifications when someone sends you a message?</AlertDialog.Description>
+    </AlertDialog.Header>
+    <AlertDialog.Footer>
+      <AlertDialog.Cancel
+        on:click={() => {
+          preferences.update((state) => ({ ...state, notifications: false }));
+        }}>No thanks</AlertDialog.Cancel>
+      <AlertDialog.Action on:click={requestNotificationPermission}>Yes</AlertDialog.Action>
+    </AlertDialog.Footer>
+  </AlertDialog.Content>
+</AlertDialog.Root>
