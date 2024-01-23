@@ -62,7 +62,7 @@
   <meta name="twitter:creator" content="@iDarthGigi" />
   <meta property="og:title" content="RCC API Documentation — MinionAH" />
   <meta property="og:description" content="Since NEU does not provide a public API for their (raw) craft cost feature, we decided to create our own. We have created a public API that will calculate the (raw) craft cost of any Hypixel SkyBlock item. This API is available for everyone to use in their own projects." />
-  <meta property="og:image" content="https://minionah.com/assets/images/banner.png" />
+  <meta property="og:image" content="https://minionah.com/assets/images/ogBanner.png" />
   <meta property="og:url" content="https://minionah.com/api/craftcost/docs" />
   <meta property="og:site_name" content="MinionAH" />
   <meta property="og:locale" content="en_US" />
