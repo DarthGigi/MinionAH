@@ -12,8 +12,8 @@
   <meta property="og:url" content="https://minionah.com" />
   <meta property="og:title" content="MinionAH — The Auction House for Hypixel SkyBlock Minions" />
   <meta property="og:description" content="Buy and sell Hypixel SkyBlock minions easily on MinionAH. Explore a seamless marketplace with a beautiful interface for minion trading." />
-  <meta property="og:image" content="https://minionah.com/assets/images/ogBanner.png" />
-  <meta property="og:image:secure_url" content="https://minionah.com/assets/images/ogBanner.png" />
+  <meta property="og:image" content="https://minionah.com/assets/images/ogBanner.png?v=2" />
+  <meta property="og:image:secure_url" content="https://minionah.com/assets/images/ogBanner.png?v=2" />
   <meta property="og:image:alt" content="MinionAH" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -26,6 +26,6 @@
   <meta property="twitter:url" content="https://minionah.com" />
   <meta property="twitter:title" content="MinionAH" />
   <meta property="twitter:description" content="Buy and sell Hypixel SkyBlock minions easily on MinionAH. Explore a seamless marketplace with a beautiful interface for minion trading." />
-  <meta property="twitter:image" content="https://minionah.com/assets/images/ogBanner.png" />
+  <meta property="twitter:image" content="https://minionah.com/assets/images/ogBanner.png?v=2" />
 </svelte:head>
 <slot />
