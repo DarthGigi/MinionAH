@@ -129,16 +129,6 @@
                       preferences.update((state) => ({ ...state, minecraftFont: checked }));
                     }} />
                 </div>
-                {#if $page.url.pathname === "/"}
-                  <div class="grid w-full grid-cols-2 items-center justify-between gap-4">
-                    <Label>Notifications</Label>
-                    <Switch
-                      checked={$preferences.notifications}
-                      onCheckedChange={(checked) => {
-                        preferences.update((state) => ({ ...state, notifications: checked }));
-                      }} />
-                  </div>
-                {/if}
               </div>
             </div>
             <Tooltip.Root closeDelay={0} openDelay={0} closeOnPointerDown={false}>
