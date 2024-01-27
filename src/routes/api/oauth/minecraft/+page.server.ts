@@ -4,6 +4,7 @@ import { auth } from "$lib/server/lucia";
 import { OAuthRequestError, providerUserAuth, validateOAuth2AuthorizationCode } from "@lucia-auth/oauth";
 import { error, redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 async function getMinecraftInfo(access_token: string): Promise<MCAuthProfile> {
   const res = await fetch("https://mc-auth.com/api/v2/profile ", {
@@ -180,12 +181,18 @@ export const load = (async ({ cookies, url, locals }) => {
 
     if (!user) throw new Error("Failed to get user");
 
-    const key = await auth.createKey({
-      providerId: "username",
-      providerUserId: user.username.toLocaleLowerCase(),
-      password: null,
-      userId: user.userId
-    });
+    try {
+      const key = await auth.createKey({
+        providerId: "username",
+        providerUserId: minecraftUser.name.toLocaleLowerCase(),
+        password: null,
+        userId: user.userId
+      });
+    } catch (e: any) {
+      if (!(e instanceof PrismaClientKnownRequestError && e.code === "P2002") && !(e instanceof TypeError)) {
+        console.error(e);
+      }
+    }
 
     const session = await auth.createSession({
       userId: user.userId,
