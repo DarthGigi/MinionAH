@@ -42,6 +42,7 @@
   "dependencies": {
     "@prisma/client": "5.8.1",
     "@prisma/extension-accelerate": "^0.6.2",
+    "@vercel/speed-insights": "^1.0.8",
     "bits-ui": "^0.15.1",
     "clsx": "^2.1.0",
     "cmdk-sv": "^0.0.13",

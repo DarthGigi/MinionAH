@@ -3,8 +3,12 @@
   import Navbar from "$lib/layouts/Navbar.svelte";
   import { preferences } from "$lib/stores/preferences";
   import { inject } from "@vercel/analytics";
+  import { injectSpeedInsights } from "@vercel/speed-insights/sveltekit";
   import "../app.css";
   inject({ mode: dev ? "development" : "production", debug: false });
+  if (!dev) {
+    injectSpeedInsights();
+  }
 
   preferences.subscribe((value) => {
     if (typeof window !== "undefined") {
