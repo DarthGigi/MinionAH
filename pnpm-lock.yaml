@@ -127,6 +127,9 @@ devDependencies:
   svelte-check:
     specifier: ^3.6.3
     version: 3.6.3(postcss@8.4.33)(svelte@4.2.9)
+  svelte-headless-table:
+    specifier: ^0.18.1
+    version: 0.18.1(svelte@4.2.9)
   svelte-highlight:
     specifier: ^7.4.8
     version: 7.4.8
@@ -2555,6 +2558,17 @@ packages:
       - sugarss
     dev: true
 
+  /svelte-headless-table@0.18.1(svelte@4.2.9):
+    resolution: {integrity: sha512-pcZIi36u8RV9B3m0oG6000az7tvT6CCK+c8qBUuNUQSChsfJySC5ryGdJSTFlAYBVRGUgZlqYOKGUgSbOfIrnA==}
+    peerDependencies:
+      svelte: ^4.0.0
+    dependencies:
+      svelte: 4.2.9
+      svelte-keyed: 2.0.0(svelte@4.2.9)
+      svelte-render: 2.0.0(svelte@4.2.9)
+      svelte-subscribe: 2.0.1(svelte@4.2.9)
+    dev: true
+
   /svelte-highlight@7.4.8:
     resolution: {integrity: sha512-KjXI+RwpBiDvwgZX9M0T6JpmAPhLjC4Gcks5qIDrFd7iO/pEBFR3B6qeMUTFIhxipHEPp/rC4/0enAvCQtHp+A==}
     dependencies:
@@ -2568,6 +2582,14 @@ packages:
       svelte: ^3.19.0 || ^4.0.0
     dependencies:
       svelte: 4.2.9
+
+  /svelte-keyed@2.0.0(svelte@4.2.9):
+    resolution: {integrity: sha512-7TeEn+QbJC2OJrHiuM0T8vMBkms3DNpTE+Ir+NtnVBnBMA78aL4f1ft9t0Hn/pBbD/TnIXi4YfjFRAgtN+DZ5g==}
+    peerDependencies:
+      svelte: ^4.0.0
+    dependencies:
+      svelte: 4.2.9
+    dev: true
 
   /svelte-persisted-store@0.9.0(svelte@4.2.9):
     resolution: {integrity: sha512-GoK160xYmwBX0AiZDrh7AvdapcI8xCjb8r5xyWX+eJL2iw8o6xIxqjTHSmrrhUgOWj7rYc8EXiRMf9U9ryaGVg==}
@@ -2624,6 +2646,23 @@ packages:
       strip-indent: 3.0.0
       svelte: 4.2.9
       typescript: 5.3.3
+    dev: true
+
+  /svelte-render@2.0.0(svelte@4.2.9):
+    resolution: {integrity: sha512-YWMwXGlUlnlb8QhEd138Kmay2KfU6sE7jj3epoYZuHe3M2voGdXfgqYJY7gGizW55N0zDWtuRaY3Rh6PGcGQyQ==}
+    peerDependencies:
+      svelte: ^4.0.0
+    dependencies:
+      svelte: 4.2.9
+      svelte-subscribe: 2.0.1(svelte@4.2.9)
+    dev: true
+
+  /svelte-subscribe@2.0.1(svelte@4.2.9):
+    resolution: {integrity: sha512-eKXIjLxB4C7eQWPqKEdxcGfNXm2g/qJ67zmEZK/GigCZMfrTR3m7DPY93R6MX+5uoqM1FRYxl8LZ1oy4URWi2A==}
+    peerDependencies:
+      svelte: ^4.0.0
+    dependencies:
+      svelte: 4.2.9
     dev: true
 
   /svelte@4.2.9:
