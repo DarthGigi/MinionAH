@@ -11,7 +11,7 @@
   import { ArrowUpDown, ChevronDown } from "lucide-svelte";
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
   import { Input } from "$lib/components/ui/input";
-  import DataTableCheckbox from "./data-table-checkbox.svelte";
+  import DataTableCheckbox from "../components/data-table-checkbox.svelte";
   import { formatNumber } from "$lib/utilities";
   import { preferences } from "$lib/stores/preferences";
 

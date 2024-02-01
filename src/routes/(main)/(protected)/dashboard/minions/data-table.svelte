@@ -11,7 +11,7 @@
   import { addHiddenColumns, addPagination, addSelectedRows, addSortBy, addTableFilter } from "svelte-headless-table/plugins";
   import { readable } from "svelte/store";
   import DataTableActions from "./data-table-actions.svelte";
-  import DataTableCheckbox from "./data-table-checkbox.svelte";
+  import DataTableCheckbox from "../components/data-table-checkbox.svelte";
   import DataTableMinion from "./data-table-minion.svelte";
 
   export let data: Minion[];
