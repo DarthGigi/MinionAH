@@ -8,7 +8,7 @@
     { href: "/dashboard/auctions", text: "Auctions" },
     { href: "/dashboard/minions", text: "Minions" },
     { href: "/dashboard/chats", text: "Chats" },
-    { href: $page.url.pathname, text: "Banned Users (coming soon)" }
+    { href: "/dashboard/banned", text: "Banned Users (coming soon)" }
   ];
 </script>
 
