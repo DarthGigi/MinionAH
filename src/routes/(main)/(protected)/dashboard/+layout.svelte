@@ -7,7 +7,8 @@
     { href: "/dashboard/users", text: "Users" },
     { href: "/dashboard/auctions", text: "Auctions" },
     { href: "/dashboard/minions", text: "Minions" },
-    { href: "/dashboard/chats", text: "Chats" }
+    { href: "/dashboard/chats", text: "Chats" },
+    { href: $page.url.pathname, text: "Banned Users (coming soon)" }
   ];
 </script>
 
@@ -16,7 +17,11 @@
     <div class="flex h-16 items-center px-4">
       <nav class="mx-6 flex items-center space-x-4 lg:space-x-6">
         {#each links as link (link.href)}
-          <a href={link.href} class="text-sm font-medium transition-colors hover:text-primary" class:text-muted-foreground={path !== link.href}> {link.text} </a>
+          {#if link.text !== "Banned Users (coming soon)"}
+            <a href={link.href} class="text-sm font-medium transition-colors hover:text-primary" class:text-muted-foreground={path !== link.href}> {link.text} </a>
+          {:else}
+            <span class="pointer-events-none select-none text-sm font-medium text-muted-foreground/30"> {link.text} </span>
+          {/if}
         {/each}
       </nav>
     </div>
