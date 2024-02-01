@@ -79,7 +79,7 @@
     <AlertDialog.Footer>
       <AlertDialog.Cancel disabled={loading}>Cancel</AlertDialog.Cancel>
       <AlertDialog.Action asChild>
-        <Button disabled={loading} variant="destructive" on:click={() => handleButtonClick("/api/dashboard/chats/delete", "DELETE", JSON.stringify({ id: id }), "Deleting the chat failed. Please try again later or contact support.", (value) => (chatDeleteDialogOpen = value))}>
+        <Button disabled={loading} variant="destructive" on:click={() => handleButtonClick("/api/dashboard/chats/delete", "DELETE", JSON.stringify({ ids: [id] }), "Deleting the chat failed. Please try again later or contact support.", (value) => (chatDeleteDialogOpen = value))}>
           {#if loading}
             <Loader2 class="h-4 w-4 animate-spin" />
           {:else}

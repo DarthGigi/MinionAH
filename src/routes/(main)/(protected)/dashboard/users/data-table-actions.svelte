@@ -86,7 +86,7 @@
     <AlertDialog.Footer>
       <AlertDialog.Cancel disabled={loading}>Cancel</AlertDialog.Cancel>
       <AlertDialog.Action asChild>
-        <Button disabled={loading} variant="destructive" on:click={() => handleButtonClick("/api/dashboard/users/delete", "DELETE", JSON.stringify({ id: id }), "Deleting the user failed. Please try again later or contact support.", (value) => (userDeleteDialogOpen = value))}>
+        <Button disabled={loading} variant="destructive" on:click={() => handleButtonClick("/api/dashboard/users/delete", "DELETE", JSON.stringify({ ids: [id] }), "Deleting the user failed. Please try again later or contact support.", (value) => (userDeleteDialogOpen = value))}>
           {#if loading}
             <Loader2 class="h-4 w-4 animate-spin" />
           {:else}

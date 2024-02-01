@@ -3,9 +3,14 @@ import type { RequestHandler } from "./$types";
 export const DELETE: RequestHandler = async ({ request }) => {
   try {
     const data = await request.json();
-    await prisma.chat.delete({
+
+    const ids = data.ids as string[];
+
+    await prisma.chat.deleteMany({
       where: {
-        id: data.id
+        id: {
+          in: ids
+        }
       }
     });
     return new Response(JSON.stringify({ success: true, message: "Successfully deleted the chat" }), {

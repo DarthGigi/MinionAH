@@ -3,9 +3,14 @@ import type { RequestHandler } from "./$types";
 export const DELETE: RequestHandler = async ({ request }) => {
   try {
     const data = await request.json();
-    await prisma.minion.delete({
+
+    const ids = data.ids as string[];
+
+    await prisma.minion.deleteMany({
       where: {
-        id: data.id
+        id: {
+          in: ids
+        }
       }
     });
     return new Response(JSON.stringify({ success: true, message: "Successfully deleted minion" }), {
