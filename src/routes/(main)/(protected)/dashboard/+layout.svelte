@@ -6,7 +6,8 @@
     { href: "/dashboard", text: "Overview" },
     { href: "/dashboard/users", text: "Users" },
     { href: "/dashboard/auctions", text: "Auctions" },
-    { href: "/dashboard/minions", text: "Minions" }
+    { href: "/dashboard/minions", text: "Minions" },
+    { href: "/dashboard/chats", text: "Chats" }
   ];
 </script>
 
