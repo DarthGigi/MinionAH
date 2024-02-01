@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "packageManager": "pnpm@8.14.1",
   "scripts": {
-    "dev": "vite dev",
+    "dev": "dotenv -e .env.development -- vite dev",
     "build": "vite build",
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
