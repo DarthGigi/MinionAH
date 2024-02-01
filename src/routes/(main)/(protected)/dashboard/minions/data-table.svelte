@@ -97,8 +97,10 @@
     table.column({
       accessor: ({ id }) => id,
       header: "",
-      cell: (data) => {
-        return createRender(DataTableActions, { id: data.value, name: (data.row as any).original.name });
+      cell: ({ row, value }) => {
+        if (!row.isData()) return "";
+
+        return createRender(DataTableActions, { id: value, name: row.original.name });
       },
       plugins: {
         sort: {

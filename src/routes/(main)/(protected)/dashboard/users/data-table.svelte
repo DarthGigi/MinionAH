@@ -51,8 +51,9 @@
         return data.username;
       },
       header: "Username",
-      cell: (data) => {
-        return createRender(DataTableUser, { user: (data.row as any).original });
+      cell: ({ row }) => {
+        if (!row.isData()) return "";
+        return createRender(DataTableUser, { user: row.original });
       }
     }),
     table.column({
@@ -85,8 +86,9 @@
     table.column({
       accessor: ({ id }) => id,
       header: "",
-      cell: (data) => {
-        return createRender(DataTableActions, { id: data.value, username: (data.row as any).original.username });
+      cell: ({ row, value }) => {
+        if (!row.isData()) return "";
+        return createRender(DataTableActions, { id: value, username: row.original.username });
       },
       plugins: {
         sort: {
