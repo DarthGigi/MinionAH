@@ -8,7 +8,7 @@
   import { preferences } from "$lib/stores/preferences";
   import { formatNumber } from "$lib/utilities";
   import type { Minion } from "@prisma/client";
-  import { ArrowUpDown, ChevronDown, Loader2, RefreshCw, Trash2 } from "lucide-svelte";
+  import { ArrowUpDown, ChevronDown, CircleEllipsis, Loader2, RefreshCw, Trash2 } from "lucide-svelte";
   import { Render, Subscribe, createRender, createTable } from "svelte-headless-table";
   import { addHiddenColumns, addPagination, addSelectedRows, addSortBy, addTableFilter } from "svelte-headless-table/plugins";
   import { readable } from "svelte/store";
@@ -120,6 +120,17 @@
   const { hiddenColumnIds } = pluginStates.hide;
   const { selectedDataIds } = pluginStates.select;
 
+  let selectedIds: string[];
+  $: {
+    selectedIds = Object.entries($selectedDataIds)
+      .filter(([id, isSelected]) => isSelected && $rows[Number(id)])
+      .map(([id]) => {
+        const row = $rows[Number(id)];
+        if (!row.isData()) return;
+        return row.original.id;
+      });
+  }
+
   const ids = flatColumns.map((col) => col.id);
   let hideForId = Object.fromEntries(ids.map((id) => [id, true]));
   $: $hiddenColumnIds = Object.entries(hideForId)
@@ -129,17 +140,19 @@
   let minionRefreshDialogOpen = false;
   let minionRCCDialogOpen = false;
   let minionDeleteDialogOpen = false;
+  let minionsDeleteDialogOpen = false;
   let loading = false;
   let statusDialog = { open: false, title: "", description: "" };
 
-  async function handleButtonClick(apiEndpoint: string, method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH", errorMessage: string, dialogOpenSetter: { (value: any): any; (value: any): any; (arg0: boolean): void }) {
+  async function handleButtonClick(apiEndpoint: string, method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH", body: string, errorMessage: string, dialogOpenSetter: { (value: any): any; (value: any): any; (arg0: boolean): void }) {
     loading = true;
     try {
       const res = await fetch(apiEndpoint, {
         method: method,
         headers: {
           "Content-Type": "application/json"
-        }
+        },
+        [method !== "GET" ? "body" : ""]: body
       });
       const resJson = await res.json();
       if (resJson.success) {
@@ -248,9 +261,28 @@
       </Table.Root>
     </div>
     <div class="flex items-center justify-end space-x-2 py-4">
-      <div class="flex-1 text-sm text-muted-foreground">
-        {Object.keys($selectedDataIds).length} of{" "}
-        {$rows.length} item{#if $rows.length !== 1}s{/if} selected
+      <div class="flex flex-1 items-center gap-2 text-sm text-muted-foreground">
+        <div>
+          {Object.keys($selectedDataIds).length} of{" "}
+          {$rows.length} row{#if $rows.length !== 1}s{/if} selected
+        </div>
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger asChild let:builder>
+            {#if Object.keys($selectedDataIds).length > 0}
+              <Button variant="ghost" builders={[builder]} size="icon" class="relative h-8 w-8 p-0">
+                <span class="sr-only">Open menu</span>
+                <CircleEllipsis class="h-5 w-5" />
+              </Button>
+            {/if}
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Content class="border-border bg-popover text-popover-foreground">
+            <DropdownMenu.Label>Selected Items</DropdownMenu.Label>
+            <DropdownMenu.Group>
+              <DropdownMenu.Separator class="bg-border" />
+              <DropdownMenu.Item on:click={() => (minionsDeleteDialogOpen = true)}><Trash2 class="mr-2 h-4 w-4" />Delete minions</DropdownMenu.Item>
+            </DropdownMenu.Group>
+          </DropdownMenu.Content>
+        </DropdownMenu.Root>
       </div>
       <span class="text-sm text-muted-foreground">
         Page {$pageIndex + 1} of {$pageCount}
@@ -276,7 +308,7 @@
     <AlertDialog.Footer>
       <AlertDialog.Cancel disabled={loading}>Cancel</AlertDialog.Cancel>
       <AlertDialog.Action asChild>
-        <Button disabled={loading} variant="destructive" on:click={() => handleButtonClick("/api/dashboard/minions/resetall", "PUT", "Updating the minions failed. Please try again later or contact support.", (value) => (minionRefreshDialogOpen = value))}>
+        <Button disabled={loading} variant="destructive" on:click={() => handleButtonClick("/api/dashboard/minions/resetall", "PUT", JSON.stringify({}), "Updating the minions failed. Please try again later or contact support.", (value) => (minionRefreshDialogOpen = value))}>
           {#if loading}
             <Loader2 class="h-4 w-4 animate-spin" />
           {:else}
@@ -303,7 +335,7 @@
     <AlertDialog.Footer>
       <AlertDialog.Cancel disabled={loading}>Cancel</AlertDialog.Cancel>
       <AlertDialog.Action asChild>
-        <Button disabled={loading} variant="default" on:click={() => handleButtonClick("/api/dashboard/minions/priceall", "PATCH", "Updating the prices failed. Please try again later or contact support.", (value) => (minionRCCDialogOpen = value))}>
+        <Button disabled={loading} variant="default" on:click={() => handleButtonClick("/api/dashboard/minions/priceall", "PATCH", JSON.stringify({}), "Updating the prices failed. Please try again later or contact support.", (value) => (minionRCCDialogOpen = value))}>
           {#if loading}
             <Loader2 class="h-4 w-4 animate-spin" />
           {:else}
@@ -328,7 +360,34 @@
     <AlertDialog.Footer>
       <AlertDialog.Cancel disabled={loading}>Cancel</AlertDialog.Cancel>
       <AlertDialog.Action asChild>
-        <Button disabled={loading} variant="default" on:click={() => handleButtonClick("/api/dashboard/minions/deleteall", "DELETE", "Updating the prices failed. Please try again later or contact support.", (value) => (minionRCCDialogOpen = value))}>
+        <Button disabled={loading} variant="default" on:click={() => handleButtonClick("/api/dashboard/minions/deleteall", "DELETE", JSON.stringify({}), "Updating the prices failed. Please try again later or contact support.", (value) => (minionRCCDialogOpen = value))}>
+          {#if loading}
+            <Loader2 class="h-4 w-4 animate-spin" />
+          {:else}
+            Continue
+          {/if}
+        </Button>
+      </AlertDialog.Action>
+    </AlertDialog.Footer>
+  </AlertDialog.Content>
+</AlertDialog.Root>
+
+<AlertDialog.Root bind:open={minionsDeleteDialogOpen} closeOnEscape={!loading} closeOnOutsideClick={!loading}>
+  <AlertDialog.Content>
+    <AlertDialog.Header>
+      <AlertDialog.Title>Delete selected minions</AlertDialog.Title>
+      <AlertDialog.Description>
+        This will delete all the selected minions
+        <br /><br />
+        <span class="font-semibold text-destructive">This will also delete every auction associated with the minions.</span>
+        <br />
+        <span class="text-destructive">This action is irreversible.</span>
+      </AlertDialog.Description>
+    </AlertDialog.Header>
+    <AlertDialog.Footer>
+      <AlertDialog.Cancel disabled={loading}>Cancel</AlertDialog.Cancel>
+      <AlertDialog.Action asChild>
+        <Button disabled={loading} variant="destructive" on:click={() => handleButtonClick("/api/dashboard/chats/delete", "DELETE", JSON.stringify({ ids: selectedIds }), "Deleting the minions failed. Please try again later or contact support.", (value) => (minionsDeleteDialogOpen = value))}>
           {#if loading}
             <Loader2 class="h-4 w-4 animate-spin" />
           {:else}
