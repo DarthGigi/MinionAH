@@ -100,36 +100,34 @@
         <Card.Title>Recent Users</Card.Title>
         <Card.Description>Users who have recently logged in</Card.Description>
       </Card.Header>
-      <Card.Content>
-        <div class="space-y-8">
-          {#each data.users as user}
-            <div class="flex flex-col items-center space-y-2 md:flex-row">
-              <a href={`/${user.username}`} class="flex w-full items-center rounded-lg px-4 py-2 hover:bg-accent/50">
-                <Avatar.Root class="h-9 w-9 flex-shrink-0 rounded-full ">
-                  <Avatar.Image class="pointer-events-none h-full w-full bg-accent p-1" src={`data:image/png;base64,${user.avatar}`} alt={`${user.username}'s avatar`} />
-                  <Avatar.Fallback class="border-2 border-accent bg-accent">{user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
-                </Avatar.Root>
-                <div class="ml-4 flex w-full flex-col items-center justify-between md:flex-row">
-                  <div class="space-y-1 [overflow-wrap:anywhere]">
-                    <p class="text-sm font-medium leading-none">{user.username}</p>
-                    <p class="text-sm text-muted-foreground">{user.id}</p>
-                  </div>
-                  <div class="font-medium md:ml-auto">
-                    {#if typeof window !== "undefined"}
-                      {new Date(user.loggedInAt).toLocaleString(window.navigator.language, {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                        hour: "numeric",
-                        minute: "numeric"
-                      })}
-                    {/if}
-                  </div>
+      <Card.Content class="space-y-8">
+        {#each data.users as user}
+          <div class="flex flex-col items-center space-y-2 md:flex-row">
+            <a href={`/${user.username}`} class="flex w-full items-center rounded-lg px-4 py-2 hover:bg-accent/50">
+              <Avatar.Root class="h-9 w-9 flex-shrink-0 rounded-full ">
+                <Avatar.Image class="pointer-events-none h-full w-full bg-accent p-1" src={`data:image/png;base64,${user.avatar}`} alt={`${user.username}'s avatar`} />
+                <Avatar.Fallback class="border-2 border-accent bg-accent">{user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
+              </Avatar.Root>
+              <div class="ml-4 flex w-full flex-col items-center justify-between md:flex-row">
+                <div class="space-y-1 [overflow-wrap:anywhere]">
+                  <p class="text-sm font-medium leading-none">{user.username}</p>
+                  <p class="max-w-36 text-sm text-muted-foreground">{user.id}</p>
                 </div>
-              </a>
-            </div>
-          {/each}
-        </div>
+                <div class="font-medium md:ml-auto">
+                  {#if typeof window !== "undefined"}
+                    {new Date(user.loggedInAt).toLocaleString(window.navigator.language, {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                      hour: "numeric",
+                      minute: "numeric"
+                    })}
+                  {/if}
+                </div>
+              </div>
+            </a>
+          </div>
+        {/each}
       </Card.Content>
     </Card.Root>
   </div>
