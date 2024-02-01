@@ -5,6 +5,7 @@ import prisma from "$lib/server/prisma";
 import type { Handle } from "@sveltejs/kit";
 import { redirect } from "@sveltejs/kit";
 import { RetryAfterRateLimiter } from "sveltekit-rate-limiter/server";
+import { ADMIN_ID } from "$env/static/private";
 
 const limiter = new RetryAfterRateLimiter({
   IP: [60, "15m"],
@@ -75,8 +76,6 @@ export const handle: Handle = async ({ event, resolve }) => {
         }
       }
     });
-
-    event.locals.session = session;
     user ? (event.locals.user = user) : (event.locals.user = null);
     if (user) {
       // if the time difference is more than an hour, update the loggedInAt time
@@ -93,6 +92,9 @@ export const handle: Handle = async ({ event, resolve }) => {
       }
       if (user._count.key > 0 && event.url.pathname !== "/signup/password") {
         redirect(302, "/signup/password");
+      }
+      if (user.id === ADMIN_ID) {
+        event.locals.isAdmin = true;
       }
     }
   } else {
@@ -117,6 +119,10 @@ export const handle: Handle = async ({ event, resolve }) => {
     if (event.locals.user._count.key < 1) {
       redirect(302, "/profile");
     }
+  }
+
+  if (path.includes("dashboard") && !event.locals.isAdmin) {
+    redirect(302, "/login");
   }
 
   return await resolve(event);

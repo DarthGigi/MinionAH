@@ -19,6 +19,7 @@ declare global {
         | null;
       session: Session | null;
       isProtectedRoute: boolean;
+      isAdmin: boolean = false;
     }
     // interface PageData {}
     // interface Platform {}
