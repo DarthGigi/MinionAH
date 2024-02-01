@@ -93,6 +93,9 @@ export const handle: Handle = async ({ event, resolve }) => {
       if (user._count.key > 0 && event.url.pathname !== "/signup/password") {
         redirect(302, "/signup/password");
       }
+      if (user.id === ADMIN_ID) {
+        event.locals.isAdmin = true;
+      }
     }
   } else {
     event.locals.session = null;
