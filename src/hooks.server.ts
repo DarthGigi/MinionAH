@@ -121,7 +121,7 @@ export const handle: Handle = async ({ event, resolve }) => {
     }
   }
 
-  if (path.includes("/dashboard") && event.locals.user.id !== ADMIN_ID) {
+  if (path.includes("/dashboard") && !event.locals.isAdmin) {
     redirect(302, "/login");
   }
 
