@@ -10,18 +10,21 @@ export const GET: RequestHandler = async ({ request, fetch }) => {
     });
   }
 
-  const minions: Record<string, number> = await fetch("/api/craftcost/minions").then((r) => r.json());
+  try {
+    const minions: Record<string, number> = await fetch("/api/craftcost/minions").then((r) => r.json());
 
-  const prismapromises = Object.keys(minions).map((minion) =>
-    prisma.minion.update({
-      where: { id: minion },
-      data: { craftCost: minions[minion] }
-    })
-  );
+    const prismapromises = Object.keys(minions).map((minion) =>
+      prisma.minion.update({
+        where: { id: minion },
+        data: { craftCost: minions[minion] }
+      })
+    );
 
-  await prisma.$transaction(async () => {
-    await Promise.all([prismapromises]);
-  });
+    await prisma.$transaction(prismapromises);
 
-  return new Response(JSON.stringify({ success: true }, null, 2), { headers: { "content-type": "application/json" }, status: 200, statusText: "OK" });
+    return new Response(JSON.stringify({ success: true }, null, 2), { headers: { "content-type": "application/json" }, status: 200, statusText: "OK" });
+  } catch (e) {
+    console.error(e);
+    return new Response(JSON.stringify({ success: false, error: e }, null, 2), { headers: { "content-type": "application/json" }, status: 500, statusText: "Internal Server Error" });
+  }
 };

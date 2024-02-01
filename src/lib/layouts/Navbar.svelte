@@ -72,6 +72,9 @@
                 <DropdownMenu.Content class="border-border bg-popover">
                   <DropdownMenu.Group>
                     <DropdownMenu.Item href="/profile" class="cursor-pointer data-[highlighted]:bg-background">Profile</DropdownMenu.Item>
+                    {#if $page.data.isAdmin}
+                      <DropdownMenu.Item href="/dashboard" class="cursor-pointer data-[highlighted]:bg-background">Dashboard</DropdownMenu.Item>
+                    {/if}
                     <DropdownMenu.Item href="/profile/chats" class="relative cursor-pointer data-[highlighted]:bg-background"
                       >Messages
                       {#if !$page.url.pathname.includes("chat")}
