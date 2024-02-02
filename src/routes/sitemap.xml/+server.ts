@@ -4,7 +4,7 @@ import { error } from "@sveltejs/kit";
 
 export const GET: RequestHandler = async () => {
   try {
-    const { users, minions } = await Promise.all([
+    const [users, minions] = await Promise.all([
       prisma.user.findMany({
         select: {
           username: true
@@ -20,7 +20,7 @@ export const GET: RequestHandler = async () => {
           }
         }
       })
-    ]).then(([users, minions]) => ({ users, minions }));
+    ]);
 
     return await sitemap.response({
       origin: "https://minionah.com",
