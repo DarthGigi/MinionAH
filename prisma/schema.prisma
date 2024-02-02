@@ -19,9 +19,6 @@ model User {
   avatar       String
   skin         String
   cape         String?
-  banner       String?
-  accent_color Int?
-  locale       String?
   minions      MinionSeller[]
   chatsAsUser1 Chat[]         @relation("user1")
   chatsAsUser2 Chat[]         @relation("user2")
