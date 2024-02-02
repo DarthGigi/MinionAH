@@ -55,7 +55,7 @@
               <DropdownMenu.Root bind:open={profileDropdownOpen}>
                 <DropdownMenu.Trigger class="relative">
                   <Avatar.Root class="items-center justify-center bg-accent">
-                    <Avatar.Image class="pointer-events-none h-full w-full p-1" src={`data:image/png;base64,${user.avatar}`} alt={user.username} />
+                    <Avatar.Image class="pointer-events-none h-full w-full p-1" src={`https://res.cloudinary.com/minionah/image/upload/v1/users/avatars/${user.id}`} alt={user.username} />
                     <Avatar.Fallback class="border-2 border-border bg-accent">{user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
                   </Avatar.Root>
                   {#if !$page.url.pathname.includes("chat")}

@@ -1,6 +1,15 @@
+import { CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET, CLOUDINARY_CLOUD_NAME } from "$env/static/private";
 import prisma from "$lib/server/prisma";
 import type { Minion } from "@prisma/client";
+import { v2 as cloudinary } from "cloudinary";
 import type { RequestHandler } from "./$types";
+
+cloudinary.config({
+  cloud_name: CLOUDINARY_CLOUD_NAME,
+  api_key: CLOUDINARY_API_KEY,
+  api_secret: CLOUDINARY_API_SECRET,
+  secure: true
+});
 
 async function fetchTexture(minion: Minion, type: "skin" | "head") {
   try {
@@ -8,7 +17,14 @@ async function fetchTexture(minion: Minion, type: "skin" | "head") {
     const texture = await fetch(`https://mc-heads.net/${type}/${minion.texture}`);
     const textureBuffer = await texture.arrayBuffer();
     const textureBase64 = Buffer.from(textureBuffer).toString("base64");
-    minion[type] = textureBase64;
+    const upload = await cloudinary.uploader.upload(`data:image/png;base64,${textureBase64}`, {
+      folder: `minions/${type}`,
+      public_id: minion.id,
+      overwrite: true,
+      resource_type: "image"
+    });
+    // @ts-ignore
+    minion[type] = "";
     console.info(`Got ${type} for ${minion.name}`);
   } catch (e) {
     console.error(`Failed to get ${type} for ${minion.name}`);
@@ -74,6 +90,7 @@ export const PUT: RequestHandler = async ({ fetch }) => {
           name: minion.name,
           generator: minion.generator,
           generator_tier: minion.generator_tier,
+          // @ts-ignore
           texture: minion.head,
           skin: minion.skin,
           maxTier: minion.maxTier,

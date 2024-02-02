@@ -21,7 +21,7 @@
       <div class="relative flex w-80 items-center justify-between gap-x-4 !overflow-visible truncate rounded-md bg-background text-popover-foreground shadow-md outline-none">
         <a href="/{chatUser.username}/chat" class="group flex items-center justify-between gap-x-4 py-4 pl-4">
           <Avatar.Root class="h-12 w-12 flex-shrink bg-accent transition-all duration-300 group-hover:scale-110">
-            <Avatar.Image class="pointer-events-none  h-full w-full p-2" src={`data:image/png;base64,${chatUser.avatar}`} alt={`${chatUser.username}'s avatar`} />
+            <Avatar.Image class="pointer-events-none  h-full w-full p-2" src={`https://res.cloudinary.com/minionah/image/upload/v1/users/avatars/${chatUser.id}`} alt={`${chatUser.username}'s avatar`} />
             <Avatar.Fallback class="border-2 border-accent bg-secondary">{chatUser.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
           </Avatar.Root>
           <div class="flex-grow space-y-1">

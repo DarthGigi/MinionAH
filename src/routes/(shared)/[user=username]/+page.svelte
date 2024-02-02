@@ -55,7 +55,7 @@
     <div class="absolute right-12 top-3 flex h-8 scale-0 items-center justify-center overflow-hidden rounded-md border border-accent bg-popover px-2 py-1 text-xs opacity-0 shadow-md transition-all duration-300" class:!scale-100={copied} class:!opacity-100={copied}>Copied Link</div>
     <a href={`/${data.minionuser.username}/chat`} class="relative mx-20 my-5 flex flex-col items-center rounded py-5 transition-all duration-300 hover:scale-110 hover:bg-accent">
       <Avatar.Root class="mb-3 h-24 w-24 rounded-full bg-accent shadow-lg">
-        <Avatar.Image class="pointer-events-none h-full w-full p-2" src={`data:image/png;base64,${data.minionuser.avatar}`} alt={data.minionuser.username} />
+        <Avatar.Image class="pointer-events-none h-full w-full p-2" src={`https://res.cloudinary.com/minionah/image/upload/v1/users/avatars/${data.minionuser.id}`} alt={data.minionuser.username} />
         <Avatar.Fallback class="border-2 border-accent bg-accent">{data.minionuser.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
       </Avatar.Root>
       <h5 class="mb-1 text-xl font-medium text-white">{data.minionuser.username}</h5>

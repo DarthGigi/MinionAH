@@ -45,6 +45,7 @@
     "@prisma/extension-accelerate": "^0.6.2",
     "@vercel/speed-insights": "^1.0.9",
     "bits-ui": "^0.16.0",
+    "cloudinary": "^2.0.0",
     "clsx": "^2.1.0",
     "cmdk-sv": "^0.0.13",
     "css-tree": "^2.3.1",
