@@ -31,6 +31,7 @@ This section will guide you through the process of setting up the project for de
 - [pnpm](https://pnpm.js.org/en/installation) (recommended)
 - [MongoDB](https://www.mongodb.com/try/download/community) (v7.0 or higher) (this project uses MongoDB Atlas, but you can use a local instance if you want)
 - [Vercel](https://vercel.com/) (this project uses Vercel for hosting and deployment, so your fork should be Vercel compatible)
+- [Cloudinary](https://cloudinary.com/) (this project uses Cloudinary for image hosting, so you will need to create an account and get your cloud name, API key, and API secret)
 
 ## 🚀 Getting Started
 
@@ -68,22 +69,13 @@ This section will guide you through the process of setting up the project for de
 
    This will get rid of TypeScript errors and warnings.
 
-7. Open `src/routes/api/resetminions/+server.ts`, remove
+7. Open [localhost:5173/signup](http://localhost:5173/signup) to make an account.
 
-   ```js
-   return new Response(null, {
-     status: 302,
-     headers: {
-       location: "/"
-     }
-   });
-   ```
+8. After making an account, add your ID to the `ADMIN_ID` field in the `.env` file.
 
-   at the top of the file, and open [localhost:5173/api/resetminions](http://localhost:5173/api/resetminions) with your browser to fill the database with all the Hypixel SkyBlock minions and their data.
+9. Open [localhost:5173/dashboard/minions](http://localhost:5173/dashboard/minions), click the "Actions" button, and then click "Update every minion". This will add all the Hypixel SkyBlock minions to the database.
 
-8. Done! You can now start making changes to the code and see them reflected in the browser.
-
-9. (Optional) You should probably make an account so you can work on stuff where you need to be logged in. You can do this by going to [localhost:5173/login](http://localhost:5173/login) and clicking the "Sign up" button.
+10. Done! You can now start making changes to the code and see them reflected in the browser.
 
 # 🔀 Pull Requests
 
