@@ -13,13 +13,14 @@
   $: userCanvas, createUserViewer();
   function createUserViewer() {
     if (userCanvas) {
-      if (!minion.user.skin) return;
+      if (!minion.user.id) return;
+      const skinUrl = `https://res.cloudinary.com/minionah/image/upload/v1/users/skins/${minion.user.id}`;
       const userCanvasContainerDimensions = (document.getElementById(`userCanvasContainer_${minion.id}`) as HTMLDivElement).getBoundingClientRect();
       userViewer = new headview3d.SkinViewer({
         canvas: userCanvas,
         width: userCanvasContainerDimensions.width,
         height: userCanvasContainerDimensions.height,
-        skin: `data:image/png;base64,${minion.user.skin}`,
+        skin: skinUrl,
         zoom: 2.5,
         background: "#404040"
       });
@@ -53,7 +54,7 @@
 <HoverCard.Root openDelay={150} closeDelay={150} bind:open={userisOpen}>
   <HoverCard.Trigger href={`/${minion.user.username}`} class="my-2 flex flex-col items-center truncate rounded p-1 transition-all duration-500">
     <Avatar.Root class="h-12 w-12 flex-shrink-0 rounded-full ">
-      <Avatar.Image class="pointer-events-none h-full w-full bg-accent p-1" src={`data:image/png;base64,${minion.user.avatar}`} alt={`${minion.user.username}'s avatar`} />
+      <Avatar.Image class="pointer-events-none h-full w-full bg-accent p-1" src={`https://res.cloudinary.com/minionah/image/upload/v1/users/avatars/${minion.user.id}`} alt={`${minion.user.username}'s avatar`} />
       <Avatar.Fallback class="border-2 border-accent bg-accent">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
     </Avatar.Root>
     <h3 class="truncate text-sm font-medium text-white">{minion.user.username}</h3>

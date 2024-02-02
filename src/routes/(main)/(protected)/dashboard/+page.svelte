@@ -61,7 +61,7 @@
                 <div class="flex w-full flex-col gap-2 md:flex-row md:items-center md:gap-0">
                   <div class="flex flex-shrink-0 flex-col items-start justify-start md:basis-64 md:flex-row md:items-center">
                     <Avatar.Root class="h-9 w-9 flex-shrink-0 rounded-full ">
-                      <Avatar.Image class="pointer-events-none h-full w-full bg-accent p-1" src={`data:image/png;base64,${auction.minion.texture}`} alt={`${auction.minion.name}'s avatar`} />
+                      <Avatar.Image class="pointer-events-none h-full w-full bg-accent p-1" src={`https://res.cloudinary.com/minionah/image/upload/v1/minions/head/${auction.minion.id}`} alt={`${auction.minion.name}'s avatar`} />
                       <Avatar.Fallback class="border-2 border-accent bg-accent">{auction.minion.name.slice(0, 2).toUpperCase()}</Avatar.Fallback>
                     </Avatar.Root>
                     <div class="mt-2 flex w-full flex-col justify-between md:ml-4 md:flex-row md:items-center">
@@ -73,7 +73,7 @@
                   </div>
                   <div class="hidden flex-shrink-0 flex-col md:flex">
                     <Avatar.Root class="h-9 w-9 flex-shrink-0 rounded-full ">
-                      <Avatar.Image class="pointer-events-none h-full w-full bg-accent p-1" src={`data:image/png;base64,${auction.user.avatar}`} alt={`${auction.user.username}'s avatar`} />
+                      <Avatar.Image class="pointer-events-none h-full w-full bg-accent p-1" src={`https://res.cloudinary.com/minionah/image/upload/v1/users/avatars/${auction.user.id}`} alt={`${auction.user.username}'s avatar`} />
                       <Avatar.Fallback class="border-2 border-accent bg-accent">{auction.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
                     </Avatar.Root>
                     <p class="mt-2 text-sm font-medium leading-none">{auction.user.username}</p>
@@ -105,7 +105,7 @@
           <div class="flex flex-col items-center space-y-2 md:flex-row">
             <a href={`/${user.username}`} class="flex w-full items-center rounded-lg px-4 py-2 hover:bg-accent/50">
               <Avatar.Root class="h-9 w-9 flex-shrink-0 rounded-full ">
-                <Avatar.Image class="pointer-events-none h-full w-full bg-accent p-1" src={`data:image/png;base64,${user.avatar}`} alt={`${user.username}'s avatar`} />
+                <Avatar.Image class="pointer-events-none h-full w-full bg-accent p-1" src={`https://res.cloudinary.com/minionah/image/upload/v1/users/avatars/${user.id}`} alt={`${user.username}'s avatar`} />
                 <Avatar.Fallback class="border-2 border-accent bg-accent">{user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
               </Avatar.Root>
               <div class="ml-4 flex w-full flex-col items-center justify-between md:flex-row">
