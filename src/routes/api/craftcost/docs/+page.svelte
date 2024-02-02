@@ -56,7 +56,7 @@
   <meta name="keywords" content="RCC, Craft Cost, Raw Craft Cost, API, Documentation, MinionAH" />
   <meta name="robots" content="index, follow" />
   <meta name="author" content="DarthGigi" />
-  <meta name="theme-color" content="#1f2937" />
+  <meta name="theme-color" content="#171717" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@MinionAH" />
   <meta name="twitter:creator" content="@iDarthGigi" />
