@@ -34,7 +34,7 @@
           <Button builders={[builder]} {...attrs} variant="outline" role="combobox" type="button" class={cn("relative w-40 cursor-default justify-between rounded-md border-none bg-accent py-1.5 pl-3 text-left shadow-sm focus:outline-none focus:ring-2 focus:ring-ring sm:text-sm sm:leading-6 md:w-44", !value && "text-muted-foreground")} aria-label="Select a minion" aria-haspopup="listbox" aria-expanded={open}>
             <div class="flex">
               {#if minionType.find((f) => f.generator === value)}
-                <img loading="lazy" src={`data:image/png;base64,${minionType.find((f) => f.generator === value)?.texture}`} class="mr-2 h-6 w-6" alt={value} />
+                <img loading="lazy" src={`https://res.cloudinary.com/minionah/image/upload/v1/minions/head/${minionType.find((f) => f.generator === value)?.id}`} class="mr-2 h-6 w-6" alt={value} />
                 <span class="capitalize">
                   {minionType
                     .find((f) => f.generator === value)
@@ -65,7 +65,7 @@
                 }}
                 class="justify-between text-popover-foreground aria-selected:bg-background">
                 <div class="inline-flex items-center">
-                  <img src={`data:image/png;base64,${minionType.texture}`} class="mr-2 h-6 w-6" alt={minionType.generator} />
+                  <img src={`https://res.cloudinary.com/minionah/image/upload/v1/minions/head/${minionType.id}`} class="mr-2 h-6 w-6" alt={minionType.generator} />
                   <span class="capitalize">
                     {minionType.generator.replace(/_/g, " ").toLowerCase().charAt(0).toUpperCase() + minionType.generator.slice(1).toLowerCase().replace(/_/g, " ")}
                   </span>
