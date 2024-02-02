@@ -16,7 +16,6 @@
   import { parse } from "numerable";
   import * as skinview3d from "skinview3d";
   import { onMount } from "svelte";
-  import { slide } from "svelte/transition";
   import type { PageData } from "./$types";
   import { formSchemaCreate, formSchemaDelete } from "./schema";
   export let data: PageData;
@@ -90,6 +89,10 @@
           resetForm: true,
           onSubmit: () => {
             submittingCreate = true;
+          },
+          onResult: () => {
+            submittingCreate = false;
+            showFormStatusDialog = false;
           },
           onUpdated: () => {
             submittingCreate = false;
@@ -233,9 +236,7 @@
 
                         {#if priceValue}
                           {#if Number(value) >= 1000}
-                            <div transition:slide|global={{ axis: "y" }}>
-                              <Form.Description>{parse(value)} = {formatNumber(value)}</Form.Description>
-                            </div>
+                            <Form.Description>{parse(value)} = {formatNumber(value)}</Form.Description>
                           {/if}
                         {/if}
 
@@ -308,6 +309,7 @@
     },
     onResult: () => {
       showDeleteFormDialog = false;
+      submittingDelete = false;
     },
     onUpdated: () => {
       showFormStatusDialog = true;
@@ -328,7 +330,7 @@
   </Form.Field>
 </Form.Root>
 
-<AlertDialog.Root bind:open={showFormStatusDialog}>
+<AlertDialog.Root bind:open={showFormStatusDialog} closeOnEscape={true} closeOnOutsideClick={true}>
   <AlertDialog.Content>
     <AlertDialog.Header>
       {#if $page.form && $page.form.form && $page.form.form.message}
