@@ -3,8 +3,8 @@
 </script>
 
 <div class="flex h-[calc(50%-4rem)] flex-col items-center justify-end">
-  <Button data-sveltekit-preload-data="tap" href="/api/oauth" class="group scale-125 bg-[#343a40] font-medium text-[#f8f9fa] duration-300 hover:bg-[#343a40]/50 hover:text-[#f8f9fa]/50">
-    <img src="/assets/images/mc-auth.svg" class="pointer-events-none mr-1 h-6 w-auto select-none transition-opacity duration-300 group-hover:opacity-70" alt="Mc-Auth" />
+  <Button data-sveltekit-preload-data="tap" href="/api/oauth" class="group scale-125 bg-primary font-medium text-primary-foreground duration-300 hover:bg-accent">
+    <img src="/assets/images/mc-auth.svg" class="pointer-events-none mr-1 h-6 w-auto" alt="Mc-Auth" />
     Sign up with MC-Auth
   </Button>
   <span class="mt-2 text-xs text-accent">This is a one-time process</span>
