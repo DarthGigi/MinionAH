@@ -3,15 +3,18 @@
 </script>
 
 <div class="flex h-[calc(50%-4rem)] flex-col items-center justify-end">
-  <Button data-sveltekit-preload-data="tap" href="/api/oauth" class="group scale-125 bg-[#343a40] font-medium text-[#f8f9fa] duration-300 hover:bg-[#343a40]/50 hover:text-[#f8f9fa]/50">
-    <img src="/assets/images/mc-auth.svg" class="pointer-events-none mr-1 h-6 w-auto select-none transition-opacity duration-300 group-hover:opacity-70" alt="Mc-Auth" />
+  <Button data-sveltekit-preload-data="tap" href="/api/oauth" class="group scale-125 bg-primary font-medium text-primary-foreground duration-300 hover:bg-accent">
+    <img src="/assets/images/mc-auth.svg" class="pointer-events-none mr-1 h-6 w-auto" alt="Mc-Auth" />
     Sign up with MC-Auth
   </Button>
+  <span class="mt-2 text-xs text-accent">This is a one-time process</span>
 </div>
 <div class="mx-auto max-w-xl select-none px-4 py-8 text-accent max-md:pb-20 md:px-0">
   <p>
+    <span class="font-bold">No sensitive information like your password, tokens, or any other personal information is being used or stored during this process.</span>
+    <br /><br />
     MinionAH will never try to steal, sell, or otherwise misuse your Minecraft account information. We use the information provided by MC-Auth to verify your Minecraft identity.
-    <br />
+    <br /><br />
     We will never ask for your Minecraft password or any other sensitive information.
     <br /><br />
     MC-Auth is the most secure way to authenticate your Minecraft account. We do not have access to your account or any other sensitive information. You can check out <a href="https://mc-auth.com" target="_blank" class="underline underline-offset-2">mc-auth.com</a> for more information.
