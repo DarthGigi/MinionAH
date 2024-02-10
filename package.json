@@ -5,13 +5,21 @@
   "scripts": {
     "dev": "dotenv -e .env.development -- vite dev",
     "build": "vite build",
+    "build:dev": "dotenv -e .env.development -- vite build",
     "preview": "vite preview",
+    "preview:dev": "dotenv -e .env.development -- vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "lint": "prettier --check .",
     "format": "prettier --write .",
     "update:shadcn": "pnpm dlx shadcn-svelte update -a && prettier --write ./src/lib/components/ui",
-    "postinstall": "prisma generate --no-engine"
+    "postinstall": "prisma generate --no-engine",
+    "prisma:generate:dev": "dotenv -e .env.development -- prisma generate",
+    "prisma:generate": "prisma generate",
+    "prisma:db:push:dev": "dotenv -e .env.development -- prisma db push",
+    "prisma:db:push": "prisma db push",
+    "prisma:studio:dev": "dotenv -e .env.development -- prisma studio",
+    "prisma:studio": "prisma studio"
   },
   "devDependencies": {
     "@lucia-auth/adapter-prisma": "4.0.0",
