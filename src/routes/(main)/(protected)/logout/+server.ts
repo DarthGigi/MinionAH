@@ -1,9 +1,10 @@
-import { auth } from "$lib/server/lucia";
+import { lucia } from "$lib/server/lucia";
 import type { RequestHandler } from "./$types";
 
 export const GET: RequestHandler = async ({ locals, cookies }) => {
-  await auth.invalidateSession(locals.session!.sessionId);
-  locals.auth.setSession(null);
+  await lucia.invalidateSession(locals.session!.id);
+  locals.user = null;
+  locals.session = null;
 
   cookies.delete("auth_session", { path: "/" });
 

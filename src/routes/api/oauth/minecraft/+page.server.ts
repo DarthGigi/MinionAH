@@ -1,10 +1,10 @@
 import { dev } from "$app/environment";
 import { CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET, CLOUDINARY_CLOUD_NAME, MC_AUTH_CLIENT_ID, MC_AUTH_CLIENT_SECRET, MC_AUTH_REDIRECT_URI } from "$env/static/private";
-import { auth } from "$lib/server/lucia";
-import { OAuthRequestError, providerUserAuth, validateOAuth2AuthorizationCode } from "@lucia-auth/oauth";
+import { lucia } from "$lib/server/lucia";
 import { Prisma } from "@prisma/client";
 import { error, redirect } from "@sveltejs/kit";
 import { v2 as cloudinary } from "cloudinary";
+import { OAuth2Client, OAuth2RequestError } from "oslo/oauth2";
 import type { PageServerLoad } from "./$types";
 
 cloudinary.config({
@@ -80,6 +80,10 @@ type MCAuthProfile = {
   legacy: boolean;
 };
 
+const provider = new OAuth2Client(MC_AUTH_CLIENT_ID, "https://mc-auth.com/oAuth2/authorize", "https://mc-auth.com/oAuth2/token", {
+  redirectURI: dev ? "http://localhost:5173/api/oauth/minecraft" : MC_AUTH_REDIRECT_URI
+});
+
 export const load = (async ({ cookies, url, locals }) => {
   const code = url.searchParams.get("code");
   const state = url.searchParams.get("state");
@@ -97,27 +101,25 @@ export const load = (async ({ cookies, url, locals }) => {
   if (!codeVerifier) redirect(302, "/login"); // invalid code verifier
 
   try {
-    const tokens = await validateOAuth2AuthorizationCode<MCAuthResponseSuccess | MCAuthResponseError>(code as string, "https://mc-auth.com/oAuth2/token", {
-      clientId: MC_AUTH_CLIENT_ID,
-      clientPassword: {
-        clientSecret: MC_AUTH_CLIENT_SECRET,
-        authenticateWith: "client_secret"
-      },
-      redirectUri: dev ? "http://localhost:5173/api/oauth/minecraft" : MC_AUTH_REDIRECT_URI,
-      codeVerifier
+    const tokens = await provider.validateAuthorizationCode(code as string, {
+      codeVerifier,
+      credentials: MC_AUTH_CLIENT_SECRET,
+      authenticateWith: "request_body"
     });
 
     if ("error" in tokens) {
-      console.error(tokens.error, tokens.message);
+      console.error(tokens.error);
       error(500, "Error getting MC profile");
     }
 
     const minecraftUser = await getMinecraftInfo(tokens.access_token);
 
-    const minecraftUserAuth = providerUserAuth(auth, "minecraft", minecraftUser.id);
-
     const getUser = async () => {
-      let existingUser = await minecraftUserAuth.getExistingUser();
+      let existingUser = await prisma.user.findFirst({
+        where: {
+          id: minecraftUser.id
+        }
+      });
 
       let skin: string;
       try {
@@ -175,7 +177,7 @@ export const load = (async ({ cookies, url, locals }) => {
         // update user
         await prisma.user.update({
           where: {
-            id: existingUser.userId
+            id: existingUser.id
           },
           data: {
             username: minecraftUser.name,
@@ -184,51 +186,58 @@ export const load = (async ({ cookies, url, locals }) => {
             cape: ""
           }
         });
-        existingUser = await minecraftUserAuth.getExistingUser();
         return existingUser;
       }
 
       // create a new user if the user does not exist
-      const user = await minecraftUserAuth.createUser({
-        userId: minecraftUser.id,
-        attributes: {
-          id: minecraftUser.id,
-          username: minecraftUser.name,
-          avatar: "",
-          skin: "",
-          cape: "",
-          loggedInAt: new Date()
+      try {
+        const user = await prisma.user.create({
+          data: {
+            id: minecraftUser.id,
+            username: minecraftUser.name,
+            avatar: "",
+            skin: "",
+            cape: "",
+            loggedInAt: new Date(),
+            key: {
+              createMany: {
+                data: [
+                  {
+                    id: `minecraft:${minecraftUser.id}`,
+                    hashed_password: null
+                  },
+                  {
+                    id: `username:${minecraftUser.name.toLocaleLowerCase()}`,
+                    hashed_password: null
+                  }
+                ]
+              }
+            }
+          }
+        });
+        return user;
+      } catch (e: any) {
+        if (!(e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") && !(e instanceof TypeError)) {
+          console.error(e);
         }
-      });
-      return user;
+        return null;
+      }
     };
 
     const user = await getUser();
 
     if (!user) throw new Error("Failed to get user");
 
-    try {
-      const key = await auth.createKey({
-        providerId: "username",
-        providerUserId: minecraftUser.name.toLocaleLowerCase(),
-        password: null,
-        userId: user.userId
-      });
-    } catch (e: any) {
-      if (!(e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") && !(e instanceof TypeError)) {
-        console.error(e);
-      }
-    }
-
-    const session = await auth.createSession({
-      userId: user.userId,
-      attributes: {}
+    const session = await lucia.createSession(user.id, {});
+    const sessionCookie = lucia.createSessionCookie(session.id);
+    cookies.set(sessionCookie.name, sessionCookie.value, {
+      ...sessionCookie.attributes,
+      path: sessionCookie.attributes.path || "/"
     });
-
-    locals.auth.setSession(session);
+    locals.session = session;
   } catch (e: any) {
     console.error(e);
-    if (e instanceof OAuthRequestError) {
+    if (e instanceof OAuth2RequestError) {
       // invalid code
       error(400, "Invalid Code");
     }

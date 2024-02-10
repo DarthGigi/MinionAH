@@ -1,5 +1,5 @@
-import { auth } from "$lib/server/lucia";
 import { fail, redirect } from "@sveltejs/kit";
+import { Argon2id } from "oslo/password";
 import { message, superValidate } from "sveltekit-superforms/server";
 import type { Actions, PageServerLoad } from "./$types";
 import { formSchema } from "./schema";
@@ -20,8 +20,19 @@ export const actions: Actions = {
     if (!form.valid) return fail(400, { form });
 
     try {
-      const user = await auth.updateKeyPassword("username", locals.user!.username.toLocaleLowerCase(), form.data["new-password"]);
-      if (!user || !user.passwordDefined) {
+      const key = await prisma.key.update({
+        where: {
+          id: `username:${locals.user!.username.toLowerCase()}`
+        },
+        data: {
+          hashed_password: await new Argon2id().hash(form.data["new-password"])
+        },
+        include: {
+          user: true
+        }
+      });
+      const user = key.user;
+      if (!user || key.hashed_password === null) {
         console.error("Failed to create account");
         return message(
           form,
