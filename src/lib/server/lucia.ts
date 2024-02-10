@@ -1,15 +1,20 @@
 import { dev } from "$app/environment";
-import { prisma } from "@lucia-auth/adapter-prisma";
+import { PrismaAdapter } from "@lucia-auth/adapter-prisma";
 import { PrismaClient } from "@prisma/client";
-import { lucia } from "lucia";
-import { sveltekit } from "lucia/middleware";
+import { Lucia } from "lucia";
 
 const client = new PrismaClient();
 
-export const auth = lucia({
-  adapter: prisma(client),
-  env: dev ? "DEV" : "PROD",
-  middleware: sveltekit()
+export const lucia = new Lucia(new PrismaAdapter(client.session, client.user), {
+  sessionCookie: {
+    attributes: {
+      secure: !dev
+    }
+  }
 });
 
-export type Auth = typeof auth;
+declare module "lucia" {
+  interface Register {
+    Lucia: typeof lucia;
+  }
+}

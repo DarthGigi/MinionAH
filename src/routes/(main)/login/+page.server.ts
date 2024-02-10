@@ -1,6 +1,7 @@
-import { auth } from "$lib/server/lucia";
+import { lucia } from "$lib/server/lucia";
 import { fail, redirect } from "@sveltejs/kit";
-import { LuciaError } from "lucia";
+import { LegacyScrypt } from "lucia";
+import { Argon2id } from "oslo/password";
 import { message, superValidate } from "sveltekit-superforms/server";
 import type { Actions, PageServerLoad } from "./$types";
 import { formSchema } from "./schema";
@@ -18,21 +19,13 @@ export const actions: Actions = {
     if (!form.valid) return fail(400, { form });
 
     try {
-      const key = await auth.useKey("username", form.data.username.toLowerCase(), form.data["current-password"]);
-      const session = await auth.createSession({
-        userId: key.userId,
-        attributes: {}
+      const key = await prisma.key.findFirst({
+        where: {
+          id: `username:${form.data.username.toLowerCase()}`
+        }
       });
-      const sessionCookie = auth.createSessionCookie(session);
-      cookies.set(sessionCookie.name, sessionCookie.value, {
-        ...sessionCookie.attributes,
-        path: sessionCookie.attributes.path || "/"
-      });
-    } catch (e) {
-      if (e instanceof LuciaError && (e.message === "AUTH_INVALID_KEY_ID" || e.message === "AUTH_INVALID_PASSWORD")) {
-        // user does not exist
-        // or invalid password
-        console.error("Incorrect username or password");
+
+      if (!key) {
         return message(
           form,
           { title: "Failed to log you in", description: 'The username or password you entered is incorrect. Please try again. <br/><br/>If you forgot your password, you can reset it by clicking the "Forgot Password" button.' },
@@ -41,6 +34,41 @@ export const actions: Actions = {
           }
         );
       }
+      const argon2id = new Argon2id();
+      const password = form.data["current-password"];
+      const oldHash = key.hashed_password!;
+      const newHash = await argon2id.hash(password);
+
+      const validPasswordOld = await new LegacyScrypt().verify(oldHash, password);
+
+      const validPassword = await argon2id.verify(newHash, password);
+
+      if (!validPasswordOld && !validPassword) {
+        return message(
+          form,
+          { title: "Failed to log you in", description: 'The username or password you entered is incorrect. Please try again. <br/><br/>If you forgot your password, you can reset it by clicking the "Forgot Password" button.' },
+          {
+            status: 400
+          }
+        );
+      } else if (validPasswordOld) {
+        await prisma.key.update({
+          where: {
+            id: key.id
+          },
+          data: {
+            hashed_password: await argon2id.hash(password)
+          }
+        });
+      }
+
+      const session = await lucia.createSession(key?.user_id, {});
+      const sessionCookie = lucia.createSessionCookie(session.id);
+      cookies.set(sessionCookie.name, sessionCookie.value, {
+        ...sessionCookie.attributes,
+        path: sessionCookie.attributes.path || "/"
+      });
+    } catch (e) {
       console.error(e);
       return message(
         form,

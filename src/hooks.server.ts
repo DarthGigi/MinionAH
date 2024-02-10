@@ -1,11 +1,10 @@
 import { dev } from "$app/environment";
-import { RATE_LIMIT_SECRET } from "$env/static/private";
-import { auth } from "$lib/server/lucia";
+import { ADMIN_ID, RATE_LIMIT_SECRET } from "$env/static/private";
+import { lucia } from "$lib/server/lucia";
 import prisma from "$lib/server/prisma";
-import type { Handle } from "@sveltejs/kit";
+import type { Handle, RequestEvent } from "@sveltejs/kit";
 import { redirect } from "@sveltejs/kit";
 import { RetryAfterRateLimiter } from "sveltekit-rate-limiter/server";
-import { ADMIN_ID } from "$env/static/private";
 
 const limiter = new RetryAfterRateLimiter({
   IP: [60, "15m"],
@@ -38,68 +37,93 @@ export const handle: Handle = async ({ event, resolve }) => {
     }
   }
 
-  event.locals.auth = auth.handleRequest(event);
+  async function resetEventLocals(event: RequestEvent<Partial<Record<string, string>>, string | null>) {
+    event.locals.user = null;
+    event.locals.session = null;
+  }
 
-  const session = await event.locals.auth.validate();
+  try {
+    const sessionId = event.cookies.get(lucia.sessionCookieName);
 
-  if (session) {
-    event.locals.session = session;
-    const user = await prisma.user.findUnique({
-      where: {
-        id: session.user.userId
-      },
-      include: {
-        _count: {
-          select: {
-            chatsAsUser1: {
-              where: {
-                user1Read: false
-              }
-            },
-            chatsAsUser2: {
-              where: {
-                user2Read: false
-              }
-            },
-            key: {
-              //where id starts with username:
-              where: {
-                id: {
-                  startsWith: "username:"
+    if (sessionId) {
+      const { session } = await lucia.validateSession(sessionId);
+      if (session) {
+        if (session.fresh) {
+          const sessionCookie = lucia.createSessionCookie(session.id);
+          event.cookies.set(sessionCookie.name, sessionCookie.value, {
+            path: ".",
+            ...sessionCookie.attributes
+          });
+        }
+
+        const user = await prisma.user.findUnique({
+          where: {
+            id: session.userId
+          },
+          include: {
+            _count: {
+              select: {
+                chatsAsUser1: {
+                  where: {
+                    user1Read: false
+                  }
                 },
-                hashed_password: {
-                  equals: null
+                chatsAsUser2: {
+                  where: {
+                    user2Read: false
+                  }
+                },
+                key: {
+                  //where id starts with username:
+                  where: {
+                    id: {
+                      startsWith: "username:"
+                    },
+                    hashed_password: {
+                      equals: null
+                    }
+                  }
                 }
               }
             }
           }
-        }
-      }
-    });
-    user ? (event.locals.user = user) : (event.locals.user = null);
-    if (user) {
-      // if the time difference is more than an hour, update the loggedInAt time
-      const timeDifference = new Date().getTime() - user.loggedInAt.getTime();
-      if (timeDifference > 3600000) {
-        await prisma.user.update({
-          where: {
-            id: user.id
-          },
-          data: {
-            loggedInAt: new Date()
-          }
         });
+        if (user) {
+          event.locals.user = user;
+          event.locals.session = session;
+          // if the time difference is more than an hour, update the loggedInAt time
+          const timeDifference = new Date().getTime() - user.loggedInAt.getTime();
+          if (timeDifference > 3600000) {
+            await prisma.user.update({
+              where: {
+                id: user.id
+              },
+              data: {
+                loggedInAt: new Date()
+              }
+            });
+          }
+          if (user.id === ADMIN_ID) {
+            event.locals.isAdmin = true;
+          }
+        } else {
+          event.locals.user = null;
+          event.locals.session = null;
+        }
+      } else {
+        const sessionCookie = lucia.createBlankSessionCookie();
+        event.cookies.set(sessionCookie.name, sessionCookie.value, {
+          path: ".",
+          ...sessionCookie.attributes
+        });
+        resetEventLocals(event);
       }
-      if (user._count.key > 0 && event.url.pathname !== "/signup/password") {
-        redirect(302, "/signup/password");
-      }
-      if (user.id === ADMIN_ID) {
-        event.locals.isAdmin = true;
-      }
+    } else {
+      resetEventLocals(event);
     }
-  } else {
-    event.locals.session = null;
-    event.locals.user = null;
+  } catch (error) {
+    console.error(error);
+    resetEventLocals(event);
   }
 
   const isProtectedRoute = event.route.id?.includes("(protected)") ?? false;
@@ -113,10 +137,12 @@ export const handle: Handle = async ({ event, resolve }) => {
     redirect(302, "/login");
   }
 
-  if (path === "/signup/password" && event.locals.session) {
-    if (!event.locals.user) redirect(302, "/login");
+  if (event.locals.user) {
+    if (path !== "/signup/password" && event.locals.user._count.key > 0) {
+      redirect(302, "/signup/password");
+    }
 
-    if (event.locals.user._count.key < 1) {
+    if (path === "/signup/password" && event.locals.user._count.key === 0) {
       redirect(302, "/profile");
     }
   }
