@@ -1,17 +1,22 @@
 import { dev } from "$app/environment";
 import { MC_AUTH_CLIENT_ID, MC_AUTH_REDIRECT_URI } from "$env/static/private";
-import { createOAuth2AuthorizationUrlWithPKCE } from "@lucia-auth/oauth";
 import { redirect, type RequestHandler } from "@sveltejs/kit";
+import { OAuth2Client, generateCodeVerifier, generateState } from "oslo/oauth2";
+
+const provider = new OAuth2Client(MC_AUTH_CLIENT_ID, "https://mc-auth.com/oAuth2/authorize", "https://mc-auth.com/oAuth2/token", {
+  redirectURI: dev ? "http://localhost:5173/api/oauth/minecraft" : MC_AUTH_REDIRECT_URI
+});
+
+const state = generateState();
+const codeVerifier = generateCodeVerifier();
+
+const url = await provider.createAuthorizationURL({
+  state,
+  codeVerifier,
+  scopes: ["profile"]
+});
 
 export const GET: RequestHandler = async ({ cookies }) => {
-  // get url to redirect the user to, with the state
-  const [url, codeVerifier, state] = await createOAuth2AuthorizationUrlWithPKCE("https://mc-auth.com/oAuth2/authorize", {
-    clientId: MC_AUTH_CLIENT_ID,
-    redirectUri: dev ? "http://localhost:5173/api/oauth/minecraft" : MC_AUTH_REDIRECT_URI,
-    scope: ["profile"],
-    codeChallengeMethod: "S256"
-  });
-
   // the state can be stored in cookies or localstorage for request validation on callback
   cookies.set("minecraft_code_verifier", codeVerifier, {
     path: "/",

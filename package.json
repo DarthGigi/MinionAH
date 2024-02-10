@@ -15,7 +15,6 @@
   },
   "devDependencies": {
     "@lucia-auth/adapter-prisma": "4.0.0",
-    "@lucia-auth/oauth": "^3.5.3",
     "@sveltejs/adapter-vercel": "^5.1.0",
     "@sveltejs/kit": "^2.5.0",
     "@sveltejs/vite-plugin-svelte": "^3.0.2",
@@ -55,6 +54,7 @@
     "lucia": "^3.0.1",
     "lucide-svelte": "^0.321.0",
     "numerable": "^0.3.15",
+    "oslo": "^1.1.0",
     "prisma": "^5.9.1",
     "skinview3d": "^3.0.1",
     "super-sitemap": "^0.14.13",
