@@ -135,7 +135,7 @@
   }
 </script>
 
-<h2 class="sr-only">MinionAH | Auction House for Hypixel Skyblock Minions</h2>
+<h2 class="sr-only">MinionAH - The Auction House for SkyBlock Minions</h2>
 
 {#await data.streamed.form}
   <div class="mx-auto flex flex-row items-center justify-center gap-4 px-4 py-20 sm:px-6 lg:px-8">
