@@ -1,15 +1,17 @@
 <script lang="ts">
   import CardLoading from "$lib/components/CardLoading.svelte";
+  import HtmlToast from "$lib/components/HtmlToast.svelte";
   import TierListbox from "$lib/components/TierListbox.svelte";
   import { MinionCard } from "$lib/components/card";
-  import * as Alert from "$lib/components/ui/alert";
   import * as Form from "$lib/components/ui/form";
   import { Input } from "$lib/components/ui/input";
   import * as Select from "$lib/components/ui/select";
+  import { internalPreferences } from "$lib/stores/preferences";
   import { searchSignal } from "$lib/stores/signals";
   import type { Seller } from "$lib/types";
-  import { onDestroy } from "svelte";
-  import { draw, slide } from "svelte/transition";
+  import { onDestroy, onMount } from "svelte";
+  import { toast } from "svelte-sonner";
+  import { draw } from "svelte/transition";
   import type { PageData } from "./$types";
   import { formSchema } from "./schema";
 
@@ -23,11 +25,6 @@
   let lastSearch = "";
   let search: string | undefined = undefined;
   let searchValue = "";
-  let alert = {
-    title: "",
-    description: "",
-    open: false
-  };
 
   let searchSignalUnsubscribe = searchSignal.subscribe((search) => {
     if (search === searchValue || search === lastSearch || search === "") return;
@@ -38,6 +35,34 @@
 
   onDestroy(() => {
     searchSignalUnsubscribe();
+  });
+
+  onMount(() => {
+    if ($internalPreferences.hasSeenWelcomeGuideToast) return;
+    toast("Welcome to MinionAH!", {
+      description: "It seems like you're new here. Would you like to read our guide on how to use MinionAH?",
+      action: {
+        label: "Read guide",
+        onClick: () => {
+          internalPreferences.update((state) => ({ ...state, hasSeenWelcomeGuideToast: true }));
+          window.open("https://newsroom.minionah.com/minionah-guide", "_blank");
+        }
+      },
+      onDismiss: () => {
+        internalPreferences.update((state) => ({ ...state, hasSeenWelcomeGuideToast: true }));
+
+        toast(HtmlToast, {
+          duration: 5000,
+          classes: {
+            closeButton: "!hidden"
+          },
+          componentProps: {
+            htmlMessage: "You can always read the guide by visiting <a href='https://newsroom.minionah.com/minionah-guide' target='_blank' class='underline'>newsroom.minionah.com/minionah-guide</a>"
+          }
+        });
+      },
+      duration: Number.POSITIVE_INFINITY
+    });
   });
 
   (async function () {
@@ -94,12 +119,14 @@
       })
       .catch((err) => {
         console.error(err);
-        alert.open = true;
-        alert.title = "Error";
-        alert.description = "An error occurred while loading minions.";
-        setTimeout(() => {
-          alert.open = false;
-        }, 5000);
+        toast.error(HtmlToast, {
+          classes: {
+            closeButton: "!hidden"
+          },
+          componentProps: {
+            htmlMessage: "Something went wrong while trying to load minions. <br/> Please try again later."
+          }
+        });
       });
 
     newMinionAmount = res.length;
@@ -107,15 +134,6 @@
     minions = [...minions, ...res];
   }
 </script>
-
-{#if alert.open}
-  <div transition:slide={{ axis: "x" }} class="fixed right-4 top-4 w-80">
-    <Alert.Root class="border-accent bg-secondary">
-      <Alert.Title class="min-w-full truncate">{alert.title}</Alert.Title>
-      <Alert.Description class="min-w-full truncate">{alert.description}</Alert.Description>
-    </Alert.Root>
-  </div>
-{/if}
 
 <h2 class="sr-only">MinionAH | Auction House for Hypixel Skyblock Minions</h2>
 
