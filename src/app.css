@@ -99,4 +99,8 @@
   .user-select-none {
     user-select: none;
   }
+
+  [data-close-button] {
+    @apply !border !border-border !bg-background !text-primary;
+  }
 }

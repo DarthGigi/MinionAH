@@ -47,6 +47,9 @@ dependencies:
   lucide-svelte:
     specifier: ^0.323.0
     version: 0.323.0(svelte@4.2.10)
+  mode-watcher:
+    specifier: ^0.2.0
+    version: 0.2.0(svelte@4.2.10)
   numerable:
     specifier: ^0.3.15
     version: 0.3.15
@@ -65,6 +68,9 @@ dependencies:
   svelte-persisted-store:
     specifier: ^0.9.1
     version: 0.9.1(svelte@4.2.10)
+  svelte-sonner:
+    specifier: ^0.3.17
+    version: 0.3.17(svelte@4.2.10)
   sveltekit-rate-limiter:
     specifier: ^0.4.3
     version: 0.4.3(@sveltejs/kit@2.5.0)
@@ -2526,6 +2532,14 @@ packages:
     hasBin: true
     dev: true
 
+  /mode-watcher@0.2.0(svelte@4.2.10):
+    resolution: {integrity: sha512-NCo72EColWhNjMWXr+U9hjJS6ixCFEADfvj44XFLUWEkR/dsbJxnOX6bkxM+i1DWmP/nRhKI+rr2Z2nt+TZSGA==}
+    peerDependencies:
+      svelte: ^4.0.0
+    dependencies:
+      svelte: 4.2.10
+    dev: false
+
   /mri@1.2.0:
     resolution: {integrity: sha512-tzzskb3bG8LvYGFF/mDTpq3jpI6Q9wc3LEmBaghu+DdCssd1FakN7Bc0hVNmEyGq1bq3RgfkCb3cmQLpNPOroA==}
     engines: {node: '>=4'}
@@ -3332,6 +3346,14 @@ packages:
       svelte: 4.2.10
       svelte-subscribe: 2.0.1(svelte@4.2.10)
     dev: true
+
+  /svelte-sonner@0.3.17(svelte@4.2.10):
+    resolution: {integrity: sha512-jociRGESILpHi6fIIcqGYE1bWAfK4ZeTLHuXxNgGMhG1FwhNRIK1bsCbXEl8/AjRV8aiNXtkS/+IlQtvb2jR9g==}
+    peerDependencies:
+      svelte: '>=3 <5'
+    dependencies:
+      svelte: 4.2.10
+    dev: false
 
   /svelte-subscribe@2.0.1(svelte@4.2.10):
     resolution: {integrity: sha512-eKXIjLxB4C7eQWPqKEdxcGfNXm2g/qJ67zmEZK/GigCZMfrTR3m7DPY93R6MX+5uoqM1FRYxl8LZ1oy4URWi2A==}

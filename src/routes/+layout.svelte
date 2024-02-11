@@ -5,6 +5,7 @@
   import { inject } from "@vercel/analytics";
   import { injectSpeedInsights } from "@vercel/speed-insights/sveltekit";
   import "../app.css";
+  import { Toaster } from "$lib/components/ui/sonner";
   inject({ mode: dev ? "development" : "production", debug: false });
   if (!dev) {
     injectSpeedInsights();
@@ -22,5 +23,6 @@
 </script>
 
 <Navbar />
+<Toaster theme="dark" closeButton={true} />
 
 <slot />
