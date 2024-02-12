@@ -11,7 +11,7 @@ export const formSchemaCreate = z.object({
     .number({ required_error: "Please enter an amount" })
     .int()
     .min(1, "You must sell at least 1 minion")
-    .max(64, "You can't sell more than 64 minions at once")
+    .max(512, "You can't sell more than 512 minions at once")
     .default("" as unknown as number),
   price: z.coerce
     .number({ required_error: "Please enter a price" })

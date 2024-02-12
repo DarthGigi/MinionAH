@@ -148,7 +148,7 @@
                           type="number"
                           class="ring-offset-0 focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0"
                           placeholder="Amount of minions"
-                          max={64}
+                          max={512}
                           min={1}
                           on:input={({ currentTarget }) => {
                             if (!(currentTarget instanceof HTMLInputElement)) return;
@@ -157,8 +157,8 @@
                             } else {
                               moreThan1 = false;
                             }
-                            if (currentTarget.valueAsNumber > 64) {
-                              currentTarget.value = "64";
+                            if (currentTarget.valueAsNumber > 512) {
+                              currentTarget.value = "512";
                               setValue(currentTarget.valueAsNumber);
                             } else if (currentTarget.valueAsNumber < 1) {
                               currentTarget.value = "1";
