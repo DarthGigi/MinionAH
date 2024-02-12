@@ -26,10 +26,10 @@ model User {
 }
 
 model Session {
-  id             String @id @map("_id")
-  userId         String
-  expiresAt      DateTime
-  user           User   @relation(references: [id], fields: [userId], onDelete: Cascade)
+  id        String   @id @map("_id")
+  userId    String
+  expiresAt DateTime
+  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
 
   @@index([userId])
 }
@@ -51,7 +51,7 @@ model Minion {
   texture        String
   skin           String
   maxTier        Int
-  craftCost      Int           @default(0)
+  craftCost      Int            @default(0)
   sellers        MinionSeller[]
 }
 
@@ -76,7 +76,7 @@ model Chat {
   user2_id  String
   user1     User      @relation("user1", fields: [user1_id], references: [id], onDelete: Cascade)
   user2     User      @relation("user2", fields: [user2_id], references: [id], onDelete: Cascade)
-  messages  Message[] 
+  messages  Message[]
   createdAt DateTime  @default(now())
   user1Read Boolean   @default(false)
   user2Read Boolean   @default(false)
