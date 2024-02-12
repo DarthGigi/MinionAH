@@ -83,7 +83,7 @@
   {#await data.streamed.userMinions}
     <div class="h-[28.75rem] animate-pulse rounded-lg border-0 bg-background shadow-sm"></div>
   {:then userMinions}
-    {#if userMinions.length < 9}
+    {#if userMinions.length < 18}
       <Form.Root
         options={{
           resetForm: true,
