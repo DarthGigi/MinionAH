@@ -1,95 +1,21 @@
 <script lang="ts">
   import CardLoading from "$lib/components/CardLoading.svelte";
+  import HtmlToast from "$lib/components/HtmlToast.svelte";
   import TierListbox from "$lib/components/TierListbox.svelte";
   import { MinionCard } from "$lib/components/card";
-  import * as Alert from "$lib/components/ui/alert";
   import * as Form from "$lib/components/ui/form";
   import { Input } from "$lib/components/ui/input";
   import * as Select from "$lib/components/ui/select";
+  import { internalPreferences } from "$lib/stores/preferences";
   import { searchSignal } from "$lib/stores/signals";
   import type { Seller } from "$lib/types";
   import { onDestroy, onMount } from "svelte";
-  import { draw, slide } from "svelte/transition";
+  import { toast } from "svelte-sonner";
+  import { draw } from "svelte/transition";
   import type { PageData } from "./$types";
   import { formSchema } from "./schema";
-  import * as PusherPushNotifications from "@pusher/push-notifications-web";
-  import * as AlertDialog from "$lib/components/ui/alert-dialog";
-  import { preferences } from "$lib/stores/preferences";
 
   export let data: PageData;
-  onMount(async () => {
-    if (Notification.permission === "denied") return;
-    // if ($preferences.notifications === false) return;
-    if (!("serviceWorker" in window.navigator)) return;
-    window.navigator.serviceWorker.ready.then(async (serviceWorkerRegistration) => {
-      console.log(serviceWorkerRegistration);
-      const beamsClient = new PusherPushNotifications.Client({
-        instanceId: "99e26b7b-77dd-42cc-b188-437431917f07",
-        serviceWorkerRegistration: serviceWorkerRegistration
-      });
-
-      if (data.user) {
-        const beamsTokenProvider = new PusherPushNotifications.TokenProvider({
-          url: "/api/pusher/beams-auth"
-        });
-
-        const registrationState = await beamsClient.getRegistrationState().then(async (state) => {
-          switch (state) {
-            case "PERMISSION_PROMPT_REQUIRED":
-              console.log("Permissions required");
-              notificationAlert = true;
-              await beamsClient.stop();
-              return "PERMISSION_PROMPT_REQUIRED";
-            case "PERMISSION_DENIED":
-              console.log("Permissions denied");
-              await beamsClient.stop();
-              return "PERMISSION_DENIED";
-            default:
-              console.log("Permissions granted");
-              return "PERMISSION_GRANTED";
-          }
-        });
-
-        if (registrationState === "PERMISSION_PROMPT_REQUIRED" || registrationState === "PERMISSION_DENIED") return;
-
-        await beamsClient
-          .start()
-          .then(() => beamsClient.setUserId(data.user.id, beamsTokenProvider))
-          .then(() => console.log("Successfully registered and subscribed!"))
-          .catch(console.error);
-
-        await beamsClient
-          .getUserId()
-          .then((userId) => {
-            if (userId !== data.user.id) {
-              console.log("Not logged in");
-              return beamsClient.stop();
-            }
-          })
-          .catch(console.error);
-      } else {
-        console.log("Not logged in");
-        await beamsClient.stop().catch(console.error);
-      }
-    });
-  });
-
-  preferences.subscribe((state) => {
-    if (typeof window === "undefined") return;
-    if (state.notifications === false) return;
-    // console.log("Requesting permission...");
-    // requestNotificationPermission();
-  });
-
-  async function requestNotificationPermission() {
-    if (window.Notification.permission === "granted") return;
-    const permission = await window.Notification.requestPermission();
-    if (permission === "granted") {
-      window.location.reload();
-    } else {
-      preferences.update((state) => ({ ...state, notifications: false }));
-    }
-  }
 
   let minions: Seller[] = [];
   let loadingMore = true;
@@ -99,12 +25,6 @@
   let lastSearch = "";
   let search: string | undefined = undefined;
   let searchValue = "";
-  let alert = {
-    title: "",
-    description: "",
-    open: false
-  };
-  let notificationAlert = false;
 
   let searchSignalUnsubscribe = searchSignal.subscribe((search) => {
     if (search === searchValue || search === lastSearch || search === "") return;
@@ -115,6 +35,60 @@
 
   onDestroy(() => {
     searchSignalUnsubscribe();
+  });
+
+  onMount(() => {
+    if (!$internalPreferences.hasSeenDiscordToast) {
+      toast("Community", {
+        description: "Would you like to join our Discord server?",
+        action: {
+          label: "Join",
+          onClick: () => {
+            window.open("https://discord.minionah.com/", "_blank");
+          }
+        },
+        duration: Number.POSITIVE_INFINITY,
+        onDismiss: () => {
+          internalPreferences.update((state) => ({ ...state, hasSeenDiscordToast: true }));
+
+          toast(HtmlToast, {
+            duration: 5000,
+            classes: {
+              closeButton: "!hidden"
+            },
+            componentProps: {
+              htmlMessage: "You can always join our Discord server by visiting <a href='https://discord.minionah.com/' target='_blank' class='underline'>discord.minionah.com</a>"
+            }
+          });
+        }
+      });
+    }
+    if (!$internalPreferences.hasSeenWelcomeGuideToast) {
+      toast("Welcome to MinionAH!", {
+        description: "It seems like you're new here. Would you like to read our guide on how to use MinionAH?",
+        action: {
+          label: "Read guide",
+          onClick: () => {
+            internalPreferences.update((state) => ({ ...state, hasSeenWelcomeGuideToast: true }));
+            window.open("https://newsroom.minionah.com/minionah-guide", "_blank");
+          }
+        },
+        onDismiss: () => {
+          internalPreferences.update((state) => ({ ...state, hasSeenWelcomeGuideToast: true }));
+
+          toast(HtmlToast, {
+            duration: 5000,
+            classes: {
+              closeButton: "!hidden"
+            },
+            componentProps: {
+              htmlMessage: "You can always read the guide by visiting <a href='https://newsroom.minionah.com/minionah-guide' target='_blank' class='underline'>newsroom.minionah.com/minionah-guide</a>"
+            }
+          });
+        },
+        duration: Number.POSITIVE_INFINITY
+      });
+    }
   });
 
   (async function () {
@@ -171,12 +145,14 @@
       })
       .catch((err) => {
         console.error(err);
-        alert.open = true;
-        alert.title = "Error";
-        alert.description = "An error occurred while loading minions.";
-        setTimeout(() => {
-          alert.open = false;
-        }, 5000);
+        toast.error(HtmlToast, {
+          classes: {
+            closeButton: "!hidden"
+          },
+          componentProps: {
+            htmlMessage: "Something went wrong while trying to load minions. <br/> Please try again later."
+          }
+        });
       });
 
     newMinionAmount = res.length;
@@ -185,16 +161,7 @@
   }
 </script>
 
-{#if alert.open}
-  <div transition:slide={{ axis: "x" }} class="fixed right-4 top-4 w-80">
-    <Alert.Root class="border-accent bg-secondary">
-      <Alert.Title class="min-w-full truncate">{alert.title}</Alert.Title>
-      <Alert.Description class="min-w-full truncate">{alert.description}</Alert.Description>
-    </Alert.Root>
-  </div>
-{/if}
-
-<h2 class="sr-only">MinionAH | Auction House for Hypixel Skyblock Minions</h2>
+<h2 class="sr-only">MinionAH - The Auction House for SkyBlock Minions</h2>
 
 {#await data.streamed.form}
   <div class="mx-auto flex flex-row items-center justify-center gap-4 px-4 py-20 sm:px-6 lg:px-8">
@@ -295,19 +262,3 @@
     </div>
   </div>
 </div>
-
-<AlertDialog.Root bind:open={notificationAlert}>
-  <AlertDialog.Content>
-    <AlertDialog.Header>
-      <AlertDialog.Title>Notifications</AlertDialog.Title>
-      <AlertDialog.Description>Would you like to receive notifications when someone sends you a message?</AlertDialog.Description>
-    </AlertDialog.Header>
-    <AlertDialog.Footer>
-      <AlertDialog.Cancel
-        on:click={() => {
-          preferences.update((state) => ({ ...state, notifications: false }));
-        }}>No thanks</AlertDialog.Cancel>
-      <AlertDialog.Action on:click={requestNotificationPermission}>Yes</AlertDialog.Action>
-    </AlertDialog.Footer>
-  </AlertDialog.Content>
-</AlertDialog.Root>

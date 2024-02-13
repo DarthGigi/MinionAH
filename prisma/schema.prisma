@@ -12,16 +12,13 @@ datasource db {
 
 model User {
   id           String         @id @map("_id")
-  auth_session Session[]
+  sessions     Session[]
   key          Key[]
   loggedInAt   DateTime       @default(now()) @updatedAt
   username     String         @unique
   avatar       String
   skin         String
   cape         String?
-  banner       String?
-  accent_color Int?
-  locale       String?
   minions      MinionSeller[]
   chatsAsUser1 Chat[]         @relation("user1")
   chatsAsUser2 Chat[]         @relation("user2")
@@ -29,13 +26,12 @@ model User {
 }
 
 model Session {
-  id             String @id @map("_id")
-  user_id        String
-  active_expires BigInt
-  idle_expires   BigInt
-  user           User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
+  id        String   @id @map("_id")
+  userId    String
+  expiresAt DateTime
+  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
 
-  @@index([user_id])
+  @@index([userId])
 }
 
 model Key {
@@ -55,7 +51,7 @@ model Minion {
   texture        String
   skin           String
   maxTier        Int
-  craftCost      Int           @default(0)
+  craftCost      Int            @default(0)
   sellers        MinionSeller[]
 }
 
@@ -78,9 +74,9 @@ model Chat {
   id        String    @id @default(cuid()) @map("_id")
   user1_id  String
   user2_id  String
-  user1     User      @relation("user1", fields: [user1_id], references: [id])
-  user2     User      @relation("user2", fields: [user2_id], references: [id])
-  messages  Message[] 
+  user1     User      @relation("user1", fields: [user1_id], references: [id], onDelete: Cascade)
+  user2     User      @relation("user2", fields: [user2_id], references: [id], onDelete: Cascade)
+  messages  Message[]
   createdAt DateTime  @default(now())
   user1Read Boolean   @default(false)
   user2Read Boolean   @default(false)
@@ -92,7 +88,7 @@ model Message {
   user_id   String
   content   String
   chat      Chat     @relation(fields: [chat_id], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [user_id], references: [id])
+  user      User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 
   @@index([chat_id])

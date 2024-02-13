@@ -55,7 +55,7 @@
               <DropdownMenu.Root bind:open={profileDropdownOpen}>
                 <DropdownMenu.Trigger class="relative">
                   <Avatar.Root class="items-center justify-center bg-accent">
-                    <Avatar.Image class="pointer-events-none h-full w-full p-1" src={`data:image/png;base64,${user.avatar}`} alt={user.username} />
+                    <Avatar.Image class="pointer-events-none h-full w-full p-1" src={`https://res.cloudinary.com/minionah/image/upload/v1/users/avatars/${user.id}`} alt={user.username} />
                     <Avatar.Fallback class="border-2 border-border bg-accent">{user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
                   </Avatar.Root>
                   {#if !$page.url.pathname.includes("chat")}
@@ -72,6 +72,9 @@
                 <DropdownMenu.Content class="border-border bg-popover">
                   <DropdownMenu.Group>
                     <DropdownMenu.Item href="/profile" class="cursor-pointer data-[highlighted]:bg-background">Profile</DropdownMenu.Item>
+                    {#if $page.data.isAdmin}
+                      <DropdownMenu.Item href="/dashboard" class="cursor-pointer data-[highlighted]:bg-background">Dashboard</DropdownMenu.Item>
+                    {/if}
                     <DropdownMenu.Item href="/profile/chats" class="relative cursor-pointer data-[highlighted]:bg-background"
                       >Messages
                       {#if !$page.url.pathname.includes("chat")}
@@ -129,16 +132,6 @@
                       preferences.update((state) => ({ ...state, minecraftFont: checked }));
                     }} />
                 </div>
-                {#if $page.url.pathname === "/"}
-                  <div class="grid w-full grid-cols-2 items-center justify-between gap-4">
-                    <Label>Notifications</Label>
-                    <Switch
-                      checked={$preferences.notifications}
-                      onCheckedChange={(checked) => {
-                        preferences.update((state) => ({ ...state, notifications: checked }));
-                      }} />
-                  </div>
-                {/if}
               </div>
             </div>
             <Tooltip.Root closeDelay={0} openDelay={0} closeOnPointerDown={false}>

@@ -72,11 +72,8 @@ export const load = (async ({ locals }) => {
           minion: true,
           user: {
             select: {
-              accent_color: true,
               avatar: true,
-              banner: true,
               id: true,
-              locale: true,
               loggedInAt: true,
               username: true,
               skin: true

@@ -16,7 +16,6 @@
   import { parse } from "numerable";
   import * as skinview3d from "skinview3d";
   import { onMount } from "svelte";
-  import { slide } from "svelte/transition";
   import type { PageData } from "./$types";
   import { formSchemaCreate, formSchemaDelete } from "./schema";
   export let data: PageData;
@@ -46,8 +45,8 @@
       canvas: minecraftAvatar,
       width: minecraftAvatarContainerDimensions.width,
       height: minecraftAvatarContainerDimensions.height,
-      skin: `data:image/png;base64,${data.user!.skin}`,
-      [data.user!.cape ? "cape" : ""]: `data:image/png;base64,${data.user!.cape}`,
+      skin: `https://res.cloudinary.com/minionah/image/upload/v1/users/skins/${data.user!.id}`,
+      [data.user!.cape ? "cape" : ""]: `https://res.cloudinary.com/minionah/image/upload/v1/users/capes/${data.user!.id}`,
       enableControls: true,
       animation: new skinview3d.IdleAnimation(),
       nameTag: data.user!.username,
@@ -84,12 +83,16 @@
   {#await data.streamed.userMinions}
     <div class="h-[28.75rem] animate-pulse rounded-lg border-0 bg-background shadow-sm"></div>
   {:then userMinions}
-    {#if userMinions.length < 9}
+    {#if userMinions.length < 18}
       <Form.Root
         options={{
           resetForm: true,
           onSubmit: () => {
             submittingCreate = true;
+          },
+          onResult: () => {
+            submittingCreate = false;
+            showFormStatusDialog = false;
           },
           onUpdated: () => {
             submittingCreate = false;
@@ -145,7 +148,7 @@
                           type="number"
                           class="ring-offset-0 focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0"
                           placeholder="Amount of minions"
-                          max={64}
+                          max={512}
                           min={1}
                           on:input={({ currentTarget }) => {
                             if (!(currentTarget instanceof HTMLInputElement)) return;
@@ -154,8 +157,8 @@
                             } else {
                               moreThan1 = false;
                             }
-                            if (currentTarget.valueAsNumber > 64) {
-                              currentTarget.value = "64";
+                            if (currentTarget.valueAsNumber > 512) {
+                              currentTarget.value = "512";
                               setValue(currentTarget.valueAsNumber);
                             } else if (currentTarget.valueAsNumber < 1) {
                               currentTarget.value = "1";
@@ -233,9 +236,7 @@
 
                         {#if priceValue}
                           {#if Number(value) >= 1000}
-                            <div transition:slide|global={{ axis: "y" }}>
-                              <Form.Description>{parse(value)} = {formatNumber(value)}</Form.Description>
-                            </div>
+                            <Form.Description>{parse(value)} = {formatNumber(value)}</Form.Description>
                           {/if}
                         {/if}
 
@@ -308,6 +309,7 @@
     },
     onResult: () => {
       showDeleteFormDialog = false;
+      submittingDelete = false;
     },
     onUpdated: () => {
       showFormStatusDialog = true;
@@ -328,7 +330,7 @@
   </Form.Field>
 </Form.Root>
 
-<AlertDialog.Root bind:open={showFormStatusDialog}>
+<AlertDialog.Root bind:open={showFormStatusDialog} closeOnEscape={true} closeOnOutsideClick={true}>
   <AlertDialog.Content>
     <AlertDialog.Header>
       {#if $page.form && $page.form.form && $page.form.form.message}

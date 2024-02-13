@@ -5,8 +5,5 @@ export default defineConfig({
   plugins: [sveltekit()],
   build: {
     sourcemap: true
-  },
-  ssr: {
-    noExternal: ["@pusher/push-notifications-web"]
   }
 });

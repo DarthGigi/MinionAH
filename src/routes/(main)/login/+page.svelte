@@ -21,7 +21,7 @@
   <Form.Field {config} name="username">
     <Form.Item>
       <Form.Label for="username">Username</Form.Label>
-      <Form.Description>This is your Minecraft username.</Form.Description>
+      <Form.Description>This is your <span class="font-semibold">Minecraft</span> username.</Form.Description>
       <Form.Input maxlength={16} type="text" class="border-2 border-accent transition-all duration-300 focus:border-muted-foreground focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[invalid]:border-destructive/40 focus:data-[invalid]:border-destructive" autocomplete="username" name="username" id="username" />
       <Form.Validation />
     </Form.Item>
@@ -29,7 +29,7 @@
   <Form.Field {config} name="current-password">
     <Form.Item>
       <Form.Label for="current-password">Password</Form.Label>
-      <Form.Description>Enter your password to login.</Form.Description>
+      <Form.Description>Enter your <span class="font-semibold">MinionAH</span> password to login.</Form.Description>
       <Form.Input
         type="password"
         name="current-password"

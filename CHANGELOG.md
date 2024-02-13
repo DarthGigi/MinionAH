@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.2] - 2024-02-11
+
+### Added
+
+- Added a toast notification when you first visit the website
+
+## [1.3.1] - 2024-02-10
+
+### Added
+
+- Added a new button to the minion card to buy the minion
+- Added Vercel Speed Insights
+- Added a dashboard for the admin account
+
+### Fixed
+
+- Fixed the daily minion price update cron job not actually updating the prices
+
+### Security
+
+- Updated dependencies
+
 ## [1.3.0] - 2024-01-20
 
 ### Added

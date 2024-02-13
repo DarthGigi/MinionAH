@@ -36,7 +36,7 @@ export const load = (async ({ params, fetch }) => {
     minionuser,
     color: await fetch("/api/getColor", {
       headers: {
-        imageUrl: `data:image/png;base64,${minionuser.avatar}`
+        imageUrl: `https://res.cloudinary.com/minionah/image/upload/v1/users/avatars/${minionuser.id}`
       }
     }).then((res) => res.text()),
     streamed: {

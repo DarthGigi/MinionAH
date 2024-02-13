@@ -1,10 +1,16 @@
 User-agent: *
-Disallow: /api/
-Disallow: /filter/
-Disallow: /resetminions/
+Disallow: /profile
 Disallow: /profile/
+Disallow: /assets/css/
+Disallow: /assets/fonts/
+Disallow: /api
+Disallow: /api/
+Disallow: /api/craftcost
+Disallow: /api/craftcost/
 
-Allow: /.well-known/
+Allow: /
 Allow: /assets/images/
+Allow: /api/craftcost/docs
+Allow: /api/craftcost/docs/
 
 Sitemap: https://minionah.com/sitemap.xml

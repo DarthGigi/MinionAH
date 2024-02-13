@@ -23,13 +23,14 @@
   $: minionCanvas, createMinionViewer();
   function createMinionViewer() {
     if (minionCanvas) {
-      if (!minion.minion.skin) return;
+      if (!minion.minion.id) return;
+      const skinUrl = `https://res.cloudinary.com/minionah/image/upload/v1/minions/skin/${minion.minion.id}`;
       const minionCanvasContainerDimensions = (document.getElementById(`minionCanvasContainer_${minion.id}`) as HTMLDivElement).getBoundingClientRect();
       minionViewer = new headview3d.SkinViewer({
         canvas: minionCanvas,
         width: minionCanvasContainerDimensions.width,
         height: minionCanvasContainerDimensions.height,
-        skin: `data:image/png;base64,${minion.minion.skin}`,
+        skin: skinUrl,
         zoom: 2.5,
         background: "#404040"
       });
@@ -62,7 +63,7 @@
 <HoverCard.Root openDelay={150} closeDelay={150} bind:open={minionisOpen}>
   <HoverCard.Trigger href={`https://hypixel-skyblock.fandom.com/wiki/${minion.minion.name.replace(/ [IVX]+$/, "").replace(/ /g, "_")}`} target="_blank" rel="noopener" class="my-2 flex flex-col items-center truncate rounded p-1 transition-all duration-500">
     <Avatar.Root class="h-12 w-12 flex-shrink-0 rounded-full ">
-      <Avatar.Image class="pointer-events-none h-full w-full bg-accent p-1" src={`data:image/png;base64,${minion.minion.texture}`} alt={minion.minion.name} />
+      <Avatar.Image class="pointer-events-none h-full w-full bg-accent p-1" src={`https://res.cloudinary.com/minionah/image/upload/f_auto,q_auto/v1/minions/head/${minion.minion.id}`} alt={minion.minion.name} />
       <Avatar.Fallback class="border-2 border-accent bg-accent">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
     </Avatar.Root>
     <h3 class="truncate text-sm font-medium text-white">{minion.minion.name.replace(/ [IVX]+$/, "")}</h3>
@@ -88,7 +89,7 @@
           <br />
           <Tooltip.Root openDelay={150}>
             <Tooltip.Trigger class="cursor-help text-[#FEFF55]">
-              Raw Craft Cost: <span class="text-[#FEAB00]">{formatNumber(minion.minion.craftCost)} coins</span>
+              <p class="text-wrap text-left">Raw Craft Cost: <span class="text-[#FEAB00]">{formatNumber(minion.minion.craftCost)} coins</span></p>
             </Tooltip.Trigger>
             <Tooltip.Content class="border-accent bg-muted text-primary">
               <p>Raw Craft Cost is <span class="font-semibold underline">not</span> 100% accurate.</p>
