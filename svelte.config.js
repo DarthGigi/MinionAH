@@ -22,9 +22,6 @@ const config = {
     },
     csrf: {
       checkOrigin: true
-    },
-    files: {
-      serviceWorker: "src/sw.ts"
     }
   }
 };
