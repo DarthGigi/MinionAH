@@ -1,5 +1,23 @@
+import { INSTANCE_ID, SECRET_KEY, app_id, secret } from "$env/static/private";
+import { PUBLIC_cluster, PUBLIC_key } from "$env/static/public";
+import { sanitize } from "@jill64/universal-sanitizer";
+import PushNotifications from "@pusher/push-notifications-server";
 import { redirect } from "@sveltejs/kit";
+import Pusher from "pusher";
 import type { RequestHandler } from "./$types";
+
+const beamsClient = new PushNotifications({
+  instanceId: INSTANCE_ID,
+  secretKey: SECRET_KEY
+});
+
+const pusher = new Pusher({
+  appId: app_id,
+  key: PUBLIC_key,
+  secret: secret,
+  cluster: PUBLIC_cluster,
+  useTLS: true
+});
 
 export const GET: RequestHandler = async ({ params, locals, request, url }) => {
   if (request.headers.get("X-Requested-With") !== "fetch") {
@@ -9,7 +27,6 @@ export const GET: RequestHandler = async ({ params, locals, request, url }) => {
   const user = locals.user;
 
   if (!user) {
-    console.info("no user");
     redirect(302, "/login");
   }
 
@@ -22,7 +39,6 @@ export const GET: RequestHandler = async ({ params, locals, request, url }) => {
   });
 
   if (!user2) {
-    console.info("no user2");
     redirect(302, "/");
   }
 
@@ -76,10 +92,10 @@ export const GET: RequestHandler = async ({ params, locals, request, url }) => {
       chat_id: {
         equals: chat.id
       }
-    },
-    orderBy: {
-      createdAt: "desc"
     }
+    // orderBy: {
+    //   createdAt: "desc"
+    // }
   });
 
   return new Response(JSON.stringify(messages), {
@@ -96,7 +112,6 @@ export const POST: RequestHandler = async ({ locals, request, params, url }) => 
   const user = locals.user;
 
   if (!user) {
-    console.info("no user");
     redirect(302, "/login");
   }
 
@@ -141,57 +156,194 @@ export const POST: RequestHandler = async ({ locals, request, params, url }) => 
     }
   });
 
-  let newChat;
   if (!chat) {
-    newChat = await prisma.chat.create({
-      data: {
-        user1: {
-          connect: {
-            id: user.id
-          }
-        },
-        user2: {
-          connect: {
-            id: user2?.id
-          }
-        },
-        user1Read: true,
-        user2Read: false
+    try {
+      chat = await prisma.chat.create({
+        data: {
+          user1: {
+            connect: {
+              id: user.id
+            }
+          },
+          user2: {
+            connect: {
+              id: user2?.id
+            }
+          },
+          user1Read: true,
+          user2Read: false
+        }
+      });
+      if (!chat) {
+        throw new Error("Chat not found");
       }
-    });
+    } catch (error) {
+      console.error(error);
+      return new Response(null, { status: 500 });
+    }
   }
 
-  chat = newChat ?? chat;
+  interface Message {
+    id?: string;
+    chat_id: string;
+    user_id: string;
+    content: string;
+    createdAt: Date;
+  }
+
+  pusher
+    .trigger(`chat-${chat.id}`, "new-message", {
+      chat_id: chat.id,
+      user_id: user.id,
+      content: body.content as string,
+      createdAt: body.createdAt
+    } as Message)
+    .then(async (res) => {
+      if (res.status === 200) {
+        await prisma.message.create({
+          data: {
+            chat_id: chat!.id,
+            content: body.content as string,
+            user_id: user.id
+          }
+        });
+
+        await prisma.chat.update({
+          where: {
+            id: chat!.id
+          },
+          data: {
+            user1Read: user.id === chat!.user1_id ? chat!.user1Read : false,
+            user2Read: user.id === chat!.user2_id ? chat!.user2Read : false
+          }
+        });
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      switch (err.statusCode) {
+        case 400:
+          return new Response(err.body, {
+            status: 400,
+            statusText: "Bad Request"
+          });
+        case 401:
+          return new Response(err.body, {
+            status: 401,
+            statusText: "Unauthorized"
+          });
+        case 403:
+          return new Response(err.body, {
+            status: 403,
+            statusText: "Forbidden"
+          });
+        default:
+          return new Response(err.body, {
+            status: 500,
+            statusText: "Internal Server Error"
+          });
+      }
+    });
+
+  // send notification to the other user
+  await beamsClient.publishToUsers([chat.user1_id === user.id ? chat.user2_id : chat.user1_id], {
+    web: {
+      notification: {
+        title: `${user.username} sent you a message`,
+        body: sanitize(body.content, {
+          sanitizeHtml: {
+            allowedTags: [],
+            disallowedTagsMode: "discard"
+          }
+        }),
+        deep_link: `https://minionah.com/${user.username}/chat`,
+        icon: `https://res.cloudinary.com/minionah/image/upload/v1/users/avatars/${user.id}`,
+        hide_notification_if_site_has_focus: true
+      },
+      data: {
+        chat_id: chat.id,
+        user_id: user.id
+      }
+    }
+  });
+
+  return new Response(JSON.stringify({}), {
+    status: 201,
+    statusText: "Created",
+    headers: {
+      "content-type": "application/json"
+    }
+  });
+};
+
+export const PUT: RequestHandler = async ({ params, locals, request, url }) => {
+  if (request.headers.get("X-Requested-With") !== "fetch") {
+    redirect(302, url.href.replace("/api", ""));
+  }
+
+  const user = locals.user;
+
+  if (!user) {
+    redirect(302, "/login");
+  }
+
+  const username = params.user;
+
+  const user2 = await prisma.user.findUnique({
+    where: {
+      username
+    }
+  });
+
+  const chat = await prisma.chat.findFirst({
+    where: {
+      OR: [
+        {
+          user1_id: {
+            equals: user.id
+          },
+          user2_id: {
+            equals: user2?.id
+          }
+        },
+        {
+          user1_id: {
+            equals: user2?.id
+          },
+          user2_id: {
+            equals: user.id
+          }
+        }
+      ]
+    }
+  });
 
   if (!chat) {
     throw new Error("Chat not found");
   }
 
-  const message = await prisma.message.create({
-    data: {
-      chat_id: chat.id,
-      content: body.content as string,
-      user_id: user.id
-    }
-  });
+  let updatedChat;
+  if ((user.id === chat.user1_id && !chat.user1Read) || (user.id === chat.user2_id && !chat.user2Read)) {
+    updatedChat = await prisma.chat.update({
+      where: {
+        id: chat.id
+      },
+      data: {
+        user1Read: user.id === chat.user1_id ? true : chat.user1Read,
+        user2Read: user.id === chat.user2_id ? true : chat.user2Read
+      }
+    });
 
-  // set the other user's read status to false
-  await prisma.chat.update({
-    where: {
-      id: chat.id
-    },
-    data: {
-      user1Read: user.id === chat.user1_id ? chat.user1Read : false,
-      user2Read: user.id === chat.user2_id ? chat.user2Read : false
+    if (!updatedChat) {
+      throw new Error("Chat not found");
     }
-  });
+  }
 
-  return new Response(JSON.stringify(message), {
-    status: 201,
-    statusText: newChat ? "Created" : "OK",
+  return new Response(JSON.stringify({}), {
+    status: 200,
+    statusText: "No Content",
     headers: {
-      "content-type": "application/json",
-      "x-created-chat": newChat ? "true" : "false"
+      "content-type": "application/json"
     }
   });
 };

@@ -15,7 +15,7 @@ const config = {
     csp: {
       directives: {
         "script-src": ["self", "https://*.vercel-scripts.com", "https://*.vercel.app", "https://*.pusher.com"],
-        "img-src": ["self", "data:", "https://res.cloudinary.com"],
+        // "img-src": ["self", "data:", "https://res.cloudinary.com"],
         "style-src": ["self", "unsafe-inline"]
       },
       mode: "auto"

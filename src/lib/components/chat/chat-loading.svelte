@@ -1,27 +1,26 @@
 <script lang="ts">
   import { fly } from "svelte/transition";
 
-  let chats: { number: number; show: boolean }[] = Array.from({ length: 5 }, (_, i) => ({ number: i, show: false }));
+  const initialChats: { number: number; animate: boolean }[] = Array.from({ length: 6 }, (_, i) => ({ number: i, animate: false }));
+  let chats: { number: number; animate: boolean }[] = [];
 
-  for (let i = 0; i < chats.length; i++) {
-    setTimeout(() => {
-      chats[i].show = true;
-    }, i * 1000);
-  }
+  setInterval(() => {
+    chats = [...chats, { number: chats.length + 1, animate: true }];
+  }, 1000);
 </script>
 
-{#each chats.slice().reverse() as chat}
-  {#if chat.show}
+{#each initialChats as chat}
+  <div class="pulse rounded-full {chat.number % 2 !== 0 ? 'self-end rounded-br-none bg-[#3C83F7]' : 'self-start rounded-bl-none bg-[#3B3B3D]'} px-4 py-2">
+    <div class="h-4 w-16" />
+  </div>
+{/each}
+
+{#each chats as chat}
+  {#if chat.animate}
     <div in:fly|global={{ y: 24 }} out:fly={{ duration: 0 }} class="pulse rounded-full {chat.number % 2 === 0 ? 'self-end rounded-br-none bg-[#3C83F7]' : 'self-start rounded-bl-none bg-[#3B3B3D]'} px-4 py-2">
       <div class="h-4 w-16" />
     </div>
   {/if}
-{/each}
-
-{#each chats as chat}
-  <div class="pulse rounded-full {chat.number % 2 !== 0 ? 'self-end rounded-br-none bg-[#3C83F7]' : 'self-start rounded-bl-none bg-[#3B3B3D]'} px-4 py-2">
-    <div class="h-4 w-16" />
-  </div>
 {/each}
 
 <style>

@@ -1,37 +1,68 @@
 <script lang="ts">
+  import { beforeNavigate } from "$app/navigation";
+  import { PUBLIC_cluster, PUBLIC_key } from "$env/static/public";
+  import Tiptap from "$lib/components/chat/Tiptap.svelte";
   import ChatLoading from "$lib/components/chat/chat-loading.svelte";
   import Message from "$lib/components/chat/message.svelte";
   import * as Avatar from "$lib/components/ui/avatar";
-  import { ArrowLeftCircle, ArrowUp } from "lucide-svelte";
-  import { onMount } from "svelte";
+  import { scrollToBottomAction } from "$lib/utilities";
+  import { ArrowLeftCircle } from "lucide-svelte";
+  import Pusher from "pusher-js";
+  import { onDestroy, onMount } from "svelte";
   import { draw, fade } from "svelte/transition";
   import type { PageData } from "./$types";
 
-  interface Message {
+  interface iMessage {
     id?: string;
-    chat_id?: string;
-    user_id?: string;
+    chat_id: string;
+    user_id: string;
     content: string;
     createdAt: Date;
+    animate?: boolean;
   }
 
   export let data: PageData;
 
-  let sendButton: HTMLButtonElement;
+  const pusher = new Pusher(PUBLIC_key, {
+    cluster: PUBLIC_cluster
+  });
 
-  let newLines = 0;
-  let textValue: string;
-  let messageDiv: HTMLDivElement;
-  let showChat = false;
+  const channel = pusher.subscribe(`chat-${data.chat.id}`);
 
-  let newChats: Message[] = [];
-  let messages: Message[];
-  let sentMessageSuccess: boolean | undefined;
+  let showChat = true;
+
+  let newChats: iMessage[] = [];
+  let messages: iMessage[] = [];
+  let sentMessageSuccess: boolean | undefined | null = null;
+
+  let loading = true;
+  let updateRead = async () => {};
 
   $: newChats;
   $: messages;
-  let loading = true;
+
+  function disconnect() {
+    channel.unsubscribe();
+    channel.unbind_all();
+    channel.disconnect();
+    pusher.unsubscribe(data.chat.id);
+    pusher.unbind_all();
+    pusher.disconnect();
+  }
+
+  beforeNavigate(() => {
+    updateRead();
+    disconnect();
+  });
+
   onMount(async () => {
+    await fetch(`${window.location.href}/api`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Requested-With": "fetch"
+      }
+    });
     const messagesData = await fetch(`${window.location.href}/api`, {
       method: "GET",
       headers: {
@@ -54,20 +85,20 @@
 
     messages = [...messagesData];
   });
-
-  async function sendMessage() {
-    if (!textValue || !textValue.length) return;
+  async function sendMessage(eventData: any) {
+    const textValue = eventData.detail;
+    if (!textValue) return;
     const message = {
       content: textValue,
       createdAt: new Date(),
       user_id: data.user.id,
-      id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+      id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
+      chat_id: data.chat.id
     };
-    newChats = [message, ...newChats];
+    newChats = [...newChats, message];
+    sentMessageSuccess = undefined;
 
-    textValue = "";
-
-    const res = await fetch(`${window.location.href}/api`, {
+    await fetch(`${window.location.href}/api`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -75,35 +106,27 @@
       },
       body: JSON.stringify(message)
     });
+  }
 
-    const sentMessage = await res.json().then((res) => {
-      return {
-        ...res,
-        createdAt: new Date(res.createdAt)
-      };
-    });
-
-    if (res.status !== 201) {
-      sentMessageSuccess = false;
-      setTimeout(() => {
-        sentMessageSuccess = undefined;
-        newChats = newChats.filter((message) => message.id === sentMessage.id);
-        messages = [sentMessage, ...messages];
-      }, 1000);
-      console.error("Error sending message");
-    } else {
-      if (res.headers.get("x-created-chat") === "true") {
-        loading = false;
-        showChat = true;
-      }
+  channel.bind("new-message", (new_message: iMessage) => {
+    new_message.createdAt = new Date(new_message.createdAt);
+    new_message.animate = true;
+    if (new_message.user_id === data.user.id) {
+      messages = [...messages, new_message];
+      newChats = newChats.filter((message) => message.id === new_message.id);
       sentMessageSuccess = true;
       setTimeout(() => {
-        sentMessageSuccess = undefined;
-        newChats = newChats.filter((message) => message.id === sentMessage.id);
-        messages = [sentMessage, ...messages];
+        sentMessageSuccess = null;
       }, 1000);
+    } else {
+      messages = [...messages, new_message];
     }
-  }
+  });
+
+  onDestroy(() => {
+    updateRead();
+    disconnect();
+  });
 </script>
 
 <div class="flex h-[calc(100vh-64px)] w-screen flex-col items-center justify-center">
@@ -119,8 +142,8 @@
       </Avatar.Root>
       <h2 class="text-center text-lg font-semibold">{data.user2?.username}</h2>
     </div>
-    {#if data.chat || showChat}
-      <div class="no-scrollbar flex max-h-72 w-full max-w-full flex-col-reverse gap-2 overflow-y-auto scroll-smooth px-6 py-6">
+    {#if showChat}
+      <div use:scrollToBottomAction class="no-scrollbar flex max-h-72 w-full max-w-full flex-col gap-2 overflow-y-auto scroll-smooth px-6 py-6">
         {#if loading}
           <ChatLoading />
         {:else if messages}
@@ -138,7 +161,7 @@
       </div>
     {/if}
     <div class="relative border-t border-accent p-4">
-      {#if newChats.length > 0}
+      {#if sentMessageSuccess !== null}
         <div transition:fade class="absolute -top-8 right-1 rounded bg-accent p-0.5">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-loader-2 h-6 w-6 transition-colors delay-300 duration-300" class:animate-spin={sentMessageSuccess === undefined && newChats.length > 0} class:text-blue-500={sentMessageSuccess === undefined && newChats.length > 0} class:text-green-500={sentMessageSuccess === true} class:text-red-500={sentMessageSuccess === false}>
             {#if sentMessageSuccess === undefined && newChats.length > 0}
@@ -151,72 +174,7 @@
           </svg>
         </div>
       {/if}
-      <div class="relative flex rounded-[30px] border-2 border-accent bg-accent transition-all duration-300" class:!rounded-2xl={newLines > 0} bind:this={messageDiv}>
-        <!-- svelte-ignore a11y-autofocus -->
-        <textarea
-          bind:value={textValue}
-          data-sveltekit-keepfocus
-          cols="1"
-          rows="1"
-          maxlength="1000"
-          class="no-scrollbar h-full w-full resize-none rounded-full border-none bg-transparent placeholder-ring focus-visible:border-none focus-visible:ring-0"
-          class:!rounded-2xl={newLines > 0}
-          name="message"
-          placeholder={data.chat ? "Message" : "Send a message to start a chat"}
-          autofocus
-          required
-          disabled={newChats.length > 2}
-          on:keydown={(e) => {
-            if (e.shiftKey && e.key === "Enter") {
-              return;
-            }
-            if (e.key === "Enter") {
-              e.preventDefault();
-              sendButton.click();
-            }
-          }}
-          on:focus={() => {
-            messageDiv.classList.add("!border-blue-500");
-          }}
-          on:focusout={() => {
-            messageDiv.classList.remove("!border-blue-500");
-          }}
-          on:input={({ currentTarget }) => {
-            if (!(currentTarget instanceof HTMLTextAreaElement)) return;
-            newLines = (textValue.match(/\n/g) || []).length;
-            if (newLines > 0) {
-              messageDiv.classList.add("!rounded-2xl");
-            }
-
-            switch (newLines) {
-              case 0:
-                currentTarget.rows = 1;
-                break;
-              case 1:
-                currentTarget.rows = 2;
-                break;
-              case 2:
-                currentTarget.rows = 3;
-                break;
-              case 3:
-                currentTarget.rows = 4;
-                break;
-              case 4:
-                currentTarget.rows = 5;
-                break;
-
-              default:
-                currentTarget.rows = 5;
-                break;
-            }
-          }} />
-        <span class="translate-x absolute bottom-1/2 right-2 translate-y-1/2 text-xs text-ring transition-all duration-300" class:-translate-x-8={textValue} class:!-translate-y-2={newLines > 0} class:!bottom-1={newLines > 0} class:duration-0={newLines > 0}>{textValue && textValue.length ? textValue.length : ""}/1000</span>
-
-        <div class="pointer-events-none w-32" />
-        <button type="button" class="group absolute bottom-1/2 right-1 translate-y-1/2 overflow-hidden opacity-0 transition-opacity duration-300" bind:this={sendButton} class:!bottom-1={newLines > 0} class:!translate-y-0={newLines > 0} class:opacity-100={textValue} on:click={sendMessage}>
-          <ArrowUp class="relative z-10 h-6 w-6 rounded-full bg-blue-500 text-white transition-all duration-300" />
-        </button>
-      </div>
+      <Tiptap on:sendMessage={sendMessage} />
     </div>
   </div>
   <span class="mt-1 text-xs opacity-25"> Messages are not end-to-end encrypted and are stored in plaintext. </span>
