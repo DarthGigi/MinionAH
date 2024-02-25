@@ -51,8 +51,6 @@
   "dependencies": {
     "@prisma/client": "5.9.1",
     "@prisma/extension-accelerate": "^0.6.3",
-    "@pusher/push-notifications-server": "^1.2.6",
-    "@pusher/push-notifications-web": "^2.0.1",
     "@tiptap/core": "^2.2.3",
     "@tiptap/extension-bubble-menu": "^2.2.3",
     "@tiptap/extension-character-count": "^2.2.3",
@@ -69,6 +67,8 @@
     "css-tree": "^2.3.1",
     "date-fns": "^3.3.1",
     "fast-average-color-node": "^3.0.0",
+    "firebase": "^10.8.0",
+    "firebase-admin": "^12.0.0",
     "formsnap": "^0.4.4",
     "headview3d": "^2.2.2",
     "lucia": "^3.0.1",
