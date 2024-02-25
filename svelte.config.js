@@ -22,6 +22,9 @@ const config = {
     },
     csrf: {
       checkOrigin: true
+    },
+    serviceWorker: {
+      register: false
     }
   }
 };
