@@ -57,7 +57,6 @@
   let:config
   method="POST"
   class="space-y-8"
-  debug={true}
   options={{
     onSubmit: async ({ formData }) => {
       formData.set("fcmToken", fcmToken);
