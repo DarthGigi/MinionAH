@@ -72,6 +72,10 @@
                 <DropdownMenu.Content class="border-border bg-popover">
                   <DropdownMenu.Group>
                     <DropdownMenu.Item href="/profile" class="cursor-pointer data-[highlighted]:bg-background">Profile</DropdownMenu.Item>
+                    <DropdownMenu.Item href="/profile/settings" class="ml-2 cursor-pointer data-[highlighted]:bg-background">Settings</DropdownMenu.Item>
+                  </DropdownMenu.Group>
+                  <DropdownMenu.Separator class="bg-border" />
+                  <DropdownMenu.Group>
                     {#if $page.data.isAdmin}
                       <DropdownMenu.Item href="/dashboard" class="cursor-pointer data-[highlighted]:bg-background">Dashboard</DropdownMenu.Item>
                     {/if}
