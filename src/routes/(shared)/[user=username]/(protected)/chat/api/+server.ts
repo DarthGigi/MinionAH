@@ -1,15 +1,24 @@
-import { INSTANCE_ID, SECRET_KEY, app_id, secret } from "$env/static/private";
+import { app_id, secret, FIREBASE_SERVICE_ACCOUNT_KEY } from "$env/static/private";
 import { PUBLIC_cluster, PUBLIC_key } from "$env/static/public";
 import { sanitize } from "@jill64/universal-sanitizer";
-import PushNotifications from "@pusher/push-notifications-server";
 import { redirect } from "@sveltejs/kit";
 import Pusher from "pusher";
 import type { RequestHandler } from "./$types";
+import { initializeApp, cert, getApps, getApp } from "firebase-admin/app";
 
-const beamsClient = new PushNotifications({
-  instanceId: INSTANCE_ID,
-  secretKey: SECRET_KEY
-});
+import { getMessaging, type MulticastMessage } from "firebase-admin/messaging";
+
+const firebaseApp =
+  getApps().length === 0
+    ? initializeApp(
+        {
+          credential: cert(JSON.parse(FIREBASE_SERVICE_ACCOUNT_KEY))
+        },
+        "admin"
+      )
+    : getApp("admin");
+
+const messaging = getMessaging(firebaseApp);
 
 const pusher = new Pusher({
   appId: app_id,
@@ -130,6 +139,13 @@ export const POST: RequestHandler = async ({ locals, request, params, url }) => 
   const user2 = await prisma.user.findUnique({
     where: {
       username
+    },
+    include: {
+      settings: {
+        include: {
+          notificationSettings: true
+        }
+      }
     }
   });
 
@@ -245,27 +261,47 @@ export const POST: RequestHandler = async ({ locals, request, params, url }) => 
       }
     });
 
-  // send notification to the other user
-  await beamsClient.publishToUsers([chat.user1_id === user.id ? chat.user2_id : chat.user1_id], {
-    web: {
-      notification: {
-        title: `${user.username} sent you a message`,
-        body: sanitize(body.content, {
-          sanitizeHtml: {
-            allowedTags: [],
-            disallowedTagsMode: "discard"
+  const notificationSettings = user2?.settings?.notificationSettings;
+
+  if (notificationSettings?.notificationType === "ALL" || notificationSettings?.notificationType === "DEVICE") {
+    if (notificationSettings.socialNotifications) {
+      if (notificationSettings.fcmTokens.length > 0) {
+        const message: MulticastMessage = {
+          notification: {
+            title: `${user.username} sent you a message`,
+            body: sanitize(body.content, {
+              sanitizeHtml: {
+                allowedTags: [],
+                disallowedTagsMode: "discard"
+              }
+            }),
+            imageUrl: `https://res.cloudinary.com/minionah/image/upload/v1/users/avatars/${user.id}`
+          },
+          data: {
+            chat_id: chat.id,
+            user_id: user.id,
+            username: user.username
+          },
+          tokens: notificationSettings.fcmTokens,
+          webpush: {
+            fcmOptions: {
+              link: `https://minionah.com/${user.username}/chat`
+            },
+            notification: {
+              icon: `https://res.cloudinary.com/minionah/image/upload/v1/users/avatars/${user.id}`,
+              image: `https://res.cloudinary.com/minionah/image/upload/v1/users/avatars/${user.id}`,
+              tag: `chat-${chat.id}`,
+              renotify: true
+            }
           }
-        }),
-        deep_link: `https://minionah.com/${user.username}/chat`,
-        icon: `https://res.cloudinary.com/minionah/image/upload/v1/users/avatars/${user.id}`,
-        hide_notification_if_site_has_focus: true
-      },
-      data: {
-        chat_id: chat.id,
-        user_id: user.id
+        };
+
+        messaging.sendEachForMulticast(message).catch((error) => {
+          console.error("Error sending message:", error);
+        });
       }
     }
-  });
+  }
 
   return new Response(JSON.stringify({}), {
     status: 201,

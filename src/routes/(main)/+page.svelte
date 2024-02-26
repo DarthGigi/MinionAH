@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { PUBLIC_PUSHER_INSTANCE_ID } from "$env/static/public";
   import CardLoading from "$lib/components/CardLoading.svelte";
   import HtmlToast from "$lib/components/HtmlToast.svelte";
   import TierListbox from "$lib/components/TierListbox.svelte";
@@ -7,10 +6,9 @@
   import * as Form from "$lib/components/ui/form";
   import { Input } from "$lib/components/ui/input";
   import * as Select from "$lib/components/ui/select";
-  import { internalPreferences, preferences } from "$lib/stores/preferences";
+  import { internalPreferences } from "$lib/stores/preferences";
   import { searchSignal } from "$lib/stores/signals";
   import type { Seller } from "$lib/types";
-  import * as PusherPushNotifications from "@pusher/push-notifications-web";
   import { onDestroy, onMount } from "svelte";
   import { toast } from "svelte-sonner";
   import { draw } from "svelte/transition";
@@ -91,95 +89,33 @@
         duration: Number.POSITIVE_INFINITY
       });
     }
-    if (Notification.permission === "denied") {
-      preferences.update((state) => ({ ...state, notifications: false }));
-      return;
-    }
-    if ($preferences.notifications !== false) {
-      if (!("serviceWorker" in window.navigator)) return;
-      window.navigator.serviceWorker.ready.then(async (serviceWorkerRegistration) => await initializePusher(serviceWorkerRegistration));
-    }
-  });
-
-  let initial = true;
-  preferences.subscribe(async (state) => {
-    if (initial) {
-      initial = false;
-      return;
-    }
-    if (typeof window === "undefined") return;
-    if (state.notifications === false) return;
-    await initializePusher(await window.navigator.serviceWorker.ready);
-  });
-
-  async function initializePusher(serviceWorkerRegistration: ServiceWorkerRegistration) {
-    const beamsClient = new PusherPushNotifications.Client({
-      instanceId: PUBLIC_PUSHER_INSTANCE_ID,
-      serviceWorkerRegistration: serviceWorkerRegistration
-    });
-
-    if (data.user) {
-      const beamsTokenProvider = new PusherPushNotifications.TokenProvider({
-        url: "/api/pusher/beams-auth"
-      });
-
-      const registrationState = await beamsClient.getRegistrationState().then(async (state) => {
-        switch (state) {
-          case "PERMISSION_PROMPT_REQUIRED":
-            toast("Notifications", {
-              description: "Would you like to enable notifications for MinionAH?",
-              action: {
-                label: "Enable",
-                onClick: async () => {
-                  await requestNotificationPermission();
-                }
-              },
-              onDismiss: async () => {
-                preferences.update((state) => ({ ...state, notifications: false }));
-              },
-              duration: Number.POSITIVE_INFINITY
-            });
-            await beamsClient.stop();
-            return "PERMISSION_PROMPT_REQUIRED";
-          case "PERMISSION_DENIED":
-            await beamsClient.stop();
-            return "PERMISSION_DENIED";
-          default:
-            return "PERMISSION_GRANTED";
-        }
-      });
-
-      if (registrationState === "PERMISSION_PROMPT_REQUIRED" || registrationState === "PERMISSION_DENIED") return;
-
-      await beamsClient
-        .start()
-        .then(() => beamsClient.setUserId(data.user.id, beamsTokenProvider))
-        .catch(console.error);
-
-      await beamsClient
-        .getUserId()
-        .then((userId) => {
-          if (userId !== data.user.id) return beamsClient.stop();
-        })
-        .catch(console.error);
-    } else {
-      await beamsClient.stop().catch(console.error);
-    }
-  }
-
-  async function requestNotificationPermission() {
-    if (window.Notification.permission === "granted") return;
-    const permission = await window.Notification.requestPermission();
-    if (permission === "granted") {
-      window.location.reload();
-    } else {
+    if (!$internalPreferences.hasSeenDeviceNotificationsToast) {
+      if (!data.user) return;
       toast("Notifications", {
-        description: "You have denied notifications for MinionAH. You can enable them in your browser settings.",
+        description: "Would you like to receive notifications when someone sends you a message?",
+        action: {
+          label: "Enable",
+          onClick: () => {
+            internalPreferences.update((state) => ({ ...state, hasSeenDeviceNotificationsToast: true }));
+            window.open("/profile/settings/notifications", "_self");
+          }
+        },
+        onDismiss: () => {
+          internalPreferences.update((state) => ({ ...state, hasSeenDeviceNotificationsToast: true }));
+          toast(HtmlToast, {
+            duration: 5000,
+            classes: {
+              closeButton: "!hidden"
+            },
+            componentProps: {
+              htmlMessage: "You can always enable notifications by visiting <a href='/profile/settings/notifications' target='_self' class='underline'>your settings</a>"
+            }
+          });
+        },
         duration: Number.POSITIVE_INFINITY
       });
-      preferences.update((state) => ({ ...state, notifications: false }));
     }
-  }
+  });
 
   (async function () {
     minions = await data.streamed.minions;

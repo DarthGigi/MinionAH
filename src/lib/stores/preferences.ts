@@ -9,5 +9,7 @@ export const preferences = persisted("preferences", {
 export const internalPreferences = persisted("internalPreferences", {
   isNewToSite: true,
   hasSeenWelcomeGuideToast: false,
-  hasSeenDiscordToast: false
+  hasSeenDiscordToast: false,
+  hasSeenDeviceNotificationsToast: false,
+  hasSeenEmailNotificationsToast: false
 });
