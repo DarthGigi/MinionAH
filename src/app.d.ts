@@ -18,6 +18,7 @@ declare global {
       session: import("lucia").Session | null;
       isProtectedRoute: boolean;
       isAdmin: boolean | undefined;
+      maintenance: boolean;
     }
     // interface PageData {}
     // interface Platform {}

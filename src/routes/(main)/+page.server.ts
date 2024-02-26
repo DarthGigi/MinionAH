@@ -4,6 +4,7 @@ import type { PageServerLoad } from "./$types";
 import { formSchema } from "./schema";
 
 export const load = (async ({ locals }) => {
+  if (locals.maintenance) return;
   const session = locals.session;
 
   let unreadChats;
