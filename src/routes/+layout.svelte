@@ -24,8 +24,7 @@
   const firebaseApp: FirebaseApp = initializeApp(firebaseConfig);
 
   inject({ mode: dev ? "development" : "production", debug: false });
-  if (!dev) {
-    if (data.maintenance) return;
+  if (!dev && !data.maintenance) {
     injectSpeedInsights();
   }
 
