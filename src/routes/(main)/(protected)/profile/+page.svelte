@@ -12,7 +12,7 @@
   import { Label } from "$lib/components/ui/label";
   import { formatNumber } from "$lib/utilities";
   import type { Minion, MinionSeller as Seller, User } from "@prisma/client";
-  import { ChevronsUpDown, Loader2 } from "lucide-svelte";
+  import { ChevronsUpDown, Cog, Loader2 } from "lucide-svelte";
   import { parse } from "numerable";
   import * as skinview3d from "skinview3d";
   import { onMount } from "svelte";
@@ -39,17 +39,19 @@
 
   let priceValue: number;
 
+  const user = data.user! as User;
+
   onMount(async () => {
     const minecraftAvatarContainerDimensions = minecraftAvatarContainer.getBoundingClientRect();
     const viewer = new skinview3d.SkinViewer({
       canvas: minecraftAvatar,
       width: minecraftAvatarContainerDimensions.width,
       height: minecraftAvatarContainerDimensions.height,
-      skin: `https://res.cloudinary.com/minionah/image/upload/v1/users/skins/${data.user!.id}`,
-      [data.user!.cape ? "cape" : ""]: `https://res.cloudinary.com/minionah/image/upload/v1/users/capes/${data.user!.id}`,
+      skin: `https://res.cloudinary.com/minionah/image/upload/v1/users/skins/${user.id}`,
+      [user.cape ? "cape" : ""]: `https://res.cloudinary.com/minionah/image/upload/v1/users/capes/${user.id}`,
       enableControls: true,
       animation: new skinview3d.IdleAnimation(),
-      nameTag: data.user!.username,
+      nameTag: user.username,
       zoom: 0.7,
       panorama: "/assets/images/panorama.png",
       background: "#050505"
@@ -71,7 +73,10 @@
     <div class="relative mt-5">
       <div bind:this={minecraftAvatarContainer} class="relative">
         <div class="absolute right-3 top-3 z-30 flex flex-col gap-2">
-          <CopyButton on:click={() => navigator.clipboard.writeText(`${window.location.origin}/${data.user?.username}`)} />
+          <CopyButton on:click={() => navigator.clipboard.writeText(`${window.location.origin}/${user?.username}`)} />
+          <Button variant="link" href="/profile/settings" class="group h-auto rounded-lg !border-0 bg-accent p-1.5 focus:outline-none focus:ring-0 focus:ring-transparent">
+            <Cog class="h-5 w-5 text-muted-foreground transition-colors duration-300 group-hover:text-foreground" />
+          </Button>
         </div>
         {#if canvasIsLoading}
           <div class="absolute h-full w-full animate-pulse rounded-lg bg-background" />
