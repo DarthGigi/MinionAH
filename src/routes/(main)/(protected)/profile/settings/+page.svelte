@@ -8,7 +8,7 @@
 <div class="space-y-6">
   <div>
     <h3 class="text-lg font-medium">Profile</h3>
-    <p class="text-sm text-muted-foreground">This is how others will see you on MinionAH.</p>
+    <p class="text-sm text-muted-foreground">This is how others will see you on MinionAH. <span class="font-semibold">(coming soon)</span></p>
   </div>
   <Separator />
   <ProfileForm data={data.form} />
