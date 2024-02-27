@@ -69,7 +69,7 @@
     "fast-average-color-node": "^3.0.0",
     "firebase": "^10.8.0",
     "firebase-admin": "^12.0.0",
-    "formsnap": "^0.4.4",
+    "formsnap": "^0.5.1",
     "headview3d": "^2.2.2",
     "lucia": "^3.0.1",
     "lucide-svelte": "^0.341.0",
@@ -84,7 +84,7 @@
     "svelte-persisted-store": "^0.9.1",
     "svelte-sonner": "^0.3.18",
     "sveltekit-rate-limiter": "^0.4.3",
-    "sveltekit-superforms": "^1.13.4",
+    "sveltekit-superforms": "^2.6.2",
     "tailwind-merge": "^2.2.1",
     "tailwind-variants": "^0.2.0",
     "zod": "^3.22.4"
