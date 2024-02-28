@@ -41,18 +41,20 @@
   $: newChats;
   $: messages;
 
-  function disconnect() {
+  const disconnect = () => {
     channel.unsubscribe();
     channel.unbind_all();
     channel.disconnect();
     pusher.unsubscribe(data.chat.id);
     pusher.unbind_all();
     pusher.disconnect();
-  }
+  };
 
-  beforeNavigate(() => {
+  beforeNavigate(({ to }) => {
     updateRead();
     disconnect();
+    // This makes sure the +layout.server.ts is re-run so that unreadMessages is updated
+    window.location.href = to?.url.href || "/";
   });
 
   onMount(async () => {
@@ -85,7 +87,7 @@
 
     messages = [...messagesData];
   });
-  async function sendMessage(eventData: any) {
+  const sendMessage = async (eventData: any) => {
     const textValue = eventData.detail;
     if (!textValue) return;
     const message = {
@@ -106,7 +108,7 @@
       },
       body: JSON.stringify(message)
     });
-  }
+  };
 
   channel.bind("new-message", (new_message: iMessage) => {
     new_message.createdAt = new Date(new_message.createdAt);
