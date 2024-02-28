@@ -59,7 +59,7 @@
                     <Avatar.Fallback class="border-2 border-border bg-accent">{user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
                   </Avatar.Root>
                   {#if !$page.url.pathname.includes("chat")}
-                    {#if user._count.chatsAsUser1 > 0 || user._count.chatsAsUser2 > 0}
+                    {#if $page.data.unreadChats}
                       {#if !profileDropdownOpen}
                         <span class="absolute -right-0.5 top-0.5 flex h-3 w-3 transition-all duration-300" class:opacity-0={profileDropdownOpen} class:scale-0={profileDropdownOpen}>
                           <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-muted-foreground opacity-75" />
@@ -82,7 +82,7 @@
                     <DropdownMenu.Item href="/profile/chats" class="relative cursor-pointer data-[highlighted]:bg-background"
                       >Messages
                       {#if !$page.url.pathname.includes("chat")}
-                        {#if user._count.chatsAsUser1 > 0 || user._count.chatsAsUser2 > 0}
+                        {#if $page.data.unreadChats}
                           {#if profileDropdownOpen}
                             <span class="absolute right-2 top-1/2 flex h-3 w-3 -translate-y-1/2 transition-all delay-1000 duration-300">
                               <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-muted-foreground opacity-75" />
@@ -116,7 +116,6 @@
             <div class="flex flex-col gap-4">
               <div class="space-y-2">
                 <h4 class="font-medium leading-none">Preferences</h4>
-
                 <p class="text-xs text-muted-foreground">Set your preferences for MinionAH.</p>
               </div>
               <div class="grid gap-2">
@@ -136,16 +135,6 @@
                       preferences.update((state) => ({ ...state, minecraftFont: checked }));
                     }} />
                 </div>
-                {#if $page.url.pathname === "/"}
-                  <div class="grid w-full grid-cols-2 items-center justify-between gap-4">
-                    <Label>Notifications</Label>
-                    <Switch
-                      checked={$preferences.notifications}
-                      onCheckedChange={(checked) => {
-                        preferences.update((state) => ({ ...state, notifications: checked }));
-                      }} />
-                  </div>
-                {/if}
               </div>
             </div>
             <Tooltip.Root closeDelay={0} openDelay={0} closeOnPointerDown={false}>
