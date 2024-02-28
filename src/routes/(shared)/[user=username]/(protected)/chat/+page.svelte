@@ -149,15 +149,15 @@
         {#if loading}
           <ChatLoading />
         {:else if messages}
-          {#each newChats as message}
-            <Message {message} self={true} class="animate-pulse" />
-          {/each}
           {#each messages as message, i}
             {#if message.user_id === data.user.id}
               <Message {message} self={true} />
             {:else}
               <Message {message} self={false} />
             {/if}
+          {/each}
+          {#each newChats as message}
+            <Message {message} self={true} class="animate-pulse" />
           {/each}
         {/if}
       </div>

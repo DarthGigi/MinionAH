@@ -84,7 +84,7 @@
         <a href={`https://sky.shiiyu.moe/stats/${minion.user.username}`} target="_blank" rel="noopener" class="group rounded bg-accent p-1 text-sm text-muted-foreground focus:outline-none focus:ring-4 focus:ring-transparent">
           <Info class="h-5 w-5 transition-colors duration-300 group-hover:text-white" />
         </a>
-        <a href={`/${minion.user.username}/chat`} class="group rounded bg-accent p-1 text-sm text-muted-foreground focus:outline-none focus:ring-4 focus:ring-transparent">
+        <a href={`/${minion.user.username}/chat`} data-sveltekit-preload-data="off" class="group rounded bg-accent p-1 text-sm text-muted-foreground focus:outline-none focus:ring-4 focus:ring-transparent">
           <MessagesSquare class="h-5 w-5 transition-colors duration-300 group-hover:text-white" />
         </a>
       </div>

@@ -48,7 +48,7 @@
   </div>
   {#if isHome}
     <div class="flex h-10">
-      <a href={`${minion.user.username}/chat`} class="relative flex h-full w-full items-center justify-center overflow-hidden rounded-b-lg font-medium text-primary transition-all duration-300">
+      <a href={`${minion.user.username}/chat`} data-sveltekit-preload-data="off" class="relative flex h-full w-full items-center justify-center overflow-hidden rounded-b-lg font-medium text-primary transition-all duration-300">
         <div class="group peer relative z-10 flex h-full w-full flex-shrink-0 items-center justify-center text-wrap rounded-full px-2 py-0.5 text-xs font-medium text-primary transition-all duration-300 group-hover:scale-125 group-hover:text-muted">
           <div class="inline-block">Buy&nbsp;</div>
           <div class="inline-block w-0 max-w-fit overflow-hidden text-nowrap transition-[width] duration-1000 group-hover:w-full">

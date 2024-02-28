@@ -28,7 +28,13 @@ export const load = (async ({ locals }) => {
       take: MAX_ITEMS
     }),
     prisma.minion.count(),
-    prisma.chat.count()
+    prisma.chat.count({
+      where: {
+        messages: {
+          some: {}
+        }
+      }
+    })
   ]);
 
   return {
