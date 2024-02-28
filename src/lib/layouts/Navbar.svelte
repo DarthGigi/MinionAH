@@ -83,7 +83,7 @@
                       <DropdownMenu.Item href="/dashboard" class="cursor-pointer data-[highlighted]:bg-background">Dashboard</DropdownMenu.Item>
                     {/if}
                     <DropdownMenu.Item href="/profile/chats" class="relative cursor-pointer data-[highlighted]:bg-background"
-                      >Messages
+                      >Chats
                       {#if !$page.url.pathname.includes("chat")}
                         {#if $page.data.unreadChats}
                           {#if profileDropdownOpen}
