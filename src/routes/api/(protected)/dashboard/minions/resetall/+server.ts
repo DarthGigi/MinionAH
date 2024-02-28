@@ -62,7 +62,6 @@ export const PUT: RequestHandler = async ({ fetch }) => {
         }
       });
       const craftCosts = await response.json();
-      console.log(craftCosts);
       minions.forEach((minion) => {
         console.info(`Setting craft cost for ${minion.id}`);
         minion.craftCost = craftCosts[minion.id];
