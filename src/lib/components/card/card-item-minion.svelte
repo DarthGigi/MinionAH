@@ -6,7 +6,8 @@
   import type { Seller } from "$lib/types";
   import { formatNumber } from "$lib/utilities";
   import * as headview3d from "headview3d";
-  import { Info, Search } from "lucide-svelte";
+  import Info from "lucide-svelte/icons/info";
+  import Search from "lucide-svelte/icons/search";
   import { getContext } from "svelte";
 
   const minion = getContext<Seller>("minion");
@@ -16,12 +17,12 @@
 
   let minionViewer: headview3d.SkinViewer;
 
-  function handleSearchSignal(search: string) {
+  const handleSearchSignal = (search: string) => {
     searchSignal.update(() => search);
-  }
+  };
 
   $: minionCanvas, createMinionViewer();
-  function createMinionViewer() {
+  const createMinionViewer = () => {
     if (minionCanvas) {
       if (!minion.minion.id) return;
       const skinUrl = `https://res.cloudinary.com/minionah/image/upload/v1/minions/skin/${minion.minion.id}`;
@@ -31,27 +32,27 @@
         width: minionCanvasContainerDimensions.width,
         height: minionCanvasContainerDimensions.height,
         skin: skinUrl,
-        zoom: 2.5,
-        background: "#404040"
+        enableControls: true,
+        zoom: 2.5
       });
       minionViewer.resetSkin();
-      minionViewer.animations.add(headview3d.RotatingAnimation).speed = 0.5;
-      let control = headview3d.createOrbitControls(minionViewer);
-      control.enableRotate = true;
-      control.enableZoom = false;
-      control.enablePan = false;
+      minionViewer.autoRotate = true;
+      minionViewer.autoRotateSpeed = 0.5;
+      minionViewer.controls.enableRotate = true;
+      minionViewer.controls.enableZoom = false;
+      minionViewer.controls.enablePan = false;
     } else {
       return;
     }
-  }
+  };
 
-  function destroyViewer(viewer: headview3d.SkinViewer) {
+  const destroyViewer = (viewer: headview3d.SkinViewer) => {
     if (!viewer) return;
     setTimeout(() => {
       viewer.dispose();
       viewer.renderer.forceContextLoss();
     }, 300);
-  }
+  };
 
   let minionisOpen = false;
 
@@ -71,7 +72,7 @@
   <HoverCard.Content class="mt-0 w-80 -translate-y-44 gap-x-2 border-accent bg-muted">
     <div class="flex items-center justify-center gap-x-2">
       <Avatar.Root id={`minionCanvasContainer_${minion.id}`} class="h-12 w-12  rounded-full bg-accent">
-        <canvas bind:this={minionCanvas} class="!h-full !w-full cursor-move rounded-full" />
+        <canvas bind:this={minionCanvas} class="!h-full !w-full cursor-move rounded-full bg-transparent" />
         <Avatar.Fallback class="border-2 border-accent bg-accent">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
       </Avatar.Root>
       <div>

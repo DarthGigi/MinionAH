@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button";
   import { Input } from "$lib/components/ui/input";
-  import { Loader2 } from "lucide-svelte";
+  import Loader2 from "lucide-svelte/icons/loader-2";
   import { onMount } from "svelte";
   import Highlight from "svelte-highlight";
   import json from "svelte-highlight/languages/typescript";

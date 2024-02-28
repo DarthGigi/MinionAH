@@ -4,7 +4,7 @@
   import CopyButton from "$lib/components/CopyButton.svelte";
   import { MinionCard } from "$lib/components/card";
   import * as Avatar from "$lib/components/ui/avatar";
-  import { MessagesSquare } from "lucide-svelte";
+  import MessagesSquare from "lucide-svelte/icons/messages-square";
   import type { PageData } from "./$types";
 
   export let data: PageData;
@@ -43,7 +43,7 @@
 
 <div id="container" class="flex w-full flex-col justify-center pt-6 md:h-[calc(100vh_-_64px)]">
   <div class="relative mx-auto w-full max-w-sm rounded-lg border border-accent bg-secondary shadow">
-    <a href={`/${data.minionuser.username}/chat`} class="group absolute left-3 top-3 rounded-lg bg-accent p-1.5 text-sm text-muted-foreground focus:outline-none focus:ring-4 focus:ring-transparent">
+    <a href={`/${data.minionuser.username}/chat`} data-sveltekit-preload-data="off" class="group absolute left-3 top-3 rounded-lg bg-accent p-1.5 text-sm text-muted-foreground focus:outline-none focus:ring-4 focus:ring-transparent">
       <MessagesSquare class="h-5 w-5 transition-colors duration-300 group-hover:text-white" />
     </a>
     <CopyButton
@@ -53,7 +53,7 @@
         navigator.clipboard.writeText(`${window.location.href}`);
       }} />
     <div class="absolute right-12 top-3 flex h-8 scale-0 items-center justify-center overflow-hidden rounded-md border border-accent bg-popover px-2 py-1 text-xs opacity-0 shadow-md transition-all duration-300" class:!scale-100={copied} class:!opacity-100={copied}>Copied Link</div>
-    <a href={`/${data.minionuser.username}/chat`} class="relative mx-20 my-5 flex flex-col items-center rounded py-5 transition-all duration-300 hover:scale-110 hover:bg-accent">
+    <a href={`/${data.minionuser.username}/chat`} data-sveltekit-preload-data="off" class="relative mx-20 my-5 flex flex-col items-center rounded py-5 transition-all duration-300 hover:scale-110 hover:bg-accent">
       <Avatar.Root class="mb-3 h-24 w-24 rounded-full bg-accent shadow-lg">
         <Avatar.Image class="pointer-events-none h-full w-full p-2" src={`https://res.cloudinary.com/minionah/image/upload/v1/users/avatars/${data.minionuser.id}`} alt={data.minionuser.username} />
         <Avatar.Fallback class="border-2 border-accent bg-accent">{data.minionuser.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>

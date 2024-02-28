@@ -1,13 +1,14 @@
 import prisma from "$lib/server/prisma";
 import { fail } from "@sveltejs/kit";
-import { message, superValidate } from "sveltekit-superforms/server";
+import { message, superValidate } from "sveltekit-superforms";
+import { zod } from "sveltekit-superforms/adapters";
 import type { Actions, PageServerLoad } from "./$types";
 import { formSchemaCreate, formSchemaDelete } from "./schema";
 
 export const load = (async ({ locals }) => {
   return {
-    formCreate: await superValidate(formSchemaCreate, { id: "formCreate" }),
-    formDelete: await superValidate(formSchemaDelete, { id: "formDelete" }),
+    formCreate: await superValidate(zod(formSchemaCreate), { id: "formCreate" }),
+    formDelete: await superValidate(zod(formSchemaDelete), { id: "formDelete" }),
     streamed: {
       // Load all generator types, only 1 minion per type
       minionTypes: prisma.minion.findMany({
@@ -44,7 +45,7 @@ export const actions = {
   createMinion: async ({ locals, request }) => {
     const user = locals.user;
 
-    const formCreate = await superValidate(request, formSchemaCreate, { id: "formCreate" });
+    const formCreate = await superValidate(request, zod(formSchemaCreate), { id: "formCreate" });
 
     if (!formCreate.valid) {
       return fail(400, {
@@ -106,7 +107,7 @@ export const actions = {
     }
   },
   deleteMinion: async ({ locals, request }) => {
-    const formDelete = await superValidate(request, formSchemaDelete, { id: "formDelete" });
+    const formDelete = await superValidate(request, zod(formSchemaDelete), { id: "formDelete" });
 
     if (!formDelete.valid) {
       return fail(400, {

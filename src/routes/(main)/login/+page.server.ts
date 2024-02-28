@@ -2,19 +2,20 @@ import { lucia } from "$lib/server/lucia";
 import { fail, redirect } from "@sveltejs/kit";
 import { LegacyScrypt } from "lucia";
 import { Argon2id } from "oslo/password";
-import { message, superValidate } from "sveltekit-superforms/server";
+import { message, superValidate } from "sveltekit-superforms";
+import { zod } from "sveltekit-superforms/adapters";
 import type { Actions, PageServerLoad } from "./$types";
 import { formSchema } from "./schema";
 
 export const load = (async () => {
   return {
-    form: await superValidate(formSchema)
+    form: await superValidate(zod(formSchema))
   };
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
   default: async ({ request, cookies }) => {
-    const form = await superValidate(request, formSchema);
+    const form = await superValidate(request, zod(formSchema));
 
     if (!form.valid) return fail(400, { form });
 

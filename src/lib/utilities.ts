@@ -1,5 +1,6 @@
 import type { Chat } from "@prisma/client";
 import { format } from "numerable";
+import { sanitize } from "@jill64/universal-sanitizer";
 
 export function formatNumber(num: number | string): string {
   // if the number is a string, parse it to a number
@@ -34,4 +35,62 @@ export function checkReadStatus(chat: Chat, loggedInUserId: string | undefined) 
   } else {
     throw new Error("Logged in user is not part of this chat");
   }
+}
+
+export function scrollToBottomAction(node: HTMLElement, immediate = true) {
+  let stop: () => void;
+  const destroy = () => {
+    stop && stop();
+  };
+  const update = () => {
+    destroy();
+    function mutationCallback() {
+      const { clientHeight, scrollHeight } = node;
+      if (scrollHeight > clientHeight) {
+        if (node.scrollTo) {
+          node.scrollTo({
+            behavior: "smooth",
+            top: scrollHeight
+          });
+        } else {
+          node.scrollTop = scrollHeight;
+        }
+      }
+    }
+    const mutationObserver = new MutationObserver(mutationCallback);
+    mutationObserver.observe(node, { childList: true, subtree: false });
+    if (immediate) mutationCallback();
+    stop = () => {
+      mutationObserver.disconnect();
+    };
+  };
+  update();
+  return {
+    update,
+    destroy
+  };
+}
+
+export function sanitizeInput(input: string): string {
+  const sanitizedInput = sanitize(input, {
+    sanitizeHtml: {
+      allowedTags: ["b", "i", "u", "s", "img"],
+      allowedAttributes: {
+        img: ["src"]
+      },
+      disallowedTagsMode: "discard",
+      selfClosing: ["img"]
+    }
+  });
+  return sanitizedInput;
+}
+
+export function requestNotificationPermission(request: boolean = false) {
+  if (request) {
+    return Notification.requestPermission().then(async (permission) => {
+      return permission;
+    });
+  }
+
+  return Notification.permission;
 }

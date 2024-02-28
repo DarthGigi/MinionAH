@@ -1,5 +1,5 @@
 import { dev } from "$app/environment";
-import { ADMIN_ID, RATE_LIMIT_SECRET } from "$env/static/private";
+import { ADMIN_ID, RATE_LIMIT_SECRET, MAINTENANCE_MODE } from "$env/static/private";
 import { lucia } from "$lib/server/lucia";
 import prisma from "$lib/server/prisma";
 import type { Handle, RequestEvent } from "@sveltejs/kit";
@@ -35,6 +35,14 @@ export const handle: Handle = async ({ event, resolve }) => {
         statusText: "You have made too many requests, please try again later."
       });
     }
+  }
+
+  if (MAINTENANCE_MODE === "true") {
+    event.locals.maintenance = true;
+    if (event.url.pathname !== "/") {
+      redirect(302, "/");
+    }
+    return await resolve(event);
   }
 
   async function resetEventLocals(event: RequestEvent<Partial<Record<string, string>>, string | null>) {

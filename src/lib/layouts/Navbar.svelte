@@ -7,7 +7,10 @@
   import { Switch } from "$lib/components/ui/switch";
   import * as Tooltip from "$lib/components/ui/tooltip";
   import { preferences } from "$lib/stores/preferences";
-  import { ChevronDown, Info, Plus, Settings } from "lucide-svelte";
+  import ChevronDown from "lucide-svelte/icons/chevron-down";
+  import Info from "lucide-svelte/icons/info";
+  import Plus from "lucide-svelte/icons/plus";
+  import Settings from "lucide-svelte/icons/settings";
 
   let profileDropdownOpen = false;
   let menuDropdownOpen = false;
@@ -59,7 +62,7 @@
                     <Avatar.Fallback class="border-2 border-border bg-accent">{user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
                   </Avatar.Root>
                   {#if !$page.url.pathname.includes("chat")}
-                    {#if user._count.chatsAsUser1 > 0 || user._count.chatsAsUser2 > 0}
+                    {#if $page.data.unreadChats}
                       {#if !profileDropdownOpen}
                         <span class="absolute -right-0.5 top-0.5 flex h-3 w-3 transition-all duration-300" class:opacity-0={profileDropdownOpen} class:scale-0={profileDropdownOpen}>
                           <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-muted-foreground opacity-75" />
@@ -72,13 +75,17 @@
                 <DropdownMenu.Content class="border-border bg-popover">
                   <DropdownMenu.Group>
                     <DropdownMenu.Item href="/profile" class="cursor-pointer data-[highlighted]:bg-background">Profile</DropdownMenu.Item>
+                    <DropdownMenu.Item href="/profile/settings" class="ml-2 cursor-pointer data-[highlighted]:bg-background">Settings</DropdownMenu.Item>
+                  </DropdownMenu.Group>
+                  <DropdownMenu.Separator class="bg-border" />
+                  <DropdownMenu.Group>
                     {#if $page.data.isAdmin}
                       <DropdownMenu.Item href="/dashboard" class="cursor-pointer data-[highlighted]:bg-background">Dashboard</DropdownMenu.Item>
                     {/if}
                     <DropdownMenu.Item href="/profile/chats" class="relative cursor-pointer data-[highlighted]:bg-background"
-                      >Messages
+                      >Chats
                       {#if !$page.url.pathname.includes("chat")}
-                        {#if user._count.chatsAsUser1 > 0 || user._count.chatsAsUser2 > 0}
+                        {#if $page.data.unreadChats}
                           {#if profileDropdownOpen}
                             <span class="absolute right-2 top-1/2 flex h-3 w-3 -translate-y-1/2 transition-all delay-1000 duration-300">
                               <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-muted-foreground opacity-75" />
@@ -112,7 +119,6 @@
             <div class="flex flex-col gap-4">
               <div class="space-y-2">
                 <h4 class="font-medium leading-none">Preferences</h4>
-
                 <p class="text-xs text-muted-foreground">Set your preferences for MinionAH.</p>
               </div>
               <div class="grid gap-2">

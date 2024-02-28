@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { page } from "$app/stores";
   import CardLoading from "$lib/components/CardLoading.svelte";
   import CopyButton from "$lib/components/CopyButton.svelte";
+  import HtmlToast from "$lib/components/HtmlToast.svelte";
   import MinionsListBox from "$lib/components/MinionsListBox.svelte";
   import TierListbox from "$lib/components/TierListbox.svelte";
   import MinionCard from "$lib/components/card/cardminion.svelte";
@@ -9,22 +9,83 @@
   import { Button } from "$lib/components/ui/button";
   import * as Card from "$lib/components/ui/card";
   import * as Form from "$lib/components/ui/form";
+  import { Input } from "$lib/components/ui/input";
   import { Label } from "$lib/components/ui/label";
+  import { Switch } from "$lib/components/ui/switch";
   import { formatNumber } from "$lib/utilities";
   import type { Minion, MinionSeller as Seller, User } from "@prisma/client";
-  import { ChevronsUpDown, Loader2 } from "lucide-svelte";
+  import ChevronsUpDown from "lucide-svelte/icons/chevrons-up-down";
+  import Cog from "lucide-svelte/icons/cog";
+  import Loader2 from "lucide-svelte/icons/loader-2";
   import { parse } from "numerable";
   import * as skinview3d from "skinview3d";
   import { onMount } from "svelte";
+  import { toast } from "svelte-sonner";
+  import { superForm } from "sveltekit-superforms";
+  import { zodClient } from "sveltekit-superforms/adapters";
   import type { PageData } from "./$types";
   import { formSchemaCreate, formSchemaDelete } from "./schema";
+
   export let data: PageData;
-  let moreThan1 = false;
 
-  let submittingCreate = false;
-  let submittingDelete = false;
-  let showFormStatusDialog = false;
+  const formCreate = superForm(data.formCreate, {
+    validators: zodClient(formSchemaCreate),
+    onUpdated: () => {
+      if ($messageCreate) {
+        toast($messageCreate.title, {
+          description: HtmlToast,
+          componentProps: {
+            htmlMessage: $messageCreate.description
+          }
+        });
+      }
+    },
+    onError: () => {
+      if ($messageCreate) {
+        toast.error($messageCreate.title, {
+          description: HtmlToast,
+          componentProps: {
+            htmlMessage: $messageCreate.description
+          }
+        });
+      }
+    }
+  });
 
+  const formDelete = superForm(data.formDelete, {
+    validators: zodClient(formSchemaDelete),
+    onSubmit: ({ formData }) => {
+      formData.set("id", minionToDelete?.id);
+    },
+    onResult: () => {
+      showDeleteFormDialog = false;
+    },
+    onUpdated: () => {
+      if ($messageDelete) {
+        toast($messageDelete.title, {
+          description: HtmlToast,
+          componentProps: {
+            htmlMessage: $messageDelete.description
+          }
+        });
+      }
+    },
+    onError: () => {
+      if ($messageDelete) {
+        toast.error($messageDelete.title, {
+          description: HtmlToast,
+          componentProps: {
+            htmlMessage: $messageDelete.description
+          }
+        });
+      }
+    }
+  });
+
+  const { form: formDataCreate, enhance: enhanceCreate, message: messageCreate, submitting: submittingCreate, errors: errorsCreate, constraints: constraintsCreate } = formCreate;
+  const { form: formDataDelete, enhance: enhanceDelete, message: messageDelete, submitting: submittingDelete, submit: submitDelete } = formDelete;
+
+  $: moreThan1 = $formDataCreate.amount > (parseInt($constraintsCreate.amount?.min?.toString() ?? "0") || 0);
   let showDeleteFormDialog = false;
   let minionToDelete: Seller & { minion: Minion } & { user: User };
 
@@ -37,7 +98,7 @@
 
   let tierListDisabled = true;
 
-  let priceValue: number;
+  const user = data.user! as User;
 
   onMount(async () => {
     const minecraftAvatarContainerDimensions = minecraftAvatarContainer.getBoundingClientRect();
@@ -45,11 +106,11 @@
       canvas: minecraftAvatar,
       width: minecraftAvatarContainerDimensions.width,
       height: minecraftAvatarContainerDimensions.height,
-      skin: `https://res.cloudinary.com/minionah/image/upload/v1/users/skins/${data.user!.id}`,
-      [data.user!.cape ? "cape" : ""]: `https://res.cloudinary.com/minionah/image/upload/v1/users/capes/${data.user!.id}`,
+      skin: `https://res.cloudinary.com/minionah/image/upload/v1/users/skins/${user.id}`,
+      [user.cape ? "cape" : ""]: `https://res.cloudinary.com/minionah/image/upload/v1/users/capes/${user.id}`,
       enableControls: true,
       animation: new skinview3d.IdleAnimation(),
-      nameTag: data.user!.username,
+      nameTag: user.username,
       zoom: 0.7,
       panorama: "/assets/images/panorama.png",
       background: "#050505"
@@ -71,7 +132,10 @@
     <div class="relative mt-5">
       <div bind:this={minecraftAvatarContainer} class="relative">
         <div class="absolute right-3 top-3 z-30 flex flex-col gap-2">
-          <CopyButton on:click={() => navigator.clipboard.writeText(`${window.location.origin}/${data.user?.username}`)} />
+          <CopyButton on:click={() => navigator.clipboard.writeText(`${window.location.origin}/${user?.username}`)} />
+          <Button variant="link" href="/profile/settings" class="group h-auto rounded-lg !border-0 bg-accent p-1.5 focus:outline-none focus:ring-0 focus:ring-transparent">
+            <Cog class="h-5 w-5 text-muted-foreground transition-colors duration-300 group-hover:text-foreground" />
+          </Button>
         </div>
         {#if canvasIsLoading}
           <div class="absolute h-full w-full animate-pulse rounded-lg bg-background" />
@@ -84,31 +148,7 @@
     <div class="h-[28.75rem] animate-pulse rounded-lg border-0 bg-background shadow-sm"></div>
   {:then userMinions}
     {#if userMinions.length < 18}
-      <Form.Root
-        options={{
-          resetForm: true,
-          onSubmit: () => {
-            submittingCreate = true;
-          },
-          onResult: () => {
-            submittingCreate = false;
-            showFormStatusDialog = false;
-          },
-          onUpdated: () => {
-            submittingCreate = false;
-            showFormStatusDialog = true;
-          },
-          onError: () => {
-            submittingCreate = false;
-            showFormStatusDialog = true;
-          }
-        }}
-        form={data.formCreate}
-        schema={formSchemaCreate}
-        method="POST"
-        action="?/createMinion"
-        class="space-y-6"
-        let:config>
+      <form use:enhanceCreate method="POST" action="?/createMinion" class="space-y-6">
         <Card.Root class="border-0 bg-background text-primary">
           <Card.Header>
             <Card.Title>Minions</Card.Title>
@@ -127,94 +167,114 @@
                       </Button>
                     </div>
                   {:then minionTypes}
-                    <MinionsListBox
-                      {config}
-                      on:onSelect={({ detail }) => {
-                        maxtier = detail;
-                        if (detail > 0 && detail <= 12) tierListDisabled = false;
-                      }}
-                      minionType={minionTypes} />
+                    <Form.Field form={formCreate} name="type" class="flex flex-col space-y-2">
+                      <Form.Control let:attrs>
+                        <Form.Label>Minion</Form.Label>
+                        <MinionsListBox
+                          on:onSelect={({ detail }) => {
+                            maxtier = detail.maxTier;
+                            $formDataCreate.type = detail.generator;
+                            if ($constraintsCreate.tier?.min && $constraintsCreate.tier?.max) {
+                              const minTier = Number($constraintsCreate.tier.min);
+                              const maxTier = Number($constraintsCreate.tier.max);
+
+                              if (maxtier > minTier && maxtier <= maxTier) {
+                                tierListDisabled = false;
+                              }
+                            }
+                          }}
+                          minionType={minionTypes} />
+                        <input hidden bind:value={$formDataCreate.type} name={attrs.name} />
+                        <Form.FieldErrors />
+                      </Form.Control>
+                    </Form.Field>
                   {/await}
-                  {#key maxtier}
-                    <TierListbox {config} bind:disabled={tierListDisabled} bind:maxtier />
-                  {/key}
+                  <Form.Field form={formCreate} name="tier" class="flex flex-col space-y-2">
+                    <Form.Control let:attrs>
+                      <Form.Label>Tier</Form.Label>
+                      {#key maxtier}
+                        <TierListbox bind:disabled={tierListDisabled} bind:maxtier on:onSelectedTierChange={({ detail }) => ($formDataCreate.tier = Number(detail.tier))} />
+                      {/key}
+                      <input hidden bind:value={$formDataCreate.tier} name={attrs.name} />
+                      <Form.FieldErrors />
+                    </Form.Control>
+                  </Form.Field>
                 </div>
                 <div class="flex gap-4">
                   <div class="mt-1 inline-flex flex-col rounded-md">
-                    <Form.Field {config} name="amount" let:setValue>
-                      <Form.Item class="flex w-40 flex-col md:w-44">
+                    <Form.Field form={formCreate} name="amount" class="flex w-40 flex-col md:w-44">
+                      <Form.Control let:attrs>
                         <Form.Label>Amount</Form.Label>
-                        <Form.Input
+                        <Input
                           type="number"
                           class="ring-offset-0 focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0"
                           placeholder="Amount of minions"
-                          max={512}
-                          min={1}
-                          on:input={({ currentTarget }) => {
-                            if (!(currentTarget instanceof HTMLInputElement)) return;
-                            if (currentTarget.valueAsNumber > 1) {
-                              moreThan1 = true;
-                            } else {
-                              moreThan1 = false;
-                            }
-                            if (currentTarget.valueAsNumber > 512) {
-                              currentTarget.value = "512";
-                              setValue(currentTarget.valueAsNumber);
-                            } else if (currentTarget.valueAsNumber < 1) {
-                              currentTarget.value = "1";
-                              setValue(currentTarget.valueAsNumber);
+                          max={$constraintsCreate.amount?.max}
+                          min={$constraintsCreate.amount?.min}
+                          {...attrs}
+                          bind:value={$formDataCreate.amount}
+                          on:change={() => {
+                            if ($constraintsCreate.amount?.max && $formDataCreate.amount > Number($constraintsCreate.amount.max)) {
+                              $formDataCreate.amount = Number($constraintsCreate.amount.max);
+                            } else if ($constraintsCreate.amount?.min && $formDataCreate.amount < Number($constraintsCreate.amount.min)) {
+                              $formDataCreate.amount = Number($constraintsCreate.amount.min);
                             }
                           }}
                           on:keydown={(e) => {
-                            if (e.key === "e" || e.key === "." || e.key === "-" || e.key === "+" || e.key === "E" || e.key === " " || e.key === ",") {
+                            if ((e.key === "v" && (e.ctrlKey || e.metaKey)) || (e.key === "a" && (e.ctrlKey || e.metaKey)) || (e.key === "x" && (e.ctrlKey || e.metaKey)) || e.key === "Backspace" || e.key === "Delete") {
+                              return;
+                            }
+                            if (isNaN(Number(e.key))) {
                               e.preventDefault();
                             }
                           }}
                           on:paste={(e) => {
                             e.preventDefault();
                           }} />
-                        <Form.Validation />
-                      </Form.Item>
+                        <Form.FieldErrors />
+                      </Form.Control>
                     </Form.Field>
                   </div>
                   <div class="mt-1 inline-flex flex-col rounded-md">
-                    <Form.Field {config} name="price" let:setValue let:value>
-                      <Form.Item class="flex w-40 flex-col md:w-44">
+                    <Form.Field form={formCreate} name="price" class="flex w-40 flex-col md:w-44">
+                      <Form.Control let:attrs>
                         <Form.Label>Price <span class="inline text-neutral-200/50 opacity-0 transition-opacity duration-500" class:opacity-100={moreThan1}>(each)</span></Form.Label>
-                        <Form.Input
+                        <Input
                           type="text"
                           class="w-40 ring-offset-0 focus-visible:border-neutral-500 focus-visible:ring-1 focus-visible:ring-neutral-500 focus-visible:ring-offset-0 md:w-44"
                           placeholder={moreThan1 ? "Price of each minion" : "Price of minion"}
+                          {...attrs}
+                          bind:value={$formDataCreate.price}
                           on:keydown={(e) => {
                             // check for ctrl + v, cmd + v, ctrl + a, cmd + a, ctrl + x, cmd + x, backspace and delete
                             if ((e.key === "v" && (e.ctrlKey || e.metaKey)) || (e.key === "a" && (e.ctrlKey || e.metaKey)) || (e.key === "x" && (e.ctrlKey || e.metaKey)) || e.key === "Backspace" || e.key === "Delete") {
                               return;
                             }
+
+                            if ($constraintsCreate.price?.max && Number($formDataCreate.price) > Number($constraintsCreate.price.max)) e.preventDefault();
                             // check for k, m, b, t
                             if (e.key === "k" || e.key === "m" || e.key === "b" || e.key === "t") {
                               e.preventDefault();
-                              if (isNaN(Number(e.currentTarget.value))) {
+                              if (isNaN(Number($formDataCreate.price))) {
                                 return;
                               }
-                              let value = Number(e.currentTarget.value);
+                              let currentPrice = $formDataCreate.price;
                               switch (e.key) {
                                 case "k":
-                                  value *= 1000;
+                                  currentPrice *= 1000;
                                   break;
                                 case "m":
-                                  value *= 1000000;
+                                  currentPrice *= 1000000;
                                   break;
                                 case "b":
-                                  value *= 1000000000;
+                                  currentPrice *= 1000000000;
                                   break;
                                 case "t":
-                                  value *= 1000000000000;
+                                  currentPrice *= 1000000000000;
                                   break;
                               }
-                              if (value > 9999999999999) {
-                                return;
-                              }
-                              setValue(value);
+                              if ($constraintsCreate.price?.max && currentPrice > Number($constraintsCreate.price.max)) return;
+                              $formDataCreate.price = currentPrice;
                             }
                             if (isNaN(Number(e.key))) {
                               e.preventDefault();
@@ -224,44 +284,40 @@
                             if (!(e.currentTarget instanceof HTMLInputElement)) return;
                             if (isNaN(Number(e.clipboardData?.getData("text/plain")))) e.preventDefault();
                           }}
-                          on:change={({ currentTarget }) => {
-                            if (!(currentTarget instanceof HTMLInputElement)) return;
-                            if (Number(currentTarget.value) <= 0) {
-                              currentTarget.value = "1";
-                              setValue(currentTarget.value);
+                          on:change={() => {
+                            if ($constraintsCreate.price?.min && Number($formDataCreate.price) < Number($constraintsCreate.price.min)) {
+                              $formDataCreate.price = Number($constraintsCreate.price.min);
+                            } else if ($constraintsCreate.price?.max && Number($formDataCreate.price) > Number($constraintsCreate.price.max)) {
+                              $formDataCreate.price = Number($constraintsCreate.price.max);
                             }
-                            setValue(currentTarget.value);
-                            priceValue = Number(currentTarget.value);
                           }} />
 
-                        {#if priceValue}
-                          {#if Number(value) >= 1000}
-                            <Form.Description>{parse(value)} = {formatNumber(value)}</Form.Description>
-                          {/if}
+                        {#if Number($formDataCreate.price) >= 1000}
+                          <Form.Description>{parse($formDataCreate.price)} = {formatNumber($formDataCreate.price)}</Form.Description>
                         {/if}
 
-                        <Form.Validation />
-                      </Form.Item>
+                        <Form.FieldErrors />
+                      </Form.Control>
                     </Form.Field>
                   </div>
                 </div>
               </div>
               <div class="flex gap-4">
-                <Form.Field {config} name="infusion">
-                  <Form.Item class="flex flex-row items-center justify-between gap-6 rounded-lg bg-muted p-4">
+                <Form.Field form={formCreate} name="infusion" class="flex flex-row items-center justify-between gap-6 rounded-lg bg-muted p-4">
+                  <Form.Control let:attrs>
                     <div class="select-none space-y-0.5">
                       <Form.Label>Mithril Infused</Form.Label>
                       <Form.Description><a href="https://hypixel-skyblock.fandom.com/wiki/Mithril_Infusion" target="_blank" class="underline underline-offset-2">Mithril Infusion</a> is a minion upgrade which <br /> increases a minion's speed by 10% permanently.</Form.Description>
                     </div>
-                    <Form.Switch />
-                  </Form.Item>
+                    <Switch includeInput {...attrs} bind:checked={$formDataCreate.infusion} />
+                  </Form.Control>
                 </Form.Field>
               </div>
             </div>
           </Card.Content>
           <Card.Footer class="justify-end">
-            <Form.Button disabled={submittingCreate}>
-              {#if !submittingCreate}
+            <Form.Button disabled={$submittingCreate || Object.keys($errorsCreate).length !== 0}>
+              {#if !$submittingCreate}
                 Create
               {:else}
                 <Loader2 class="h-4 w-4 animate-spin" />
@@ -269,7 +325,7 @@
             </Form.Button>
           </Card.Footer>
         </Card.Root>
-      </Form.Root>
+      </form>
     {:else}
       <div class="space-y-8 divide-y divide-secondary rounded-lg bg-background px-6 py-8 text-primary">
         <div class="space-y-8 divide-y divide-secondary">
@@ -302,53 +358,15 @@
   </div>
 </div>
 
-<Form.Root
-  options={{
-    onSubmit: () => {
-      submittingDelete = true;
-    },
-    onResult: () => {
-      showDeleteFormDialog = false;
-      submittingDelete = false;
-    },
-    onUpdated: () => {
-      showFormStatusDialog = true;
-    },
-    onError: () => {
-      showFormStatusDialog = true;
-    }
-  }}
-  form={data.formDelete}
-  schema={formSchemaDelete}
-  let:config
-  action="?/deleteMinion"
-  class="hidden"
-  method="POST"
-  id="deleteForm">
-  <Form.Field {config} name="id">
-    <Form.Input type="hidden" value={minionToDelete?.id} />
+<form use:enhanceDelete action="?/deleteMinion" class="hidden" method="POST">
+  <Form.Field form={formDelete} name="id">
+    <Form.Control let:attrs>
+      <input hidden bind:value={$formDataDelete.id} name={attrs.name} />
+    </Form.Control>
   </Form.Field>
-</Form.Root>
+</form>
 
-<AlertDialog.Root bind:open={showFormStatusDialog} closeOnEscape={true} closeOnOutsideClick={true}>
-  <AlertDialog.Content>
-    <AlertDialog.Header>
-      {#if $page.form && $page.form.form && $page.form.form.message}
-        <AlertDialog.Title>
-          {$page.form.form.message.title}
-        </AlertDialog.Title>
-        <AlertDialog.Description>
-          {@html $page.form.form.message.description}
-        </AlertDialog.Description>
-      {/if}
-    </AlertDialog.Header>
-    <AlertDialog.Footer>
-      <AlertDialog.Cancel>Close</AlertDialog.Cancel>
-    </AlertDialog.Footer>
-  </AlertDialog.Content>
-</AlertDialog.Root>
-
-<AlertDialog.Root bind:open={showDeleteFormDialog} closeOnEscape={!submittingDelete} closeOnOutsideClick={!submittingDelete}>
+<AlertDialog.Root bind:open={showDeleteFormDialog} closeOnEscape={!$submittingDelete} closeOnOutsideClick={!$submittingDelete}>
   <AlertDialog.Content>
     <AlertDialog.Header>
       <AlertDialog.Title>Warning</AlertDialog.Title>
@@ -358,17 +376,15 @@
       </ul>
     </AlertDialog.Header>
     <AlertDialog.Footer>
-      <AlertDialog.Cancel class="transition-all duration-300" disabled={submittingDelete}>Cancel</AlertDialog.Cancel>
+      <AlertDialog.Cancel class="transition-all duration-300" disabled={$submittingDelete}>Cancel</AlertDialog.Cancel>
       <AlertDialog.Action
         class="transition-all duration-300"
-        disabled={submittingDelete}
-        on:click={(e) => {
-          e.preventDefault();
-          const deleteForm = document.getElementById("deleteForm");
-          if (!(deleteForm instanceof HTMLFormElement)) return;
-          deleteForm.requestSubmit();
+        disabled={$submittingDelete}
+        on:click={({ preventDefault }) => {
+          preventDefault();
+          submitDelete();
         }}>
-        {#if !submittingDelete}
+        {#if !$submittingDelete}
           Delete
         {:else}
           <Loader2 class="h-4 w-4 animate-spin" />

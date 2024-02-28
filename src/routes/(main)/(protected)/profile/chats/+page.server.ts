@@ -17,7 +17,10 @@ export const load = (async ({ locals }) => {
                 equals: locals.user!.id
               }
             }
-          ]
+          ],
+          messages: {
+            some: {}
+          }
         },
         include: {
           user1: {

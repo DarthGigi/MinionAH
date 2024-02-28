@@ -3,7 +3,8 @@
   import * as HoverCard from "$lib/components/ui/hover-card";
   import type { Seller } from "$lib/types";
   import * as headview3d from "headview3d";
-  import { Info, MessagesSquare } from "lucide-svelte";
+  import Info from "lucide-svelte/icons/info";
+  import MessagesSquare from "lucide-svelte/icons/messages-square";
   import { getContext } from "svelte";
   const minion = getContext<Seller>("minion");
 
@@ -11,7 +12,7 @@
   let userCanvas: HTMLCanvasElement;
 
   $: userCanvas, createUserViewer();
-  function createUserViewer() {
+  const createUserViewer = () => {
     if (userCanvas) {
       if (!minion.user.id) return;
       const skinUrl = `https://res.cloudinary.com/minionah/image/upload/v1/users/skins/${minion.user.id}`;
@@ -21,20 +22,20 @@
         width: userCanvasContainerDimensions.width,
         height: userCanvasContainerDimensions.height,
         skin: skinUrl,
-        zoom: 2.5,
-        background: "#404040"
+        enableControls: true,
+        zoom: 2.5
       });
 
-      userViewer.animations.add(headview3d.RotatingAnimation).speed = 0.5;
-
-      let control = headview3d.createOrbitControls(userViewer);
-      control.enableRotate = true;
-      control.enableZoom = false;
-      control.enablePan = false;
+      userViewer.resetSkin();
+      userViewer.autoRotate = true;
+      userViewer.autoRotateSpeed = 0.5;
+      userViewer.controls.enableRotate = true;
+      userViewer.controls.enableZoom = false;
+      userViewer.controls.enablePan = false;
     } else {
       return;
     }
-  }
+  };
 
   function destroyViewer(viewer: headview3d.SkinViewer) {
     if (!viewer) return;
@@ -83,7 +84,7 @@
         <a href={`https://sky.shiiyu.moe/stats/${minion.user.username}`} target="_blank" rel="noopener" class="group rounded bg-accent p-1 text-sm text-muted-foreground focus:outline-none focus:ring-4 focus:ring-transparent">
           <Info class="h-5 w-5 transition-colors duration-300 group-hover:text-white" />
         </a>
-        <a href={`/${minion.user.username}/chat`} class="group rounded bg-accent p-1 text-sm text-muted-foreground focus:outline-none focus:ring-4 focus:ring-transparent">
+        <a href={`/${minion.user.username}/chat`} data-sveltekit-preload-data="off" class="group rounded bg-accent p-1 text-sm text-muted-foreground focus:outline-none focus:ring-4 focus:ring-transparent">
           <MessagesSquare class="h-5 w-5 transition-colors duration-300 group-hover:text-white" />
         </a>
       </div>

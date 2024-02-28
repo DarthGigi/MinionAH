@@ -23,6 +23,39 @@ model User {
   chatsAsUser1 Chat[]         @relation("user1")
   chatsAsUser2 Chat[]         @relation("user2")
   messages     Message[]
+  settings     UserSettings?
+}
+
+model UserSettings {
+  id                   String                @id @map("_id")
+  user_id              String                @unique
+  user                 User                  @relation(fields: [id], references: [id])
+  profileSettings      ProfileSettings?
+  notificationSettings NotificationSettings?
+}
+
+model ProfileSettings {
+  id           String       @id @map("_id")
+  userSettings UserSettings @relation(fields: [id], references: [user_id], onDelete: Cascade)
+  email        String?
+  bio          String?
+  website      String?
+}
+
+enum NotificationType {
+  ALL
+  EMAIL
+  DEVICE
+  NONE
+}
+
+model NotificationSettings {
+  id                  String           @id @map("_id")
+  userSettings        UserSettings     @relation(fields: [id], references: [user_id], onDelete: Cascade)
+  notificationType    NotificationType
+  marketNotifications Boolean          @default(true)
+  socialNotifications Boolean          @default(true)
+  fcmTokens           String[]
 }
 
 model Session {
