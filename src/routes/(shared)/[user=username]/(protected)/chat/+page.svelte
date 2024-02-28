@@ -6,7 +6,7 @@
   import Message from "$lib/components/chat/message.svelte";
   import * as Avatar from "$lib/components/ui/avatar";
   import { scrollToBottomAction } from "$lib/utilities";
-  import { ArrowLeftCircle } from "lucide-svelte";
+  import ArrowLeftCircle from "lucide-svelte/icons/arrow-left-circle";
   import Pusher from "pusher-js";
   import { onDestroy, onMount } from "svelte";
   import { draw, fade } from "svelte/transition";

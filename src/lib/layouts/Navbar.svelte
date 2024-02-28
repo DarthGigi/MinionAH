@@ -7,7 +7,10 @@
   import { Switch } from "$lib/components/ui/switch";
   import * as Tooltip from "$lib/components/ui/tooltip";
   import { preferences } from "$lib/stores/preferences";
-  import { ChevronDown, Info, Plus, Settings } from "lucide-svelte";
+  import ChevronDown from "lucide-svelte/icons/chevron-down";
+  import Info from "lucide-svelte/icons/info";
+  import Plus from "lucide-svelte/icons/plus";
+  import Settings from "lucide-svelte/icons/settings";
 
   let profileDropdownOpen = false;
   let menuDropdownOpen = false;

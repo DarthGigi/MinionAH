@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { Separator } from "$lib/components/ui/separator";
-  import SidebarNav from "./(components)/sidebar-nav.svelte";
   import { Button } from "$lib/components/ui/button";
-  import { ArrowLeft } from "lucide-svelte";
+  import { Separator } from "$lib/components/ui/separator";
+  import ArrowLeft from "lucide-svelte/icons/arrow-left";
+  import SidebarNav from "./(components)/sidebar-nav.svelte";
 
   const sidebarNavItems = [
     {

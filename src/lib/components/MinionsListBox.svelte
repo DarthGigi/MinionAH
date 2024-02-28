@@ -3,7 +3,8 @@
   import * as Command from "$lib/components/ui/command";
   import * as Popover from "$lib/components/ui/popover";
   import { cn } from "$lib/utils";
-  import { Check, ChevronsUpDown } from "lucide-svelte";
+  import Check from "lucide-svelte/icons/check";
+  import ChevronsUpDown from "lucide-svelte/icons/chevrons-up-down";
   import { createEventDispatcher, tick } from "svelte";
 
   export let minionType: { id: string; generator: string; texture: string; maxTier: number }[];

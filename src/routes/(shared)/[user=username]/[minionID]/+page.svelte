@@ -3,7 +3,7 @@
   import CopyButton from "$lib/components/CopyButton.svelte";
   import { MinionCard } from "$lib/components/card";
   import * as Avatar from "$lib/components/ui/avatar";
-  import { ArrowLeftCircle } from "lucide-svelte";
+  import ArrowLeftCircle from "lucide-svelte/icons/arrow-left-circle";
   import type { PageData } from "./$types";
 
   export let data: PageData;

@@ -3,7 +3,8 @@
   import * as AlertDialog from "$lib/components/ui/alert-dialog";
   import * as Avatar from "$lib/components/ui/avatar";
   import { checkReadStatus } from "$lib/utilities";
-  import { Info, Trash2 } from "lucide-svelte";
+  import Info from "lucide-svelte/icons/info";
+  import Trash2 from "lucide-svelte/icons/trash-2";
   import type { PageData } from "./$types";
 
   export let data: PageData;

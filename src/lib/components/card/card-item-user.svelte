@@ -3,7 +3,8 @@
   import * as HoverCard from "$lib/components/ui/hover-card";
   import type { Seller } from "$lib/types";
   import * as headview3d from "headview3d";
-  import { Info, MessagesSquare } from "lucide-svelte";
+  import Info from "lucide-svelte/icons/info";
+  import MessagesSquare from "lucide-svelte/icons/messages-square";
   import { getContext } from "svelte";
   const minion = getContext<Seller>("minion");
 

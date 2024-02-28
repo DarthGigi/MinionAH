@@ -13,7 +13,13 @@
   import Placeholder from "@tiptap/extension-placeholder";
   import { Underline as TiptapUnderline } from "@tiptap/extension-underline";
   import StarterKit from "@tiptap/starter-kit";
-  import { ArrowUp, Bold, Image, Info, Italic, Strikethrough, Underline } from "lucide-svelte";
+  import ArrowUp from "lucide-svelte/icons/arrow-up";
+  import Bold from "lucide-svelte/icons/bold";
+  import Image from "lucide-svelte/icons/image";
+  import Info from "lucide-svelte/icons/info";
+  import Italic from "lucide-svelte/icons/italic";
+  import Strikethrough from "lucide-svelte/icons/strikethrough";
+  import Underline from "lucide-svelte/icons/underline";
   import { createEventDispatcher, onDestroy, onMount } from "svelte";
   import { toast } from "svelte-sonner";
   import { slide } from "svelte/transition";

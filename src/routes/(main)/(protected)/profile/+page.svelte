@@ -14,7 +14,9 @@
   import { Switch } from "$lib/components/ui/switch";
   import { formatNumber } from "$lib/utilities";
   import type { Minion, MinionSeller as Seller, User } from "@prisma/client";
-  import { ChevronsUpDown, Cog, Loader2 } from "lucide-svelte";
+  import ChevronsUpDown from "lucide-svelte/icons/chevrons-up-down";
+  import Cog from "lucide-svelte/icons/cog";
+  import Loader2 from "lucide-svelte/icons/loader-2";
   import { parse } from "numerable";
   import * as skinview3d from "skinview3d";
   import { onMount } from "svelte";

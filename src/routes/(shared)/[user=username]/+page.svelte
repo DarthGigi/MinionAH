@@ -4,7 +4,7 @@
   import CopyButton from "$lib/components/CopyButton.svelte";
   import { MinionCard } from "$lib/components/card";
   import * as Avatar from "$lib/components/ui/avatar";
-  import { MessagesSquare } from "lucide-svelte";
+  import MessagesSquare from "lucide-svelte/icons/messages-square";
   import type { PageData } from "./$types";
 
   export let data: PageData;

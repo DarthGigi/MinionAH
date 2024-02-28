@@ -1,9 +1,14 @@
 <script lang="ts">
-  import { Button } from "$lib/components/ui/button";
-  import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
-  import { Copy, Eye, Gavel, CircleEllipsis, Trash2, Loader2 } from "lucide-svelte";
   import * as AlertDialog from "$lib/components/ui/alert-dialog";
+  import { Button } from "$lib/components/ui/button";
   import * as Dialog from "$lib/components/ui/dialog";
+  import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
+  import CircleEllipsis from "lucide-svelte/icons/circle-ellipsis";
+  import Copy from "lucide-svelte/icons/copy";
+  import Eye from "lucide-svelte/icons/eye";
+  import Gavel from "lucide-svelte/icons/gavel";
+  import Loader2 from "lucide-svelte/icons/loader-2";
+  import Trash2 from "lucide-svelte/icons/trash-2";
 
   export let id: string;
   export let username: string;

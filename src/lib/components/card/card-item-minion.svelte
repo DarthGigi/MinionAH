@@ -6,7 +6,8 @@
   import type { Seller } from "$lib/types";
   import { formatNumber } from "$lib/utilities";
   import * as headview3d from "headview3d";
-  import { Info, Search } from "lucide-svelte";
+  import Info from "lucide-svelte/icons/info";
+  import Search from "lucide-svelte/icons/search";
   import { getContext } from "svelte";
 
   const minion = getContext<Seller>("minion");

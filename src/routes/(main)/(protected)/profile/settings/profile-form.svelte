@@ -15,7 +15,7 @@
   import * as Form from "$lib/components/ui/form";
   import { Input } from "$lib/components/ui/input";
   import { Textarea } from "$lib/components/ui/textarea";
-  import { RefreshCw } from "lucide-svelte";
+  import RefreshCw from "lucide-svelte/icons/refresh-cw";
   import { superForm, type Infer, type SuperValidated } from "sveltekit-superforms";
   import { zodClient } from "sveltekit-superforms/adapters";
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Loader2 } from "lucide-svelte";
+  import Loader2 from "lucide-svelte/icons/loader-2";
 </script>
 
 <div class="flex h-screen w-screen items-center justify-center">

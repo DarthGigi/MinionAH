@@ -1,19 +1,23 @@
 <script lang="ts">
   import { page } from "$app/stores";
+  import * as AlertDialog from "$lib/components/ui/alert-dialog";
   import { Button } from "$lib/components/ui/button";
+  import * as Dialog from "$lib/components/ui/dialog";
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
   import { Input } from "$lib/components/ui/input";
   import * as Table from "$lib/components/ui/table";
   import type { User } from "@prisma/client";
-  import { ArrowUpDown, ChevronDown, CircleEllipsis, Loader2, Trash2 } from "lucide-svelte";
+  import ArrowUpDown from "lucide-svelte/icons/arrow-up-down";
+  import ChevronDown from "lucide-svelte/icons/chevron-down";
+  import CircleEllipsis from "lucide-svelte/icons/circle-ellipsis";
+  import Loader2 from "lucide-svelte/icons/loader-2";
+  import Trash2 from "lucide-svelte/icons/trash-2";
   import { Render, Subscribe, createRender, createTable } from "svelte-headless-table";
   import { addHiddenColumns, addPagination, addSelectedRows, addSortBy, addTableFilter } from "svelte-headless-table/plugins";
   import { readable } from "svelte/store";
-  import DataTableActions from "./data-table-actions.svelte";
   import DataTableCheckbox from "../components/data-table-checkbox.svelte";
+  import DataTableActions from "./data-table-actions.svelte";
   import DataTableUser from "./data-table-user.svelte";
-  import * as AlertDialog from "$lib/components/ui/alert-dialog";
-  import * as Dialog from "$lib/components/ui/dialog";
 
   export let data: User[];
   const table = createTable(readable(data.filter((user) => user.id !== $page.data.user.id)), {

@@ -8,7 +8,11 @@
   import { preferences } from "$lib/stores/preferences";
   import { formatNumber } from "$lib/utilities";
   import type { MinionSeller } from "@prisma/client";
-  import { ArrowUpDown, ChevronDown, CircleEllipsis, Loader2, Trash2 } from "lucide-svelte";
+  import ArrowUpDown from "lucide-svelte/icons/arrow-up-down";
+  import ChevronDown from "lucide-svelte/icons/chevron-down";
+  import CircleEllipsis from "lucide-svelte/icons/circle-ellipsis";
+  import Loader2 from "lucide-svelte/icons/loader-2";
+  import Trash2 from "lucide-svelte/icons/trash-2";
   import { Render, Subscribe, createRender, createTable } from "svelte-headless-table";
   import { addHiddenColumns, addPagination, addSelectedRows, addSortBy, addTableFilter } from "svelte-headless-table/plugins";
   import { readable } from "svelte/store";

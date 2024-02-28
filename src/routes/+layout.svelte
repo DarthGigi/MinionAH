@@ -12,11 +12,11 @@
   import type { FirebaseApp } from "firebase/app";
   import { initializeApp } from "firebase/app";
   import { getMessaging, getToken, onMessage } from "firebase/messaging";
+  import Hammer from "lucide-svelte/icons/hammer";
   import { onMount } from "svelte";
   import { toast } from "svelte-sonner";
   import "../app.css";
   import type { LayoutData } from "./$types";
-  import { Hammer } from "lucide-svelte";
 
   export let data: LayoutData;
 
