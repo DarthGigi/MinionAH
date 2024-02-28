@@ -1,7 +1,8 @@
-import { message, superValidate } from "sveltekit-superforms/server";
+import { fail, type Actions } from "@sveltejs/kit";
+import { message, superValidate, defaultValues } from "sveltekit-superforms";
+import { zod } from "sveltekit-superforms/adapters";
 import type { PageServerLoad } from "../$types";
 import { notificationsFormSchema } from "./notifications-form.svelte";
-import { fail, type Actions } from "@sveltejs/kit";
 
 export const load: PageServerLoad = async ({ locals }) => {
   const userSettings = await prisma.userSettings.findFirst({
@@ -20,23 +21,19 @@ export const load: PageServerLoad = async ({ locals }) => {
         marketing_emails: userSettings?.notificationSettings?.marketNotifications || false,
         social_emails: userSettings?.notificationSettings?.socialNotifications || false
       },
-      notificationsFormSchema
+      zod(notificationsFormSchema)
     )
   };
 };
 
 export const actions: Actions = {
   default: async ({ request, locals }) => {
-    const formData = await request.formData();
-
-    const form = await superValidate(formData, notificationsFormSchema);
+    const form = await superValidate(request, zod(notificationsFormSchema));
     if (!form.valid) {
       return fail(400, {
         form
       });
     }
-
-    // return message(form, "Settings updated successfully.");
 
     const notificationType = form.data.type;
     const marketNotifications = form.data.marketing_emails;

@@ -2,12 +2,21 @@
   import { page } from "$app/stores";
   import * as AlertDialog from "$lib/components/ui/alert-dialog";
   import * as Form from "$lib/components/ui/form";
+  import { Input } from "$lib/components/ui/input";
   import { Loader2 } from "lucide-svelte";
-  import { superForm } from "sveltekit-superforms/client";
-  import type { PageData } from "./$types";
-  import { formSchema } from "./schema";
-  export let data: PageData;
-  const { message } = superForm(data.form, { warnings: { duplicateId: false } });
+  import { superForm, type Infer, type SuperValidated } from "sveltekit-superforms";
+  import { zodClient } from "sveltekit-superforms/adapters";
+  import { formSchema, type FormSchema } from "./schema";
+
+  export let data: SuperValidated<Infer<FormSchema>>;
+
+  const form = superForm(data, {
+    warnings: { duplicateId: false },
+    validators: zodClient(formSchema),
+    dataType: "json"
+  });
+
+  const { form: formData, enhance, message } = form;
 
   let passwordInputIsValid = false;
   let submitting = false;
@@ -17,20 +26,29 @@
   }
 </script>
 
-<Form.Root method="POST" form={data.form} on:submit={() => (submitting = true)} schema={formSchema} let:config class="relative mx-auto flex h-1/2 max-w-md flex-col justify-center self-center px-4 md:px-0">
-  <Form.Field {config} name="username">
-    <Form.Item>
+<form
+  method="POST"
+  use:enhance={{
+    onSubmit: () => {
+      submitting = true;
+    }
+  }}
+  class="relative mx-auto flex h-1/2 max-w-md flex-col justify-center self-center px-4 md:px-0">
+  <Form.Field {form} name="username">
+    <Form.Control let:attrs>
       <Form.Label for="username">Username</Form.Label>
       <Form.Description>This is your <span class="font-semibold">Minecraft</span> username.</Form.Description>
-      <Form.Input maxlength={16} type="text" class="border-2 border-accent transition-all duration-300 focus:border-muted-foreground focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[invalid]:border-destructive/40 focus:data-[invalid]:border-destructive" autocomplete="username" name="username" id="username" />
-      <Form.Validation />
-    </Form.Item>
+      <Input {...attrs} bind:value={$formData.username} maxlength={16} type="text" class="border-2 border-accent transition-all duration-300 focus:border-muted-foreground focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[invalid]:border-destructive/40 focus:data-[invalid]:border-destructive" autocomplete="username" name="username" id="username" />
+      <Form.FieldErrors />
+    </Form.Control>
   </Form.Field>
-  <Form.Field {config} name="current-password">
-    <Form.Item>
+  <Form.Field {form} name="current-password">
+    <Form.Control let:attrs>
       <Form.Label for="current-password">Password</Form.Label>
       <Form.Description>Enter your <span class="font-semibold">MinionAH</span> password to login.</Form.Description>
-      <Form.Input
+      <Input
+        {...attrs}
+        bind:value={$formData["current-password"]}
         type="password"
         name="current-password"
         id="current-password"
@@ -44,8 +62,8 @@
             passwordInputIsValid = false;
           }
         }} />
-      <Form.Validation />
-    </Form.Item>
+      <Form.FieldErrors />
+    </Form.Control>
   </Form.Field>
 
   <Form.Button disabled={!passwordInputIsValid || submitting} class="transition-all duration-300">
@@ -66,7 +84,7 @@
     <span class="opacity-50">Don't have an account?</span>
     <a href="/signup" class={`underline underline-offset-2 opacity-50 transition-opacity duration-300 hover:opacity-100 ${submitting ? "pointer-events-none cursor-default" : ""}`}>Sign up</a>
   </span>
-</Form.Root>
+</form>
 
 <AlertDialog.Root
   open={$message !== undefined}

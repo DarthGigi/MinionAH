@@ -17,7 +17,7 @@ export const formSchemaCreate = z.object({
     .number({ required_error: "Please enter a price" })
     .int()
     .min(1, "Minion's price can't be lower than 1 coin")
-    .max(9999999999999, "Minion's price can't be higher than 9999999999999 coins")
+    .max(10000000000000, "Minion's price can't be higher than 10000000000000 coins")
     .default("" as unknown as number),
   infusion: z.boolean()
 });

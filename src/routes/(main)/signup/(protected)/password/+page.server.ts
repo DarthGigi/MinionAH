@@ -1,11 +1,12 @@
 import { fail, redirect } from "@sveltejs/kit";
 import { Argon2id } from "oslo/password";
-import { message, superValidate } from "sveltekit-superforms/server";
+import { message, superValidate } from "sveltekit-superforms";
+import { zod } from "sveltekit-superforms/adapters";
 import type { Actions, PageServerLoad } from "./$types";
 import { formSchema } from "./schema";
 
 export const load = (async ({ locals }) => {
-  const superValidatedFormSchema = await superValidate(formSchema);
+  const superValidatedFormSchema = await superValidate(zod(formSchema));
   superValidatedFormSchema.data.username = locals.user!.username;
 
   return {
@@ -15,7 +16,7 @@ export const load = (async ({ locals }) => {
 
 export const actions: Actions = {
   default: async ({ locals, request }) => {
-    const form = await superValidate(request, formSchema);
+    const form = await superValidate(request, zod(formSchema));
 
     if (!form.valid) return fail(400, { form });
 
