@@ -70,7 +70,7 @@
     "firebase": "^10.8.0",
     "firebase-admin": "^12.0.0",
     "formsnap": "^0.5.1",
-    "headview3d": "^2.2.2",
+    "headview3d": "^3.0.2",
     "lucia": "^3.0.1",
     "lucide-svelte": "^0.341.0",
     "mode-watcher": "^0.2.1",
