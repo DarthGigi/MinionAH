@@ -11,7 +11,7 @@
   let userCanvas: HTMLCanvasElement;
 
   $: userCanvas, createUserViewer();
-  function createUserViewer() {
+  const createUserViewer = () => {
     if (userCanvas) {
       if (!minion.user.id) return;
       const skinUrl = `https://res.cloudinary.com/minionah/image/upload/v1/users/skins/${minion.user.id}`;
@@ -21,20 +21,20 @@
         width: userCanvasContainerDimensions.width,
         height: userCanvasContainerDimensions.height,
         skin: skinUrl,
-        zoom: 2.5,
-        background: "#404040"
+        enableControls: true,
+        zoom: 2.5
       });
 
-      userViewer.animations.add(headview3d.RotatingAnimation).speed = 0.5;
-
-      let control = headview3d.createOrbitControls(userViewer);
-      control.enableRotate = true;
-      control.enableZoom = false;
-      control.enablePan = false;
+      userViewer.resetSkin();
+      userViewer.autoRotate = true;
+      userViewer.autoRotateSpeed = 0.5;
+      userViewer.controls.enableRotate = true;
+      userViewer.controls.enableZoom = false;
+      userViewer.controls.enablePan = false;
     } else {
       return;
     }
-  }
+  };
 
   function destroyViewer(viewer: headview3d.SkinViewer) {
     if (!viewer) return;
