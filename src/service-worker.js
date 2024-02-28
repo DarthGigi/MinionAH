@@ -25,7 +25,6 @@ const firebase =
 const messaging = getMessaging(firebase);
 onBackgroundMessage(messaging, async (/** @type {import("firebase/messaging").MessagePayload} */ payload) => {
   const notification = /** @type {import("firebase/messaging").NotificationPayload} */ (payload.notification);
-  console.log("Received background message ", payload);
   const notificationTitle = notification?.title ?? "MinionAH";
   const notificationOptions = /** @type {NotificationOptions} */ ({
     body: notification?.body ?? "New message from MinionAH",
