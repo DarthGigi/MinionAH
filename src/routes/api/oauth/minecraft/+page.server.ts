@@ -180,10 +180,7 @@ export const load = (async ({ cookies, url, locals }) => {
             id: existingUser.id
           },
           data: {
-            username: minecraftUser.name,
-            avatar: "",
-            skin: "",
-            cape: ""
+            username: minecraftUser.name
           }
         });
         return existingUser;
@@ -195,9 +192,6 @@ export const load = (async ({ cookies, url, locals }) => {
           data: {
             id: minecraftUser.id,
             username: minecraftUser.name,
-            avatar: "",
-            skin: "",
-            cape: "",
             loggedInAt: new Date(),
             key: {
               createMany: {

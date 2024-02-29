@@ -7,7 +7,7 @@
   import * as Table from "$lib/components/ui/table";
   import { preferences } from "$lib/stores/preferences";
   import { formatNumber } from "$lib/utilities";
-  import type { MinionSeller } from "@prisma/client";
+  import type { Auction } from "@prisma/client";
   import ArrowUpDown from "lucide-svelte/icons/arrow-up-down";
   import ChevronDown from "lucide-svelte/icons/chevron-down";
   import CircleEllipsis from "lucide-svelte/icons/circle-ellipsis";
@@ -21,7 +21,7 @@
   import DataTableMinion from "./data-table-minion.svelte";
   import DataTableUser from "./data-table-user.svelte";
 
-  export let data: MinionSeller[];
+  export let data: Auction[];
   const table = createTable(readable(data), {
     page: addPagination(),
     sort: addSortBy({ disableMultiSort: true }),

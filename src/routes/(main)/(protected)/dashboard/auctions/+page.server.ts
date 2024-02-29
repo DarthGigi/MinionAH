@@ -2,7 +2,7 @@ import type { PageServerLoad } from "./$types";
 
 export const load = (async () => {
   const [auctions] = await Promise.all([
-    prisma.minionSeller.findMany({
+    prisma.auction.findMany({
       include: {
         user: true,
         minion: true

@@ -6,7 +6,7 @@ export const load = (async () => {
       include: {
         _count: {
           select: {
-            minions: true
+            auctions: true
           }
         }
       }

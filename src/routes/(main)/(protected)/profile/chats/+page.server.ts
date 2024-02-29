@@ -27,7 +27,6 @@ export const load = (async ({ locals }) => {
             select: {
               id: true,
               username: true,
-              avatar: true,
               loggedInAt: true
             }
           },
@@ -35,7 +34,6 @@ export const load = (async ({ locals }) => {
             select: {
               id: true,
               username: true,
-              avatar: true,
               loggedInAt: true
             }
           },

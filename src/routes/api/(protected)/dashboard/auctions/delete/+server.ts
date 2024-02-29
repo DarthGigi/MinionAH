@@ -6,7 +6,7 @@ export const DELETE: RequestHandler = async ({ request }) => {
 
     const ids = data.ids as string[];
 
-    await prisma.minionSeller.deleteMany({
+    await prisma.auction.deleteMany({
       where: {
         id: {
           in: ids

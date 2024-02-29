@@ -11,7 +11,7 @@ type Params = {
 };
 
 async function getMinions(take: number = 18, skip?: number, orderBy: object = [{ timeCreated: "desc" }, { price: "asc" }], distinct?: any, where?: any) {
-  let minions = await prisma.minionSeller.findMany({
+  let minions = await prisma.auction.findMany({
     take,
     skip,
     orderBy,
@@ -21,7 +21,6 @@ async function getMinions(take: number = 18, skip?: number, orderBy: object = [{
       minion: true,
       user: {
         select: {
-          avatar: true,
           id: true,
           loggedInAt: true,
           username: true

@@ -23,7 +23,7 @@ export const load = (async ({ locals }) => {
           generator: "asc"
         }
       }),
-      userMinions: prisma.minionSeller.findMany({
+      userMinions: prisma.auction.findMany({
         where: {
           user: {
             id: locals.user!.id
@@ -80,7 +80,7 @@ export const actions = {
 
     // create the minion in the database
     try {
-      const createdMinion = await prisma.minionSeller.create({
+      const createdMinion = await prisma.auction.create({
         data: {
           amount: formCreate.data.amount,
           price: Number(formCreate.data.price),
@@ -118,7 +118,7 @@ export const actions = {
     const minionId = formDelete.data.id as string;
 
     try {
-      const deletedMinion = await prisma.minionSeller.delete({
+      const deletedMinion = await prisma.auction.delete({
         where: {
           id: minionId,
           AND: [

@@ -1,9 +1,9 @@
 <script lang="ts">
-  import type { MinionSeller } from "$lib/types";
+  import type { Auction } from "$lib/types";
   import { formatNumber } from "$lib/utilities";
   import { getContext } from "svelte";
   import { fade } from "svelte/transition";
-  const minion = getContext<MinionSeller>("minion");
+  const minion = getContext<Auction>("minion");
   const isHome = getContext<boolean>("isHome");
   export let hovering: boolean;
 </script>
