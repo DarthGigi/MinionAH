@@ -11,13 +11,13 @@ export const load = (async ({ locals }) => {
       },
       where: {
         id: {
-          not: locals.user.id
+          not: locals.user!.id
         }
       },
       take: MAX_ITEMS
     }),
-    prisma.minionSeller.count(),
-    prisma.minionSeller.findMany({
+    prisma.auction.count(),
+    prisma.auction.findMany({
       orderBy: {
         timeCreated: "desc"
       },

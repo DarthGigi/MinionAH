@@ -1,7 +1,7 @@
 <script lang="ts">
-  import type { MinionSeller } from "$lib/types";
+  import type { Auction } from "$lib/types";
   import { getContext } from "svelte";
-  const minion = getContext<MinionSeller>("minion");
+  const minion = getContext<Auction>("minion");
   const isHome = getContext<boolean>("isHome");
 </script>
 

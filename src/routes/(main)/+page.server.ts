@@ -5,7 +5,7 @@ export const load = (async ({ locals }) => {
   if (locals.maintenance) return;
 
   return {
-    minions: prisma.minionSeller.findMany({
+    minions: prisma.auction.findMany({
       take: 18,
       skip: 0,
       orderBy: [
@@ -20,11 +20,9 @@ export const load = (async ({ locals }) => {
         minion: true,
         user: {
           select: {
-            avatar: true,
             id: true,
             loggedInAt: true,
-            username: true,
-            skin: true
+            username: true
           }
         }
       }

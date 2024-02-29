@@ -1,11 +1,11 @@
-import type { Minion, MinionSeller, User } from "@prisma/client";
+import type { Minion, Auction, User } from "@prisma/client";
 
-// extend the MinionSeller type to include the user and minion
-interface Seller extends MinionSeller {
+// extend the Auction type to include the user and minion
+interface Seller extends Auction {
   id: any;
   timeCreated: string | number | Date;
   user: User;
   minion: Minion;
 }
 
-export type { Minion, MinionSeller, Seller };
+export type { Minion, Auction, Seller };

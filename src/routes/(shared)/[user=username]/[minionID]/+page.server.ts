@@ -5,7 +5,7 @@ export const load = (async ({ params, fetch }) => {
   const minionID = params.minionID;
   const username = params.user;
 
-  const userMinion = await prisma.minionSeller.findUnique({
+  const userMinion = await prisma.auction.findUnique({
     where: {
       id: minionID,
       AND: [

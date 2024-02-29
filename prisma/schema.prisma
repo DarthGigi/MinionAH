@@ -3,31 +3,26 @@
 generator client {
   provider = "prisma-client-js"
 }
-
 datasource db {
-  provider  = "mongodb"
+  provider  = "postgresql"
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_DATABASE_URL")
 }
-
 model User {
-  id           String         @id @map("_id")
+  id           String        @id
   sessions     Session[]
   key          Key[]
-  loggedInAt   DateTime       @default(now()) @updatedAt
-  username     String         @unique
-  avatar       String
-  skin         String
-  cape         String?
-  minions      MinionSeller[]
-  chatsAsUser1 Chat[]         @relation("user1")
-  chatsAsUser2 Chat[]         @relation("user2")
+  loggedInAt   DateTime      @default(now()) @updatedAt
+  username     String        @unique
+  auctions     Auction[]
+  chatsAsUser1 Chat[]        @relation("user1")
+  chatsAsUser2 Chat[]        @relation("user2")
   messages     Message[]
   settings     UserSettings?
 }
 
 model UserSettings {
-  id                   String                @id @map("_id")
+  id                   String                @id
   user_id              String                @unique
   user                 User                  @relation(fields: [id], references: [id])
   profileSettings      ProfileSettings?
@@ -35,7 +30,7 @@ model UserSettings {
 }
 
 model ProfileSettings {
-  id           String       @id @map("_id")
+  id           String       @id
   userSettings UserSettings @relation(fields: [id], references: [user_id], onDelete: Cascade)
   email        String?
   bio          String?
@@ -50,7 +45,7 @@ enum NotificationType {
 }
 
 model NotificationSettings {
-  id                  String           @id @map("_id")
+  id                  String           @id
   userSettings        UserSettings     @relation(fields: [id], references: [user_id], onDelete: Cascade)
   notificationType    NotificationType
   marketNotifications Boolean          @default(true)
@@ -59,7 +54,7 @@ model NotificationSettings {
 }
 
 model Session {
-  id        String   @id @map("_id")
+  id        String   @id
   userId    String
   expiresAt DateTime
   user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
@@ -68,7 +63,7 @@ model Session {
 }
 
 model Key {
-  id              String  @id @map("_id")
+  id              String  @id
   hashed_password String?
   user_id         String
   user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
@@ -77,26 +72,26 @@ model Key {
 }
 
 model Minion {
-  id             String         @id @map("_id")
+  id             String    @id
   name           String
   generator      String
   generator_tier Int
   texture        String
   skin           String
   maxTier        Int
-  craftCost      Int            @default(0)
-  sellers        MinionSeller[]
+  craftCost      Float     @default(0)
+  sellers        Auction[]
 }
 
-model MinionSeller {
-  id          String   @id @default(cuid()) @map("_id")
+model Auction {
+  id          String   @id @default(cuid())
   minion_id   String
   user_id     String
   user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
   minion      Minion   @relation(fields: [minion_id], references: [id], onDelete: Cascade)
   hasInfusion Boolean  @default(false)
   price       Float
-  amount      Int?
+  amount      BigInt?
   timeCreated DateTime @default(now()) @updatedAt
 
   @@index([user_id])
@@ -104,7 +99,7 @@ model MinionSeller {
 }
 
 model Chat {
-  id        String    @id @default(cuid()) @map("_id")
+  id        String    @id @default(cuid())
   user1_id  String
   user2_id  String
   user1     User      @relation("user1", fields: [user1_id], references: [id], onDelete: Cascade)
@@ -116,7 +111,7 @@ model Chat {
 }
 
 model Message {
-  id        String   @id @default(cuid()) @map("_id")
+  id        String   @id @default(cuid())
   chat_id   String
   user_id   String
   content   String

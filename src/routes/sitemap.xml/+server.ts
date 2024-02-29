@@ -10,7 +10,7 @@ export const GET: RequestHandler = async () => {
           username: true
         }
       }),
-      prisma.minionSeller.findMany({
+      prisma.auction.findMany({
         select: {
           id: true,
           user: {

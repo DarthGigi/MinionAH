@@ -13,7 +13,7 @@
   import { Label } from "$lib/components/ui/label";
   import { Switch } from "$lib/components/ui/switch";
   import { formatNumber } from "$lib/utilities";
-  import type { Minion, MinionSeller as Seller, User } from "@prisma/client";
+  import type { Minion, Auction, User } from "@prisma/client";
   import ChevronsUpDown from "lucide-svelte/icons/chevrons-up-down";
   import Cog from "lucide-svelte/icons/cog";
   import Loader2 from "lucide-svelte/icons/loader-2";
@@ -87,7 +87,7 @@
 
   $: moreThan1 = $formDataCreate.amount > (parseInt($constraintsCreate.amount?.min?.toString() ?? "0") || 0);
   let showDeleteFormDialog = false;
-  let minionToDelete: Seller & { minion: Minion } & { user: User };
+  let minionToDelete: Auction & { minion: Minion } & { user: User };
 
   let minecraftAvatar: HTMLCanvasElement;
   let minecraftAvatarContainer: HTMLDivElement;

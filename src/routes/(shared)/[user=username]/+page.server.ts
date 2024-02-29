@@ -9,7 +9,7 @@ export const load = (async ({ params, fetch }) => {
       username: username
     },
     include: {
-      minions: true
+      auctions: true
     }
   });
 
@@ -17,7 +17,7 @@ export const load = (async ({ params, fetch }) => {
     redirect(302, "/");
   }
 
-  const minions = prisma.minionSeller.findMany({
+  const minions = prisma.auction.findMany({
     where: {
       user: {
         id: minionuser.id
