@@ -380,8 +380,8 @@
       <AlertDialog.Action
         class="transition-all duration-300"
         disabled={$submittingDelete}
-        on:click={({ preventDefault }) => {
-          preventDefault();
+        on:click={(e) => {
+          e.preventDefault();
           submitDelete();
         }}>
         {#if !$submittingDelete}
