@@ -91,7 +91,7 @@ model Auction {
   minion      Minion   @relation(fields: [minion_id], references: [id], onDelete: Cascade)
   hasInfusion Boolean  @default(false)
   price       Float
-  amount      BigInt?
+  amount      Int
   timeCreated DateTime @default(now()) @updatedAt
 
   @@index([user_id])
