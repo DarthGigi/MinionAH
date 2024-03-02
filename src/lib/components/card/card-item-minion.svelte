@@ -9,9 +9,11 @@
   import Info from "lucide-svelte/icons/info";
   import Search from "lucide-svelte/icons/search";
   import { getContext } from "svelte";
+  import { createPress } from "svelte-interactions";
 
   const minion = getContext<Seller>("minion");
   const isHome = getContext<boolean>("isHome");
+  const { pressAction } = createPress();
 
   let minionCanvas: HTMLCanvasElement;
 
@@ -105,7 +107,8 @@
         {#if isHome}
           <button
             class="group rounded bg-accent p-1 text-sm text-muted-foreground focus:outline-none focus:ring-4 focus:ring-transparent"
-            on:click={() => {
+            use:pressAction
+            on:press={() => {
               handleSearchSignal(minion.minion.generator.replace(/_/g, " ").toLowerCase().charAt(0).toUpperCase() + minion.minion.generator.slice(1).toLowerCase().replace(/_/g, " "));
             }}>
             <Search class="h-5 w-5 transition-colors duration-300 group-hover:text-white" />

@@ -21,8 +21,14 @@
   import Strikethrough from "lucide-svelte/icons/strikethrough";
   import Underline from "lucide-svelte/icons/underline";
   import { createEventDispatcher, onDestroy, onMount } from "svelte";
+  import { createPress } from "svelte-interactions";
   import { toast } from "svelte-sonner";
   import { slide } from "svelte/transition";
+
+  const { pressAction: pressActionBold } = createPress();
+  const { pressAction: pressActionItalic } = createPress();
+  const { pressAction: pressActionUnderline } = createPress();
+  const { pressAction: pressActionStrike } = createPress();
 
   const KeyboardHandler = Extension.create({
     name: "keyboardHandler"
@@ -104,11 +110,11 @@
     }
   });
 
-  function emitSendMessage() {
+  const emitSendMessage = () => {
     if (editor.getHTML().trim() === "" || editor.storage.characterCount.characters() > 1000 || editor.storage.characterCount.characters() === 0) return false;
     dispatch("sendMessage", sanitizeInput(editor.getHTML()));
     return editor.commands.clearContent();
-  }
+  };
 
   let boldButton: HTMLButtonElement;
 </script>
@@ -118,16 +124,16 @@
     <div class="menu rounded-lg border border-accent bg-popover">
       <ToggleGroup.Root type="multiple" class="menu select-none p-2">
         <ToggleGroup.Item el={boldButton} value="bold" class="h-auto w-auto p-2">
-          <button bind:this={boldButton} data-state={editor.isActive("bold")} on:click={() => editor.chain().focus().toggleBold().run()}> <Bold class="h-4 w-4" /> </button>
+          <button bind:this={boldButton} data-state={editor.isActive("bold")} use:pressActionBold on:press={() => editor.chain().focus().toggleBold().run()}> <Bold class="h-4 w-4" /> </button>
         </ToggleGroup.Item>
         <ToggleGroup.Item value="italic" class="h-auto w-auto p-2">
-          <button data-state={editor.isActive("italic")} on:click={() => editor.chain().focus().toggleItalic().run()}> <Italic class="h-4 w-4" /> </button>
+          <button data-state={editor.isActive("italic")} use:pressActionItalic on:press={() => editor.chain().focus().toggleItalic().run()}> <Italic class="h-4 w-4" /> </button>
         </ToggleGroup.Item>
         <ToggleGroup.Item value="underline" class="h-auto w-auto p-2">
-          <button data-state={editor.isActive("underline")} on:click={() => editor.chain().focus().toggleUnderline().run()}> <Underline class="h-4 w-4" /> </button>
+          <button data-state={editor.isActive("underline")} use:pressActionUnderline on:press={() => editor.chain().focus().toggleUnderline().run()}> <Underline class="h-4 w-4" /> </button>
         </ToggleGroup.Item>
         <ToggleGroup.Item value="strike" class="h-auto w-auto p-2">
-          <button data-state={editor.isActive("strike")} on:click={() => editor.chain().focus().toggleStrike().run()}> <Strikethrough class="h-4 w-4" /> </button>
+          <button data-state={editor.isActive("strike")} use:pressActionStrike on:press={() => editor.chain().focus().toggleStrike().run()}> <Strikethrough class="h-4 w-4" /> </button>
         </ToggleGroup.Item>
       </ToggleGroup.Root>
     </div>

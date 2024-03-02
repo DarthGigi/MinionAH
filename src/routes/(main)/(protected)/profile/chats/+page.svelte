@@ -5,9 +5,12 @@
   import { checkReadStatus } from "$lib/utilities";
   import Info from "lucide-svelte/icons/info";
   import Trash2 from "lucide-svelte/icons/trash-2";
+  import { createPress } from "svelte-interactions";
   import type { PageData } from "./$types";
 
   export let data: PageData;
+
+  const { pressAction } = createPress();
 
   let showDelete = false;
   let chatToDelete: string | null = null;
@@ -46,7 +49,8 @@
           <button
             class="group rounded bg-accent p-1 text-sm text-muted-foreground transition-colors duration-300 hover:bg-destructive focus:outline-none focus:ring-4 focus:ring-transparent"
             type="button"
-            on:click={() => {
+            use:pressAction
+            on:press={() => {
               showDelete = true;
               chatToDelete = chat.id;
             }}>
