@@ -261,7 +261,19 @@ export const POST: RequestHandler = async ({ locals, request, params, url }) => 
       }
     });
 
-  const notificationSettings = user2?.settings?.notificationSettings;
+  /// get the notification settings of the other user
+  const notificationSettings =
+    user.id === chat.user1_id
+      ? user2?.settings?.notificationSettings
+      : await prisma.notificationSettings.findFirst({
+          where: {
+            userSettings: {
+              user_id: chat.user1_id
+            }
+          }
+        });
+
+  console.log(notificationSettings);
 
   if (notificationSettings?.notificationType === "ALL" || notificationSettings?.notificationType === "DEVICE") {
     if (notificationSettings.socialNotifications) {
