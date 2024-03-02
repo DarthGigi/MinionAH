@@ -30,6 +30,7 @@
 
   const form = superForm(data, {
     validators: zodClient(notificationsFormSchema),
+    dataType: "json",
     resetForm: false
   });
   const { form: formData, enhance } = form;
@@ -51,6 +52,7 @@
       fcmToken = await getToken(messaging, {
         serviceWorkerRegistration: await navigator.serviceWorker.ready
       });
+      $formData.fcmToken = fcmToken;
       deviceRadioDisabled = false;
       allRadioDisabled = !hasEmail;
     } else if (permission === "denied" || permission === "default") {
