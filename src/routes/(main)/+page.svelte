@@ -9,11 +9,14 @@
   import { searchSignal } from "$lib/stores/signals";
   import type { Seller } from "$lib/types";
   import { onDestroy, onMount } from "svelte";
+  import { createPress } from "svelte-interactions";
   import { toast } from "svelte-sonner";
   import { draw } from "svelte/transition";
   import type { PageData } from "./$types";
 
   export let data: PageData;
+
+  const { pressAction } = createPress();
 
   let minions: Promise<Seller[]> | Seller[] = data.minions;
   let loadingMore = false;
@@ -249,7 +252,7 @@
         {#if newMinionAmount === 0 || newMinionAmount < 18 || (minions.length === 0 && !loadingMore)}
           <p class="px-4 py-1 text-center text-sm text-primary text-opacity-40">No more minions to load.</p>
         {:else}
-          <button type="button" on:click={() => searchMinions(currentTier, search, true, minions.length)} class="rounded p-1 text-sm text-accent transition-all duration-300 hover:bg-accent hover:text-white" aria-label="Load more minions">
+          <button type="button" use:pressAction on:press={() => searchMinions(currentTier, search, true, minions.length)} class="rounded p-1 text-sm text-accent transition-all duration-300 hover:bg-accent hover:text-white" aria-label="Load more minions">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down h-6 w-6" class:animate-spin={loadingMore}>
               {#if loadingMore}
                 <path in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />

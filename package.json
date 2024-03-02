@@ -81,6 +81,7 @@
     "pusher-js": "8.4.0-rc2",
     "skinview3d": "^3.0.1",
     "super-sitemap": "^0.14.14",
+    "svelte-interactions": "^0.2.0",
     "svelte-persisted-store": "^0.9.1",
     "svelte-sonner": "^0.3.19",
     "sveltekit-rate-limiter": "^0.4.3",

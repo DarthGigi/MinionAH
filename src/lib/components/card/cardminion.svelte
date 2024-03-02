@@ -6,14 +6,16 @@
   import Eye from "lucide-svelte/icons/eye";
   import Trash2 from "lucide-svelte/icons/trash-2";
   import { createEventDispatcher, setContext } from "svelte";
+  import { createHover } from "svelte-interactions";
   import { fade } from "svelte/transition";
-  import MinionCopyButton from "../CopyButton.svelte";
+  import CopyButton from "../CopyButton.svelte";
   import CardItemMinion from "./card-item-minion.svelte";
   import CardItemUser from "./card-item-user.svelte";
   import CardMinionAmount from "./card-minion-amount.svelte";
   import CardMinionPrice from "./card-minion-price.svelte";
   import CardMinionTier from "./card-minion-tier.svelte";
 
+  export let showButtons = true;
   export let minion: Seller;
   setContext("minion", minion);
 
@@ -21,10 +23,9 @@
   setContext("isHome", isHome);
   const isMinionPage = $page.url.pathname === `/` || $page.url.pathname === `/profile` || $page.url.pathname === `/${minion.user.username}`;
   setContext("isMinionPage", isMinionPage);
-  let hovering = false;
-  export let showButtons = true;
 
   const dispatch = createEventDispatcher();
+  const { hoverAction, isHovered } = createHover();
 
   function openModal(minionID: string) {
     dispatch("openDeleteModal", {
@@ -33,7 +34,7 @@
   }
 </script>
 
-<li in:fade|global={{ delay: 0 }} {...$$restProps} class="user-select-none relative list-item divide-y divide-accent rounded-lg bg-background transition-all duration-300" class:group={isHome} class:hover:bg-muted={isHome} on:mouseover={() => (hovering = true)} on:mouseout={() => (hovering = false)} on:blur={() => (hovering = false)} on:focus={() => (hovering = true)} role="listitem">
+<li role="listitem" class="user-select-none relative list-item divide-y divide-accent rounded-lg bg-background transition-all duration-300" class:group={isHome} class:hover:bg-muted={isHome} {...$$restProps} in:fade|global={{ delay: 0 }} use:hoverAction>
   <div class="flex w-full items-center justify-center gap-x-6 px-4">
     <CardItemMinion />
     {#if isHome}
@@ -43,7 +44,7 @@
 
   <div class="flex divide-x divide-accent">
     <CardMinionTier />
-    <CardMinionPrice bind:hovering />
+    <CardMinionPrice bind:hovering={$isHovered} />
     <CardMinionAmount />
   </div>
   {#if isHome}
@@ -82,7 +83,7 @@
     {/if}
 
     {#if isMinionPage}
-      <MinionCopyButton
+      <CopyButton
         class="absolute left-2 top-2"
         on:click={() => {
           // copy url to clipboard
