@@ -34,7 +34,7 @@
   }
 </script>
 
-<li role="listitem" class="user-select-none relative list-item divide-y divide-accent rounded-lg bg-background transition-all duration-300" class:group={isHome} class:hover:bg-muted={isHome} {...$$restProps} in:fade|global={{ delay: 0 }} use:hoverAction>
+<li role="listitem" {...$$restProps} class="user-select-none relative list-item divide-y divide-accent rounded-lg bg-background transition-all duration-300" class:group={isHome} class:hover:bg-muted={isHome} in:fade|global={{ delay: 0 }} use:hoverAction>
   <div class="flex w-full items-center justify-center gap-x-6 px-4">
     <CardItemMinion />
     {#if isHome}
