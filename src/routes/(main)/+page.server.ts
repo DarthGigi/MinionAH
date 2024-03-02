@@ -1,9 +1,7 @@
 import type { Seller } from "$lib/types";
 import type { PageServerLoad } from "./$types";
 
-export const load = (async ({ locals }) => {
-  if (locals.maintenance) return;
-
+export const load = (async () => {
   return {
     minions: prisma.auction.findMany({
       take: 18,

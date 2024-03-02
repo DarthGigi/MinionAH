@@ -18,6 +18,10 @@ const limiter = new RetryAfterRateLimiter({
 });
 
 export const handle: Handle = async ({ event, resolve }) => {
+  if (MAINTENANCE_MODE === "true") {
+    redirect(303, "https://maintenance.minionah.com");
+  }
+
   if (!dev) {
     await limiter.cookieLimiter?.preflight(event);
 
@@ -35,14 +39,6 @@ export const handle: Handle = async ({ event, resolve }) => {
         statusText: "You have made too many requests, please try again later."
       });
     }
-  }
-
-  if (MAINTENANCE_MODE === "true") {
-    event.locals.maintenance = true;
-    if (event.url.pathname !== "/") {
-      redirect(302, "/");
-    }
-    return await resolve(event);
   }
 
   async function resetEventLocals(event: RequestEvent<Partial<Record<string, string>>, string | null>) {
