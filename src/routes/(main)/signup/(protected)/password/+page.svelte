@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { page } from "$app/stores";
   import * as AlertDialog from "$lib/components/ui/alert-dialog";
   import * as Form from "$lib/components/ui/form";
   import { Input } from "$lib/components/ui/input";
@@ -8,22 +7,17 @@
   import { zodClient } from "sveltekit-superforms/adapters";
   import { formSchema, type FormSchema } from "./schema";
 
-  export let data: SuperValidated<Infer<FormSchema>>;
+  export let data;
+  const dataForm: SuperValidated<Infer<FormSchema>> = data.form;
 
-  const form = superForm(data, {
-    warnings: { duplicateId: false },
-    validators: zodClient(formSchema),
-    dataType: "json"
+  const form = superForm(dataForm, {
+    validators: zodClient(formSchema)
   });
 
   const { form: formData, enhance, message } = form;
 
   let passwordConfirmInputIsValid = false;
   let submitting = false;
-
-  $: if ($page.form) {
-    submitting = false;
-  }
 </script>
 
 <form
