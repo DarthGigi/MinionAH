@@ -3,7 +3,7 @@
   import * as AlertDialog from "$lib/components/ui/alert-dialog";
   import * as Form from "$lib/components/ui/form";
   import { Input } from "$lib/components/ui/input";
-  import Loader2 from "lucide-svelte/icons/loader-2";
+  import LoaderCircle from "lucide-svelte/icons/loader-circle";
   import { superForm, type Infer, type SuperValidated } from "sveltekit-superforms";
   import { zodClient } from "sveltekit-superforms/adapters";
   import { formSchema, type FormSchema } from "./schema";
@@ -70,7 +70,7 @@
     {#if !submitting}
       Login
     {:else}
-      <Loader2 class="h-4 w-4 animate-spin" />
+      <LoaderCircle class="h-4 w-4 animate-spin" />
     {/if}
   </Form.Button>
 

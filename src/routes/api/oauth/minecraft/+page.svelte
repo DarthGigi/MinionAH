@@ -1,8 +1,8 @@
 <script lang="ts">
-  import Loader2 from "lucide-svelte/icons/loader-2";
+  import LoaderCircle from "lucide-svelte/icons/loader-circle";
 </script>
 
 <div class="flex h-screen w-screen items-center justify-center">
-  <Loader2 class="h10 w-10 animate-spin" />
+  <LoaderCircle class="h10 w-10 animate-spin" />
   Processing
 </div>

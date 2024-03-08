@@ -11,7 +11,7 @@
   import ArrowUpDown from "lucide-svelte/icons/arrow-up-down";
   import ChevronDown from "lucide-svelte/icons/chevron-down";
   import CircleEllipsis from "lucide-svelte/icons/circle-ellipsis";
-  import Loader2 from "lucide-svelte/icons/loader-2";
+  import LoaderCircle from "lucide-svelte/icons/loader-circle";
   import RefreshCw from "lucide-svelte/icons/refresh-cw";
   import Trash2 from "lucide-svelte/icons/trash-2";
   import { Render, Subscribe, createRender, createTable } from "svelte-headless-table";
@@ -315,7 +315,7 @@
       <AlertDialog.Action asChild>
         <Button disabled={loading} variant="destructive" on:click={() => handleButtonClick("/api/dashboard/minions/resetall", "PUT", JSON.stringify({}), "Updating the minions failed. Please try again later or contact support.", (value) => (minionRefreshDialogOpen = value))}>
           {#if loading}
-            <Loader2 class="h-4 w-4 animate-spin" />
+            <LoaderCircle class="h-4 w-4 animate-spin" />
           {:else}
             Continue
           {/if}
@@ -342,7 +342,7 @@
       <AlertDialog.Action asChild>
         <Button disabled={loading} variant="default" on:click={() => handleButtonClick("/api/dashboard/minions/priceall", "PATCH", JSON.stringify({}), "Updating the prices failed. Please try again later or contact support.", (value) => (minionRCCDialogOpen = value))}>
           {#if loading}
-            <Loader2 class="h-4 w-4 animate-spin" />
+            <LoaderCircle class="h-4 w-4 animate-spin" />
           {:else}
             Continue
           {/if}
@@ -367,7 +367,7 @@
       <AlertDialog.Action asChild>
         <Button disabled={loading} variant="default" on:click={() => handleButtonClick("/api/dashboard/minions/deleteall", "DELETE", JSON.stringify({}), "Updating the prices failed. Please try again later or contact support.", (value) => (minionRCCDialogOpen = value))}>
           {#if loading}
-            <Loader2 class="h-4 w-4 animate-spin" />
+            <LoaderCircle class="h-4 w-4 animate-spin" />
           {:else}
             Continue
           {/if}
@@ -394,7 +394,7 @@
       <AlertDialog.Action asChild>
         <Button disabled={loading} variant="destructive" on:click={() => handleButtonClick("/api/dashboard/chats/delete", "DELETE", JSON.stringify({ ids: selectedIds }), "Deleting the minions failed. Please try again later or contact support.", (value) => (minionsDeleteDialogOpen = value))}>
           {#if loading}
-            <Loader2 class="h-4 w-4 animate-spin" />
+            <LoaderCircle class="h-4 w-4 animate-spin" />
           {:else}
             Continue
           {/if}

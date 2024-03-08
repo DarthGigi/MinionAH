@@ -2,7 +2,7 @@
   import * as Avatar from "$lib/components/ui/avatar";
   import * as Card from "$lib/components/ui/card";
   import { formatNumber } from "$lib/utilities";
-  import Contact2 from "lucide-svelte/icons/contact-2";
+  import ContactRound from "lucide-svelte/icons/contact-round";
   import MessagesSquare from "lucide-svelte/icons/messages-square";
   import ShoppingCart from "lucide-svelte/icons/shopping-cart";
   import Users from "lucide-svelte/icons/users";
@@ -22,7 +22,7 @@
     },
     {
       title: "Minions",
-      icon: Contact2,
+      icon: ContactRound,
       count: data.minions
     },
     {

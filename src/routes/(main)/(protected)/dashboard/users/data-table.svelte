@@ -10,7 +10,7 @@
   import ArrowUpDown from "lucide-svelte/icons/arrow-up-down";
   import ChevronDown from "lucide-svelte/icons/chevron-down";
   import CircleEllipsis from "lucide-svelte/icons/circle-ellipsis";
-  import Loader2 from "lucide-svelte/icons/loader-2";
+  import LoaderCircle from "lucide-svelte/icons/loader-circle";
   import Trash2 from "lucide-svelte/icons/trash-2";
   import { Render, Subscribe, createRender, createTable } from "svelte-headless-table";
   import { addHiddenColumns, addPagination, addSelectedRows, addSortBy, addTableFilter } from "svelte-headless-table/plugins";
@@ -283,7 +283,7 @@
       <AlertDialog.Action asChild>
         <Button disabled={loading} variant="destructive" on:click={() => handleButtonClick("/api/dashboard/users/delete", "DELETE", JSON.stringify({ ids: selectedIds }), "Deleting the users failed. Please try again later or contact support.", (value) => (usersDeleteDialogOpen = value))}>
           {#if loading}
-            <Loader2 class="h-4 w-4 animate-spin" />
+            <LoaderCircle class="h-4 w-4 animate-spin" />
           {:else}
             Continue
           {/if}
