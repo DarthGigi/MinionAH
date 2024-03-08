@@ -23,7 +23,7 @@
       <div class="flex flex-shrink-0 items-center">
         <DropdownMenu.Root bind:open={menuDropdownOpen}>
           <DropdownMenu.Trigger class="flex items-center gap-2 rounded-md px-4 py-2 hover:bg-popover">
-            <img class="pointer-events-none block h-8 w-auto transition-transform duration-300 ease-in-out" src="/assets/images/favicons/favicon.png" alt="Minion AH" class:rotate-45={menuDropdownOpen} class:max-md:-rotate-45={menuDropdownOpen} />
+            <img class="pointer-events-none block h-8 w-auto transition-transform duration-300 ease-in-out" src="/favicon.png" alt="Minion AH" class:rotate-45={menuDropdownOpen} class:max-md:-rotate-45={menuDropdownOpen} />
             <h1>MinionAH<span class="sr-only">: The Auction House for SkyBlock Minions</span></h1>
             <ChevronDown class="h-4 w-4" />
           </DropdownMenu.Trigger>

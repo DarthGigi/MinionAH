@@ -24,12 +24,13 @@ const firebase =
 
 const messaging = getMessaging(firebase);
 onBackgroundMessage(messaging, async (/** @type {import("firebase/messaging").MessagePayload} */ payload) => {
+  console.log("Received background message ", payload);
   const notification = /** @type {import("firebase/messaging").NotificationPayload} */ (payload.notification);
   const notificationTitle = notification?.title ?? "MinionAH";
   const notificationOptions = /** @type {NotificationOptions} */ ({
     body: notification?.body ?? "New message from MinionAH",
-    icon: notification?.icon ?? "https://minionah.com/assets/images/favicons/favicon.png",
-    image: notification?.image ?? "https://minionah.com/assets/images/favicons/favicon.png"
+    icon: notification?.icon ?? "https://minionah.com/favicon.png",
+    image: notification?.image ?? "https://minionah.com/favicon.png"
   });
 
   sw.registration.showNotification(notificationTitle, notificationOptions);
@@ -50,6 +51,7 @@ sw.addEventListener("notificationclick", (event /** @type {NotificationEvent} */
 
 // A simple, no-op service worker that takes immediate control.
 sw.addEventListener("install", () => {
+  console.log("Service worker installed.");
   // Skip over the "waiting" lifecycle state, to ensure that our
   // new service worker is activated immediately, even if there's
   // another tab open controlled by our older service worker code.
@@ -57,6 +59,7 @@ sw.addEventListener("install", () => {
 });
 
 sw.addEventListener("activate", () => {
+  console.log("Service worker activated.");
   // Optional: Get a list of all the current open windows/tabs under
   // our service worker's control, and force them to reload.
   // This can "unbreak" any open windows/tabs as soon as the new
