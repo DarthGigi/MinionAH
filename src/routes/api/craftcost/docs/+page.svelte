@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button";
   import { Input } from "$lib/components/ui/input";
-  import Loader2 from "lucide-svelte/icons/loader-2";
+  import LoaderCircle from "lucide-svelte/icons/loader-circle";
   import { onMount } from "svelte";
   import Highlight from "svelte-highlight";
   import json from "svelte-highlight/languages/typescript";
@@ -174,7 +174,7 @@
             demoCode = await fetchCode(item);
           }}>
           {#if loading}
-            <Loader2 class="mr-2 h-4 w-4 animate-spin" />
+            <LoaderCircle class="mr-2 h-4 w-4 animate-spin" />
           {:else}
             Send
           {/if}

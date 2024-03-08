@@ -7,7 +7,7 @@
   import Copy from "lucide-svelte/icons/copy";
   import Eye from "lucide-svelte/icons/eye";
   import Gavel from "lucide-svelte/icons/gavel";
-  import Loader2 from "lucide-svelte/icons/loader-2";
+  import LoaderCircle from "lucide-svelte/icons/loader-circle";
   import Trash2 from "lucide-svelte/icons/trash-2";
 
   export let id: string;
@@ -93,7 +93,7 @@
       <AlertDialog.Action asChild>
         <Button disabled={loading} variant="destructive" on:click={() => handleButtonClick("/api/dashboard/users/delete", "DELETE", JSON.stringify({ ids: [id] }), "Deleting the user failed. Please try again later or contact support.", (value) => (userDeleteDialogOpen = value))}>
           {#if loading}
-            <Loader2 class="h-4 w-4 animate-spin" />
+            <LoaderCircle class="h-4 w-4 animate-spin" />
           {:else}
             Continue
           {/if}

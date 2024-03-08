@@ -6,7 +6,7 @@
   import Message from "$lib/components/chat/message.svelte";
   import * as Avatar from "$lib/components/ui/avatar";
   import { scrollToBottomAction } from "$lib/utilities";
-  import ArrowLeftCircle from "lucide-svelte/icons/arrow-left-circle";
+  import CircleArrowLeft from "lucide-svelte/icons/circle-arrow-left";
   import Pusher from "pusher-js";
   import { onDestroy, onMount } from "svelte";
   import { draw, fade } from "svelte/transition";
@@ -134,7 +134,7 @@
 <div class="flex h-[calc(100vh-64px)] w-screen flex-col items-center justify-center">
   <div class="relative w-full max-w-sm rounded-lg border border-border bg-secondary shadow">
     <a href={`/${data.user2.username}`} class="absolute left-2 top-2 rounded-lg bg-accent bg-opacity-0 p-1.5 text-sm text-muted-foreground opacity-30 transition-all duration-300 hover:bg-opacity-100 hover:opacity-100">
-      <ArrowLeftCircle class="h-6 w-6" />
+      <CircleArrowLeft class="h-6 w-6" />
     </a>
 
     <div class="flex flex-col items-center justify-center border-border p-4" class:border-b={data.chat || showChat}>

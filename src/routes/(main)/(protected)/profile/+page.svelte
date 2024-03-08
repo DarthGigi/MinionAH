@@ -16,7 +16,7 @@
   import type { Minion, Auction, User } from "@prisma/client";
   import ChevronsUpDown from "lucide-svelte/icons/chevrons-up-down";
   import Cog from "lucide-svelte/icons/cog";
-  import Loader2 from "lucide-svelte/icons/loader-2";
+  import LoaderCircle from "lucide-svelte/icons/loader-circle";
   import { parse } from "numerable";
   import * as skinview3d from "skinview3d";
   import { onMount } from "svelte";
@@ -320,7 +320,7 @@
               {#if !$submittingCreate}
                 Create
               {:else}
-                <Loader2 class="h-4 w-4 animate-spin" />
+                <LoaderCircle class="h-4 w-4 animate-spin" />
               {/if}
             </Form.Button>
           </Card.Footer>
@@ -387,7 +387,7 @@
         {#if !$submittingDelete}
           Delete
         {:else}
-          <Loader2 class="h-4 w-4 animate-spin" />
+          <LoaderCircle class="h-4 w-4 animate-spin" />
         {/if}
       </AlertDialog.Action>
     </AlertDialog.Footer>

@@ -3,7 +3,7 @@
   import CopyButton from "$lib/components/CopyButton.svelte";
   import { MinionCard } from "$lib/components/card";
   import * as Avatar from "$lib/components/ui/avatar";
-  import ArrowLeftCircle from "lucide-svelte/icons/arrow-left-circle";
+  import CircleArrowLeft from "lucide-svelte/icons/circle-arrow-left";
   import type { PageData } from "./$types";
 
   export let data: PageData;
@@ -41,7 +41,7 @@
 <div class="flex h-[calc(100vh-64px)] w-screen items-center justify-center">
   <div class="relative w-full max-w-sm rounded-lg border border-accent bg-secondary shadow">
     <a href={`/${data.userMinion.user.username}`} class="absolute left-2 top-2 rounded-lg bg-accent bg-opacity-0 p-1.5 text-sm text-muted-foreground opacity-30 transition-all duration-300 hover:bg-opacity-100 hover:opacity-100">
-      <ArrowLeftCircle class="h-6 w-6" />
+      <CircleArrowLeft class="h-6 w-6" />
     </a>
     <CopyButton
       class="absolute right-2 top-2"
