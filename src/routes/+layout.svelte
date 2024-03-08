@@ -49,7 +49,7 @@
         toast(payload.notification?.title || "New message", {
           description: MessageToast,
           componentProps: {
-            image: payload.notification?.image || "/favicon.ico",
+            image: payload.notification?.image || "/favicon.png",
             text: payload.notification?.body || "You have a new message",
             username: payload.data?.username || "Unknown"
           },
