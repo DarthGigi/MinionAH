@@ -41,7 +41,7 @@
   <meta property="twitter:image" content="https://og.minionah.com/user/{$page.params.user}" />
 </svelte:head>
 
-<div id="container" class="flex w-full flex-col justify-center pt-6 md:h-[calc(100vh_-_64px)]">
+<div id="container" class="flex w-full flex-col justify-center pt-6">
   <div class="relative mx-auto w-full max-w-sm rounded-lg border border-accent bg-secondary shadow">
     <a href={`/${data.minionuser.username}/chat`} data-sveltekit-preload-data="off" class="group absolute left-3 top-3 rounded-lg bg-accent p-1.5 text-sm text-muted-foreground focus:outline-none focus:ring-4 focus:ring-transparent">
       <MessagesSquare class="h-5 w-5 transition-colors duration-300 group-hover:text-white" />
