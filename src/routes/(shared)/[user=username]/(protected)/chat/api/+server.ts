@@ -273,8 +273,6 @@ export const POST: RequestHandler = async ({ locals, request, params, url }) => 
           }
         });
 
-  console.log(notificationSettings);
-
   if (notificationSettings?.notificationType === "ALL" || notificationSettings?.notificationType === "DEVICE") {
     if (notificationSettings.socialNotifications) {
       if (notificationSettings.fcmTokens.length > 0) {
