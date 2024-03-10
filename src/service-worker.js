@@ -36,18 +36,18 @@ onBackgroundMessage(messaging, async (/** @type {import("firebase/messaging").Me
   sw.registration.showNotification(notificationTitle, notificationOptions);
 });
 
-sw.addEventListener("notificationclick", (event /** @type {NotificationEvent} */) => {
-  const notification /** @type {Notification} */ = event.notification;
-  const action /** @type {string} */ = event.action;
+// sw.addEventListener("notificationclick", (event /** @type {NotificationEvent} */) => {
+//   const notification /** @type {Notification} */ = event.notification;
+//   const action /** @type {string} */ = event.action;
 
-  if (action.startsWith("view-")) {
-    const username = action.split("-")[1];
-    sw.clients.openWindow(`https://minionah.com/${username}/chat`);
-  } else {
-    sw.clients.openWindow("https://minionah.com");
-  }
-  notification.close();
-});
+//   if (action.startsWith("view-")) {
+//     const username = action.split("-")[1];
+//     sw.clients.openWindow(`https://minionah.com/${username}/chat`);
+//   } else {
+//     sw.clients.openWindow("https://minionah.com");
+//   }
+//   notification.close();
+// });
 
 // A simple, no-op service worker that takes immediate control.
 sw.addEventListener("install", () => {

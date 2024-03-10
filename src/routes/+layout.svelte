@@ -14,6 +14,7 @@
   import { getMessaging, getToken, onMessage } from "firebase/messaging";
   import { onMount } from "svelte";
   import { toast } from "svelte-sonner";
+  import { page } from "$app/stores";
   import "../app.css";
 
   // Initialize Firebase
@@ -46,6 +47,7 @@
         serviceWorkerRegistration: await serviceWorker
       });
       onMessage(messaging, (payload) => {
+        if ($page.url.pathname.endsWith("/chat")) return;
         toast(payload.notification?.title || "New message", {
           description: MessageToast,
           componentProps: {
