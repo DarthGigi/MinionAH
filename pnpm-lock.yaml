@@ -75,11 +75,11 @@ dependencies:
     specifier: ^3.0.2
     version: 3.0.2
   lucia:
-    specifier: ^3.0.1
-    version: 3.0.1
+    specifier: ^3.1.1
+    version: 3.1.1
   lucide-svelte:
-    specifier: ^0.352.0
-    version: 0.352.0(svelte@4.2.12)
+    specifier: ^0.354.0
+    version: 0.354.0(svelte@4.2.12)
   mode-watcher:
     specifier: ^0.2.2
     version: 0.2.2(svelte@4.2.12)
@@ -134,8 +134,8 @@ devDependencies:
     specifier: ^1.2.3
     version: 1.2.3
   '@lucia-auth/adapter-prisma':
-    specifier: 4.0.0
-    version: 4.0.0(@prisma/client@5.10.2)(lucia@3.0.1)
+    specifier: 4.0.1
+    version: 4.0.1(@prisma/client@5.10.2)(lucia@3.1.1)
   '@sveltejs/adapter-vercel':
     specifier: ^5.1.0
     version: 5.1.0(@sveltejs/kit@2.5.3)(encoding@0.1.13)
@@ -1283,14 +1283,14 @@ packages:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.4.15
 
-  /@lucia-auth/adapter-prisma@4.0.0(@prisma/client@5.10.2)(lucia@3.0.1):
-    resolution: {integrity: sha512-TJg4/U1K1slS4A/OzDYCgmHTrIArntIynue14zGIEaMDu+OD+tGyq9WwQWqOabpx2Gm9xtDsoK+tTokAY3Up7A==}
+  /@lucia-auth/adapter-prisma@4.0.1(@prisma/client@5.10.2)(lucia@3.1.1):
+    resolution: {integrity: sha512-3SztRhj1RAHbbhI/0aB7YC5zl6Z6aktPhkWpn2CHhiB03B9x/+A+M6pqJuAt1usU8PzkjVilgRPhrPymMar66A==}
     peerDependencies:
       '@prisma/client': ^4.2.0 || ^5.0.0
       lucia: 3.x
     dependencies:
       '@prisma/client': 5.10.2(prisma@5.10.2)
-      lucia: 3.0.1
+      lucia: 3.1.1
     dev: true
 
   /@mapbox/node-pre-gyp@1.0.11(encoding@0.1.13):
@@ -2795,7 +2795,7 @@ packages:
       camelcase: 8.0.0
       dayjs: 1.11.10
       dlv: 1.1.3
-      normalize-url: 8.0.0
+      normalize-url: 8.0.1
       validator: 13.11.0
     dev: false
     optional: true
@@ -3073,7 +3073,7 @@ packages:
     hasBin: true
     dependencies:
       caniuse-lite: 1.0.30001596
-      electron-to-chromium: 1.4.698
+      electron-to-chromium: 1.4.699
       node-releases: 2.0.14
       update-browserslist-db: 1.0.13(browserslist@4.23.0)
     dev: true
@@ -3434,8 +3434,8 @@ packages:
       safe-buffer: 5.2.1
     dev: false
 
-  /electron-to-chromium@1.4.698:
-    resolution: {integrity: sha512-f9iZD1t3CLy1AS6vzM5EKGa6p9pRcOeEFXRFbaG2Ta+Oe7MkfRQ3fsvPYidzHe1h4i0JvIvpcY55C+B6BZNGtQ==}
+  /electron-to-chromium@1.4.699:
+    resolution: {integrity: sha512-I7q3BbQi6e4tJJN5CRcyvxhK0iJb34TV8eJQcgh+fR2fQ8miMgZcEInckCo1U9exDHbfz7DLDnFn8oqH/VcRKw==}
     dev: true
 
   /emoji-regex@8.0.0:
@@ -4319,13 +4319,13 @@ packages:
       lru-cache: 4.0.2
     dev: false
 
-  /lucia@3.0.1:
-    resolution: {integrity: sha512-srwUkTCGgr6N4mFpaKZVZy5kwiRZdsrbIDv9Wrjar+xyw1MjojYQQ7oRbegjRWOZ3yI8xOOclK3sz/rga2J7/w==}
+  /lucia@3.1.1:
+    resolution: {integrity: sha512-Ygvgnqq7Ha7lYVaZATPwkPD2s2Qlsm71Z2o0byx/abNBfFldCRow5sNii6RqMsuMpK957RAI3Gw4/aWoagkc7A==}
     dependencies:
       oslo: 1.0.1
 
-  /lucide-svelte@0.352.0(svelte@4.2.12):
-    resolution: {integrity: sha512-L2Hk0xGMMI25P+5nUBbhZrXLzZFVrvilL5ctscX/DbA/A1vw9uYToMqdn6oYmTA0FTcZ3vlmibaRCDcfWaUiNg==}
+  /lucide-svelte@0.354.0(svelte@4.2.12):
+    resolution: {integrity: sha512-70SspM/VC9E9OLJj1Jg6IhF40vf22aanW9vhUvtBwORogK4TP2oTd27YkY/3zOgi/Y5OAEOU4ZYtLxsAiOHPjQ==}
     peerDependencies:
       svelte: ^3 || ^4 || ^5.0.0-next.42
     dependencies:
@@ -4597,8 +4597,8 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /normalize-url@8.0.0:
-    resolution: {integrity: sha512-uVFpKhj5MheNBJRTiMZ9pE/7hD1QTeEvugSJW/OmLzAp78PB5O6adfMNTvmfKhXBkvCzC+rqifWcVYpGFwTjnw==}
+  /normalize-url@8.0.1:
+    resolution: {integrity: sha512-IO9QvjUMWxPQQhs60oOu10CRkWCiZzSUkzbXGGV9pviYl1fXYcvkzQ5jV9z8Y6un8ARoVRl4EtC6v6jNqbaJ/w==}
     engines: {node: '>=14.16'}
     requiresBuild: true
     dev: false
