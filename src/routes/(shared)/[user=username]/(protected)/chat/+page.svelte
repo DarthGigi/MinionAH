@@ -31,6 +31,8 @@
 
   let showChat = true;
 
+  let chatContainer: HTMLDivElement;
+  let timeout: NodeJS.Timeout;
   let newChats: iMessage[] = [];
   let messages: iMessage[] = [];
   let sentMessageSuccess: boolean | undefined | null = null;
@@ -83,6 +85,9 @@
       })
       .finally(() => {
         loading = false;
+        setTimeout(() => {
+          scrollToBottomAction(chatContainer);
+        }, 300);
       });
 
     messages = [...messagesData];
@@ -111,13 +116,16 @@
   };
 
   channel.bind("new-message", (new_message: iMessage) => {
+    sentMessageSuccess = null;
     new_message.createdAt = new Date(new_message.createdAt);
     new_message.animate = true;
     if (new_message.user_id === data.user.id) {
+      console.log(new_message);
       messages = [...messages, new_message];
       newChats = newChats.filter((message) => message.id === new_message.id);
       sentMessageSuccess = true;
-      setTimeout(() => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
         sentMessageSuccess = null;
       }, 1000);
     } else {
@@ -145,7 +153,7 @@
       <h2 class="text-center text-lg font-semibold">{data.user2?.username}</h2>
     </div>
     {#if showChat}
-      <div use:scrollToBottomAction class="no-scrollbar flex max-h-72 w-full max-w-full flex-col gap-2 overflow-y-auto scroll-smooth px-6 py-6">
+      <div use:scrollToBottomAction bind:this={chatContainer} class="no-scrollbar flex max-h-72 w-full max-w-full flex-col gap-2 overflow-y-auto scroll-smooth px-6 py-6">
         {#if loading}
           <ChatLoading />
         {:else if messages}
