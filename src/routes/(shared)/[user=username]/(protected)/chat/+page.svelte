@@ -27,7 +27,9 @@
     cluster: PUBLIC_cluster
   });
 
-  const channel = pusher.subscribe(`chat-${data.chat.id}`).bind("new-message", (new_message: iMessage) => {
+  const channel = pusher.subscribe(`chat-${data.chat.id}`).bind_global((eventName: string, new_message: iMessage) => {
+    console.log(eventName);
+    if (eventName !== "new-message") return;
     sentMessageSuccess = null;
     new_message.createdAt = new Date(new_message.createdAt);
     new_message.animate = true;
