@@ -27,7 +27,22 @@
     cluster: PUBLIC_cluster
   });
 
-  const channel = pusher.subscribe(`chat-${data.chat.id}`);
+  const channel = pusher.subscribe(`chat-${data.chat.id}`).bind("new-message", (new_message: iMessage) => {
+    sentMessageSuccess = null;
+    new_message.createdAt = new Date(new_message.createdAt);
+    new_message.animate = true;
+    if (new_message.user_id === data.user.id) {
+      messages = [...messages, new_message];
+      newChats = newChats.filter((message) => message.id === new_message.id);
+      sentMessageSuccess = true;
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        sentMessageSuccess = null;
+      }, 1000);
+    } else {
+      messages = [...messages, new_message];
+    }
+  });
 
   let showChat = true;
 
@@ -43,18 +58,18 @@
   $: newChats;
   $: messages;
 
-  const disconnect = () => {
-    channel.unsubscribe();
-    channel.unbind_all();
-    channel.disconnect();
-    pusher.unsubscribe(data.chat.id);
-    pusher.unbind_all();
-    pusher.disconnect();
-  };
+  // const disconnect = () => {
+  //   channel.unsubscribe();
+  //   channel.unbind_all();
+  //   channel.disconnect();
+  //   pusher.unsubscribe(data.chat.id);
+  //   pusher.unbind_all();
+  //   pusher.disconnect();
+  // };
 
   beforeNavigate(({ to }) => {
     updateRead();
-    disconnect();
+    // disconnect();
     // This makes sure the +layout.server.ts is re-run so that unreadMessages is updated
     window.location.href = to?.url.href || "/";
   });
@@ -92,23 +107,22 @@
 
     messages = [...messagesData];
 
-    channel.bind("new-message", (new_message: iMessage) => {
-      sentMessageSuccess = null;
-      new_message.createdAt = new Date(new_message.createdAt);
-      new_message.animate = true;
-      if (new_message.user_id === data.user.id) {
-        console.log(new_message);
-        messages = [...messages, new_message];
-        newChats = newChats.filter((message) => message.id === new_message.id);
-        sentMessageSuccess = true;
-        clearTimeout(timeout);
-        timeout = setTimeout(() => {
-          sentMessageSuccess = null;
-        }, 1000);
-      } else {
-        messages = [...messages, new_message];
-      }
-    });
+    // channel.bind("new-message", (new_message: iMessage) => {
+    //   sentMessageSuccess = null;
+    //   new_message.createdAt = new Date(new_message.createdAt);
+    //   new_message.animate = true;
+    //   if (new_message.user_id === data.user.id) {
+    //     messages = [...messages, new_message];
+    //     newChats = newChats.filter((message) => message.id === new_message.id);
+    //     sentMessageSuccess = true;
+    //     clearTimeout(timeout);
+    //     timeout = setTimeout(() => {
+    //       sentMessageSuccess = null;
+    //     }, 1000);
+    //   } else {
+    //     messages = [...messages, new_message];
+    //   }
+    // });
   });
   const sendMessage = async (eventData: any) => {
     const textValue = eventData.detail;
@@ -135,7 +149,7 @@
 
   onDestroy(() => {
     updateRead();
-    disconnect();
+    // disconnect();
   });
 </script>
 
