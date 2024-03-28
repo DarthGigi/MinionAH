@@ -91,6 +91,24 @@
       });
 
     messages = [...messagesData];
+
+    channel.bind("new-message", (new_message: iMessage) => {
+      sentMessageSuccess = null;
+      new_message.createdAt = new Date(new_message.createdAt);
+      new_message.animate = true;
+      if (new_message.user_id === data.user.id) {
+        console.log(new_message);
+        messages = [...messages, new_message];
+        newChats = newChats.filter((message) => message.id === new_message.id);
+        sentMessageSuccess = true;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+          sentMessageSuccess = null;
+        }, 1000);
+      } else {
+        messages = [...messages, new_message];
+      }
+    });
   });
   const sendMessage = async (eventData: any) => {
     const textValue = eventData.detail;
@@ -114,24 +132,6 @@
       body: JSON.stringify(message)
     });
   };
-
-  channel.bind("new-message", (new_message: iMessage) => {
-    sentMessageSuccess = null;
-    new_message.createdAt = new Date(new_message.createdAt);
-    new_message.animate = true;
-    if (new_message.user_id === data.user.id) {
-      console.log(new_message);
-      messages = [...messages, new_message];
-      newChats = newChats.filter((message) => message.id === new_message.id);
-      sentMessageSuccess = true;
-      clearTimeout(timeout);
-      timeout = setTimeout(() => {
-        sentMessageSuccess = null;
-      }, 1000);
-    } else {
-      messages = [...messages, new_message];
-    }
-  });
 
   onDestroy(() => {
     updateRead();
