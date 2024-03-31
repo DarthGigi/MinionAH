@@ -71,7 +71,7 @@
     </Avatar.Root>
     <h3 class="truncate text-sm font-medium text-white">{minion.minion.name.replace(/ [IVX]+$/, "")}</h3>
   </HoverCard.Trigger>
-  <HoverCard.Content class="mt-0 w-80 -translate-y-44 gap-x-2 border-accent bg-muted">
+  <HoverCard.Content class="mt-0 min-w-80 gap-x-2 border-accent bg-muted" side="top" align="center">
     <div class="flex items-center justify-center gap-x-2">
       <Avatar.Root id={`minionCanvasContainer_${minion.id}`} class="h-12 w-12  rounded-full bg-accent">
         <canvas bind:this={minionCanvas} class="!h-full !w-full cursor-move rounded-full bg-transparent" />

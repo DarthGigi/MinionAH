@@ -60,7 +60,7 @@
     </Avatar.Root>
     <h3 class="truncate text-sm font-medium text-white">{minion.user.username}</h3>
   </HoverCard.Trigger>
-  <HoverCard.Content class="mt-0 -translate-y-44 gap-x-2 border-accent bg-muted">
+  <HoverCard.Content class="mt-0 gap-x-2 border-accent bg-muted" side="top" align="center">
     <div class="flex items-center justify-center gap-x-2">
       <Avatar.Root id={`userCanvasContainer_${minion.id}`} class="h-12 w-12 flex-shrink-0 rounded-full bg-accent">
         <canvas bind:this={userCanvas} class="!h-full !w-full cursor-move rounded-full" />
