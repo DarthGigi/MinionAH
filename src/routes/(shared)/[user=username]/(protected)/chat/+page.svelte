@@ -27,10 +27,29 @@
     cluster: PUBLIC_cluster
   });
 
-  const channel = pusher.subscribe(`chat-${data.chat.id}`);
+  const channel = pusher.subscribe(`chat-${data.chat.id}`).bind_global((eventName: string, new_message: iMessage) => {
+    console.log(eventName);
+    if (eventName !== "new-message") return;
+    sentMessageSuccess = null;
+    new_message.createdAt = new Date(new_message.createdAt);
+    new_message.animate = true;
+    if (new_message.user_id === data.user.id) {
+      messages = [...messages, new_message];
+      newChats = newChats.filter((message) => message.id === new_message.id);
+      sentMessageSuccess = true;
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        sentMessageSuccess = null;
+      }, 1000);
+    } else {
+      messages = [...messages, new_message];
+    }
+  });
 
   let showChat = true;
 
+  let chatContainer: HTMLDivElement;
+  let timeout: NodeJS.Timeout;
   let newChats: iMessage[] = [];
   let messages: iMessage[] = [];
   let sentMessageSuccess: boolean | undefined | null = null;
@@ -41,18 +60,18 @@
   $: newChats;
   $: messages;
 
-  const disconnect = () => {
-    channel.unsubscribe();
-    channel.unbind_all();
-    channel.disconnect();
-    pusher.unsubscribe(data.chat.id);
-    pusher.unbind_all();
-    pusher.disconnect();
-  };
+  // const disconnect = () => {
+  //   channel.unsubscribe();
+  //   channel.unbind_all();
+  //   channel.disconnect();
+  //   pusher.unsubscribe(data.chat.id);
+  //   pusher.unbind_all();
+  //   pusher.disconnect();
+  // };
 
   beforeNavigate(({ to }) => {
     updateRead();
-    disconnect();
+    // disconnect();
     // This makes sure the +layout.server.ts is re-run so that unreadMessages is updated
     window.location.href = to?.url.href || "/";
   });
@@ -83,9 +102,29 @@
       })
       .finally(() => {
         loading = false;
+        setTimeout(() => {
+          scrollToBottomAction(chatContainer);
+        }, 300);
       });
 
     messages = [...messagesData];
+
+    // channel.bind("new-message", (new_message: iMessage) => {
+    //   sentMessageSuccess = null;
+    //   new_message.createdAt = new Date(new_message.createdAt);
+    //   new_message.animate = true;
+    //   if (new_message.user_id === data.user.id) {
+    //     messages = [...messages, new_message];
+    //     newChats = newChats.filter((message) => message.id === new_message.id);
+    //     sentMessageSuccess = true;
+    //     clearTimeout(timeout);
+    //     timeout = setTimeout(() => {
+    //       sentMessageSuccess = null;
+    //     }, 1000);
+    //   } else {
+    //     messages = [...messages, new_message];
+    //   }
+    // });
   });
   const sendMessage = async (eventData: any) => {
     const textValue = eventData.detail;
@@ -110,24 +149,9 @@
     });
   };
 
-  channel.bind("new-message", (new_message: iMessage) => {
-    new_message.createdAt = new Date(new_message.createdAt);
-    new_message.animate = true;
-    if (new_message.user_id === data.user.id) {
-      messages = [...messages, new_message];
-      newChats = newChats.filter((message) => message.id === new_message.id);
-      sentMessageSuccess = true;
-      setTimeout(() => {
-        sentMessageSuccess = null;
-      }, 1000);
-    } else {
-      messages = [...messages, new_message];
-    }
-  });
-
   onDestroy(() => {
     updateRead();
-    disconnect();
+    // disconnect();
   });
 </script>
 
@@ -145,7 +169,7 @@
       <h2 class="text-center text-lg font-semibold">{data.user2?.username}</h2>
     </div>
     {#if showChat}
-      <div use:scrollToBottomAction class="no-scrollbar flex max-h-72 w-full max-w-full flex-col gap-2 overflow-y-auto scroll-smooth px-6 py-6">
+      <div use:scrollToBottomAction bind:this={chatContainer} class="no-scrollbar flex max-h-72 w-full max-w-full flex-col gap-2 overflow-y-auto scroll-smooth px-6 py-6">
         {#if loading}
           <ChatLoading />
         {:else if messages}

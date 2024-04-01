@@ -16,6 +16,7 @@
   import { toast } from "svelte-sonner";
   import { page } from "$app/stores";
   import "../app.css";
+  import type { ToasterProps } from "svelte-sonner";
 
   // Initialize Firebase
   const firebaseApp: FirebaseApp = initializeApp(firebaseConfig);
@@ -35,7 +36,15 @@
     }
   });
 
+  let position: ToasterProps["position"] = "bottom-right";
+  let closeButton: ToasterProps["closeButton"] = true;
+
   onMount(async () => {
+    if (window.innerWidth < 768) {
+      position = "top-center";
+      closeButton = false;
+    }
+
     const serviceWorker = navigator.serviceWorker.register("/service-worker.js", {
       type: dev ? "module" : "classic"
     });
@@ -67,7 +76,18 @@
   });
 </script>
 
+<svelte:window
+  on:resize={() => {
+    if (window.innerWidth < 768) {
+      position = "top-center";
+      closeButton = false;
+    } else {
+      position = "bottom-right";
+      closeButton = true;
+    }
+  }} />
+
 <Navbar />
-<Toaster theme="dark" closeButton={true} />
+<Toaster theme="dark" {closeButton} {position} />
 
 <slot />

@@ -39,80 +39,86 @@
 
   onMount(() => {
     if (!$internalPreferences.hasSeenDiscordToast) {
-      toast("Community", {
-        description: "Would you like to join our Discord server?",
-        action: {
-          label: "Join",
-          onClick: () => {
-            window.open("https://discord.minionah.com/", "_blank");
-          }
-        },
-        duration: Number.POSITIVE_INFINITY,
-        onDismiss: () => {
-          internalPreferences.update((state) => ({ ...state, hasSeenDiscordToast: true }));
-
-          toast(HtmlToast, {
-            duration: 5000,
-            classes: {
-              closeButton: "!hidden"
-            },
-            componentProps: {
-              htmlMessage: "You can always join our Discord server by visiting <a href='https://discord.minionah.com/' target='_blank' class='underline'>discord.minionah.com</a>"
+      setTimeout(() => {
+        toast("Community", {
+          description: "Would you like to join our Discord server?",
+          action: {
+            label: "Join",
+            onClick: () => {
+              window.open("https://discord.minionah.com/", "_blank");
             }
-          });
-        }
+          },
+          duration: Number.POSITIVE_INFINITY,
+          onDismiss: () => {
+            internalPreferences.update((state) => ({ ...state, hasSeenDiscordToast: true }));
+
+            toast(HtmlToast, {
+              duration: 5000,
+              classes: {
+                closeButton: "!hidden"
+              },
+              componentProps: {
+                htmlMessage: "You can always join our Discord server by visiting <a href='https://discord.minionah.com/' target='_blank' class='underline'>discord.minionah.com</a>"
+              }
+            });
+          }
+        });
       });
     }
     if (!$internalPreferences.hasSeenWelcomeGuideToast) {
-      toast("Welcome to MinionAH!", {
-        description: "It seems like you're new here. Would you like to read our guide on how to use MinionAH?",
-        action: {
-          label: "Read guide",
-          onClick: () => {
-            internalPreferences.update((state) => ({ ...state, hasSeenWelcomeGuideToast: true }));
-            window.open("https://newsroom.minionah.com/minionah-guide", "_blank");
-          }
-        },
-        onDismiss: () => {
-          internalPreferences.update((state) => ({ ...state, hasSeenWelcomeGuideToast: true }));
-
-          toast(HtmlToast, {
-            duration: 5000,
-            classes: {
-              closeButton: "!hidden"
-            },
-            componentProps: {
-              htmlMessage: "You can always read the guide by visiting <a href='https://newsroom.minionah.com/minionah-guide' target='_blank' class='underline'>newsroom.minionah.com/minionah-guide</a>"
+      setTimeout(() => {
+        toast("Welcome to MinionAH!", {
+          description: "It seems like you're new here. Would you like to read our guide on how to use MinionAH?",
+          action: {
+            label: "Read guide",
+            onClick: () => {
+              internalPreferences.update((state) => ({ ...state, hasSeenWelcomeGuideToast: true }));
+              window.open("https://newsroom.minionah.com/minionah-guide", "_blank");
             }
-          });
-        },
-        duration: Number.POSITIVE_INFINITY
+          },
+          onDismiss: () => {
+            internalPreferences.update((state) => ({ ...state, hasSeenWelcomeGuideToast: true }));
+
+            toast(HtmlToast, {
+              duration: 5000,
+              classes: {
+                closeButton: "!hidden"
+              },
+              componentProps: {
+                htmlMessage: "You can always read the guide by visiting <a href='https://newsroom.minionah.com/minionah-guide' target='_blank' class='underline'>newsroom.minionah.com/minionah-guide</a>"
+              }
+            });
+          },
+          duration: Number.POSITIVE_INFINITY
+        });
       });
     }
     if (!$internalPreferences.hasSeenDeviceNotificationsToast) {
       if (!data.user) return;
-      toast("Notifications", {
-        description: "Would you like to receive notifications when someone sends you a message?",
-        action: {
-          label: "Enable",
-          onClick: () => {
-            internalPreferences.update((state) => ({ ...state, hasSeenDeviceNotificationsToast: true }));
-            window.open("/profile/settings/notifications", "_self");
-          }
-        },
-        onDismiss: () => {
-          internalPreferences.update((state) => ({ ...state, hasSeenDeviceNotificationsToast: true }));
-          toast(HtmlToast, {
-            duration: 5000,
-            classes: {
-              closeButton: "!hidden"
-            },
-            componentProps: {
-              htmlMessage: "You can always enable notifications by visiting <a href='/profile/settings/notifications' target='_self' class='underline'>your settings</a>"
+      setTimeout(() => {
+        toast("Notifications", {
+          description: "Would you like to receive notifications when someone sends you a message?",
+          action: {
+            label: "Enable",
+            onClick: () => {
+              internalPreferences.update((state) => ({ ...state, hasSeenDeviceNotificationsToast: true }));
+              window.open("/profile/settings/notifications", "_self");
             }
-          });
-        },
-        duration: Number.POSITIVE_INFINITY
+          },
+          onDismiss: () => {
+            internalPreferences.update((state) => ({ ...state, hasSeenDeviceNotificationsToast: true }));
+            toast(HtmlToast, {
+              duration: 5000,
+              classes: {
+                closeButton: "!hidden"
+              },
+              componentProps: {
+                htmlMessage: "You can always enable notifications by visiting <a href='/profile/settings/notifications' target='_self' class='underline'>your settings</a>"
+              }
+            });
+          },
+          duration: Number.POSITIVE_INFINITY
+        });
       });
     }
   });

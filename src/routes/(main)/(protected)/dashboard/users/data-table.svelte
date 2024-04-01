@@ -18,7 +18,6 @@
   import DataTableCheckbox from "../components/data-table-checkbox.svelte";
   import DataTableActions from "./data-table-actions.svelte";
   import DataTableUser from "./data-table-user.svelte";
-
   export let data: User[];
   const table = createTable(readable(data.filter((user) => user.id !== $page.data.user.id)), {
     page: addPagination(),
@@ -81,7 +80,8 @@
       }
     }),
     table.column({
-      accessor: ({ _count }) => _count.minions,
+      // @ts-ignore - Prisma doesn't have a type for this
+      accessor: ({ _count }) => _count.auctions,
       header: "Minions",
       plugins: {
         filter: {
@@ -114,7 +114,7 @@
   const { hiddenColumnIds } = pluginStates.hide;
   const { selectedDataIds } = pluginStates.select;
 
-  let selectedIds: string[];
+  let selectedIds: (string | undefined)[];
   $: {
     selectedIds = Object.entries($selectedDataIds)
       .filter(([id, isSelected]) => isSelected && $rows[Number(id)])

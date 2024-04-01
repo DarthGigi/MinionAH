@@ -66,6 +66,9 @@
         {/if}
       </div>
     {/each}
+    {#if chats.length === 0}
+      <p class="text-muted-foreground">You have no chats yet.</p>
+    {/if}
   {/await}
 </div>
 
