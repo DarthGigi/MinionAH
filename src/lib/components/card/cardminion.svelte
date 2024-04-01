@@ -50,9 +50,9 @@
   {#if isHome}
     <div class="flex h-10">
       <a href={`${minion.user.username}/chat`} data-sveltekit-preload-data="off" class="relative flex h-full w-full items-center justify-center overflow-hidden rounded-b-lg font-medium text-primary transition-all duration-300">
-        <div class="group peer relative z-10 flex h-full w-full flex-shrink-0 items-center justify-center text-wrap rounded-full px-2 py-0.5 text-xs font-medium text-primary transition-all duration-300 group-hover:scale-125 group-hover:text-muted">
+        <div class="group peer relative z-10 flex h-full w-full min-w-0 flex-shrink-0 flex-nowrap items-center justify-center text-nowrap rounded-full px-2 py-0.5 text-xs font-medium text-primary transition-all duration-300 group-hover:scale-125 group-hover:text-muted">
           <div class="inline-block">Buy&nbsp;</div>
-          <div class="inline-block w-0 max-w-fit overflow-hidden text-nowrap transition-[width] duration-1000 group-hover:w-full">
+          <div class="inline-block w-0 max-w-fit flex-nowrap overflow-hidden text-nowrap transition-[width] duration-1000 group-hover:w-full">
             {minion.user.username}{#if minion.user.username.endsWith("s")}
               '
             {:else}
@@ -61,7 +61,7 @@
             {minion.minion.generator.replace(/_/g, " ").toLowerCase().charAt(0) + minion.minion.generator.slice(1).toLowerCase().replace(/_/g, " ")} minion{#if minion.amount && minion.amount > 1}s{/if}
           </div>
         </div>
-        <div class="absolute top-0 z-0 h-0 w-full flex-shrink-0 bg-muted-foreground transition-all duration-500 group-hover:h-full peer-hover:top-1/2 peer-hover:h-3/4 peer-hover:w-10/12 peer-hover:-translate-y-1/2 peer-hover:rounded-lg" />
+        <div class="absolute top-0 z-0 h-0 w-full flex-shrink-0 bg-muted-foreground transition-all duration-500 group-hover:h-full peer-hover:top-1/2 peer-hover:h-3/4 peer-hover:w-[95%] peer-hover:-translate-y-1/2 peer-hover:rounded-lg" />
       </a>
     </div>
   {/if}
