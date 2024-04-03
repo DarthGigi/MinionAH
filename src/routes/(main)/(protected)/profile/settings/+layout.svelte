@@ -18,8 +18,10 @@
 
 <div class="space-y-6 p-10 pb-28">
   <div class="space-y-0.5">
-    <Button variant="link" href="/profile" class="px-0"><ArrowLeft /></Button>
-    <h2 class="text-2xl font-bold tracking-tight">Settings</h2>
+    <div class="flex items-center gap-2">
+      <Button variant="link" href="/profile" class="px-0"><ArrowLeft /></Button>
+      <h2 class="text-2xl font-bold tracking-tight">Settings</h2>
+    </div>
     <p class="text-muted-foreground">Manage your account and notification settings.</p>
   </div>
   <Separator class="my-6" />
