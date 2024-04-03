@@ -18,8 +18,8 @@ export const load: PageServerLoad = async ({ locals }) => {
     form: await superValidate(
       {
         type: userSettings?.notificationSettings?.notificationType || "NONE",
-        marketing_emails: userSettings?.notificationSettings?.marketNotifications || false,
-        social_emails: userSettings?.notificationSettings?.socialNotifications || false
+        marketing_notifications: userSettings?.notificationSettings?.marketNotifications || false,
+        social_notifications: userSettings?.notificationSettings?.socialNotifications || false
       },
       zod(notificationsFormSchema)
     )
@@ -36,8 +36,8 @@ export const actions: Actions = {
     }
 
     const notificationType = form.data.type;
-    const marketNotifications = form.data.marketing_emails;
-    const socialNotifications = form.data.social_emails;
+    const marketNotifications = form.data.marketing_notifications;
+    const socialNotifications = form.data.social_notifications;
     const fcmTokens = form.data.fcmToken ? [form.data.fcmToken] : [];
 
     try {
