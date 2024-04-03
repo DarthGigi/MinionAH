@@ -9,7 +9,7 @@
 <div class="space-y-6">
   <div>
     <h3 class="text-lg font-medium">Notifications</h3>
-    <p class="text-sm text-muted-foreground">Configure your notification preferences.</p>
+    <p class="text-sm text-muted-foreground">Customize your notification settings</p>
   </div>
   <Separator />
   <NotificationsForm data={data.form} />
