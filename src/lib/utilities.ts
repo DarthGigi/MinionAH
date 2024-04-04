@@ -2,7 +2,7 @@ import type { Chat } from "@prisma/client";
 import { format } from "numerable";
 import { sanitize } from "@jill64/universal-sanitizer";
 
-export function formatNumber(num: number | string): string {
+export const formatNumber = (num: number | string): string => {
   // if the number is a string, parse it to a number
   if (typeof num === "string") {
     num = parseFloat(num);
@@ -25,9 +25,9 @@ export function formatNumber(num: number | string): string {
   } else {
     return format(num, "0a");
   }
-}
+};
 
-export function checkReadStatus(chat: Chat, loggedInUserId: string | undefined) {
+export const checkReadStatus = (chat: Chat, loggedInUserId: string | undefined) => {
   if (chat.user1_id === loggedInUserId) {
     return chat.user1Read;
   } else if (chat.user2_id === loggedInUserId) {
@@ -35,9 +35,9 @@ export function checkReadStatus(chat: Chat, loggedInUserId: string | undefined) 
   } else {
     throw new Error("Logged in user is not part of this chat");
   }
-}
+};
 
-export function scrollToBottomAction(node: HTMLElement, immediate = true) {
+export const scrollToBottomAction = (node: HTMLElement, immediate = true) => {
   let stop: () => void;
   const destroy = () => {
     stop && stop();
@@ -69,9 +69,9 @@ export function scrollToBottomAction(node: HTMLElement, immediate = true) {
     update,
     destroy
   };
-}
+};
 
-export function sanitizeInput(input: string): string {
+export const sanitizeInput = (input: string): string => {
   const sanitizedInput = sanitize(input, {
     sanitizeHtml: {
       allowedTags: ["b", "i", "u", "s", "img"],
@@ -83,9 +83,9 @@ export function sanitizeInput(input: string): string {
     }
   });
   return sanitizedInput;
-}
+};
 
-export function requestNotificationPermission(request: boolean = false) {
+export const requestNotificationPermission = (request: boolean = false) => {
   if (request) {
     return Notification.requestPermission().then(async (permission) => {
       return permission;
@@ -93,4 +93,4 @@ export function requestNotificationPermission(request: boolean = false) {
   }
 
   return Notification.permission;
-}
+};

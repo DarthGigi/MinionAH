@@ -34,7 +34,7 @@ model ProfileSettings {
   userSettings UserSettings @relation(fields: [id], references: [user_id], onDelete: Cascade)
   email        String?
   bio          String?
-  website      String?
+  urls         String[]
 }
 
 enum NotificationType {

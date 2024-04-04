@@ -6,8 +6,8 @@
         required_error: "You need to select a notification type."
       })
       .default("NONE"),
-    social_emails: z.boolean().default(false).optional(),
-    marketing_emails: z.boolean().default(false).optional(),
+    social_notifications: z.boolean().default(false).optional(),
+    marketing_notifications: z.boolean().default(false).optional(),
     fcmToken: z.string().optional()
   });
   type NotificationFormSchema = typeof notificationsFormSchema;
@@ -23,6 +23,7 @@
   import { getMessaging, getToken } from "firebase/messaging";
   import { onMount } from "svelte";
   import { toast } from "svelte-sonner";
+  import { readable, writable } from "svelte/store";
   import { superForm, type Infer, type SuperValidated } from "sveltekit-superforms";
   import { zodClient } from "sveltekit-superforms/adapters";
 
@@ -31,35 +32,47 @@
   const form = superForm(data, {
     validators: zodClient(notificationsFormSchema),
     dataType: "json",
-    resetForm: false
+    resetForm: false,
+    timeoutMs: 2000
   });
-  const { form: formData, enhance } = form;
 
-  let fcmToken: string;
-  let deviceRadioDisabled = false;
-  let permission: NotificationPermission;
-  let hasEmail = $page.data.settings?.profileSettings?.email ? true : false;
-  let allRadioDisabled: boolean = false;
+  const { form: formData, enhance, tainted, isTainted, submitting, timeout } = form;
+
+  const fcmToken = writable<string>();
+  const deviceRadioDisabled = writable(false);
+  const permission = writable<NotificationPermission>();
+  const hasEmail = readable($page.data.userData.settings?.profileSettings?.email ? true : false);
+  const allRadioDisabled = writable(false);
+  const toastLoading = writable<number | string>();
+
+  const handleRequestPermission = async (request: boolean = false) => {
+    permission.set(await requestNotificationPermission(request));
+    if ($permission === "granted") {
+      const messaging = getMessaging();
+      fcmToken.set(
+        await getToken(messaging, {
+          serviceWorkerRegistration: await navigator.serviceWorker.ready
+        })
+      );
+      deviceRadioDisabled.set(false);
+      allRadioDisabled.set(!$hasEmail);
+    } else if ($permission === "denied" || $permission === "default") {
+      deviceRadioDisabled.set(true);
+      allRadioDisabled.set(true);
+    }
+  };
+
+  timeout.subscribe((value) => {
+    if (value) {
+      toast.loading("It's taking longer than expected to update your notification preferences...", {
+        id: $toastLoading
+      });
+    }
+  });
 
   onMount(async () => {
     handleRequestPermission();
   });
-
-  const handleRequestPermission = async (request: boolean = false) => {
-    permission = await requestNotificationPermission(request);
-    if (permission === "granted") {
-      const messaging = getMessaging();
-      fcmToken = await getToken(messaging, {
-        serviceWorkerRegistration: await navigator.serviceWorker.ready
-      });
-      $formData.fcmToken = fcmToken;
-      deviceRadioDisabled = false;
-      allRadioDisabled = !hasEmail;
-    } else if (permission === "denied" || permission === "default") {
-      deviceRadioDisabled = true;
-      allRadioDisabled = true;
-    }
-  };
 </script>
 
 <form
@@ -67,9 +80,13 @@
   class="space-y-8"
   use:enhance={{
     onSubmit: async ({ formData }) => {
-      formData.set("fcmToken", fcmToken);
+      formData.set("fcmToken", $fcmToken);
+      $toastLoading = toast.loading("Updating your notification preferences...");
     },
-    onResult: async ({ result }) => {
+    onResult: async () => {
+      setTimeout(() => toast.dismiss($toastLoading), 300);
+    },
+    onUpdate: async ({ result }) => {
       if (result.type === "success") {
         toast.success("Your notification preferences have been updated successfully.");
       } else {
@@ -85,11 +102,11 @@
     <RadioGroup.Root class="flex flex-col space-y-1" bind:value={$formData.type}>
       <div class="flex items-center space-x-4">
         <Form.Control let:attrs>
-          <RadioGroup.Item value="ALL" disabled={allRadioDisabled} {...attrs} />
+          <RadioGroup.Item value="ALL" disabled={true} {...attrs} />
           <Form.Label class="flex flex-col font-normal">
             <span class="text-base">Device & Email</span>
-            <span class="text-sm text-muted-foreground">Receive notifications on your device and via email.</span>
-            {#if permission === "denied" || permission === "default"}
+            <span class="text-sm text-muted-foreground">Receive notifications on your device and via email. (coming soon)</span>
+            {#if $permission === "denied" || $permission === "default"}
               <span class="text-sm font-semibold text-muted-foreground">You need to allow notifications to receive them.</span>
             {/if}
             {#if !hasEmail}
@@ -100,10 +117,10 @@
       </div>
       <div class="flex items-center space-x-4">
         <Form.Control let:attrs>
-          <RadioGroup.Item value="EMAIL" disabled={!hasEmail} {...attrs} />
+          <RadioGroup.Item value="EMAIL" disabled={true} {...attrs} />
           <Form.Label class="flex flex-col font-normal">
             <span class="text-base">Email</span>
-            <span class="text-sm text-muted-foreground">Receive notifications via email only.</span>
+            <span class="text-sm text-muted-foreground">Receive notifications via email only. (coming soon) </span>
             {#if !hasEmail}
               <span class="text-sm font-semibold text-muted-foreground">You need to add an email to receive email notifications. You can do this in your <a href="/profile/settings" class="underline">profile settings</a>.</span>
             {/if}
@@ -112,11 +129,11 @@
       </div>
       <div class="flex items-center space-x-4">
         <Form.Control let:attrs>
-          <RadioGroup.Item value="DEVICE" disabled={deviceRadioDisabled} {...attrs} />
+          <RadioGroup.Item value="DEVICE" disabled={$deviceRadioDisabled} {...attrs} />
           <Form.Label class="flex flex-col font-normal">
             <span class="text-base">Device</span>
             <span class="text-sm text-muted-foreground">Receive notifications on your device only.</span>
-            {#if permission === "denied" || permission === "default"}
+            {#if $permission === "denied" || $permission === "default"}
               <span class="text-sm font-semibold text-muted-foreground">You need to allow notifications to receive them.</span>
             {/if}
           </Form.Label>
@@ -134,42 +151,42 @@
     </RadioGroup.Root>
   </Form.Fieldset>
 
-  {#if permission === "denied" || permission === "default"}
+  {#if $permission === "denied" || $permission === "default"}
     <div class="flex flex-col">
-      {#if permission === "default"}
+      {#if $permission === "default"}
         <Button class="w-fit" variant="outline" on:click={() => handleRequestPermission(true)}>Allow notifications</Button>
       {/if}
-      {#if permission === "denied"}
+      {#if $permission === "denied"}
         <p class="text-sm text-red-500">You have denied notifications. Please allow them in your browser settings.</p>
       {/if}
     </div>
   {/if}
 
   <div class="space-y-4">
-    <Form.Field {form} name="marketing_emails">
-      <Form.Legend>Notify me about...</Form.Legend>
+    <Form.Field {form} name="marketing_notifications">
+      <Form.Legend>Send me...</Form.Legend>
       <Form.Control let:attrs>
         <div class="flex flex-row items-center justify-between rounded-lg border border-border p-4">
           <div class="space-y-0.5">
-            <Form.Label class="text-base">Marketing</Form.Label>
+            <Form.Label class="text-base">Marketing notifications</Form.Label>
             <Form.Description>Receive notifications about new features, news, and more.</Form.Description>
           </div>
-          <Switch includeInput {...attrs} bind:checked={$formData.marketing_emails} />
+          <Switch includeInput {...attrs} bind:checked={$formData.marketing_notifications} />
         </div>
       </Form.Control>
     </Form.Field>
-    <Form.Field {form} name="social_emails">
+    <Form.Field {form} name="social_notifications">
       <Form.Control let:attrs>
         <div class="flex flex-row items-center justify-between rounded-lg border border-border p-4">
           <div class="space-y-0.5">
-            <Form.Label class="text-base">Social emails</Form.Label>
-            <Form.Description>Receive emails for when someone sends you a message.</Form.Description>
+            <Form.Label class="text-base">Social notifications</Form.Label>
+            <Form.Description>Receive notifications for when someone sends you a message.</Form.Description>
           </div>
-          <Switch includeInput {...attrs} bind:checked={$formData.social_emails} />
+          <Switch includeInput {...attrs} bind:checked={$formData.social_notifications} />
         </div>
       </Form.Control>
     </Form.Field>
   </div>
 
-  <Form.Button>Update notifications</Form.Button>
+  <Form.Button disabled={!isTainted($tainted) || $submitting}>Update notifications</Form.Button>
 </form>
