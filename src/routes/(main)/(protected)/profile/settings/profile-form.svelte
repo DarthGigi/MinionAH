@@ -2,7 +2,7 @@
   import { z } from "zod";
   export const profileFormSchema = z.object({
     username: z.string().min(3).max(16),
-    email: z.string().email({ message: "Please enter a valid email" }).optional(),
+    email: z.string().email({ message: "Please enter a valid email" }).optional().or(z.literal("")),
     bio: z.string().max(160, { message: "Your bio can't be longer than 160 characters." }).optional(),
     urls: z.array(z.string().url({ message: "Please enter a valid URL" }).max(100, { message: "Your website URL can't be longer than 100 characters." })).max(6, { message: "You can't add more than 6 URLs." })
   });
