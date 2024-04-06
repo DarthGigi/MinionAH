@@ -1,4 +1,5 @@
 import { CRON_SECRET } from "$env/static/private";
+import { bulkUpdate, type BulkUpdateEntries } from "$lib/server/utilities";
 import type { RequestHandler } from "./$types";
 
 export const GET: RequestHandler = async ({ request, fetch }) => {
@@ -13,14 +14,14 @@ export const GET: RequestHandler = async ({ request, fetch }) => {
   try {
     const minions: Record<string, number> = await fetch("/api/craftcost/minions").then((r) => r.json());
 
-    const prismapromises = Object.keys(minions).map((minion) =>
-      prisma.minion.update({
-        where: { id: minion },
-        data: { craftCost: minions[minion] }
-      })
-    );
+    const bulkUpdates: BulkUpdateEntries = Object.keys(minions).map((minion) => {
+      return {
+        id: minion,
+        craftCost: minions[minion]
+      };
+    });
 
-    await prisma.$transaction(prismapromises);
+    await prisma.$transaction([bulkUpdate("Minion", bulkUpdates)]);
 
     return new Response(JSON.stringify({ success: true }, null, 2), { headers: { "content-type": "application/json" }, status: 200, statusText: "OK" });
   } catch (e) {

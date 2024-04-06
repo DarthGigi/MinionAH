@@ -193,3 +193,6 @@ package
 .ionide
 
 # Custom rules
+
+# Sentry Config File
+.sentryclirc
