@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [
     sentrySvelteKit({
       sourceMapsUploadOptions: {
-        org: "MinionAH",
+        org: "minionah",
         project: "minionah"
       }
     }),
