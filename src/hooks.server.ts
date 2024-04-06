@@ -1,3 +1,5 @@
+import {sequence} from "@sveltejs/kit/hooks";
+import * as Sentry from "@sentry/sveltekit";
 import { dev } from "$app/environment";
 import { ADMIN_ID, RATE_LIMIT_SECRET, MAINTENANCE_MODE } from "$env/static/private";
 import { lucia } from "$lib/server/lucia";
@@ -5,6 +7,11 @@ import prisma from "$lib/server/prisma";
 import type { Handle, RequestEvent } from "@sveltejs/kit";
 import { redirect } from "@sveltejs/kit";
 import { RetryAfterRateLimiter } from "sveltekit-rate-limiter/server";
+
+Sentry.init({
+    dsn: "https://c7b9b7a1b4e2f091d9a1dc913b23dffc@o4507042038087680.ingest.us.sentry.io/4507042039791616",
+    tracesSampleRate: 1
+})
 
 const limiter = new RetryAfterRateLimiter({
   IP: [60, "15m"],
@@ -17,7 +24,7 @@ const limiter = new RetryAfterRateLimiter({
   }
 });
 
-export const handle: Handle = async ({ event, resolve }) => {
+export const handle: Handle = sequence(Sentry.sentryHandle(), async ({ event, resolve }) => {
   if (MAINTENANCE_MODE === "true") {
     redirect(303, "https://maintenance.minionah.com");
   }
@@ -156,4 +163,5 @@ export const handle: Handle = async ({ event, resolve }) => {
   }
 
   return await resolve(event);
-};
+});
+export const handleError = Sentry.handleErrorWithSentry();
