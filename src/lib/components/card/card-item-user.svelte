@@ -53,7 +53,7 @@
 </script>
 
 <HoverCard.Root openDelay={150} closeDelay={150} bind:open={userisOpen}>
-  <HoverCard.Trigger href={`/${minion.user.username}`} class="my-2 flex flex-col items-center truncate rounded p-1 transition-all duration-500">
+  <HoverCard.Trigger href={`/user/${minion.user.username}`} class="my-2 flex flex-col items-center truncate rounded p-1 transition-all duration-500">
     <Avatar.Root class="h-12 w-12 flex-shrink-0 rounded-full ">
       <Avatar.Image class="pointer-events-none h-full w-full bg-accent p-1" src={`https://res.cloudinary.com/minionah/image/upload/v1/users/avatars/${minion.user.id}`} alt={`${minion.user.username}'s avatar`} />
       <Avatar.Fallback class="border-2 border-accent bg-accent">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
@@ -84,7 +84,7 @@
         <a href={`https://sky.shiiyu.moe/stats/${minion.user.username}`} target="_blank" rel="noopener" class="group rounded bg-accent p-1 text-sm text-muted-foreground focus:outline-none focus:ring-4 focus:ring-transparent">
           <Info class="h-5 w-5 transition-colors duration-300 group-hover:text-white" />
         </a>
-        <a href={`/${minion.user.username}/chat`} data-sveltekit-preload-data="off" class="group rounded bg-accent p-1 text-sm text-muted-foreground focus:outline-none focus:ring-4 focus:ring-transparent">
+        <a href={`/user/${minion.user.username}/chat`} data-sveltekit-preload-data="off" class="group rounded bg-accent p-1 text-sm text-muted-foreground focus:outline-none focus:ring-4 focus:ring-transparent">
           <MessagesSquare class="h-5 w-5 transition-colors duration-300 group-hover:text-white" />
         </a>
       </div>

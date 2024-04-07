@@ -17,11 +17,11 @@
   <meta name="title" content="{data.minionuser.username}'s MinionAH" />
   <meta name="description" content={`Check out ${data.minionuser.username}'s profile on MinionAH!`} />
   <meta name="theme-color" content={data.color.toString()} />
-  <link rel="canonical" href="https://minionah.com/{$page.params.user}" />
+  <link rel="canonical" href="https://minionah.com/user/{$page.params.user}" />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://minionah.com/{$page.params.user}" />
+  <meta property="og:url" content="https://minionah.com/user/{$page.params.user}" />
   <meta property="og:title" content="{data.minionuser.username}'s MinionAH" />
   <meta property="og:description" content={`Check out ${data.minionuser.username}'s profile on MinionAH!`} />
   <meta property="og:image" content="https://og.minionah.com/user/{$page.params.user}" />
@@ -35,7 +35,7 @@
 
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image" />
-  <meta property="twitter:url" content="https://minionah.com/{$page.params.user}" />
+  <meta property="twitter:url" content="https://minionah.com/user/{$page.params.user}" />
   <meta property="twitter:title" content="{data.minionuser.username}'s MinionAH" />
   <meta property="twitter:description" content={`Check out ${data.minionuser.username}'s profile on MinionAH!`} />
   <meta property="twitter:image" content="https://og.minionah.com/user/{$page.params.user}" />
@@ -43,7 +43,7 @@
 
 <div id="container" class="flex w-full flex-col justify-center pt-6">
   <div class="relative mx-auto w-full max-w-sm rounded-lg border border-accent bg-secondary shadow">
-    <a href={`/${data.minionuser.username}/chat`} data-sveltekit-preload-data="off" class="group absolute left-3 top-3 rounded-lg bg-accent p-1.5 text-sm text-muted-foreground focus:outline-none focus:ring-4 focus:ring-transparent">
+    <a href={`/user/${data.minionuser.username}/chat`} data-sveltekit-preload-data="off" class="group absolute left-3 top-3 rounded-lg bg-accent p-1.5 text-sm text-muted-foreground focus:outline-none focus:ring-4 focus:ring-transparent">
       <MessagesSquare class="h-5 w-5 transition-colors duration-300 group-hover:text-white" />
     </a>
     <CopyButton

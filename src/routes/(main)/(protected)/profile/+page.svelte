@@ -132,7 +132,7 @@
     <div class="relative mt-5">
       <div bind:this={minecraftAvatarContainer} class="relative">
         <div class="absolute right-3 top-3 z-30 flex flex-col gap-2">
-          <CopyButton on:click={() => navigator.clipboard.writeText(`${window.location.origin}/${user?.username}`)} />
+          <CopyButton on:click={() => navigator.clipboard.writeText(`${window.location.origin}/user/${user?.username}`)} />
           <Button variant="link" href="/profile/settings" class="group h-auto rounded-lg !border-0 bg-accent p-1.5 focus:outline-none focus:ring-0 focus:ring-transparent">
             <Cog class="h-5 w-5 text-muted-foreground transition-colors duration-300 group-hover:text-foreground" />
           </Button>

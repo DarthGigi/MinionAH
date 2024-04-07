@@ -67,7 +67,7 @@
           action: {
             label: "View",
             onClick: () => {
-              window.location.href = `/${payload.data?.username}/chat`;
+              window.location.href = `/user/${payload.data?.username}/chat`;
             }
           }
         });

@@ -59,7 +59,7 @@
     <DropdownMenu.Group>
       <DropdownMenu.Separator class="bg-border" />
       <DropdownMenu.Item on:click={() => navigator.clipboard.writeText(id)}><Copy class="mr-2 h-4 w-4" />Copy auction ID</DropdownMenu.Item>
-      <DropdownMenu.Item href={`/${username}/${id}`}><Eye class="mr-2 h-4 w-4" />View auction</DropdownMenu.Item>
+      <DropdownMenu.Item href={`/user/${username}/${id}`}><Eye class="mr-2 h-4 w-4" />View auction</DropdownMenu.Item>
     </DropdownMenu.Group>
     <DropdownMenu.Group>
       <DropdownMenu.Separator class="bg-border" />

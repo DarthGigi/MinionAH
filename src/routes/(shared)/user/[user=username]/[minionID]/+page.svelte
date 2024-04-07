@@ -14,14 +14,14 @@
   <meta name="title" content="{data.userMinion.user.username}'s {data.userMinion.minion.name.replace(/ [IVX]+$/, '')}{data.userMinion.amount && data.userMinion.amount > 1 ? 's' : ''} — MinionAH" />
   <meta name="description" content={`${data.userMinion.user.username} is selling ${data.userMinion.amount ? data.userMinion.amount : 0} ${data.userMinion.minion.name.replace(/ [IVX]+$/, "")}${data.userMinion.amount && data.userMinion.amount > 1 ? "s" : ""}. Check out their listing on MinionAH!`} />
   <meta name="theme-color" content={data.color.toString()} />
-  <link rel="canonical" href="https://minionah.com/{$page.params.user}/{$page.params.minionID}" />
+  <link rel="canonical" href="https://minionah.com/user/{$page.params.user}/{$page.params.minionID}" />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://minionah.com/{$page.params.user}/{$page.params.minionID}" />
+  <meta property="og:url" content="https://minionah.com/user/{$page.params.user}/{$page.params.minionID}" />
   <meta property="og:title" content="{data.userMinion.user.username}'s {data.userMinion.minion.name.replace(/ [IVX]+$/, '')}{data.userMinion.amount && data.userMinion.amount > 1 ? 's' : ''} — MinionAH" />
   <meta property="og:description" content={`${data.userMinion.user.username} is selling ${data.userMinion.amount ? data.userMinion.amount : 0} ${data.userMinion.minion.name.replace(/ [IVX]+$/, "")}${data.userMinion.amount && data.userMinion.amount > 1 ? "s" : ""}. Check out their auction on MinionAH!`} />
-  <meta property="og:image" content="https://og.minionah.com/minion/{$page.params.minionID}" />
+  <meta property="og:image" content="https://og.minionah.com/minion/user/{$page.params.minionID}" />
   <meta property="og:image:secure_url" content="https://og.minionah.com/minion/{$page.params.minionID}" />
   <meta property="og:image:alt" content="{data.userMinion.user.username}'s {data.userMinion.minion.name.replace(/ [IVX]+$/, '')}{data.userMinion.amount && data.userMinion.amount > 1 ? 's' : ''} — MinionAH" />
   <meta property="og:image:width" content="1200" />
@@ -32,7 +32,7 @@
 
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image" />
-  <meta property="twitter:url" content="https://minionah.com/{$page.params.user}/{$page.params.minionID}" />
+  <meta property="twitter:url" content="https://minionah.com/user/{$page.params.user}/{$page.params.minionID}" />
   <meta property="twitter:title" content="{data.userMinion.user.username}'s {data.userMinion.minion.name.replace(/ [IVX]+$/, '')}{data.userMinion.amount && data.userMinion.amount > 1 ? 's' : ''} — MinionAH" />
   <meta property="twitter:description" content={`${data.userMinion.user.username} is selling ${data.userMinion.amount ? data.userMinion.amount : 0} ${data.userMinion.minion.name.replace(/ [IVX]+$/, "")}${data.userMinion.amount && data.userMinion.amount > 1 ? "s" : ""}. Check out their auction on MinionAH!`} />
   <meta property="twitter:image" content="https://og.minionah.com/minion/{$page.params.minionID}" />
