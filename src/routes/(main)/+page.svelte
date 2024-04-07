@@ -147,7 +147,7 @@
     }
 
     const res = await fetch(
-      "/api/loadMinions?" +
+      "/api/internal/search/minions?" +
         new URLSearchParams({
           where: JSON.stringify(where),
           skip: skip?.toString() ?? "0"
