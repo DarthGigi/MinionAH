@@ -4,7 +4,7 @@ import type { RequestHandler } from "./$types";
 export const GET: RequestHandler = async ({ request }) => {
   const imageUrl = request.headers.get("imageUrl");
   if (!imageUrl) {
-    return new Response("#000000", {
+    return new Response("#171717", {
       status: 400,
       headers: {
         "content-type": "text/plain"
