@@ -1,6 +1,7 @@
 import { CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET, CLOUDINARY_CLOUD_NAME } from "$env/static/private";
 import prisma from "$lib/server/prisma";
 import type { Minion } from "@prisma/client";
+import { json } from "@sveltejs/kit";
 import { v2 as cloudinary } from "cloudinary";
 import type { RequestHandler } from "./$types";
 
@@ -100,17 +101,21 @@ export const PUT: RequestHandler = async ({ fetch }) => {
 
     console.info("\n\nSuccessfully filled database with minions");
 
-    return new Response(JSON.stringify({ success: true, message: "Successfully filled database with minions" }), {
-      headers: { "content-type": "application/json;charset=UTF-8" },
-      status: 200,
-      statusText: "Success"
-    });
+    return json(
+      { success: true, message: "Successfully filled database with minions" },
+      {
+        status: 200,
+        statusText: "Success"
+      }
+    );
   } catch (e) {
     console.error(e);
-    return new Response(JSON.stringify({ success: false, message: "Failed to fill database with minions" }), {
-      headers: { "content-type": "application/json;charset=UTF-8" },
-      status: 500,
-      statusText: "Internal Server Error"
-    });
+    return json(
+      { success: false, message: "Failed to fill database with minions" },
+      {
+        status: 500,
+        statusText: "Internal Server Error"
+      }
+    );
   }
 };

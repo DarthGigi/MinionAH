@@ -1,3 +1,4 @@
+import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 
 export const GET: RequestHandler = async () => {
@@ -22,7 +23,5 @@ export const GET: RequestHandler = async () => {
   });
 
   // give back a .json file
-  return new Response(JSON.stringify(minions), {
-    headers: { "content-type": "application/json;charset=UTF-8" }
-  });
+  return json(minions);
 };

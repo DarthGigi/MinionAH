@@ -1,12 +1,11 @@
-import { app_id, secret, FIREBASE_SERVICE_ACCOUNT_KEY } from "$env/static/private";
+import { FIREBASE_SERVICE_ACCOUNT_KEY, app_id, secret } from "$env/static/private";
 import { PUBLIC_cluster, PUBLIC_key } from "$env/static/public";
 import { sanitize } from "@jill64/universal-sanitizer";
-import { redirect } from "@sveltejs/kit";
+import { json, redirect } from "@sveltejs/kit";
+import { cert, getApp, getApps, initializeApp } from "firebase-admin/app";
+import { getMessaging, type MulticastMessage } from "firebase-admin/messaging";
 import Pusher from "pusher";
 import type { RequestHandler } from "./$types";
-import { initializeApp, cert, getApps, getApp } from "firebase-admin/app";
-
-import { getMessaging, type MulticastMessage } from "firebase-admin/messaging";
 
 const firebaseApp =
   getApps().length === 0
@@ -79,11 +78,7 @@ export const GET: RequestHandler = async ({ params, locals, request, url }) => {
   });
 
   if (!chat) {
-    return new Response(JSON.stringify([]), {
-      headers: {
-        "content-type": "application/json"
-      }
-    });
+    return json([]);
   }
 
   await prisma.chat.update({
@@ -107,11 +102,7 @@ export const GET: RequestHandler = async ({ params, locals, request, url }) => {
     // }
   });
 
-  return new Response(JSON.stringify(messages), {
-    headers: {
-      "content-type": "application/json"
-    }
-  });
+  return json(messages);
 };
 
 export const POST: RequestHandler = async ({ locals, request, params, url }) => {
@@ -313,13 +304,7 @@ export const POST: RequestHandler = async ({ locals, request, params, url }) => 
     }
   }
 
-  return new Response(JSON.stringify({}), {
-    status: 201,
-    statusText: "Created",
-    headers: {
-      "content-type": "application/json"
-    }
-  });
+  return json({}, { status: 201, statusText: "Created" });
 };
 
 export const PUT: RequestHandler = async ({ params, locals, request, url }) => {
@@ -385,11 +370,5 @@ export const PUT: RequestHandler = async ({ params, locals, request, url }) => {
     }
   }
 
-  return new Response(JSON.stringify({}), {
-    status: 200,
-    statusText: "No Content",
-    headers: {
-      "content-type": "application/json"
-    }
-  });
+  return json({}, { status: 200, statusText: "No Content" });
 };

@@ -1,3 +1,4 @@
+import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 
 export const DELETE: RequestHandler = async ({ request }) => {
@@ -13,17 +14,21 @@ export const DELETE: RequestHandler = async ({ request }) => {
         }
       }
     });
-    return new Response(JSON.stringify({ success: true, message: "Successfully deleted minion" }), {
-      headers: { "content-type": "application/json" },
-      status: 200,
-      statusText: "Success"
-    });
+    return json(
+      { success: true, message: "Successfully deleted minion" },
+      {
+        status: 200,
+        statusText: "Success"
+      }
+    );
   } catch (error) {
     console.error(error);
-    return new Response(JSON.stringify({ success: false, message: "Failed to delete minion" }), {
-      headers: { "content-type": "application/json" },
-      status: 500,
-      statusText: "Internal Server Error"
-    });
+    return json(
+      { success: false, message: "Failed to delete minion" },
+      {
+        status: 500,
+        statusText: "Internal Server Error"
+      }
+    );
   }
 };

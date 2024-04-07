@@ -1,5 +1,6 @@
 import prisma from "$lib/server/prisma";
 import type { Seller } from "$lib/types";
+import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 
 type Params = {
@@ -45,9 +46,5 @@ export const GET: RequestHandler = async ({ url }) => {
     });
   }
 
-  return new Response(JSON.stringify(minions), {
-    headers: {
-      "Content-Type": "application/json"
-    }
-  });
+  return json(minions);
 };
