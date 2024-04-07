@@ -297,7 +297,7 @@
     <AlertDialog.Footer>
       <AlertDialog.Cancel disabled={loading}>Cancel</AlertDialog.Cancel>
       <AlertDialog.Action asChild>
-        <Button disabled={loading} variant="destructive" on:click={() => handleButtonClick("/api/dashboard/auctions/delete", "DELETE", JSON.stringify({ ids: selectedIds }), "Deleting the auction failed. Please try again later or contact support.", (value) => (auctionsDeleteDialogOpen = value))}>
+        <Button disabled={loading} variant="destructive" on:click={() => handleButtonClick("/api/internal/dashboard/auctions/delete", "DELETE", JSON.stringify({ ids: selectedIds }), "Deleting the auction failed. Please try again later or contact support.", (value) => (auctionsDeleteDialogOpen = value))}>
           {#if loading}
             <LoaderCircle class="h-4 w-4 animate-spin" />
           {:else}

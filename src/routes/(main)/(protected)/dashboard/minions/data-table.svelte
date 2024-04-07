@@ -313,7 +313,7 @@
     <AlertDialog.Footer>
       <AlertDialog.Cancel disabled={loading}>Cancel</AlertDialog.Cancel>
       <AlertDialog.Action asChild>
-        <Button disabled={loading} variant="destructive" on:click={() => handleButtonClick("/api/dashboard/minions/resetall", "PUT", JSON.stringify({}), "Updating the minions failed. Please try again later or contact support.", (value) => (minionRefreshDialogOpen = value))}>
+        <Button disabled={loading} variant="destructive" on:click={() => handleButtonClick("/api/internal/dashboard/minions/resetall", "PUT", JSON.stringify({}), "Updating the minions failed. Please try again later or contact support.", (value) => (minionRefreshDialogOpen = value))}>
           {#if loading}
             <LoaderCircle class="h-4 w-4 animate-spin" />
           {:else}
@@ -340,7 +340,7 @@
     <AlertDialog.Footer>
       <AlertDialog.Cancel disabled={loading}>Cancel</AlertDialog.Cancel>
       <AlertDialog.Action asChild>
-        <Button disabled={loading} variant="default" on:click={() => handleButtonClick("/api/dashboard/minions/priceall", "PATCH", JSON.stringify({}), "Updating the prices failed. Please try again later or contact support.", (value) => (minionRCCDialogOpen = value))}>
+        <Button disabled={loading} variant="default" on:click={() => handleButtonClick("/api/internal/dashboard/minions/priceall", "PATCH", JSON.stringify({}), "Updating the prices failed. Please try again later or contact support.", (value) => (minionRCCDialogOpen = value))}>
           {#if loading}
             <LoaderCircle class="h-4 w-4 animate-spin" />
           {:else}
@@ -365,7 +365,7 @@
     <AlertDialog.Footer>
       <AlertDialog.Cancel disabled={loading}>Cancel</AlertDialog.Cancel>
       <AlertDialog.Action asChild>
-        <Button disabled={loading} variant="default" on:click={() => handleButtonClick("/api/dashboard/minions/deleteall", "DELETE", JSON.stringify({}), "Updating the prices failed. Please try again later or contact support.", (value) => (minionRCCDialogOpen = value))}>
+        <Button disabled={loading} variant="default" on:click={() => handleButtonClick("/api/internal/dashboard/minions/deleteall", "DELETE", JSON.stringify({}), "Updating the prices failed. Please try again later or contact support.", (value) => (minionRCCDialogOpen = value))}>
           {#if loading}
             <LoaderCircle class="h-4 w-4 animate-spin" />
           {:else}
@@ -392,7 +392,7 @@
     <AlertDialog.Footer>
       <AlertDialog.Cancel disabled={loading}>Cancel</AlertDialog.Cancel>
       <AlertDialog.Action asChild>
-        <Button disabled={loading} variant="destructive" on:click={() => handleButtonClick("/api/dashboard/chats/delete", "DELETE", JSON.stringify({ ids: selectedIds }), "Deleting the minions failed. Please try again later or contact support.", (value) => (minionsDeleteDialogOpen = value))}>
+        <Button disabled={loading} variant="destructive" on:click={() => handleButtonClick("/api/internal/dashboard/chats/delete", "DELETE", JSON.stringify({ ids: selectedIds }), "Deleting the minions failed. Please try again later or contact support.", (value) => (minionsDeleteDialogOpen = value))}>
           {#if loading}
             <LoaderCircle class="h-4 w-4 animate-spin" />
           {:else}

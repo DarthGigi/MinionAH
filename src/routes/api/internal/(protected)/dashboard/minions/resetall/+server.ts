@@ -34,7 +34,7 @@ async function fetchTexture(minion: Minion, type: "skin" | "head") {
 }
 
 export const PUT: RequestHandler = async ({ fetch }) => {
-  const itemsList = await fetch("/api/dashboard/minions/filter");
+  const itemsList = await fetch("/api/internal/dashboard/minions/filter");
   const items = (await itemsList.json()) as Minion[];
 
   const maxTiers: { [key: string]: number } = {};
