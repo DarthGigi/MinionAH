@@ -55,7 +55,7 @@
   };
 
   const getFavicon = (domain: string, alt: boolean = false) => {
-    if (!domain || domain === "") return `/api/favicon/${encodeURIComponent(new URL(`https://minionah.com/${$page.data.user.username}`).toString())}`;
+    if (!domain || domain === "") return `/api/internal/favicon/${encodeURIComponent(new URL(`https://minionah.com/${$page.data.user.username}`).toString())}`;
     let url: URL;
     try {
       if (!regex.test(domain)) {
@@ -70,7 +70,7 @@
     } catch {
       return null;
     }
-    return `/api/favicon/${encodeURIComponent(url.toString())}`;
+    return `/api/internal/favicon/${encodeURIComponent(url.toString())}`;
   };
 
   errors.subscribe(({ urls }) => {
