@@ -21,7 +21,7 @@ export const load = (async ({ params, locals }) => {
   }
 
   if (user.id === user2?.id) {
-    redirect(302, `/${user.username}`);
+    redirect(302, `/user/${user.username}`);
   }
 
   let chat = await prisma.chat.findFirst({
