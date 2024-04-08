@@ -10,7 +10,9 @@ import { RetryAfterRateLimiter } from "sveltekit-rate-limiter/server";
 
 Sentry.init({
   dsn: "https://c7b9b7a1b4e2f091d9a1dc913b23dffc@o4507042038087680.ingest.us.sentry.io/4507042039791616",
-  tracesSampleRate: 1
+  tracesSampleRate: dev ? 1.0 : 0.1,
+  enabled: !dev,
+  environment: dev ? "development" : "production"
 });
 
 const limiter = new RetryAfterRateLimiter({
