@@ -9,7 +9,25 @@ export const load = (async ({ params, fetch }) => {
       username: username
     },
     include: {
-      auctions: true
+      auctions: {
+        include: {
+          minion: true,
+          user: true
+        },
+        orderBy: {
+          timeCreated: "desc"
+        }
+      },
+      settings: {
+        select: {
+          profileSettings: {
+            select: {
+              bio: true,
+              urls: true
+            }
+          }
+        }
+      }
     }
   });
 
@@ -17,30 +35,12 @@ export const load = (async ({ params, fetch }) => {
     redirect(302, "/");
   }
 
-  const minions = prisma.auction.findMany({
-    where: {
-      user: {
-        id: minionuser.id
-      }
-    },
-    include: {
-      minion: true,
-      user: true
-    },
-    orderBy: {
-      timeCreated: "desc"
-    }
-  });
-
   return {
     minionuser,
     color: await fetch("/api/internal/color", {
       headers: {
         imageUrl: `https://res.cloudinary.com/minionah/image/upload/v1/users/avatars/${minionuser.id}`
       }
-    }).then((res) => res.text()),
-    streamed: {
-      minions
-    }
+    }).then((res) => res.text())
   };
 }) satisfies PageServerLoad;
