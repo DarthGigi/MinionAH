@@ -192,7 +192,7 @@
     <Label>Search</Label>
     <Input
       type="text"
-      class="w-44 border-2 border-none bg-accent text-white placeholder-white placeholder-opacity-30 focus-visible:border-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0"
+      class="w-44 border border-input bg-background text-white placeholder-white placeholder-opacity-30 focus-visible:border-input focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0"
       placeholder="Minion or user"
       maxlength={32}
       value={$searchValue}
