@@ -27,8 +27,8 @@ export const GET: RequestHandler = async () => {
       excludePatterns: [".*\\(protected\\).*", "^/api.*"],
       additionalPaths: ["/api/craftcost/docs"],
       paramValues: {
-        "/[user=username]": users.map(({ username }: { username: string }) => username),
-        "/[user=username]/[minionID]": minions.map(({ user: { username }, id }: { user: { username: string }; id: string }) => [username, id])
+        "/user/[user=username]": users.map(({ username }: { username: string }) => username),
+        "/user/[user=username]/[minionID]": minions.map(({ user: { username }, id }: { user: { username: string }; id: string }) => [username, id])
       }
     });
   } catch (e) {

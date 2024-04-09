@@ -3,6 +3,7 @@
   import * as Select from "$lib/components/ui/select";
   import { preferences } from "$lib/stores/preferences";
   import { createEventDispatcher } from "svelte";
+  import { ScrollArea } from "$lib/components/ui/scroll-area";
 
   const dispatch = createEventDispatcher<{ onSelectedTierChange: { tier: number | undefined | unknown } }>();
 
@@ -28,18 +29,20 @@
     dispatch("onSelectedTierChange", { tier: v ? v.value : undefined });
     if ($page.url.pathname !== "/profile" && v?.value !== 0) showAny = true;
   }}>
-  <Select.Trigger class={`w-40 border-none bg-accent font-medium focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-0 md:w-44 ${!selected ? "text-muted-foreground" : ""}`} aria-label="Select tier">
+  <Select.Trigger class={`w-40 border border-input bg-background font-medium focus:border-input focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-0 md:w-44 ${!selected ? "text-muted-foreground" : ""}`} aria-label="Select tier">
     <Select.Value placeholder="Select tier" />
   </Select.Trigger>
-  <Select.Content class="scrollbar max-h-56 overflow-y-auto overflow-x-clip border border-border bg-popover text-popover-foreground">
-    {#if showAny}
-      <Select.Item label="Any" value={0} class="px-2 data-[highlighted]:bg-background">Any</Select.Item>
-    {/if}
+  <Select.Content class="border-border bg-popover text-popover-foreground">
+    <ScrollArea class="h-56 rounded-md">
+      {#if showAny}
+        <Select.Item label="Any" value={0} class="px-2 data-[highlighted]:bg-background">Any</Select.Item>
+      {/if}
 
-    {#each tiers as tier}
-      <Select.Item label={`${$preferences.romanNumerals ? ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"][tier - 1] : tier} `} value={tier} class="px-2 data-[highlighted]:bg-background">
-        {`${$preferences.romanNumerals ? ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"][tier - 1] : tier}`}
-      </Select.Item>
-    {/each}
+      {#each tiers as tier}
+        <Select.Item label={`${$preferences.romanNumerals ? ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"][tier - 1] : tier} `} value={tier} class="px-2 data-[highlighted]:bg-background">
+          {`${$preferences.romanNumerals ? ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"][tier - 1] : tier}`}
+        </Select.Item>
+      {/each}
+    </ScrollArea>
   </Select.Content>
 </Select.Root>

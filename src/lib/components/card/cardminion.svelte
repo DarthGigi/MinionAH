@@ -21,7 +21,7 @@
 
   const isHome = $page.url.pathname === "/";
   setContext("isHome", isHome);
-  const isMinionPage = $page.url.pathname === `/` || $page.url.pathname === `/profile` || $page.url.pathname === `/${minion.user.username}`;
+  const isMinionPage = $page.url.pathname === `/` || $page.url.pathname === `/profile` || $page.url.pathname === `/user/${minion.user.username}`;
   setContext("isMinionPage", isMinionPage);
 
   const dispatch = createEventDispatcher();
@@ -87,10 +87,10 @@
         class="absolute left-2 top-2"
         on:click={() => {
           // copy url to clipboard
-          navigator.clipboard.writeText(`${window.location.origin}/${minion.user.username}/${minion.id}`);
+          navigator.clipboard.writeText(`${window.location.origin}/user/${minion.user.username}/${minion.id}`);
         }} />
 
-      <Button variant="link" href={`${minion.user.username}/${minion.id}`} class={`group absolute left-2 top-12 h-auto rounded-lg !border-0 bg-accent bg-opacity-0 p-1.5 text-sm text-muted-foreground transition-all duration-300 hover:bg-accent hover:bg-opacity-100 hover:opacity-100 focus:outline-none focus:ring-0 focus:ring-transparent group-hover:opacity-100 ${isHome ? "opacity-0" : "bg-opacity-100"}`} aria-label="View {minion.user.username}'s {minion.minion.generator.replace(/_/g, ' ').toLowerCase().charAt(0) + minion.minion.generator.slice(1).toLowerCase().replace(/_/g, ' ')} minion">
+      <Button variant="link" href={`/user/${minion.user.username}/${minion.id}`} class={`group absolute left-2 top-12 h-auto rounded-lg !border-0 bg-accent bg-opacity-0 p-1.5 text-sm text-muted-foreground transition-all duration-300 hover:bg-accent hover:bg-opacity-100 hover:opacity-100 focus:outline-none focus:ring-0 focus:ring-transparent group-hover:opacity-100 ${isHome ? "opacity-0" : "bg-opacity-100"}`} aria-label="View {minion.user.username}'s {minion.minion.generator.replace(/_/g, ' ').toLowerCase().charAt(0) + minion.minion.generator.slice(1).toLowerCase().replace(/_/g, ' ')} minion">
         <Eye class="h-5 w-5 transition-colors duration-300 group-hover:text-white" />
       </Button>
     {/if}

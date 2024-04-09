@@ -14,7 +14,7 @@ const config = {
     adapter: adapter(),
     csp: {
       directives: {
-        "script-src": ["self", "https://*.vercel-scripts.com", "https://*.vercel.app", "https://*.pusher.com"],
+        "script-src": ["self", "https://*.vercel-scripts.com", "https://*.vercel.app", "https://*.pusher.com", "sha256-y2WkUILyE4eycy7x+pC0z99aZjTZlWfVwgUAfNc1sY8="],
         "img-src": ["self", "data:", "https://*.vercel.app", "https://*.vercel-scripts.com", "https://*.imgur.com", "https://*.imgbb.com", "https://*.vgy.me", "https://*.gyazo.com", "https://*.prnt.sc", "https://*.prntscr.com", "https://*.tenor.com", "https://*.giphy.com", "https://*.gfycat.com", "https://*.discordapp.net", "https://*.discordapp.com", "https://*.discord.com", "https://*.minionah.com", "https://*.cloudinary.com"],
         "style-src": ["self", "unsafe-inline"]
       },

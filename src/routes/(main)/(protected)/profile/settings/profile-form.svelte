@@ -55,7 +55,7 @@
   };
 
   const getFavicon = (domain: string, alt: boolean = false) => {
-    if (!domain || domain === "") return `/api/favicon/${encodeURIComponent(new URL(`https://minionah.com/${$page.data.user.username}`).toString())}`;
+    if (!domain || domain === "") return `/api/internal/favicon/${encodeURIComponent(new URL(`https://minionah.com/${$page.data.user.username}`).toString())}`;
     let url: URL;
     try {
       if (!regex.test(domain)) {
@@ -70,7 +70,7 @@
     } catch {
       return null;
     }
-    return `/api/favicon/${encodeURIComponent(url.toString())}`;
+    return `/api/internal/favicon/${encodeURIComponent(url.toString())}`;
   };
 
   errors.subscribe(({ urls }) => {
@@ -169,7 +169,7 @@
               <Avatar.Image class="pointer-events-none h-full w-full rounded-full bg-accent p-0.5" src={getFavicon($formData.urls[i])} alt="Favicon" />
               <Avatar.Fallback class="pointer-events-none h-full w-full rounded-full bg-accent p-0.5"><Earth /></Avatar.Fallback>
             </Avatar.Root>
-            <Input {...attrs} bind:value={$formData.urls[i]} class="no-input-borders relative pl-10" placeholder="https://minionah.com/{$page.data.user.username}" />
+            <Input {...attrs} bind:value={$formData.urls[i]} class="no-input-borders relative pl-10" placeholder="https://minionah.com/user/{$page.data.user.username}" />
             <Button type="button" variant="link" size="sm" class="group absolute right-2 top-1/2 h-auto -translate-y-1/2 transform p-0" on:click={() => ($formData.urls = $formData.urls.filter((_, j) => j !== i))}>
               <CircleMinus class="opacity-50 transition-opacity duration-300 group-hover:opacity-100" />
             </Button>

@@ -13,28 +13,25 @@
   import { toast } from "svelte-sonner";
   import { draw } from "svelte/transition";
   import type { PageData } from "./$types";
+  import { writable } from "svelte/store";
 
   export let data: PageData;
 
   const { pressAction } = createPress();
 
-  let minions: Promise<Seller[]> | Seller[] = data.minions;
-  let loadingMore = false;
-  let currentTier: number | undefined = undefined;
-  let newMinionAmount: number;
-  let lastSearch = "";
-  let search: string | undefined = undefined;
-  let searchValue = "";
+  const minions = writable<Promise<Seller[]> | Seller[]>(data.minions);
+  const loadingMore = writable(false);
+  const currentTier = writable<number | undefined>(undefined);
+  const newMinionAmount = writable<number>();
+  const lastSearch = writable("");
+  const search = writable<string | undefined>(undefined);
+  const searchValue = writable("");
 
-  const searchSignalUnsubscribe = searchSignal.subscribe((search) => {
-    if (search === searchValue || search === lastSearch || search === "") return;
-    searchValue = search;
-    searchMinions(currentTier, search);
-    searchSignal.update(() => "");
-  });
-
-  onDestroy(() => {
-    searchSignalUnsubscribe();
+  searchSignal.subscribe((search) => {
+    if (search === $searchValue || $search === $lastSearch || search === "") return;
+    searchValue.set(search);
+    searchMinions($currentTier, search);
+    searchSignal.set("");
   });
 
   onMount(() => {
@@ -124,7 +121,7 @@
   });
 
   const searchMinions = async (filterTier?: number | undefined, search?: string, isMore: boolean = false, skip?: number) => {
-    loadingMore = isMore;
+    loadingMore.set(isMore);
     if (filterTier === 0) filterTier = undefined;
 
     let where = {};
@@ -150,7 +147,7 @@
     }
 
     const res = await fetch(
-      "/api/loadMinions?" +
+      "/api/internal/search/minions?" +
         new URLSearchParams({
           where: JSON.stringify(where),
           skip: skip?.toString() ?? "0"
@@ -164,11 +161,11 @@
     )
       .then((res) => {
         // reset the minions
-        if (!isMore) minions = [];
+        if (!isMore) minions.set([]);
         return res.json();
       })
       .finally(() => {
-        loadingMore = false;
+        loadingMore.set(false);
       })
       .catch((err) => {
         console.error(err);
@@ -182,9 +179,9 @@
         });
       });
 
-    newMinionAmount = res.length;
+    newMinionAmount.set(res.length);
 
-    minions = [...Array.from(await minions), ...res];
+    minions.set([...Array.from(await $minions), ...res]);
   };
 </script>
 
@@ -195,26 +192,26 @@
     <Label>Search</Label>
     <Input
       type="text"
-      class="w-44 border-2 border-none bg-accent text-white placeholder-white placeholder-opacity-30 focus-visible:border-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0"
+      class="w-44 border border-input bg-background text-white placeholder-white placeholder-opacity-30 focus-visible:border-input focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0"
       placeholder="Minion or user"
       maxlength={32}
-      value={searchValue}
+      value={$searchValue}
       on:input={({ currentTarget }) => {
         if (!(currentTarget instanceof HTMLInputElement)) return;
-        if (currentTarget.value === lastSearch) return;
+        if (currentTarget.value === $lastSearch) return;
         // every third character
         if (currentTarget.value.length % 4 !== 0 && currentTarget.value.length !== 0) return;
-        lastSearch = currentTarget.value;
-        search = currentTarget.value;
-        searchMinions(currentTier, search);
+        lastSearch.set(currentTarget.value);
+        search.set(currentTarget.value);
+        searchMinions($currentTier, $search);
       }}
       on:keypress={({ key, currentTarget }) => {
         if (key !== "Enter") return;
         if (!(currentTarget instanceof HTMLInputElement)) return;
-        if (currentTarget.value === lastSearch) return;
-        lastSearch = currentTarget.value;
-        search = currentTarget.value;
-        searchMinions(currentTier, search);
+        if (currentTarget.value === $lastSearch) return;
+        lastSearch.set(currentTarget.value);
+        search.set(currentTarget.value);
+        searchMinions($currentTier, $search);
       }} />
   </div>
 
@@ -225,12 +222,12 @@
       disabled={false}
       on:onSelectedTierChange={({ detail }) => {
         if (detail.tier === null) {
-          currentTier = undefined;
-          searchMinions(currentTier);
+          currentTier.set(undefined);
+          searchMinions($currentTier);
           return;
         }
-        currentTier = Number(detail.tier);
-        searchMinions(currentTier);
+        currentTier.set(Number(detail.tier));
+        searchMinions($currentTier);
       }} />
   </div>
 </div>
@@ -238,7 +235,7 @@
 <div class="py-8 max-md:pb-20">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
     <ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {#await minions}
+      {#await $minions}
         {#each Array(18) as _}
           <CardLoading />
         {/each}
@@ -246,21 +243,21 @@
         {#each minions as seller}
           <MinionCard minion={seller} />
         {/each}
-        {#if loadingMore}
+        {#if $loadingMore}
           {#each Array(18) as _}
             <CardLoading />
           {/each}
         {/if}
       {/await}
     </ul>
-    {#await minions then minions}
+    {#await $minions then minions}
       <div class="flex w-full justify-center py-4">
-        {#if newMinionAmount === 0 || newMinionAmount < 18 || (minions.length === 0 && !loadingMore)}
+        {#if $newMinionAmount === 0 || $newMinionAmount < 18 || (minions.length === 0 && !$loadingMore)}
           <p class="px-4 py-1 text-center text-sm text-primary text-opacity-40">No more minions to load.</p>
         {:else}
-          <button type="button" use:pressAction on:press={() => searchMinions(currentTier, search, true, minions.length)} class="rounded p-1 text-sm text-accent transition-all duration-300 hover:bg-accent hover:text-white" aria-label="Load more minions">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down h-6 w-6" class:animate-spin={loadingMore}>
-              {#if loadingMore}
+          <button type="button" use:pressAction on:press={() => searchMinions($currentTier, $search, true, minions.length)} class="rounded p-1 text-sm text-accent transition-all duration-300 hover:bg-accent hover:text-white" aria-label="Load more minions">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down h-6 w-6" class:animate-spin={$loadingMore}>
+              {#if $loadingMore}
                 <path in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
                 <path in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} d="M21 3v5h-5" />
                 <path in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />

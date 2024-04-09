@@ -5,13 +5,8 @@ import { zod } from "sveltekit-superforms/adapters";
 import type { Actions, PageServerLoad } from "./$types";
 import { formSchema } from "./schema";
 
-export const load = (async ({ locals }) => {
-  const superValidatedFormSchema = await superValidate(
-    {
-      username: locals.user!.username
-    },
-    zod(formSchema)
-  );
+export const load = (async () => {
+  const superValidatedFormSchema = await superValidate(zod(formSchema));
 
   return {
     form: superValidatedFormSchema

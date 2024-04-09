@@ -10,7 +10,7 @@
   export { className as class };
 
   const [send, receive] = crossfade({
-    duration: 250,
+    duration: 300,
     easing: cubicInOut
   });
 </script>

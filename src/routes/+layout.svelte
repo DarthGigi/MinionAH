@@ -17,14 +17,26 @@
   import { page } from "$app/stores";
   import "../app.css";
   import type { ToasterProps } from "svelte-sonner";
+  import * as Breadcrumb from "$lib/components/ui/breadcrumb";
+  import { writable } from "svelte/store";
 
   // Initialize Firebase
   const firebaseApp: FirebaseApp = initializeApp(firebaseConfig);
+
+  const paths = writable<string[]>([]);
+
+  let position: ToasterProps["position"] = "bottom-right";
+  let closeButton: ToasterProps["closeButton"] = true;
 
   inject({ mode: dev ? "development" : "production", debug: false });
   if (!dev) {
     injectSpeedInsights();
   }
+
+  page.subscribe((value) => {
+    const urls = value.url.pathname.split("/").filter((url) => url !== "user" && Boolean(url));
+    paths.set(urls);
+  });
 
   preferences.subscribe((value) => {
     if (typeof window !== "undefined") {
@@ -35,9 +47,6 @@
       }
     }
   });
-
-  let position: ToasterProps["position"] = "bottom-right";
-  let closeButton: ToasterProps["closeButton"] = true;
 
   onMount(async () => {
     if (window.innerWidth < 768) {
@@ -67,7 +76,7 @@
           action: {
             label: "View",
             onClick: () => {
-              window.location.href = `/${payload.data?.username}/chat`;
+              window.location.href = `/user/${payload.data?.username}/chat`;
             }
           }
         });
@@ -89,5 +98,21 @@
 
 <Navbar />
 <Toaster theme="dark" {closeButton} {position} />
+
+{#if $page.url.pathname !== "/"}
+  <Breadcrumb.Root class="py-2">
+    <Breadcrumb.List class="justify-center">
+      <Breadcrumb.Item>
+        <Breadcrumb.Link href="/">Home</Breadcrumb.Link>
+      </Breadcrumb.Item>
+      {#each $paths as path}
+        <Breadcrumb.Separator />
+        <Breadcrumb.Item>
+          <Breadcrumb.Link href={`/${path}`} class="capitalize">{path}</Breadcrumb.Link>
+        </Breadcrumb.Item>
+      {/each}
+    </Breadcrumb.List>
+  </Breadcrumb.Root>
+{/if}
 
 <slot />

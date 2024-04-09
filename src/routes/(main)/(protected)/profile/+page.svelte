@@ -127,29 +127,25 @@
   });
 </script>
 
-<div class="mx-auto flex max-w-xl flex-col justify-center gap-8 self-center px-2 md:px-0">
-  <div class="w-full pt-8">
-    <div class="relative mt-5">
-      <div bind:this={minecraftAvatarContainer} class="relative">
-        <div class="absolute right-3 top-3 z-30 flex flex-col gap-2">
-          <CopyButton on:click={() => navigator.clipboard.writeText(`${window.location.origin}/${user?.username}`)} />
-          <Button variant="link" href="/profile/settings" class="group h-auto rounded-lg !border-0 bg-accent p-1.5 focus:outline-none focus:ring-0 focus:ring-transparent">
-            <Cog class="h-5 w-5 text-muted-foreground transition-colors duration-300 group-hover:text-foreground" />
-          </Button>
-        </div>
-        {#if canvasIsLoading}
-          <div class="absolute h-full w-full animate-pulse rounded-lg bg-background" />
-        {/if}
-        <canvas bind:this={minecraftAvatar} class="relative !h-full !w-full overflow-hidden rounded-lg bg-background transition-all duration-[3s]" class:opacity-100={!canvasIsLoading} class:opacity-0={canvasIsLoading} />
-      </div>
+<div class="mx-auto flex max-w-xl flex-col justify-start gap-8 self-center px-2 md:px-0">
+  <div bind:this={minecraftAvatarContainer} class="relative w-full">
+    <div class="absolute right-3 top-3 z-30 flex flex-col gap-2">
+      <CopyButton on:click={() => navigator.clipboard.writeText(`${window.location.origin}/user/${user?.username}`)} />
+      <Button variant="link" href="/profile/settings" class="group h-auto rounded-lg !border-0 bg-accent p-1.5 focus:outline-none focus:ring-0 focus:ring-transparent">
+        <Cog class="h-5 w-5 text-muted-foreground transition-colors duration-300 group-hover:text-foreground" />
+      </Button>
     </div>
+    {#if canvasIsLoading}
+      <div class="absolute h-full w-full animate-pulse rounded-lg border border-border bg-popover" />
+    {/if}
+    <canvas bind:this={minecraftAvatar} class="relative !h-full !w-full overflow-hidden rounded-lg border border-border bg-popover transition-all duration-[3s]" class:opacity-100={!canvasIsLoading} class:opacity-0={canvasIsLoading} />
   </div>
   {#await data.streamed.userMinions}
-    <div class="h-[28.75rem] animate-pulse rounded-lg border-0 bg-background shadow-sm"></div>
+    <div class="h-[28.75rem] animate-pulse rounded-lg border-border bg-popover shadow-sm"></div>
   {:then userMinions}
     {#if userMinions.length < 18}
       <form use:enhanceCreate method="POST" action="?/createMinion" class="space-y-6">
-        <Card.Root class="border-0 bg-background text-primary">
+        <Card.Root class="border-border bg-popover text-primary">
           <Card.Header>
             <Card.Title>Minions</Card.Title>
             <Card.Description>Auction a minion</Card.Description>
@@ -303,7 +299,7 @@
                 </div>
               </div>
               <div class="flex gap-4">
-                <Form.Field form={formCreate} name="infusion" class="flex flex-row items-center justify-between gap-6 rounded-lg bg-muted p-4">
+                <Form.Field form={formCreate} name="infusion" class="flex flex-row items-center justify-between gap-6 rounded-lg border border-input bg-background p-4">
                   <Form.Control let:attrs>
                     <div class="select-none space-y-0.5">
                       <Form.Label>Mithril Infused</Form.Label>

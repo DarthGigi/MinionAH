@@ -60,7 +60,7 @@
         <div class="space-y-8">
           {#each data.auctions as auction}
             <div class="flex flex-col items-center space-y-2 md:flex-row">
-              <a href={`/${auction.user.username}/${auction.id}`} class="flex w-full items-center rounded-lg px-4 py-2 hover:bg-accent/50">
+              <a href={`/user/${auction.user.username}/${auction.id}`} class="flex w-full items-center rounded-lg px-4 py-2 hover:bg-accent/50">
                 <div class="flex w-full flex-col gap-2 md:flex-row md:items-center md:gap-0">
                   <div class="flex flex-shrink-0 flex-col items-start justify-start md:basis-64 md:flex-row md:items-center">
                     <Avatar.Root class="h-9 w-9 flex-shrink-0 rounded-full ">
@@ -106,7 +106,7 @@
       <Card.Content class="space-y-8">
         {#each data.users as user}
           <div class="flex flex-col items-center space-y-2 md:flex-row">
-            <a href={`/${user.username}`} class="flex w-full items-center rounded-lg px-4 py-2 hover:bg-accent/50">
+            <a href={`/user/${user.username}`} class="flex w-full items-center rounded-lg px-4 py-2 hover:bg-accent/50">
               <Avatar.Root class="h-9 w-9 flex-shrink-0 rounded-full ">
                 <Avatar.Image class="pointer-events-none h-full w-full bg-accent p-1" src={`https://res.cloudinary.com/minionah/image/upload/v1/users/avatars/${user.id}`} alt={`${user.username}'s avatar`} />
                 <Avatar.Fallback class="border-2 border-accent bg-accent">{user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>

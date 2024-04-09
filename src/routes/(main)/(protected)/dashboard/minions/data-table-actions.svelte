@@ -80,7 +80,7 @@
     <AlertDialog.Footer>
       <AlertDialog.Cancel disabled={loading}>Cancel</AlertDialog.Cancel>
       <AlertDialog.Action asChild>
-        <Button disabled={loading} variant="destructive" on:click={() => handleButtonClick("/api/dashboard/minions/delete", "DELETE", JSON.stringify({ ids: [id] }), "Deleting the minion failed. Please try again later or contact support.", (value) => (minionDeleteDialogOpen = value))}>
+        <Button disabled={loading} variant="destructive" on:click={() => handleButtonClick("/api/internal/dashboard/minions/delete", "DELETE", JSON.stringify({ ids: [id] }), "Deleting the minion failed. Please try again later or contact support.", (value) => (minionDeleteDialogOpen = value))}>
           {#if loading}
             <LoaderCircle class="h-4 w-4 animate-spin" />
           {:else}

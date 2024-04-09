@@ -59,7 +59,7 @@
     <DropdownMenu.Group>
       <DropdownMenu.Separator class="bg-border" />
       <DropdownMenu.Item on:click={() => navigator.clipboard.writeText(id)}><Copy class="mr-2 h-4 w-4" />Copy auction ID</DropdownMenu.Item>
-      <DropdownMenu.Item href={`/${username}/${id}`}><Eye class="mr-2 h-4 w-4" />View auction</DropdownMenu.Item>
+      <DropdownMenu.Item href={`/user/${username}/${id}`}><Eye class="mr-2 h-4 w-4" />View auction</DropdownMenu.Item>
     </DropdownMenu.Group>
     <DropdownMenu.Group>
       <DropdownMenu.Separator class="bg-border" />
@@ -81,7 +81,7 @@
     <AlertDialog.Footer>
       <AlertDialog.Cancel disabled={loading}>Cancel</AlertDialog.Cancel>
       <AlertDialog.Action asChild>
-        <Button disabled={loading} variant="destructive" on:click={() => handleButtonClick("/api/dashboard/auctions/delete", "DELETE", JSON.stringify({ ids: [id] }), "Deleting the auction failed. Please try again later or contact support.", (value) => (auctionDeleteDialogOpen = value))}>
+        <Button disabled={loading} variant="destructive" on:click={() => handleButtonClick("/api/internal/dashboard/auctions/delete", "DELETE", JSON.stringify({ ids: [id] }), "Deleting the auction failed. Please try again later or contact support.", (value) => (auctionDeleteDialogOpen = value))}>
           {#if loading}
             <LoaderCircle class="h-4 w-4 animate-spin" />
           {:else}
