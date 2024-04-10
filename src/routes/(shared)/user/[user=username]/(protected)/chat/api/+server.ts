@@ -198,7 +198,7 @@ export const POST: RequestHandler = async ({ locals, request, params, url }) => 
     createdAt: Date;
   }
 
-  pusher
+  await pusher
     .trigger(`chat-${chat.id}`, "new-message", {
       chat_id: chat.id,
       user_id: user.id,

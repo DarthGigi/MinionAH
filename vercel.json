@@ -1,8 +1,12 @@
 {
   "crons": [
     {
-      "path": "/api/minionprice",
+      "path": "/api/internal/crons/minionprice",
       "schedule": "0 12 * * *"
+    },
+    {
+      "path": "/api/internal/crons/cleanup",
+      "schedule": "0 0 * * *"
     }
   ]
 }

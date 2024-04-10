@@ -23,7 +23,11 @@ export const load = (async () => {
             username: true
           }
         }
-      }
+      },
+      cacheStrategy: {
+        ttl: 30,
+        swr: 60,
+      },
     }) as Promise<Seller[]>
   };
 }) as PageServerLoad;
