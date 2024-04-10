@@ -36,7 +36,7 @@ export function bulkUpdate(tableName: string, entries: BulkUpdateEntries): Prism
     UPDATE "${tableName}"
     SET ${setSql}
     FROM (VALUES ${valuesSql}) AS data(id, ${fields.map((field) => `"${field}"`).join(", ")})
-    WHERE "${tableName}".id = data.id;
+    WHERE "${tableName}".id::text = data.id;
   `;
 
   return prisma.$executeRawUnsafe(sql);
