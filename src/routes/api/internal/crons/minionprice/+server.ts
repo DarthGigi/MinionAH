@@ -29,6 +29,6 @@ export const GET: RequestHandler = async ({ request, fetch }) => {
     return json({ success: true }, { status: 200 });
   } catch (e) {
     console.error(e);
-    return json({ success: false, error: e }, { status: 500, statusText: "Internal Server Error" });
+    return json({ success: false, error: JSON.stringify(e) }, { status: 500, statusText: "Internal Server Error" });
   }
 };
