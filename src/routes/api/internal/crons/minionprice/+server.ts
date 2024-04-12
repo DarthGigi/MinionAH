@@ -24,11 +24,11 @@ export const GET: RequestHandler = async ({ request, fetch }) => {
       };
     });
 
-    await prisma.$transaction([bulkUpdate("Minion", bulkUpdates)]);
+    await prisma.$transaction([bulkUpdate("Minion", bulkUpdates, 'double precision')]);
 
     return json({ success: true }, { status: 200 });
   } catch (e) {
     console.error(e);
-    return json({ success: false, error: e }, { status: 500, statusText: "Internal Server Error" });
+    return json({ success: false, error: JSON.stringify(e) }, { status: 500, statusText: "Internal Server Error" });
   }
 };

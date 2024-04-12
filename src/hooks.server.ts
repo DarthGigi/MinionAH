@@ -1,11 +1,11 @@
-import { sequence } from "@sveltejs/kit/hooks";
-import * as Sentry from "@sentry/sveltekit";
 import { dev } from "$app/environment";
-import { ADMIN_ID, RATE_LIMIT_SECRET, MAINTENANCE_MODE } from "$env/static/private";
+import { ADMIN_ID, MAINTENANCE_MODE, RATE_LIMIT_SECRET } from "$env/static/private";
 import { lucia } from "$lib/server/lucia";
 import prisma from "$lib/server/prisma";
+import * as Sentry from "@sentry/sveltekit";
 import type { Handle, RequestEvent } from "@sveltejs/kit";
-import { redirect } from "@sveltejs/kit";
+import { json, redirect } from "@sveltejs/kit";
+import { sequence } from "@sveltejs/kit/hooks";
 import { RetryAfterRateLimiter } from "sveltekit-rate-limiter/server";
 
 Sentry.init({
@@ -40,7 +40,7 @@ export const handle: Handle = sequence(Sentry.sentryHandle(), async ({ event, re
       event.setHeaders({
         "Retry-After": status.retryAfter.toString()
       });
-      return new Response("Too many requests", {
+      return json("Too many requests", {
         status: 429,
         headers: {
           "Retry-After": status.retryAfter.toString()
