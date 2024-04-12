@@ -31,7 +31,6 @@ export function bulkUpdate(tableName: string, entries: BulkUpdateEntries, cast: 
     })
     .join(", ");
 
-
   const sql = `
     UPDATE "${tableName}"
     SET ${setSql}
