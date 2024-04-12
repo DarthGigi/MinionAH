@@ -26,8 +26,8 @@ export const load = (async () => {
       },
       cacheStrategy: {
         ttl: 30,
-        swr: 60,
-      },
+        swr: 60
+      }
     }) as Promise<Seller[]>
   };
 }) as PageServerLoad;
