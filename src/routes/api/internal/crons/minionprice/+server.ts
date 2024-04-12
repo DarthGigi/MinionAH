@@ -24,7 +24,7 @@ export const GET: RequestHandler = async ({ request, fetch }) => {
       };
     });
 
-    await prisma.$transaction([bulkUpdate("Minion", bulkUpdates)]);
+    await prisma.$transaction([bulkUpdate("Minion", bulkUpdates, 'double precision')]);
 
     return json({ success: true }, { status: 200 });
   } catch (e) {

@@ -6,11 +6,11 @@ export type BulkUpdateEntry = {
 };
 export type BulkUpdateEntries = BulkUpdateEntry[];
 
-export function bulkUpdate(tableName: string, entries: BulkUpdateEntries): PrismaPromise<number> {
+export function bulkUpdate(tableName: string, entries: BulkUpdateEntries, cast: string): PrismaPromise<number> {
   if (entries.length === 0) return prisma.$executeRawUnsafe(`SELECT 1;`);
 
   const fields = Object.keys(entries[0]!).filter((key) => key !== "id");
-  const setSql = fields.map((field) => `"${field}" = data."${field}"`).join(", ");
+  const setSql = fields.map((field) => `"${field}" = CAST(data."${field}" AS ${cast})`).join(", ");
 
   const valuesSql = entries
     .map((entry) => {
