@@ -82,7 +82,6 @@
       {/if}
     </Card.Header>
     {#if data.minionuser.settings?.profileSettings?.urls && data.minionuser.settings?.profileSettings?.urls.length !== 0}
-      Hi
       <Card.Content class="flex flex-wrap items-center justify-center gap-4">
         {#each data.minionuser.settings?.profileSettings?.urls as url}
           <Tooltip.Root group="links" openDelay={0} closeDelay={0} closeOnPointerDown={true} closeOnEscape={true}>
