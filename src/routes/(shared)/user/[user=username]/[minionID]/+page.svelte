@@ -40,7 +40,7 @@
 
 <div class="flex h-[calc(100vh-64px)] w-screen items-center justify-center">
   <div class="relative w-full max-w-sm rounded-lg border border-accent bg-secondary shadow">
-    <a href={`/${data.userMinion.user.username}`} class="absolute left-2 top-2 rounded-lg bg-accent bg-opacity-0 p-1.5 text-sm text-muted-foreground opacity-30 transition-all duration-300 hover:bg-opacity-100 hover:opacity-100">
+    <a href={`/user/${data.userMinion.user.username}`} class="absolute left-2 top-2 rounded-lg bg-accent bg-opacity-0 p-1.5 text-sm text-muted-foreground opacity-30 transition-all duration-300 hover:bg-opacity-100 hover:opacity-100">
       <CircleArrowLeft class="h-6 w-6" />
     </a>
     <CopyButton
