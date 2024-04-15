@@ -34,7 +34,7 @@
   }
 
   page.subscribe((value) => {
-    const urls = value.url.pathname.split("/").filter((url) => url !== "user" && Boolean(url));
+    const urls = value.url.pathname.split("/").filter((url) => Boolean(url));
     paths.set(urls);
   });
 
@@ -105,11 +105,19 @@
       <Breadcrumb.Item>
         <Breadcrumb.Link href="/">Home</Breadcrumb.Link>
       </Breadcrumb.Item>
-      {#each $paths as path}
-        <Breadcrumb.Separator />
-        <Breadcrumb.Item>
-          <Breadcrumb.Link href={`/${path}`} class="capitalize">{path}</Breadcrumb.Link>
-        </Breadcrumb.Item>
+      {#each $paths as path, index}
+        {#if path !== "user"}
+          <Breadcrumb.Separator />
+          <Breadcrumb.Item>
+            {#if $paths[index - 1] === "user"}
+              <Breadcrumb.Link href={`/user/${path}`} class="capitalize">{path}</Breadcrumb.Link>
+            {:else if $paths[index - 2] === "user"}
+              <Breadcrumb.Link href={`/user/${$paths[index - 1]}/${path}`} class="capitalize">{path}</Breadcrumb.Link>
+            {:else}
+              <Breadcrumb.Link href={`/${path}`} class="capitalize">{path}</Breadcrumb.Link>
+            {/if}
+          </Breadcrumb.Item>
+        {/if}
       {/each}
     </Breadcrumb.List>
   </Breadcrumb.Root>
