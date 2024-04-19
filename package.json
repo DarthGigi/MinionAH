@@ -1,7 +1,7 @@
 {
   "name": "minionah",
   "version": "0.0.1",
-  "packageManager": "pnpm@9.0.1",
+  "packageManager": "pnpm@9.0.4",
   "scripts": {
     "dev": "dotenv -e .env.development -- vite dev",
     "build": "vite build",
@@ -38,20 +38,20 @@
     "prettier": "^3.2.5",
     "prettier-plugin-svelte": "^3.2.3",
     "prettier-plugin-tailwindcss": "^0.5.14",
-    "svelte": "^4.2.14",
+    "svelte": "^4.2.15",
     "svelte-check": "^3.6.9",
     "svelte-headless-table": "^0.18.2",
     "svelte-highlight": "^7.6.0",
     "tailwindcss": "^3.4.3",
     "tslib": "^2.6.2",
     "typescript": "^5.4.5",
-    "vite": "^5.2.8"
+    "vite": "^5.2.9"
   },
   "type": "module",
   "dependencies": {
     "@prisma/client": "5.12.1",
     "@prisma/extension-accelerate": "^1.0.0",
-    "@sentry/sveltekit": "^7.110.1",
+    "@sentry/sveltekit": "^7.111.0",
     "@tiptap/core": "^2.3.0",
     "@tiptap/extension-bubble-menu": "^2.3.0",
     "@tiptap/extension-character-count": "^2.3.0",
@@ -61,7 +61,7 @@
     "@tiptap/pm": "^2.3.0",
     "@tiptap/starter-kit": "^2.3.0",
     "@vercel/speed-insights": "^1.0.10",
-    "bits-ui": "^0.21.3",
+    "bits-ui": "^0.21.4",
     "cloudinary": "^2.1.0",
     "clsx": "^2.1.0",
     "cmdk-sv": "^0.0.17",
@@ -69,11 +69,11 @@
     "date-fns": "^3.6.0",
     "fast-average-color-node": "^3.0.0",
     "firebase": "^10.11.0",
-    "firebase-admin": "^12.0.0",
+    "firebase-admin": "^12.1.0",
     "formsnap": "^1.0.0",
     "headview3d": "^3.0.2",
     "lucia": "^3.1.1",
-    "lucide-svelte": "^0.368.0",
+    "lucide-svelte": "^0.372.0",
     "mode-watcher": "^0.3.0",
     "numerable": "^0.3.15",
     "oslo": "^1.2.0",
@@ -83,13 +83,13 @@
     "skinview3d": "^3.0.1",
     "super-sitemap": "^0.14.14",
     "svelte-interactions": "^0.2.0",
-    "svelte-persisted-store": "^0.9.1",
+    "svelte-persisted-store": "^0.9.2",
     "svelte-sonner": "^0.3.22",
     "sveltekit-rate-limiter": "^0.5.1",
-    "sveltekit-superforms": "^2.12.4",
-    "tailwind-merge": "^2.2.2",
+    "sveltekit-superforms": "^2.12.5",
+    "tailwind-merge": "^2.3.0",
     "tailwind-variants": "^0.2.1",
-    "zod": "^3.22.4"
+    "zod": "^3.22.5"
   },
   "pnpm": {
     "overrides": {
