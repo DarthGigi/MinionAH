@@ -90,10 +90,5 @@
     "tailwind-merge": "^2.3.0",
     "tailwind-variants": "^0.2.1",
     "zod": "^3.22.5"
-  },
-  "pnpm": {
-    "overrides": {
-      "sharp": "~0.32.0"
-    }
   }
 }
