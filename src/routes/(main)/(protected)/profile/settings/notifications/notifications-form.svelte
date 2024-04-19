@@ -19,8 +19,8 @@
   import * as Form from "$lib/components/ui/form";
   import * as RadioGroup from "$lib/components/ui/radio-group";
   import { Switch } from "$lib/components/ui/switch";
+  import { internalStorage } from "$lib/stores/preferences";
   import { requestNotificationPermission } from "$lib/utilities";
-  import { getMessaging, getToken } from "firebase/messaging";
   import { onMount } from "svelte";
   import { toast } from "svelte-sonner";
   import { readable, writable } from "svelte/store";
@@ -38,7 +38,6 @@
 
   const { form: formData, enhance, tainted, isTainted, submitting, timeout } = form;
 
-  const fcmToken = writable<string>();
   const deviceRadioDisabled = writable(false);
   const permission = writable<NotificationPermission>();
   const hasEmail = readable($page.data.userData.settings?.profileSettings?.email ? true : false);
@@ -48,12 +47,6 @@
   const handleRequestPermission = async (request: boolean = false) => {
     permission.set(await requestNotificationPermission(request));
     if ($permission === "granted") {
-      const messaging = getMessaging();
-      fcmToken.set(
-        await getToken(messaging, {
-          serviceWorkerRegistration: await navigator.serviceWorker.ready
-        })
-      );
       deviceRadioDisabled.set(false);
       allRadioDisabled.set(!$hasEmail);
     } else if ($permission === "denied" || $permission === "default") {
@@ -79,8 +72,10 @@
   method="POST"
   class="space-y-8"
   use:enhance={{
-    onSubmit: async ({ formData }) => {
-      formData.set("fcmToken", $fcmToken);
+    onSubmit: async () => {
+      if ($internalStorage.fcmToken && $formData.type !== "NONE" && $formData.type !== "EMAIL") {
+        formData.update((state) => ({ ...state, fcmToken: $internalStorage.fcmToken }));
+      }
       $toastLoading = toast.loading("Updating your notification preferences...");
     },
     onResult: async () => {
