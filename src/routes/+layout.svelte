@@ -20,9 +20,6 @@
   import { writable } from "svelte/store";
   import "../app.css";
 
-  // Initialize Firebase
-  const firebaseApp: FirebaseApp = initializeApp(firebaseConfig);
-
   const paths = writable<string[]>([]);
 
   let position: ToasterProps["position"] = "bottom-right";
@@ -53,10 +50,13 @@
       position = "top-center";
       closeButton = false;
     }
-
     const serviceWorker = navigator.serviceWorker.register("/service-worker.js", {
       type: dev ? "module" : "classic"
     });
+
+    // Initialize Firebase
+    const firebaseApp: FirebaseApp = initializeApp(firebaseConfig);
+
     const permission = await requestNotificationPermission();
     if (permission === "granted") {
       const messaging = getMessaging(firebaseApp);
