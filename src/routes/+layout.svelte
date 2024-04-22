@@ -1,11 +1,13 @@
 <script lang="ts">
   import { dev } from "$app/environment";
+  import { page } from "$app/stores";
   import { PUBLIC_VAPID_KEY } from "$env/static/public";
   import MessageToast from "$lib/components/MessageToast.svelte";
+  import * as Breadcrumb from "$lib/components/ui/breadcrumb";
   import { Toaster } from "$lib/components/ui/sonner";
   import { firebaseConfig } from "$lib/firebase";
   import Navbar from "$lib/layouts/Navbar.svelte";
-  import { preferences } from "$lib/stores/preferences";
+  import { internalStorage, preferences } from "$lib/stores/preferences";
   import { requestNotificationPermission } from "$lib/utilities";
   import { inject } from "@vercel/analytics";
   import { injectSpeedInsights } from "@vercel/speed-insights/sveltekit";
@@ -13,15 +15,10 @@
   import { initializeApp } from "firebase/app";
   import { getMessaging, getToken, onMessage } from "firebase/messaging";
   import { onMount } from "svelte";
-  import { toast } from "svelte-sonner";
-  import { page } from "$app/stores";
-  import "../app.css";
   import type { ToasterProps } from "svelte-sonner";
-  import * as Breadcrumb from "$lib/components/ui/breadcrumb";
+  import { toast } from "svelte-sonner";
   import { writable } from "svelte/store";
-
-  // Initialize Firebase
-  const firebaseApp: FirebaseApp = initializeApp(firebaseConfig);
+  import "../app.css";
 
   const paths = writable<string[]>([]);
 
@@ -53,17 +50,24 @@
       position = "top-center";
       closeButton = false;
     }
-
     const serviceWorker = navigator.serviceWorker.register("/service-worker.js", {
       type: dev ? "module" : "classic"
     });
+
+    // Initialize Firebase
+    const firebaseApp: FirebaseApp = initializeApp(firebaseConfig);
+
     const permission = await requestNotificationPermission();
     if (permission === "granted") {
       const messaging = getMessaging(firebaseApp);
-      getToken(messaging, {
+      const token = await getToken(messaging, {
         vapidKey: PUBLIC_VAPID_KEY,
         serviceWorkerRegistration: await serviceWorker
       });
+      internalStorage.update((state) => ({
+        ...state,
+        fcmToken: token
+      }));
       onMessage(messaging, (payload) => {
         if ($page.url.pathname.endsWith("/chat")) return;
         toast(payload.notification?.title || "New message", {

@@ -15,10 +15,12 @@
 
 <script lang="ts">
   import { page } from "$app/stores";
+  import { PUBLIC_VAPID_KEY } from "$env/static/public";
   import { Button } from "$lib/components/ui/button";
   import * as Form from "$lib/components/ui/form";
   import * as RadioGroup from "$lib/components/ui/radio-group";
   import { Switch } from "$lib/components/ui/switch";
+  import { internalStorage } from "$lib/stores/preferences";
   import { requestNotificationPermission } from "$lib/utilities";
   import { getMessaging, getToken } from "firebase/messaging";
   import { onMount } from "svelte";
@@ -38,7 +40,6 @@
 
   const { form: formData, enhance, tainted, isTainted, submitting, timeout } = form;
 
-  const fcmToken = writable<string>();
   const deviceRadioDisabled = writable(false);
   const permission = writable<NotificationPermission>();
   const hasEmail = readable($page.data.userData.settings?.profileSettings?.email ? true : false);
@@ -48,12 +49,11 @@
   const handleRequestPermission = async (request: boolean = false) => {
     permission.set(await requestNotificationPermission(request));
     if ($permission === "granted") {
-      const messaging = getMessaging();
-      fcmToken.set(
-        await getToken(messaging, {
-          serviceWorkerRegistration: await navigator.serviceWorker.ready
-        })
-      );
+      const token = await getToken(getMessaging(), {
+        vapidKey: PUBLIC_VAPID_KEY,
+        serviceWorkerRegistration: await navigator.serviceWorker.ready
+      });
+      internalStorage.update((state) => ({ ...state, fcmToken: token }));
       deviceRadioDisabled.set(false);
       allRadioDisabled.set(!$hasEmail);
     } else if ($permission === "denied" || $permission === "default") {
@@ -79,9 +79,14 @@
   method="POST"
   class="space-y-8"
   use:enhance={{
-    onSubmit: async ({ formData }) => {
-      formData.set("fcmToken", $fcmToken);
-      $toastLoading = toast.loading("Updating your notification preferences...");
+    onSubmit: async ({ cancel }) => {
+      if ($internalStorage.fcmToken && $formData.type !== "NONE" && $formData.type !== "EMAIL") {
+        formData.update((state) => ({ ...state, fcmToken: $internalStorage.fcmToken }));
+        $toastLoading = toast.loading("Updating your notification preferences...");
+      } else if (!$internalStorage.fcmToken && $formData.type !== "NONE" && $formData.type !== "EMAIL") {
+        toast.error("Failed to update your notification preferences. Please refresh the page and try again.");
+        cancel();
+      }
     },
     onResult: async () => {
       setTimeout(() => toast.dismiss($toastLoading), 300);
