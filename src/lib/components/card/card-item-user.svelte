@@ -2,6 +2,8 @@
   import * as Avatar from "$lib/components/ui/avatar";
   import * as HoverCard from "$lib/components/ui/hover-card";
   import type { Seller } from "$lib/types";
+  import { formatDistanceToNow } from "date-fns";
+  import { toZonedTime } from "date-fns-tz";
   import * as headview3d from "headview3d";
   import Info from "lucide-svelte/icons/info";
   import MessagesSquare from "lucide-svelte/icons/messages-square";
@@ -71,12 +73,10 @@
           {minion.user.username}
         </h4>
         <p class="text-xs text-muted-foreground">
-          Last online: {new Date(minion.user.loggedInAt).toLocaleString(window.navigator.language, {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-            hour: "numeric",
-            minute: "numeric"
+          Last online
+          {formatDistanceToNow(toZonedTime(minion.user.loggedInAt, Intl.DateTimeFormat().resolvedOptions().timeZone ?? "UTC"), {
+            addSuffix: true,
+            includeSeconds: true
           })}
         </p>
       </div>

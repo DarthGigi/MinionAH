@@ -5,6 +5,8 @@
   import { searchSignal } from "$lib/stores/signals";
   import type { Seller } from "$lib/types";
   import { formatNumber } from "$lib/utilities";
+  import { formatDistanceToNow } from "date-fns";
+  import { toZonedTime } from "date-fns-tz";
   import * as headview3d from "headview3d";
   import Info from "lucide-svelte/icons/info";
   import Search from "lucide-svelte/icons/search";
@@ -82,20 +84,17 @@
           {minion.minion.name}
         </h4>
         <p class="text-xs text-muted-foreground">
-          Created on {new Date(minion.timeCreated).toLocaleString(window.navigator.language, {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-            hour: "numeric",
-            minute: "numeric"
+          Created
+          {formatDistanceToNow(toZonedTime(minion.timeCreated, Intl.DateTimeFormat().resolvedOptions().timeZone ?? "UTC"), {
+            addSuffix: true,
+            includeSeconds: true
           })}
-          <br />
           <Tooltip.Root openDelay={150}>
             <Tooltip.Trigger class="cursor-help text-[#FEFF55]">
               <p class="text-wrap text-left">Raw Craft Cost: <span class="text-[#FEAB00]">{formatNumber(minion.minion.craftCost)} coins</span></p>
             </Tooltip.Trigger>
             <Tooltip.Content class="border-accent bg-muted text-primary">
-              <p>Raw Craft Cost is <span class="font-semibold underline">not</span> 100% accurate.</p>
+              <p>Raw Craft Cost is <span class="underline">not</span> 100% accurate.</p>
             </Tooltip.Content>
           </Tooltip.Root>
         </p>
