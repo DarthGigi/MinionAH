@@ -3,10 +3,7 @@
   import { Input } from "$lib/components/ui/input";
   import LoaderCircle from "lucide-svelte/icons/loader-circle";
   import { onMount } from "svelte";
-  import Highlight from "svelte-highlight";
-  import json from "svelte-highlight/languages/typescript";
-  import githubdarkdimmed from "svelte-highlight/styles/github-dark-dimmed";
-
+  import { codeToHtml } from "shiki/bundle/web";
   let [allItems, minions, error] = Array(3).fill('{\n  "LOADING"\n}');
   let demoCode = "";
   let item: string;
@@ -41,9 +38,7 @@
 
   onMount(() => {
     const fetchData = async () => {
-      allItems = await fetchCode();
-      minions = await fetchCode("minions");
-      error = await fetchCode("anInvalidItemName");
+      [allItems, minions, error] = await Promise.all([fetchCode(), fetchCode("minions"), fetchCode("anInvalidItemName")]);
     };
 
     fetchData();
@@ -67,8 +62,6 @@
   <meta property="og:site_name" content="MinionAH" />
   <meta property="og:locale" content="en_US" />
   <meta property="og:type" content="website" />
-
-  {@html githubdarkdimmed}
 </svelte:head>
 
 <main class="relative overflow-hidden py-8">
@@ -111,7 +104,14 @@
       </ul>
       <h3 id="usage">Usage</h3>
       <p>To use the <code>API</code> you need to send a <code>GET</code> request to <code>https://minionah.com/api/craftcost</code> The API will return a JSON object with the raw craft cost of every item in the game:</p>
-      <Highlight language={json} code={allItems} class="max-h-64 overflow-y-auto overflow-x-clip rounded-md" />
+      {#await codeToHtml(allItems, { lang: "json", theme: "github-dark-dimmed", transformers: [{ pre(node) {
+              this.addClassToHast(node, "max-h-64 p-4 overflow-y-auto overflow-x-scroll rounded-md");
+            } }] })}
+        <LoaderCircle class="mx-auto h-8 w-8 animate-spin" />
+      {:then code}
+        {@html code}
+      {/await}
+
       <h3 id="specific-item">Specific item</h3>
       <p>
         If you need a specific item, you can send a <code>GET</code> request to <code>https://minionah.com/api/craftcost/{"{item}"}</code>
@@ -120,19 +120,43 @@
         Replace <code>{"{item}"}</code> with the internal item name, you can find a list of all the internal item names at <a href="https://github.com/kr45732/skyblock-plus-data/blob/main/InternalNameMappings.json" target="_blank">kr45732/skyblock-plus-data/InternalNameMappings.json</a>.
       </p>
       <p>The API will return a JSON object with the raw craft cost of the specified item:</p>
-      <Highlight language={json} code={JSON.stringify(JSON.parse('{"WOOD_AXE": 126.02217354265548}'), null, 2)} class="max-h-64 overflow-hidden rounded-md" />
+      {#await codeToHtml(JSON.stringify(JSON.parse('{"WOOD_AXE": 126.02217354265548}'), null, 2), { lang: "json", theme: "github-dark-dimmed", transformers: [{ pre(node) {
+              this.addClassToHast(node, "max-h-64 p-4 overflow-y-auto overflow-x-scroll rounded-md");
+            } }] })}
+        <LoaderCircle class="mx-auto h-8 w-8 animate-spin" />
+      {:then code}
+        {@html code}
+      {/await}
       <p>With a status code of <code class="!bg-green-950 text-green-300">200</code>, and a status message of <code class="!bg-green-950 text-green-300">OK</code>.</p>
       <h3 id="invalid-item">Invalid item</h3>
       <p>If you provide an invalid item name, the API will return the following JSON object:</p>
-      <Highlight language={json} code={error} class="max-h-64 overflow-y-auto overflow-x-clip rounded-md" />
+      {#await codeToHtml(error, { lang: "json", theme: "github-dark-dimmed", transformers: [{ pre(node) {
+              this.addClassToHast(node, "max-h-64 p-4 overflow-y-auto overflow-x-scroll rounded-md");
+            } }] })}
+        <LoaderCircle class="mx-auto h-8 w-8 animate-spin" />
+      {:then code}
+        {@html code}
+      {/await}
       <p>With a status code of <code class="!bg-yellow-950 text-yellow-300">404</code>, and a status message of <code class="!bg-yellow-950 text-yellow-300">Item not found</code>.</p>
       <h3 id="minions">Minions</h3>
       <p>If you want to get a list of the raw craft cost of every minion, you can provide <code>minions</code> as the <code>{`{item}`}</code> value.</p>
       <p>The API will return the following JSON object:</p>
-      <Highlight language={json} code={minions} class="max-h-64 overflow-y-auto overflow-x-clip rounded-md" />
+      {#await codeToHtml(minions, { lang: "json", theme: "github-dark-dimmed", transformers: [{ pre(node) {
+              this.addClassToHast(node, "max-h-64 p-4 overflow-y-auto overflow-x-scroll rounded-md");
+            } }] })}
+        <LoaderCircle class="mx-auto h-8 w-8 animate-spin" />
+      {:then code}
+        {@html code}
+      {/await}
       <h3 id="internal-error">Internal error</h3>
       <p>If an internal error occurs, the API will return the following JSON object:</p>
-      <Highlight language={json} code={JSON.stringify(JSON.parse(`{"error": "Something went wrong"}`), null, 2)} class="max-h-64 overflow-hidden rounded-md" />
+      {#await codeToHtml(JSON.stringify(JSON.parse(`{"error": "Something went wrong"}`), null, 2), { lang: "json", theme: "github-dark-dimmed", transformers: [{ pre(node) {
+              this.addClassToHast(node, "max-h-64 p-4 overflow-y-auto overflow-x-scroll rounded-md");
+            } }] })}
+        <LoaderCircle class="mx-auto h-8 w-8 animate-spin" />
+      {:then code}
+        {@html code}
+      {/await}
       <p>With a status code of <code class="!bg-red-950 text-red-300">500</code>, and a status message of <code class="!bg-red-950 text-red-300">Internal Server Error</code>.</p>
       <h3 id="additional-info">Additional information</h3>
       <p>Additional information about the responses:</p>
@@ -181,7 +205,13 @@
         </Button>
       </div>
       {#if demoCode}
-        <Highlight language={json} code={demoCode} class="mt-2 max-h-64 overflow-y-auto overflow-x-clip rounded-md" />
+        {#await codeToHtml(demoCode, { lang: "json", theme: "github-dark-dimmed", transformers: [{ pre(node) {
+                this.addClassToHast(node, "mt-2 max-h-64 p-4 overflow-y-auto overflow-x-scroll rounded-md");
+              } }] })}
+          <LoaderCircle class="mx-auto h-8 w-8 animate-spin" />
+        {:then code}
+          {@html code}
+        {/await}
       {/if}
     </div>
   </article>
