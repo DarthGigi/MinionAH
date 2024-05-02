@@ -6,6 +6,7 @@
   import Underline from "@tiptap/extension-underline";
   import StarterKit from "@tiptap/starter-kit";
   import { formatDistanceToNow } from "date-fns";
+  import { toZonedTime } from "date-fns-tz";
   import { onDestroy, onMount } from "svelte";
   import { fly } from "svelte/transition";
 
@@ -55,8 +56,8 @@
       <div class={`no-scrollbar min-w-0 max-w-[18rem] cursor-default select-text self-end break-words rounded-full py-2 text-left text-[#FDFDFD] transition-all duration-300 data-[image=false]:px-4 ${message.content.length >= 25 ? "!rounded-3xl" : ""} ${self ? "self-end !rounded-br-none data-[image=false]:bg-[#3C83F7]" : "self-start !rounded-bl-none data-[image=false]:bg-[#3B3B3D]"}`} bind:this={element} data-image={isOnlyImage}></div>
     </Tooltip.Trigger>
     <Tooltip.Content class="border-2 border-accent bg-accent text-white">
-      <time datetime={message.createdAt.toLocaleDateString()} class="text-nowrap text-xs">
-        {formatDistanceToNow(message.createdAt, {
+      <time datetime={message.createdAt.toLocaleString()} class="text-nowrap text-xs">
+        {formatDistanceToNow(toZonedTime(message.createdAt, Intl.DateTimeFormat().resolvedOptions().timeZone ?? "UTC"), {
           addSuffix: true,
           includeSeconds: true
         })}

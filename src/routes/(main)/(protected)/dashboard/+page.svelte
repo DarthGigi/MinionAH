@@ -2,6 +2,8 @@
   import * as Avatar from "$lib/components/ui/avatar";
   import * as Card from "$lib/components/ui/card";
   import { formatNumber } from "$lib/utilities";
+  import { formatDistanceToNow } from "date-fns";
+  import { toZonedTime } from "date-fns-tz";
   import ContactRound from "lucide-svelte/icons/contact-round";
   import MessagesSquare from "lucide-svelte/icons/messages-square";
   import ShoppingCart from "lucide-svelte/icons/shopping-cart";
@@ -84,12 +86,9 @@
                 </div>
                 <div class="ml-6 font-medium md:ml-auto md:flex-shrink-0">
                   {#if typeof window !== "undefined"}
-                    {new Date(auction.timeCreated).toLocaleString(window.navigator.language, {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                      hour: "numeric",
-                      minute: "numeric"
+                    {formatDistanceToNow(toZonedTime(auction.timeCreated, Intl.DateTimeFormat().resolvedOptions().timeZone ?? "UTC"), {
+                      addSuffix: true,
+                      includeSeconds: true
                     })}
                   {/if}
                 </div>
@@ -118,12 +117,9 @@
                 </div>
                 <div class="font-medium md:ml-auto">
                   {#if typeof window !== "undefined"}
-                    {new Date(user.loggedInAt).toLocaleString(window.navigator.language, {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                      hour: "numeric",
-                      minute: "numeric"
+                    {formatDistanceToNow(toZonedTime(user.loggedInAt, Intl.DateTimeFormat().resolvedOptions().timeZone ?? "UTC"), {
+                      addSuffix: true,
+                      includeSeconds: true
                     })}
                   {/if}
                 </div>
