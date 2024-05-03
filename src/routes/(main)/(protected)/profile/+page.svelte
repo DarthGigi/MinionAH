@@ -363,7 +363,7 @@
 </form>
 
 <AlertDialog.Root bind:open={showDeleteFormDialog} closeOnEscape={!$submittingDelete} closeOnOutsideClick={!$submittingDelete}>
-  <AlertDialog.Content>
+  <AlertDialog.Content class="border-border bg-popover">
     <AlertDialog.Header>
       <AlertDialog.Title>Warning</AlertDialog.Title>
       <AlertDialog.Description>Are you sure you want to delete this minion?</AlertDialog.Description>
