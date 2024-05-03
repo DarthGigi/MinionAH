@@ -1,8 +1,12 @@
+import { fail, message, superValidate } from "sveltekit-superforms";
+import { zod } from "sveltekit-superforms/adapters";
+import { formSchemaDelete } from "../schema";
 import type { Actions, PageServerLoad } from "./$types";
 
 export const load = (async ({ locals }) => {
   return {
     user: locals.user,
+    formDelete: await superValidate(zod(formSchemaDelete), { id: "formDelete" }),
     streamed: {
       chats: prisma.chat.findMany({
         where: {
@@ -50,22 +54,31 @@ export const load = (async ({ locals }) => {
 
 export const actions: Actions = {
   deleteChat: async ({ locals, request }) => {
-    const data = await request.formData();
-    const chatid = data.get("chatId");
+    const user = locals.user;
+
+    const formDelete = await superValidate(request, zod(formSchemaDelete), { id: "formDelete" });
+    if (!formDelete.valid) {
+      return fail(400, {
+        formDelete
+      });
+    }
+
+    const chatid = formDelete.data.id;
+
     const chat = await prisma.chat.findFirst({
       where: {
-        id: chatid?.toString(),
+        id: chatid,
         AND: [
           {
             OR: [
               {
                 user1_id: {
-                  equals: locals.user!.id
+                  equals: user!.id
                 }
               },
               {
                 user2_id: {
-                  equals: locals.user!.id
+                  equals: user!.id
                 }
               }
             ]
@@ -74,13 +87,9 @@ export const actions: Actions = {
       }
     });
     if (!chat) {
-      console.info("no chat");
-      return {
-        status: 200,
-        body: {
-          success: false
-        }
-      };
+      return message(formDelete, "Something went wrong. Please try again.", {
+        status: 500
+      });
     }
     try {
       await prisma.chat.delete({
@@ -106,19 +115,11 @@ export const actions: Actions = {
       });
     } catch (error) {
       console.error(error);
-      return {
-        status: 200,
-        body: {
-          success: false
-        }
-      };
+      return message(formDelete, "Something went wrong. Please try again.", {
+        status: 500
+      });
     }
 
-    return {
-      status: 200,
-      body: {
-        success: true
-      }
-    };
+    return message(formDelete, "Chat deleted successfully.");
   }
 };
