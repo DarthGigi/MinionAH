@@ -91,6 +91,10 @@
       });
     }
     if (!$internalPreferences.hasSeenDeviceNotificationsToast) {
+      /**
+       * TODO: Re-enable this when we have a proper notification system
+       */
+      return;
       if (!data.user) return;
       setTimeout(() => {
         toast("Notifications", {

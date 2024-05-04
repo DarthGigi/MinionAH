@@ -28,6 +28,8 @@
   import { readable, writable } from "svelte/store";
   import { superForm, type Infer, type SuperValidated } from "sveltekit-superforms";
   import { zodClient } from "sveltekit-superforms/adapters";
+  import * as Alert from "$lib/components/ui/alert";
+  import TriangleAlert from "lucide-svelte/icons/triangle-alert";
 
   export let data: SuperValidated<Infer<NotificationFormSchema>>;
 
@@ -41,10 +43,12 @@
   const { form: formData, enhance, tainted, isTainted, submitting, timeout } = form;
 
   const deviceRadioDisabled = writable(false);
-  const permission = writable<NotificationPermission>();
+  const permission = writable<NotificationPermission | undefined>();
   const hasEmail = readable($page.data.userData.settings?.profileSettings?.email ? true : false);
   const allRadioDisabled = writable(false);
   const toastLoading = writable<number | string>();
+  const iOSCanInstall = writable(false);
+  const iOSIsInstalled = writable(false);
 
   const handleRequestPermission = async (request: boolean = false) => {
     permission.set(await requestNotificationPermission(request));
@@ -56,7 +60,7 @@
       internalStorage.update((state) => ({ ...state, fcmToken: token }));
       deviceRadioDisabled.set(false);
       allRadioDisabled.set(!$hasEmail);
-    } else if ($permission === "denied" || $permission === "default") {
+    } else if ($permission === "denied" || $permission === "default" || $permission === undefined) {
       deviceRadioDisabled.set(true);
       allRadioDisabled.set(true);
     }
@@ -72,9 +76,18 @@
 
   onMount(async () => {
     handleRequestPermission();
+    if ("standalone" in window.navigator) {
+      iOSCanInstall.set(true);
+      iOSIsInstalled.set(window.navigator.standalone === true);
+    }
   });
 </script>
 
+<Alert.Root class="border-border">
+  <TriangleAlert />
+  <Alert.Title>Heads up!</Alert.Title>
+  <Alert.Description>The notifications feature is still in development. <br /> It may or may not work for you, especially on mobile devices. Please do not rely on this feature yet.</Alert.Description>
+</Alert.Root>
 <form
   method="POST"
   class="space-y-8"
@@ -159,7 +172,7 @@
   {#if $permission === "denied" || $permission === "default"}
     <div class="flex flex-col">
       {#if $permission === "default"}
-        <Button class="w-fit" variant="outline" on:click={() => handleRequestPermission(true)}>Allow notifications</Button>
+        <Button class="w-fit" variant="outline" on:click={() => handleRequestPermission(true)}>Receive notifications on this device</Button>
       {/if}
       {#if $permission === "denied"}
         <p class="text-sm text-red-500">You have denied notifications. Please allow them in your browser settings.</p>
