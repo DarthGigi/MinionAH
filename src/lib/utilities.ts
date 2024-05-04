@@ -86,6 +86,17 @@ export const sanitizeInput = (input: string): string => {
 };
 
 export const requestNotificationPermission = (request: boolean = false) => {
+
+  // Detect if it's running in a browser
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  // Check if the browser supports notifications
+  if (!("Notification" in window) || !Notification) {
+    return;
+  }
+
   if (request) {
     return Notification.requestPermission().then(async (permission) => {
       return permission;
