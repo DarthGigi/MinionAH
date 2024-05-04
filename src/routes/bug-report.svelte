@@ -80,10 +80,10 @@
   </Drawer.Root>
 {:else}
   <Popover.Root bind:open={$bugReportOpen} openFocus="[data-cancel-button]">
-    <Popover.Trigger class="fixed bottom-4 right-0 z-50 translate-x-1/2 -rotate-90 rounded-full border border-input bg-background p-2 text-muted-foreground transition-all duration-300 hover:translate-x-0 hover:rotate-0 hover:bg-accent hover:text-accent-foreground data-[open=true]:translate-x-0 data-[open=true]:rotate-0 data-[open=true]:bg-accent data-[open=true]:text-accent-foreground" data-open={$bugReportOpen}>
+    <Popover.Trigger class="fixed bottom-4 right-0 z-[9999999999] translate-x-1/2 -rotate-90 rounded-full border border-input bg-background p-2 text-muted-foreground transition-all duration-300 hover:translate-x-0 hover:rotate-0 hover:bg-accent hover:text-accent-foreground data-[open=true]:translate-x-0 data-[open=true]:rotate-0 data-[open=true]:bg-accent data-[open=true]:text-accent-foreground" data-open={$bugReportOpen}>
       <Bug class="size-4" />
     </Popover.Trigger>
-    <Popover.Content side="top" sideOffset={4} align="end" alignOffset={4} class="w-full max-w-72 rounded-lg border border-border shadow-sm">
+    <Popover.Content side="top" sideOffset={4} align="end" alignOffset={4} class="z-[9999999999] w-full max-w-96 rounded-lg border border-border shadow-sm ">
       <Card.Root class="rounded-none border-none bg-transparent text-card-foreground">
         <Card.Header>
           <Card.Title>Report a Bug</Card.Title>
