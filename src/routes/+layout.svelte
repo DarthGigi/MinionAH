@@ -19,6 +19,10 @@
   import { toast } from "svelte-sonner";
   import { writable } from "svelte/store";
   import "../app.css";
+  import type { LayoutData } from "./$types";
+  import BugReport from "./bug-report.svelte";
+
+  export let data: LayoutData;
 
   const paths = writable<string[]>([]);
 
@@ -101,6 +105,9 @@
   }} />
 
 <Navbar />
+
+<BugReport {data} />
+
 <Toaster theme="dark" {closeButton} {position} />
 
 {#if $page.url.pathname !== "/"}
