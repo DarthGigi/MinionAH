@@ -121,7 +121,15 @@
               bugReportOpen.set(false);
               bugMessageValue.set("");
             }}>Send Bug Report</Button>
-          <Button type="button" variant="secondary" class="w-full" data-cancel-button>Cancel</Button>
+          <Button
+            type="button"
+            variant="secondary"
+            class="w-full"
+            data-cancel-button
+            on:click={() => {
+              bugReportOpen.set(false);
+              bugMessageValue.set("");
+            }}>Cancel</Button>
         </Card.Footer>
       </Card.Root>
     </Popover.Content>
