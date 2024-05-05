@@ -101,15 +101,17 @@ model Auction {
 }
 
 model Chat {
-  id        String    @id @default(cuid())
-  user1_id  String
-  user2_id  String
-  user1     User      @relation("user1", fields: [user1_id], references: [id], onDelete: Cascade)
-  user2     User      @relation("user2", fields: [user2_id], references: [id], onDelete: Cascade)
-  messages  Message[]
-  createdAt DateTime  @default(now())
-  user1Read Boolean   @default(false)
-  user2Read Boolean   @default(false)
+  id           String    @id @default(cuid())
+  user1_id     String
+  user2_id     String
+  user1        User      @relation("user1", fields: [user1_id], references: [id], onDelete: Cascade)
+  user2        User      @relation("user2", fields: [user2_id], references: [id], onDelete: Cascade)
+  messages     Message[]
+  createdAt    DateTime  @default(now())
+  user1Read    Boolean   @default(false)
+  user2Read    Boolean   @default(false)
+  user1Emailed Boolean   @default(false)
+  user2Emailed Boolean   @default(false)
 }
 
 model Message {
