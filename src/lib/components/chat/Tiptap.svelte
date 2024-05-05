@@ -51,7 +51,7 @@
       element: element,
       editorProps: {
         attributes: {
-          class: "px-2 flex flex-col justify-center focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-0 min-h-11 max-w-[calc(100%-7.5rem)] transition-all duration-300 max-h-96 overflow-scroll"
+          class: "px-2 flex flex-col justify-center focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-0 min-h-11 max-w-[calc(100%-7.5rem)] transition-all duration-300 max-h-96 overflow-scroll no-scrollbar"
         }
       },
       extensions: [
@@ -69,7 +69,7 @@
         }),
         Placeholder.configure({
           placeholder: "Type a message",
-          emptyEditorClass: "cursor-text before:content-[attr(data-placeholder)] before:absolute before:top-1/2 before:left-2 before:opacity-50 before:-translate-y-1/2 before:pointer-events-none"
+          emptyEditorClass: "cursor-text before:content-[attr(data-placeholder)] before:absolute before:top-1/2 before:left-2 before:opacity-50 before:-translate-y-1/2 before:pointer-events-none no-scrollbar"
         }),
         TiptapUnderline,
         KeyboardHandler.extend({
