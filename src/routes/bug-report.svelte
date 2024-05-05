@@ -31,8 +31,6 @@
   });
 
   const isMobile = mediaQuery("(max-width: 640px)");
-
-  console.log($isMobile);
 </script>
 
 {#if $isMobile}
