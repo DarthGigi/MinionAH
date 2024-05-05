@@ -40,9 +40,9 @@
   <Collapsible.Content class="rounded-lg border border-border px-6 py-2">
     <Accordion.Root class="w-full text-muted-foreground">
       <Accordion.Item value="item-1" class="border-border">
-        <Accordion.Trigger class="text-accent-foreground">Is it safe?</Accordion.Trigger>
+        <Accordion.Trigger class="text-accent-foreground">How does it work?</Accordion.Trigger>
         <Accordion.Content>
-          Yes. We use MC-Auth to authenticate your Minecraft account, which is the most secure way to do so.
+          We use MC-Auth to authenticate your Minecraft account, which is the most secure way to do so.
           <br /><br />
           No sensitive information like your password, tokens, or any other personal information is being used or stored during this process.
           <br /><br />
@@ -52,7 +52,7 @@
       <Accordion.Item value="item-2" class="border-border">
         <Accordion.Trigger class="text-accent-foreground">Can I trust you with my account?</Accordion.Trigger>
         <Accordion.Content>
-          Yes. We will never try to steal, sell, or otherwise misuse your Minecraft account information. We use the information provided by MC-Auth to verify your Minecraft identity.
+          We will never try to steal, sell, or otherwise misuse your Minecraft account information. We use the information provided by MC-Auth to verify your Minecraft identity.
           <br /><br />
           We will also never ask for your Minecraft password or any other sensitive information.
         </Accordion.Content>

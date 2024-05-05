@@ -28,7 +28,7 @@
   import TriangleAlert from "lucide-svelte/icons/triangle-alert";
   import { onMount } from "svelte";
   import { toast } from "svelte-sonner";
-  import { readable, writable } from "svelte/store";
+  import { derived, readable, writable } from "svelte/store";
   import { superForm, type Infer, type SuperValidated } from "sveltekit-superforms";
   import { zodClient } from "sveltekit-superforms/adapters";
 
@@ -46,7 +46,9 @@
   const deviceRadioDisabled = writable(false);
   const permission = writable<NotificationPermission | undefined>();
   const hasEmail = readable($page.data.userData.settings?.profileSettings?.email ? true : false);
-  const allRadioDisabled = writable(false);
+  const allRadioDisabled = derived([deviceRadioDisabled, hasEmail], ([$deviceRadioDisabled, $hasEmail]) => {
+    return $deviceRadioDisabled || !$hasEmail;
+  });
   const toastLoading = writable<number | string>();
   const iOSCanInstall = writable(false);
   const iOSIsInstalled = writable(false);
@@ -60,10 +62,8 @@
       });
       internalStorage.update((state) => ({ ...state, fcmToken: token }));
       deviceRadioDisabled.set(false);
-      allRadioDisabled.set(!$hasEmail);
     } else if ($permission === "denied" || $permission === "default" || $permission === undefined) {
       deviceRadioDisabled.set(true);
-      allRadioDisabled.set(true);
     }
   };
 
@@ -121,14 +121,14 @@
     <RadioGroup.Root class="flex flex-col space-y-1" bind:value={$formData.type}>
       <div class="flex items-center space-x-4">
         <Form.Control let:attrs>
-          <RadioGroup.Item value="ALL" {...attrs} />
+          <RadioGroup.Item disabled={$allRadioDisabled} value="ALL" {...attrs} />
           <Form.Label class="flex flex-col font-normal">
             <span class="flex items-center gap-1.5 text-base">Device & Email <Construction class="size-4 text-muted-foreground" /></span>
             <span class="text-sm text-muted-foreground">Receive notifications on your device and via email.</span>
             {#if $permission === "denied" || $permission === "default"}
               <span class="text-sm font-semibold text-muted-foreground">You need to allow notifications to receive them.</span>
             {/if}
-            {#if !hasEmail}
+            {#if !$hasEmail}
               <span class="text-sm font-semibold text-muted-foreground">You need to add an email to receive email notifications. You can do this in your <a href="/profile/settings" class="underline">profile settings</a>.</span>
             {/if}
           </Form.Label>
@@ -136,11 +136,11 @@
       </div>
       <div class="flex items-center space-x-4">
         <Form.Control let:attrs>
-          <RadioGroup.Item value="EMAIL" {...attrs} />
+          <RadioGroup.Item disabled={!$hasEmail} value="EMAIL" {...attrs} />
           <Form.Label class="flex flex-col font-normal">
             <span class="text-base">Email</span>
             <span class="text-sm text-muted-foreground">Receive notifications via email only.</span>
-            {#if !hasEmail}
+            {#if !$hasEmail}
               <span class="text-sm font-semibold text-muted-foreground">You need to add an email to receive email notifications. You can do this in your <a href="/profile/settings" class="underline">profile settings</a>.</span>
             {/if}
           </Form.Label>
