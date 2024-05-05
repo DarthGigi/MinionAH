@@ -2,16 +2,21 @@
   import { Button } from "$lib/components/ui/button";
   import { Separator } from "$lib/components/ui/separator";
   import ArrowLeft from "lucide-svelte/icons/arrow-left";
+  import BellRing from "lucide-svelte/icons/bell-ring";
+  import UserRound from "lucide-svelte/icons/user-round";
+  import type { ComponentType } from "svelte";
   import SidebarNav from "./(components)/sidebar-nav.svelte";
 
   const sidebarNavItems = [
     {
       title: "Profile",
-      href: "/profile/settings"
+      href: "/profile/settings",
+      icon: UserRound as ComponentType
     },
     {
       title: "Notifications",
-      href: "/profile/settings/notifications"
+      href: "/profile/settings/notifications",
+      icon: BellRing as ComponentType
     }
   ];
 </script>

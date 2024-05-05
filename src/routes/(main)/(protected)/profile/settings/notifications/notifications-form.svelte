@@ -16,6 +16,7 @@
 <script lang="ts">
   import { page } from "$app/stores";
   import { PUBLIC_VAPID_KEY } from "$env/static/public";
+  import * as Alert from "$lib/components/ui/alert";
   import { Button } from "$lib/components/ui/button";
   import * as Form from "$lib/components/ui/form";
   import * as RadioGroup from "$lib/components/ui/radio-group";
@@ -23,13 +24,13 @@
   import { internalStorage } from "$lib/stores/preferences";
   import { requestNotificationPermission } from "$lib/utilities";
   import { getMessaging, getToken } from "firebase/messaging";
+  import Construction from "lucide-svelte/icons/construction";
+  import TriangleAlert from "lucide-svelte/icons/triangle-alert";
   import { onMount } from "svelte";
   import { toast } from "svelte-sonner";
   import { readable, writable } from "svelte/store";
   import { superForm, type Infer, type SuperValidated } from "sveltekit-superforms";
   import { zodClient } from "sveltekit-superforms/adapters";
-  import * as Alert from "$lib/components/ui/alert";
-  import TriangleAlert from "lucide-svelte/icons/triangle-alert";
 
   export let data: SuperValidated<Infer<NotificationFormSchema>>;
 
@@ -86,7 +87,7 @@
 <Alert.Root class="border-border">
   <TriangleAlert />
   <Alert.Title>Heads up!</Alert.Title>
-  <Alert.Description>The notifications feature is still in development. <br /> It may or may not work for you, especially on mobile devices. Please do not rely on this feature yet.</Alert.Description>
+  <Alert.Description>The device notifications feature is still in development. <br /> It may or may not work for you, especially on mobile devices. Please do not rely on this feature yet.</Alert.Description>
 </Alert.Root>
 <form
   method="POST"
@@ -120,10 +121,10 @@
     <RadioGroup.Root class="flex flex-col space-y-1" bind:value={$formData.type}>
       <div class="flex items-center space-x-4">
         <Form.Control let:attrs>
-          <RadioGroup.Item value="ALL" disabled={true} {...attrs} />
+          <RadioGroup.Item value="ALL" {...attrs} />
           <Form.Label class="flex flex-col font-normal">
-            <span class="text-base">Device & Email</span>
-            <span class="text-sm text-muted-foreground">Receive notifications on your device and via email. (coming soon)</span>
+            <span class="flex items-center gap-1.5 text-base">Device & Email <Construction class="size-4 text-muted-foreground" /></span>
+            <span class="text-sm text-muted-foreground">Receive notifications on your device and via email.</span>
             {#if $permission === "denied" || $permission === "default"}
               <span class="text-sm font-semibold text-muted-foreground">You need to allow notifications to receive them.</span>
             {/if}
@@ -135,10 +136,10 @@
       </div>
       <div class="flex items-center space-x-4">
         <Form.Control let:attrs>
-          <RadioGroup.Item value="EMAIL" disabled={true} {...attrs} />
+          <RadioGroup.Item value="EMAIL" {...attrs} />
           <Form.Label class="flex flex-col font-normal">
             <span class="text-base">Email</span>
-            <span class="text-sm text-muted-foreground">Receive notifications via email only. (coming soon) </span>
+            <span class="text-sm text-muted-foreground">Receive notifications via email only.</span>
             {#if !hasEmail}
               <span class="text-sm font-semibold text-muted-foreground">You need to add an email to receive email notifications. You can do this in your <a href="/profile/settings" class="underline">profile settings</a>.</span>
             {/if}
@@ -149,7 +150,7 @@
         <Form.Control let:attrs>
           <RadioGroup.Item value="DEVICE" disabled={$deviceRadioDisabled} {...attrs} />
           <Form.Label class="flex flex-col font-normal">
-            <span class="text-base">Device</span>
+            <span class="flex items-center gap-1.5 text-base">Device <Construction class="size-4 text-muted-foreground" /></span>
             <span class="text-sm text-muted-foreground">Receive notifications on your device only.</span>
             {#if $permission === "denied" || $permission === "default"}
               <span class="text-sm font-semibold text-muted-foreground">You need to allow notifications to receive them.</span>

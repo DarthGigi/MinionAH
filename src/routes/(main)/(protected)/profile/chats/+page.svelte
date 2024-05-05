@@ -64,7 +64,7 @@
         {#each chats as chat}
           {@const chatUser = chat.user1_id === data.user?.id ? chat.user2 : chat.user1}
           {@const read = checkReadStatus(chat, data.user?.id)}
-          <div class="@container relative flex flex-col items-center justify-between gap-x-4 space-y-4 rounded-md bg-background p-4 text-popover-foreground shadow-md outline-none">
+          <div class="relative flex flex-col items-center justify-between gap-x-4 space-y-4 rounded-md bg-background p-4 text-popover-foreground shadow-md outline-none @container">
             <div class="flex w-full flex-col items-center justify-between gap-x-4">
               <Avatar.Root class="size-24 flex-shrink bg-accent transition-all duration-300">
                 <Avatar.Image class="pointer-events-none h-full w-full p-2" src={`https://res.cloudinary.com/minionah/image/upload/v1/users/avatars/${chatUser.id}`} alt={`${chatUser.username}'s avatar`} />
@@ -82,9 +82,9 @@
                 <p class="text-xs text-muted-foreground">Messages: {chat._count.messages}</p>
               </div>
             </div>
-            <div class="@xs:flex-row flex w-full flex-col items-center justify-center gap-4">
+            <div class="flex w-full flex-col items-center justify-center gap-2 @xs:flex-row">
               <Button href={`/user/${chatUser.username}/chat`} data-sveltekit-preload-data="off" variant="outline" class="relative w-full">
-                <MessagesSquare class="mr-2 h-5 w-5" /> Chat
+                <MessagesSquare class="mr-1.5 h-5 w-5" /> Chat
                 {#if !read}
                   <span class="absolute right-0 top-0 -mr-1 -mt-1 flex size-3">
                     <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-muted-foreground opacity-75" />
@@ -93,7 +93,7 @@
                 {/if}
               </Button>
               <Button href={`/user/${chatUser.username}`} data-sveltekit-preload-data="off" variant="outline" class="w-full">
-                <UserRound class="mr-2 h-5 w-5" /> Profile
+                <UserRound class="mr-1.5 h-5 w-5" /> Profile
               </Button>
               <Button
                 data-sveltekit-preload-data="off"
@@ -103,7 +103,7 @@
                   showDelete = true;
                   chatToDelete = chat.id;
                 }}>
-                <Trash2 class="mr-2 h-5 w-5" /> Delete
+                <Trash2 class="mr-1.5 h-5 w-5" /> Delete
               </Button>
             </div>
           </div>
