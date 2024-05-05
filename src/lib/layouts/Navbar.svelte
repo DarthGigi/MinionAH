@@ -8,9 +8,20 @@
   import * as Tooltip from "$lib/components/ui/tooltip";
   import { preferences } from "$lib/stores/preferences";
   import ChevronDown from "lucide-svelte/icons/chevron-down";
+  import CircleHelp from "lucide-svelte/icons/circle-help";
+  import Code from "lucide-svelte/icons/code";
+  import Cog from "lucide-svelte/icons/cog";
+  import Home from "lucide-svelte/icons/home";
   import Info from "lucide-svelte/icons/info";
+  import LayoutDashboard from "lucide-svelte/icons/layout-dashboard";
+  import LogOut from "lucide-svelte/icons/log-out";
+  import MessagesSquare from "lucide-svelte/icons/messages-square";
+  import Newspaper from "lucide-svelte/icons/newspaper";
   import Plus from "lucide-svelte/icons/plus";
+  import Scale from "lucide-svelte/icons/scale";
   import Settings from "lucide-svelte/icons/settings";
+  import UserRound from "lucide-svelte/icons/user-round";
+  import Users from "lucide-svelte/icons/users";
 
   let profileDropdownOpen = false;
   let menuDropdownOpen = false;
@@ -29,15 +40,30 @@
           </DropdownMenu.Trigger>
           <DropdownMenu.Content class="w-44 border-border bg-popover" transitionConfig={{ duration: 300 }}>
             <DropdownMenu.Group>
-              <DropdownMenu.Item class="hover:cursor-pointer data-[highlighted]:bg-background" href="/">Home</DropdownMenu.Item>
+              <DropdownMenu.Item class="gap-1.5 hover:cursor-pointer data-[highlighted]:bg-background" href="/">
+                <Home class="size-4" />Home
+              </DropdownMenu.Item>
               <DropdownMenu.Separator class="bg-border" />
-              <DropdownMenu.Item target="_blank" class="hover:cursor-pointer data-[highlighted]:bg-background" href="https://newsroom.minionah.com">Newsroom</DropdownMenu.Item>
-              <DropdownMenu.Item target="_blank" class="hover:cursor-pointer data-[highlighted]:bg-background" href="https://discord.minionah.com">Community</DropdownMenu.Item>
+              <DropdownMenu.Item target="_blank" class="gap-1.5 hover:cursor-pointer data-[highlighted]:bg-background" href="https://newsroom.minionah.com">
+                <Newspaper class="size-4" />Newsroom
+              </DropdownMenu.Item>
+              <DropdownMenu.Item target="_blank" class="gap-1.5 hover:cursor-pointer data-[highlighted]:bg-background" href="https://discord.minionah.com">
+                <Users class="size-4" />Community
+              </DropdownMenu.Item>
               <DropdownMenu.Separator class="bg-border" />
-              <DropdownMenu.Item target="_blank" class="hover:cursor-pointer data-[highlighted]:bg-background" href="https://newsroom.minionah.com/minionah/">About</DropdownMenu.Item>
-              <DropdownMenu.Item target="_blank" class="ml-2 hover:cursor-pointer data-[highlighted]:bg-background" href="https://github.com/DarthGigi/MinionAH">GitHub</DropdownMenu.Item>
-              <DropdownMenu.Item target="_blank" class="ml-2 hover:cursor-pointer data-[highlighted]:bg-background" href="https://newsroom.minionah.com/privacy-policy">Privacy Policy</DropdownMenu.Item>
-              <DropdownMenu.Item target="_blank" class="ml-2 hover:cursor-pointer data-[highlighted]:bg-background" href="https://newsroom.minionah.com/terms-of-service">Terms of Service</DropdownMenu.Item>
+              <DropdownMenu.Item target="_blank" class="gap-1.5 hover:cursor-pointer data-[highlighted]:bg-background" href="https://newsroom.minionah.com/minionah/">
+                <CircleHelp class="size-4" />About
+              </DropdownMenu.Item>
+              <DropdownMenu.Item target="_blank" class="gap-1.5 hover:cursor-pointer data-[highlighted]:bg-background" href="https://github.com/DarthGigi/MinionAH">
+                <Code class="size-4" /> GitHub
+              </DropdownMenu.Item>
+              <DropdownMenu.Separator class="bg-border" />
+              <DropdownMenu.Item target="_blank" class="gap-1.5 hover:cursor-pointer data-[highlighted]:bg-background" href="https://newsroom.minionah.com/privacy-policy">
+                <Scale class="size-4" />Privacy Policy
+              </DropdownMenu.Item>
+              <DropdownMenu.Item target="_blank" class="gap-1.5 hover:cursor-pointer data-[highlighted]:bg-background" href="https://newsroom.minionah.com/terms-of-service">
+                <Scale class="size-4" />Terms of Service
+              </DropdownMenu.Item>
             </DropdownMenu.Group>
           </DropdownMenu.Content>
         </DropdownMenu.Root>
@@ -74,16 +100,22 @@
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content class="border-border bg-popover">
                   <DropdownMenu.Group>
-                    <DropdownMenu.Item href="/profile" class="cursor-pointer data-[highlighted]:bg-background">Profile</DropdownMenu.Item>
-                    <DropdownMenu.Item href="/profile/settings" class="ml-2 cursor-pointer data-[highlighted]:bg-background">Settings</DropdownMenu.Item>
+                    <DropdownMenu.Item href="/profile" class="cursor-pointer gap-1.5 data-[highlighted]:bg-background">
+                      <UserRound class="size-4" /> Profile
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Item href="/profile/settings" class="cursor-pointer gap-1.5 data-[highlighted]:bg-background">
+                      <Cog class="size-4" /> Settings
+                    </DropdownMenu.Item>
                   </DropdownMenu.Group>
                   <DropdownMenu.Separator class="bg-border" />
                   <DropdownMenu.Group>
                     {#if $page.data.isAdmin}
-                      <DropdownMenu.Item href="/dashboard" class="cursor-pointer data-[highlighted]:bg-background">Dashboard</DropdownMenu.Item>
+                      <DropdownMenu.Item href="/dashboard" class="cursor-pointer gap-1.5 data-[highlighted]:bg-background">
+                        <LayoutDashboard class="size-4" />Dashboard
+                      </DropdownMenu.Item>
                     {/if}
-                    <DropdownMenu.Item href="/profile/chats" class="relative cursor-pointer data-[highlighted]:bg-background"
-                      >Chats
+                    <DropdownMenu.Item href="/profile/chats" class="relative cursor-pointer gap-1.5 data-[highlighted]:bg-background">
+                      <MessagesSquare class="size-4" /> Chats
                       {#if !$page.url.pathname.includes("chat")}
                         {#if $page.data.unreadChats}
                           {#if profileDropdownOpen}
@@ -96,7 +128,9 @@
                       {/if}
                     </DropdownMenu.Item>
                     <DropdownMenu.Separator class="bg-border" />
-                    <DropdownMenu.Item href="/logout" class="cursor-pointer data-[highlighted]:bg-background" data-sveltekit-preload-data="off">Sign out</DropdownMenu.Item>
+                    <DropdownMenu.Item href="/logout" class="cursor-pointer gap-1.5 data-[highlighted]:bg-background" data-sveltekit-preload-data="off">
+                      <LogOut class="size-4" /> Sign out
+                    </DropdownMenu.Item>
                   </DropdownMenu.Group>
                 </DropdownMenu.Content>
               </DropdownMenu.Root>
