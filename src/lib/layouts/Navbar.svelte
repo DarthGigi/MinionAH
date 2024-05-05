@@ -115,7 +115,7 @@
           <Popover.Trigger aria-label="Settings">
             <Settings class={`text-accent transition-all duration-300 hover:text-accent-foreground/50 ${settingsOpen ? "rotate-45 !text-white" : ""}`} />
           </Popover.Trigger>
-          <Popover.Content sideOffset={8} class="border-border bg-popover">
+          <Popover.Content sideOffset={8} class="border-border bg-popover" data-preferences-tooltip-portal>
             <div class="flex flex-col gap-4">
               <div class="space-y-2">
                 <h4 class="font-medium leading-none">Preferences</h4>
@@ -140,11 +140,11 @@
                 </div>
               </div>
             </div>
-            <Tooltip.Root closeDelay={0} openDelay={0} closeOnPointerDown={false}>
+            <Tooltip.Root closeDelay={0} openDelay={0} closeOnPointerDown={false} portal="body">
               <Tooltip.Trigger class="absolute right-1 top-2 text-accent hover:text-accent-foreground">
                 <Info class="h-4" />
               </Tooltip.Trigger>
-              <Tooltip.Content class="border-border bg-popover">
+              <Tooltip.Content class="border-border bg-popover" side="top" sideOffset={4} align="center">
                 <p>These preferences are saved in your browser</p>
               </Tooltip.Content>
             </Tooltip.Root>
