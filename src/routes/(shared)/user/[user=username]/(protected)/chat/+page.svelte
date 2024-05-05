@@ -28,24 +28,6 @@
   });
 
   const channel = pusher.subscribe(`chat-${data.chat.id}`);
-  // bind_global((eventName: string, new_message: iMessage) => {
-  //   console.log(eventName);
-  //   if (eventName !== "new-message") return;
-  //   sentMessageSuccess = null;
-  //   new_message.createdAt = new Date(new_message.createdAt);
-  //   new_message.animate = true;
-  //   if (new_message.user_id === data.user.id) {
-  //     messages = [...messages, new_message];
-  //     newChats = newChats.filter((message) => message.id === new_message.id);
-  //     sentMessageSuccess = true;
-  //     clearTimeout(timeout);
-  //     timeout = setTimeout(() => {
-  //       sentMessageSuccess = null;
-  //     }, 1000);
-  //   } else {
-  //     messages = [...messages, new_message];
-  //   }
-  // });
 
   let showChat = true;
 
@@ -156,7 +138,7 @@
   });
 </script>
 
-<div class="flex h-[calc(100vh-64px)] w-screen flex-col items-center justify-center">
+<div class="flex h-full w-screen flex-col items-center justify-center">
   <div class="relative w-full max-w-sm rounded-lg border border-border bg-secondary shadow">
     <a href={`/${data.user2.username}`} class="absolute left-2 top-2 rounded-lg bg-accent bg-opacity-0 p-1.5 text-sm text-muted-foreground opacity-30 transition-all duration-300 hover:bg-opacity-100 hover:opacity-100">
       <CircleArrowLeft class="h-6 w-6" />
@@ -170,7 +152,7 @@
       <h2 class="text-center text-lg font-semibold">{data.user2?.username}</h2>
     </div>
     {#if showChat}
-      <div use:scrollToBottomAction bind:this={chatContainer} class="no-scrollbar flex max-h-72 w-full max-w-full flex-col gap-2 overflow-y-auto scroll-smooth px-6 py-6">
+      <div use:scrollToBottomAction bind:this={chatContainer} class="flex max-h-72 w-full max-w-full flex-col gap-2 overflow-y-auto overflow-x-clip scroll-smooth px-6 py-6">
         {#if loading}
           <ChatLoading />
         {:else if messages}
