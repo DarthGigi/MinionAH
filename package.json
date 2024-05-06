@@ -1,7 +1,6 @@
 {
   "name": "minionah",
   "version": "0.0.1",
-  "packageManager": "pnpm@9.0.6",
   "scripts": {
     "dev": "dotenv -e .env.development -- vite dev",
     "build": "vite build",
