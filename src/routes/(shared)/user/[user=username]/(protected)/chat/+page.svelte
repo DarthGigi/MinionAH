@@ -55,8 +55,9 @@
   beforeNavigate(({ to }) => {
     updateRead();
     disconnect();
+    // TODO: Revisit this later
     // This makes sure the +layout.server.ts is re-run so that unreadMessages is updated
-    window.location.href = to?.url.href || "/";
+    // window.location.href = to?.url.href || "/";
   });
 
   onMount(async () => {
@@ -140,7 +141,7 @@
 
 <div class="flex h-full w-screen flex-col items-center justify-center">
   <div class="relative w-full max-w-sm rounded-lg border border-border bg-secondary shadow">
-    <a href={`/${data.user2.username}`} class="absolute left-2 top-2 rounded-lg bg-accent bg-opacity-0 p-1.5 text-sm text-muted-foreground opacity-30 transition-all duration-300 hover:bg-opacity-100 hover:opacity-100">
+    <a href={`/user/${data.user2.username}`} class="absolute left-2 top-2 rounded-lg bg-accent bg-opacity-0 p-1.5 text-sm text-muted-foreground opacity-30 transition-all duration-300 hover:bg-opacity-100 hover:opacity-100">
       <CircleArrowLeft class="h-6 w-6" />
     </a>
 

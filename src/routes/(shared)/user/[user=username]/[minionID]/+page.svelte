@@ -50,7 +50,7 @@
         navigator.clipboard.writeText(`${window.location.href}`);
       }} />
 
-    <a href={`/${data.userMinion.user.username}/chat`} data-sveltekit-preload-data="off" class="relative z-10 mx-20 mt-5 flex flex-col items-center rounded py-5 transition-all duration-300 hover:scale-110 hover:bg-accent">
+    <a href={`/user/${data.userMinion.user.username}/chat`} data-sveltekit-preload-data="off" class="relative z-10 mx-20 mt-5 flex flex-col items-center rounded py-5 transition-all duration-300 hover:scale-110 hover:bg-accent">
       <Avatar.Root class="mb-3 h-24 w-24 rounded-full bg-accent shadow-lg">
         <Avatar.Image class="pointer-events-none h-full w-full p-2" src={`https://res.cloudinary.com/minionah/image/upload/v1/users/avatars/${data.userMinion.user.id}`} alt={data.userMinion.user.username} />
         <Avatar.Fallback class="border-2 border-accent bg-secondary">{data.userMinion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
