@@ -66,7 +66,7 @@
               {
                 loading: "Sending your bug report",
                 success: "Your bug report has been sent",
-                error: "Something went wrong trying to send the bug report"
+                error: "Something went wrong trying to send the bug report. Try disabling your adblocker and try again."
               }
             );
             bugReportOpen.set(false);
@@ -113,7 +113,7 @@
                 {
                   loading: "Sending your bug report",
                   success: "Your bug report has been sent",
-                  error: "Something went wrong trying to send the bug report"
+                  error: "Something went wrong trying to send the bug report. Try disabling your adblocker and try again."
                 }
               );
               bugReportOpen.set(false);
