@@ -35,7 +35,7 @@
 
 {#if $isMobile}
   <Drawer.Root bind:open={$bugReportOpen} openFocus="data-dialog-close" shouldScaleBackground={true}>
-    <Drawer.Trigger class="fixed bottom-4 right-0 z-50 translate-x-1/2 -rotate-90 rounded-full border border-input bg-background p-2 text-muted-foreground transition-all duration-300 hover:translate-x-0 hover:rotate-0 hover:bg-accent hover:text-accent-foreground data-[open=true]:translate-x-0 data-[open=true]:rotate-0 data-[open=true]:bg-accent data-[open=true]:text-accent-foreground" data-open={$bugReportOpen}>
+    <Drawer.Trigger class="fixed bottom-[calc(env(safe-area-inset-bottom)+1rem)] right-0 z-50 translate-x-1/2 -rotate-90 rounded-full border border-input bg-background p-2 text-muted-foreground transition-all duration-300 hover:translate-x-0 hover:rotate-0 hover:bg-accent hover:text-accent-foreground data-[open=true]:translate-x-0 data-[open=true]:rotate-0 data-[open=true]:bg-accent data-[open=true]:text-accent-foreground" data-open={$bugReportOpen}>
       <Bug class="size-4" />
     </Drawer.Trigger>
     <Drawer.Content class="border-border bg-popover">
