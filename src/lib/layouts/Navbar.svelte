@@ -29,7 +29,7 @@
 </script>
 
 <nav class="select-none bg-secondary max-md:fixed max-md:bottom-0 max-md:z-50 max-md:w-full">
-  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+  <div class="mx-auto max-w-7xl px-4 pb-[env(safe-area-inset-bottom)] pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] pt-[env(safe-area-inset-top)] sm:px-6 lg:px-8">
     <div class="flex h-16 flex-row-reverse justify-between md:flex-row">
       <div class="flex flex-shrink-0 items-center">
         <DropdownMenu.Root bind:open={menuDropdownOpen}>
