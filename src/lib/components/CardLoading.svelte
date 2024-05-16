@@ -13,16 +13,16 @@
 
     <div class="-mt-px flex divide-x divide-accent">
       <div class="relative inline-flex w-0 flex-1 items-center justify-center overflow-hidden rounded-bl-lg">
-        <div class="absolute h-5 w-20 flex-shrink-0 animate-pulse rounded-[50px] bg-accent" />
+        <div class="absolute h-5 w-20 flex-shrink-0 animate-pulse rounded-[50px] bg-accent"></div>
       </div>
       <div class="relative -ml-px inline-flex w-0 flex-1 overflow-hidden">
         <span class="relative z-10 inline-flex w-0 flex-1 items-center justify-center overflow-hidden py-4">
-          <div class="h-5 w-20 animate-pulse rounded bg-accent" />
+          <div class="h-5 w-20 animate-pulse rounded bg-accent"></div>
         </span>
-        <div class="absolute z-0 h-0 w-full flex-shrink-0 bg-muted-foreground" />
+        <div class="absolute z-0 h-0 w-full flex-shrink-0 bg-muted-foreground"></div>
       </div>
       <div class="relative inline-flex w-0 flex-1 items-center justify-center overflow-hidden rounded-br-lg">
-        <div class="absolute h-5 w-20 flex-shrink-0 animate-pulse rounded-[50px] bg-accent" />
+        <div class="absolute h-5 w-20 flex-shrink-0 animate-pulse rounded-[50px] bg-accent"></div>
       </div>
     </div>
   </div>

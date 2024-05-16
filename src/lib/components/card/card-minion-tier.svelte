@@ -14,5 +14,5 @@
       {` Tier ${minion.minion.generator_tier}`}
     {/if}
   </span>
-  <div class="absolute z-0 h-5 w-20 flex-shrink-0 rounded-[50px] bg-muted-foreground transition-all duration-500 group-hover:h-full group-hover:w-full group-hover:rounded-none" />
+  <div class="absolute z-0 h-5 w-20 flex-shrink-0 rounded-[50px] bg-muted-foreground transition-all duration-500 group-hover:h-full group-hover:w-full group-hover:rounded-none"></div>
 </div>

@@ -163,7 +163,7 @@
     </div>
   {:else}
     <div class="relative h-full min-h-12 w-full cursor-not-allowed select-none">
-      <div data-placeholder="Loading..." class="is-empty before:absolute before:left-2 before:top-1/2 before:-translate-y-1/2 before:opacity-50 before:content-[attr(data-placeholder)]" />
+      <div data-placeholder="Loading..." class="is-empty before:absolute before:left-2 before:top-1/2 before:-translate-y-1/2 before:opacity-50 before:content-[attr(data-placeholder)]"></div>
       <div class=" absolute bottom-1/2 right-2 flex translate-y-1/2 items-center">
         <div class="flex translate-x-2 items-center transition-all duration-300">
           <p class="text-xs text-ring">0/1000</p>

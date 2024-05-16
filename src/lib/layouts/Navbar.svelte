@@ -91,8 +91,8 @@
                     {#if $page.data.unreadChats}
                       {#if !profileDropdownOpen}
                         <span class="absolute -right-0.5 top-0.5 flex h-3 w-3 transition-all duration-300" class:opacity-0={profileDropdownOpen} class:scale-0={profileDropdownOpen}>
-                          <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-muted-foreground opacity-75" />
-                          <span class="relative inline-flex h-3 w-3 rounded-full bg-ring" />
+                          <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-muted-foreground opacity-75"></span>
+                          <span class="relative inline-flex h-3 w-3 rounded-full bg-ring"></span>
                         </span>
                       {/if}
                     {/if}
@@ -120,8 +120,8 @@
                         {#if $page.data.unreadChats}
                           {#if profileDropdownOpen}
                             <span class="absolute right-2 top-1/2 flex h-3 w-3 -translate-y-1/2 transition-all delay-1000 duration-300">
-                              <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-muted-foreground opacity-75" />
-                              <span class="relative inline-flex h-3 w-3 rounded-full bg-ring" />
+                              <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-muted-foreground opacity-75"></span>
+                              <span class="relative inline-flex h-3 w-3 rounded-full bg-ring"></span>
                             </span>
                           {/if}
                         {/if}

@@ -22,7 +22,7 @@
 
     <Button href={item.href} variant="ghost" class={cn(!isActive && "hover:underline", "relative justify-start gap-2 hover:bg-transparent")} data-sveltekit-noscroll>
       {#if isActive}
-        <div class="absolute inset-0 rounded-md bg-accent" in:send={{ key: "active-sidebar-tab" }} out:receive={{ key: "active-sidebar-tab" }} />
+        <div class="absolute inset-0 rounded-md bg-accent" in:send={{ key: "active-sidebar-tab" }} out:receive={{ key: "active-sidebar-tab" }}></div>
       {/if}
       <div class="relative">
         <svelte:component this={item.icon} class="size-5" />

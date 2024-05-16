@@ -76,7 +76,7 @@
   <HoverCard.Content class="mt-0 min-w-80 gap-x-2 border-accent bg-muted" side="top" align="center">
     <div class="flex items-center justify-center gap-x-2">
       <Avatar.Root id={`minionCanvasContainer_${minion.id}`} class="h-12 w-12  rounded-full bg-accent">
-        <canvas bind:this={minionCanvas} class="!h-full !w-full cursor-move rounded-full bg-transparent" />
+        <canvas bind:this={minionCanvas} class="!h-full !w-full cursor-move rounded-full bg-transparent"></canvas>
         <Avatar.Fallback class="border-2 border-accent bg-accent">{minion.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
       </Avatar.Root>
       <div>
