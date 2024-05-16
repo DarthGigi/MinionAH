@@ -27,6 +27,7 @@
   import { requestNotificationPermission } from "$lib/utilities";
   import { getMessaging, getToken } from "firebase/messaging";
   import Construction from "lucide-svelte/icons/construction";
+  import LoaderCircle from "lucide-svelte/icons/loader-circle";
   import Share from "lucide-svelte/icons/share";
   import TriangleAlert from "lucide-svelte/icons/triangle-alert";
   import { onMount } from "svelte";
@@ -49,6 +50,7 @@
   const isiOS = writable(false);
   const iOSCanInstall = writable(false);
   const iOSIsInstalled = writable(false);
+  const registering = writable(false);
 
   const showInstallInstructions = writable(false);
 
@@ -131,7 +133,7 @@
       toast.error("Something went wrong trying to update your notification preferences.");
     }
   }}>
-  <Form.Fieldset {form} name="type">
+  <Form.Fieldset {form} name="type" disabled={$registering}>
     <Form.Legend>Notify me via...</Form.Legend>
     <RadioGroup.Root class="flex flex-col space-y-1" bind:value={$formData.type}>
       <div class="flex items-center space-x-4">
@@ -196,14 +198,24 @@
         <Button
           class="w-fit"
           variant="outline"
+          disabled={$submitting || $registering}
           on:click={async () => {
+            registering.set(true);
             await handleRequestPermission(true);
+            // @ts-ignore - TypeScript doesn't know that the permission has been set
             if ($permission === "granted" && $internalStorage.fcmToken) {
               submit();
             }
+            registering.set(false);
           }}>
-          Receive notifications on this device
+          {#if $submitting || $registering}
+            <LoaderCircle class="size-4 animate-spin" />
+          {:else}
+            Receive notifications on this device
+          {/if}
         </Button>
+
+        <p class="text-sm text-muted-foreground">You need to allow notifications to receive them.</p>
       {/if}
       {#if $permission === "denied"}
         <p class="text-sm text-red-500">You have denied notifications. Please allow them in your {$isiOS ? "device settings" : "browser settings"} to receive notifications.</p>
@@ -237,7 +249,7 @@
     </Form.Field>
   </div>
 
-  <Form.Button disabled={!isTainted($tainted) || $submitting}>Update notifications</Form.Button>
+  <Form.Button disabled={!isTainted($tainted) || $submitting || $registering}>Update notifications</Form.Button>
 </form>
 
 {#if $isiOS}
