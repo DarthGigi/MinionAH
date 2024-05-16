@@ -10,11 +10,11 @@ import type { RequestHandler } from "./$types";
 const firebaseApp =
   getApps().length === 0
     ? initializeApp(
-      {
-        credential: cert(JSON.parse(FIREBASE_SERVICE_ACCOUNT_KEY))
-      },
-      "admin"
-    )
+        {
+          credential: cert(JSON.parse(FIREBASE_SERVICE_ACCOUNT_KEY))
+        },
+        "admin"
+      )
     : getApp("admin");
 
 const messaging = getMessaging(firebaseApp);
@@ -261,12 +261,12 @@ export const POST: RequestHandler = async ({ locals, request, params, url }) => 
       user.id === chat.user1_id
         ? user2?.settings?.notificationSettings
         : await prisma.notificationSettings.findFirst({
-          where: {
-            userSettings: {
-              user_id: chat.user1_id
+            where: {
+              userSettings: {
+                user_id: chat.user1_id
+              }
             }
-          }
-        });
+          });
 
     if (notificationSettings?.notificationType === "ALL" || notificationSettings?.notificationType === "DEVICE") {
       if (notificationSettings.socialNotifications) {
@@ -313,12 +313,12 @@ export const POST: RequestHandler = async ({ locals, request, params, url }) => 
       user.id === chat.user1_id
         ? user2?.settings?.profileSettings
         : await prisma.profileSettings.findFirst({
-          where: {
-            userSettings: {
-              user_id: chat.user1_id
+            where: {
+              userSettings: {
+                user_id: chat.user1_id
+              }
             }
-          }
-        });
+          });
 
     const alreadySentEmail = user.id === chat.user1_id ? chat.user1Emailed : chat.user2Emailed;
 
@@ -329,13 +329,13 @@ export const POST: RequestHandler = async ({ locals, request, params, url }) => 
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Bearer ${MINIONAH_SECRET}`
+              Authorization: `Bearer ${MINIONAH_SECRET}`
             },
             body: JSON.stringify({
               username: user2?.username,
               chatByUserImage: `https://res.cloudinary.com/minionah/image/upload/v1/users/avatars/${user.id}`,
               chatByUsername: user.username,
-              userEmail: profileSettings.email,
+              userEmail: profileSettings.email
             })
           }).then((res) => res.json());
 
