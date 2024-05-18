@@ -52,12 +52,14 @@
     pusher.disconnect();
   };
 
-  beforeNavigate(({ to }) => {
+  beforeNavigate(({ to, type, cancel }) => {
     updateRead();
     disconnect();
-    // TODO: Revisit this later
-    // This makes sure the +layout.server.ts is re-run so that unreadMessages is updated
-    // window.location.href = to?.url.href || "/";
+    if (type === "link") {
+      cancel();
+      // This makes sure the +layout.server.ts is re-run so that unreadMessages is updated
+      window.location.href = to?.url.href || "/";
+    }
   });
 
   onMount(async () => {
