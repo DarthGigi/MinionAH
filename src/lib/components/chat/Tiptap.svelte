@@ -51,7 +51,7 @@
       element: element,
       editorProps: {
         attributes: {
-          class: "px-2 flex flex-col justify-center focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-0 min-h-11 max-w-[calc(100%-7.5rem)] transition-all duration-300 max-h-96 overflow-scroll no-scrollbar"
+          class: "px-2 flex flex-col justify-center focus-visible:outline-0 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-0 min-h-11 max-w-[calc(100%-7.5rem)] transition-all duration-300 max-h-96 overflow-scroll no-scrollbar"
         }
       },
       extensions: [
