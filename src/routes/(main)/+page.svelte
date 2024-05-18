@@ -8,12 +8,13 @@
   import { internalPreferences } from "$lib/stores/preferences";
   import { searchSignal } from "$lib/stores/signals";
   import type { Seller } from "$lib/types";
-  import { onDestroy, onMount } from "svelte";
+  import { onMount } from "svelte";
   import { createPress } from "svelte-interactions";
+  import SvelteSeo from "svelte-seo";
   import { toast } from "svelte-sonner";
+  import { writable } from "svelte/store";
   import { draw } from "svelte/transition";
   import type { PageData } from "./$types";
-  import { writable } from "svelte/store";
 
   export let data: PageData;
 
@@ -217,6 +218,22 @@
     minions.set([...Array.from(await $minions), ...res]);
   };
 </script>
+
+<SvelteSeo
+  jsonLd={{
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "MinionAH",
+    alternateName: "Minion Auction House",
+    description: "The best place to buy and sell Hypixel SkyBlock minions",
+    url: "https://minionah.com",
+    logo: "https://minionah.com/favicon.png",
+    email: "contact@minionah.com",
+    contactPoint: {
+      "@type": "ContactPoint",
+      email: "contact@minionah.com"
+    }
+  }} />
 
 <h2 class="sr-only">MinionAH - The Auction House for SkyBlock Minions</h2>
 

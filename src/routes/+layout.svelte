@@ -1,5 +1,6 @@
 <script lang="ts">
   import { dev } from "$app/environment";
+  import { goto } from "$app/navigation";
   import { page } from "$app/stores";
   import { PUBLIC_VAPID_KEY } from "$env/static/public";
   import MessageToast from "$lib/components/MessageToast.svelte";
@@ -15,13 +16,13 @@
   import { initializeApp } from "firebase/app";
   import { getMessaging, getToken, onMessage } from "firebase/messaging";
   import { onMount } from "svelte";
+  import SvelteSeo from "svelte-seo";
   import type { ToasterProps } from "svelte-sonner";
   import { toast } from "svelte-sonner";
   import { writable } from "svelte/store";
   import "../app.css";
   import type { LayoutData } from "./$types";
   import BugReport from "./bug-report.svelte";
-  import { goto } from "$app/navigation";
 
   export let data: LayoutData;
 
@@ -105,6 +106,8 @@
       closeButton = true;
     }
   }} />
+
+<SvelteSeo applicationName="MinionAH" />
 
 <Navbar />
 

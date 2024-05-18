@@ -1,5 +1,6 @@
 <script lang="ts">
   import * as Tabs from "$lib/components/ui/tabs";
+  import SvelteSeo from "svelte-seo";
   import { cubicInOut } from "svelte/easing";
   import { writable } from "svelte/store";
   import { crossfade } from "svelte/transition";
@@ -29,6 +30,46 @@
     easing: cubicInOut
   });
 </script>
+
+<SvelteSeo
+  jsonLd={{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "How does it work?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "We use MC-Auth to authenticate your Minecraft account, which is the most secure way to do so.<br /><br />No sensitive information like your password, tokens, or any other personal information is being used or stored during this process.<br /><br />For more information, check out <a href='https://mc-auth.com'>MC-Auth</a>."
+        }
+      },
+      {
+        "@type": "Question",
+        name: "Can I trust you with my account?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "We will never try to steal, sell, or otherwise misuse your Minecraft account information. We use the information provided by MC-Auth to verify your Minecraft identity.<br /><br />We will also never ask for your Minecraft password or any other sensitive information."
+        }
+      },
+      {
+        "@type": "Question",
+        name: "What information do you store?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "We store the following information:<ul><li>Your Minecraft UUID</li><li>Your Minecraft username</li><li>Your Minecraft skin</li><li>Your Minecraft cape (if any)</li></ul>"
+        }
+      },
+      {
+        "@type": "Question",
+        name: "What if your database is compromised?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "In the extremely unlikely event that our database is compromised, your Minecraft account will not be at risk at all and you will not have to change your Minecraft password."
+        }
+      }
+    ]
+  }} />
 
 <Tabs.Root bind:value={$value} class="mx-auto w-full max-w-md px-4">
   <Tabs.List class="grid w-full grid-cols-2 gap-4">

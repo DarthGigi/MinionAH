@@ -64,6 +64,25 @@
     description: `Check out ${data.minionuser.username}'s profile on MinionAH!`,
     image: `https://next.minionah.com/user/${$page.params.user}`,
     imageAlt: `${data.minionuser.username}'s Profile — MinionAH`
+  }}
+  jsonLd={{
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    mainEntity: {
+      "@type": "Person",
+      name: data.minionuser.username,
+      // @ts-ignore
+      agentInteractionStatistic: {
+        "@type": "InteractionCounter",
+        interactionType: "https://schema.org/WriteAction",
+        userInteractionCount: data.minionuser.auctions.length
+      },
+      description: data.minionuser.settings?.profileSettings?.bio ?? undefined,
+      identifier: data.minionuser.username,
+      image: `https://res.cloudinary.com/minionah/image/upload/v1/users/avatars/${data.minionuser.id}`,
+      sameAs: data.minionuser.settings?.profileSettings?.urls ?? undefined,
+      url: `https://minionah.com/user/${$page.params.user}`
+    }
   }} />
 
 <div class="flex w-full flex-col justify-center pt-6">
