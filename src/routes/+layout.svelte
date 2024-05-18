@@ -21,10 +21,12 @@
   import "../app.css";
   import type { LayoutData } from "./$types";
   import BugReport from "./bug-report.svelte";
+  import { goto } from "$app/navigation";
 
   export let data: LayoutData;
 
   const paths = writable<string[]>([]);
+  const blacklistedPaths = ["/", "api"];
 
   let position: ToasterProps["position"] = "bottom-right";
   let closeButton: ToasterProps["closeButton"] = true;
@@ -83,8 +85,8 @@
           },
           action: {
             label: "View",
-            onClick: () => {
-              window.location.href = `/user/${payload.data?.username}/chat`;
+            onClick: async () => {
+              await goto(`/user/${payload.data?.username}/chat`);
             }
           }
         });
@@ -110,7 +112,7 @@
 
 <Toaster theme="dark" {closeButton} {position} />
 
-{#if $page.url.pathname !== "/"}
+{#if $paths.length > 0 && !blacklistedPaths.some((path) => $paths.includes(path))}
   <Breadcrumb.Root class="py-2">
     <Breadcrumb.List class="justify-center">
       <Breadcrumb.Item>
