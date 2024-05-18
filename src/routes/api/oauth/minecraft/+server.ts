@@ -2,10 +2,9 @@ import { dev } from "$app/environment";
 import { CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET, CLOUDINARY_CLOUD_NAME, MC_AUTH_CLIENT_ID, MC_AUTH_CLIENT_SECRET, MC_AUTH_REDIRECT_URI } from "$env/static/private";
 import { lucia } from "$lib/server/lucia";
 import { Prisma } from "@prisma/client";
-import { error, redirect } from "@sveltejs/kit";
+import { error, redirect, type RequestHandler } from "@sveltejs/kit";
 import { v2 as cloudinary } from "cloudinary";
 import { OAuth2Client, OAuth2RequestError } from "oslo/oauth2";
-import type { PageServerLoad } from "./$types";
 
 cloudinary.config({
   cloud_name: CLOUDINARY_CLOUD_NAME,
@@ -84,9 +83,8 @@ const provider = new OAuth2Client(MC_AUTH_CLIENT_ID, "https://mc-auth.com/oAuth2
   redirectURI: dev ? "http://localhost:5173/api/oauth/minecraft" : MC_AUTH_REDIRECT_URI
 });
 
-export const load = (async ({ cookies, url, locals }) => {
-  const code = url.searchParams.get("code");
-  const state = url.searchParams.get("state");
+export const POST = (async ({ cookies, request, locals }) => {
+  const { code, state } = await request.json();
 
   // get state cookie we set when we got the authorization url
   const stateCookie = cookies.get("minecraft_oauth_state");
@@ -239,4 +237,4 @@ export const load = (async ({ cookies, url, locals }) => {
     error(500, "Internal Server Error");
   }
   redirect(302, "/signup/password");
-}) satisfies PageServerLoad;
+}) satisfies RequestHandler;
