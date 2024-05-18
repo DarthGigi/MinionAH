@@ -41,7 +41,6 @@
   const message = writable<iMessage>();
 
   const messageForm = writable<HTMLFormElement>();
-  const chatContainer = writable<HTMLDivElement>();
   const timeout = writable<NodeJS.Timeout>();
   const newChats = writable<iMessage[]>([]);
   const messages = writable<iMessage[]>([]);
@@ -116,7 +115,6 @@
 
   beforeNavigate(async ({ to, type, cancel }) => {
     if (!chatExists || !pusher || !channel) return;
-    console.log("type: ", type);
     disconnect();
     if (type === "link") {
       cancel();
@@ -140,7 +138,7 @@
       <h2 class="text-center text-lg font-semibold">{data.user2?.username}</h2>
     </div>
     {#if showChat}
-      <div use:scrollToBottomAction bind:this={$chatContainer} class="flex max-h-72 w-full max-w-full flex-col gap-2 overflow-y-auto overflow-x-clip scroll-smooth px-6 py-6">
+      <div use:scrollToBottomAction class="flex max-h-72 w-full max-w-full flex-col gap-2 overflow-y-auto overflow-x-clip scroll-smooth px-6 py-6">
         {#if $loading}
           <ChatLoading />
         {:else if $messages && Array.isArray($messages)}
@@ -156,6 +154,7 @@
           {/each}
         {/if}
       </div>
+
       <div class="relative border-t border-accent p-4">
         {#if $sentMessageSuccess !== null}
           <div transition:fade class="absolute -top-8 right-1 rounded bg-accent p-0.5">
@@ -173,12 +172,9 @@
         <form
           method="POST"
           action="?/sendMessage"
-          use:enhance={({ formElement, formData, action, cancel, submitter, controller }) => {
+          use:enhance={({ formData }) => {
             formData.set("message", JSON.stringify($message));
-
             return async ({ result }) => {
-              // `result` is an `ActionResult` object
-              console.log(result);
               if (result.type === "success") {
                 sentMessageSuccess.set(true);
                 clearTimeout($timeout);
