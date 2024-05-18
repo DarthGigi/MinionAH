@@ -62,7 +62,7 @@
     "@tiptap/pm": "^2.4.0",
     "@tiptap/starter-kit": "^2.4.0",
     "@vercel/speed-insights": "^1.0.10",
-    "bits-ui": "^0.21.7",
+    "bits-ui": "^0.21.8",
     "cloudinary": "^2.2.0",
     "clsx": "^2.1.1",
     "cmdk-sv": "^0.0.17",

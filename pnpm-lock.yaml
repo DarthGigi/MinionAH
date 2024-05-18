@@ -45,8 +45,8 @@ importers:
         specifier: ^1.0.10
         version: 1.0.10(@sveltejs/kit@2.5.9(@sveltejs/vite-plugin-svelte@3.1.0(svelte@4.2.17)(vite@5.2.11(@types/node@20.12.12)))(svelte@4.2.17)(vite@5.2.11(@types/node@20.12.12)))(svelte@4.2.17)
       bits-ui:
-        specifier: ^0.21.7
-        version: 0.21.7(svelte@4.2.17)
+        specifier: ^0.21.8
+        version: 0.21.8(svelte@4.2.17)
       cloudinary:
         specifier: ^2.2.0
         version: 2.2.0
@@ -1878,8 +1878,8 @@ packages:
   bindings@1.5.0:
     resolution: {integrity: sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==}
 
-  bits-ui@0.21.7:
-    resolution: {integrity: sha512-1PKp90ly1R6jexIiAUj1Dk4u2pln7ok+L8Vc0rHMY7pi7YZvadFNZvkp1G5BtmL8qh2xsn4MVNgKjPAQMCxW0A==}
+  bits-ui@0.21.8:
+    resolution: {integrity: sha512-fr++Gf//41w9/Td5r1SfaeA/XXv5YEOw3LFY7JVH+eAbi7RzNqf7Xy8BS/W8HXfRqlsu1ReFgZ7ZZ4DbrP4HwQ==}
     peerDependencies:
       svelte: ^4.0.0 || ^5.0.0-next.118
 
@@ -5394,7 +5394,7 @@ snapshots:
     dependencies:
       file-uri-to-path: 1.0.0
 
-  bits-ui@0.21.7(svelte@4.2.17):
+  bits-ui@0.21.8(svelte@4.2.17):
     dependencies:
       '@internationalized/date': 3.5.3
       '@melt-ui/svelte': 0.76.2(svelte@4.2.17)
@@ -7343,7 +7343,7 @@ snapshots:
 
   vaul-svelte@0.3.1(svelte@4.2.17):
     dependencies:
-      bits-ui: 0.21.7(svelte@4.2.17)
+      bits-ui: 0.21.8(svelte@4.2.17)
       svelte: 4.2.17
 
   vite@5.2.11(@types/node@20.12.12):
