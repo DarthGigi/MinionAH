@@ -8,7 +8,7 @@ type InternalStorage = {
 export const preferences = persisted("preferences", {
   romanNumerals: true,
   minecraftFont: true,
-  notifications: true
+  infiniteScroll: true
 });
 
 export const internalPreferences = persisted("internalPreferences", {

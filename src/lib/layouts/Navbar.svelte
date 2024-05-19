@@ -172,6 +172,14 @@
                       preferences.update((state) => ({ ...state, minecraftFont: checked }));
                     }} />
                 </div>
+                <div class="grid w-full grid-cols-2 items-center justify-between gap-4">
+                  <Label>Infinite Scroll</Label>
+                  <Switch
+                    checked={$preferences.infiniteScroll}
+                    onCheckedChange={(checked) => {
+                      preferences.update((state) => ({ ...state, infiniteScroll: checked }));
+                    }} />
+                </div>
               </div>
             </div>
             <Tooltip.Root closeDelay={0} openDelay={0} closeOnPointerDown={false} portal="body">
