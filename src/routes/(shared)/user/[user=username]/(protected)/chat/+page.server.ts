@@ -163,21 +163,20 @@ export const actions = {
     }
   },
   sendMessage: async ({ locals, request, params }) => {
+    const data = await request.formData();
+    const dataMessage = data.get("message");
+    const message = dataMessage ? (JSON.parse(dataMessage.toString()) as iMessage) : null;
+
+    if (!message || message.content.length === 0) {
+      return fail(400, { message: "Message is required" });
+    }
+
+    const user = locals.user;
+
+    if (!user) {
+      redirect(302, "/login");
+    }
     try {
-      const data = await request.formData();
-      const dataMessage = data.get("message");
-      const message = dataMessage ? (JSON.parse(dataMessage.toString()) as iMessage) : null;
-
-      if (!message || message.content.length === 0) {
-        return fail(400, { message: "Message is required" });
-      }
-
-      const user = locals.user;
-
-      if (!user) {
-        redirect(302, "/login");
-      }
-
       // max message size
       if (message.content.length > 1000) {
         throw new Response("Message exceeds max 1000 characters", {
@@ -318,9 +317,32 @@ export const actions = {
       if (notificationSettings?.notificationType === "ALL" || notificationSettings?.notificationType === "DEVICE") {
         if (notificationSettings.socialNotifications) {
           if (notificationSettings.fcmTokens.length > 0) {
+            const unreadCount = await prisma.chat.count({
+              where: {
+                id: chat.id,
+                OR: [
+                  {
+                    user1_id: {
+                      equals: user2?.id
+                    },
+                    user1Read: {
+                      equals: false
+                    }
+                  },
+                  {
+                    user2_id: {
+                      equals: user2?.id
+                    },
+                    user2Read: {
+                      equals: false
+                    }
+                  }
+                ]
+              }
+            });
             const pushMessage: MulticastMessage = {
               notification: {
-                title: `${user.username} sent you a message`,
+                title: `${user.username}`,
                 body: sanitize(message.content, {
                   sanitizeHtml: {
                     allowedTags: [],
@@ -344,11 +366,14 @@ export const actions = {
                   image: `https://res.cloudinary.com/minionah/image/upload/v1/users/avatars/${user.id}`,
                   tag: `chat-${chat.id}`,
                   renotify: true
+                },
+                data: {
+                  unreadCount: unreadCount.toString()
                 }
               }
             };
 
-            messaging.sendEachForMulticast(pushMessage).catch((error) => {
+            await messaging.sendEachForMulticast(pushMessage).catch((error) => {
               console.error("Error sending message:", error);
             });
           }
@@ -407,71 +432,6 @@ export const actions = {
     } catch (error) {
       console.error(error);
       return fail(500, { message: "Internal Server Error", success: false });
-    }
-  },
-  updateRead: async ({ locals, params }) => {
-    try {
-      const user = locals.user;
-
-      if (!user) {
-        redirect(302, "/login");
-      }
-
-      const username = params.user;
-
-      const user2 = await prisma.user.findUnique({
-        where: {
-          username
-        }
-      });
-
-      const chat = await prisma.chat.findFirst({
-        where: {
-          OR: [
-            {
-              user1_id: {
-                equals: user.id
-              },
-              user2_id: {
-                equals: user2?.id
-              }
-            },
-            {
-              user1_id: {
-                equals: user2?.id
-              },
-              user2_id: {
-                equals: user.id
-              }
-            }
-          ]
-        }
-      });
-
-      if (!chat) {
-        return fail(404, { message: "Chat not found" });
-      }
-
-      if ((user.id === chat.user1_id && !chat.user1Read) || (user.id === chat.user2_id && !chat.user2Read)) {
-        const updatedChat = await prisma.chat.update({
-          where: {
-            id: chat.id
-          },
-          data: {
-            user1Read: user.id === chat.user1_id ? true : chat.user1Read,
-            user2Read: user.id === chat.user2_id ? true : chat.user2Read
-          }
-        });
-
-        if (!updatedChat) {
-          return fail(500, { message: "Internal Server Error" });
-        }
-      }
-
-      return { success: true };
-    } catch (error) {
-      console.error(error);
-      return fail(500, { message: "Internal Server Error" });
     }
   }
 };

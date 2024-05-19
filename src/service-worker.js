@@ -4,8 +4,6 @@
 /// <reference lib="webworker" />
 
 const sw = /** @type {ServiceWorkerGlobalScope} */ (/** @type {unknown} */ (self));
-// importScripts("https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js");
-// importScripts("https://www.gstatic.com/firebasejs/10.8.1/firebase-messaging-compat.js");
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getMessaging, onBackgroundMessage } from "firebase/messaging/sw";
 
@@ -24,7 +22,6 @@ const firebase =
 
 const messaging = getMessaging(firebase);
 onBackgroundMessage(messaging, async (/** @type {import("firebase/messaging").MessagePayload} */ payload) => {
-  console.log("Received background message ", payload);
   const notification = /** @type {import("firebase/messaging").NotificationPayload} */ (payload.notification);
   const notificationTitle = notification?.title ?? "MinionAH";
   const notificationOptions = /** @type {NotificationOptions} */ ({
@@ -33,21 +30,16 @@ onBackgroundMessage(messaging, async (/** @type {import("firebase/messaging").Me
     image: notification?.image ?? "https://minionah.com/favicon.png"
   });
 
-  sw.registration.showNotification(notificationTitle, notificationOptions);
+  if (navigator.setAppBadge) {
+    if (payload.data.unreadCount && payload.data.unreadCount > 0) {
+      if (!isNaN(Number(payload.data.unreadCount))) await navigator.setAppBadge(Number(payload.data.unreadCount));
+    } else {
+      await navigator.clearAppBadge();
+    }
+  }
+
+  await sw.registration.showNotification(notificationTitle, notificationOptions);
 });
-
-// sw.addEventListener("notificationclick", (event /** @type {NotificationEvent} */) => {
-//   const notification /** @type {Notification} */ = event.notification;
-//   const action /** @type {string} */ = event.action;
-
-//   if (action.startsWith("view-")) {
-//     const username = action.split("-")[1];
-//     sw.clients.openWindow(`https://minionah.com/${username}/chat`);
-//   } else {
-//     sw.clients.openWindow("https://minionah.com");
-//   }
-//   notification.close();
-// });
 
 // A simple, no-op service worker that takes immediate control.
 sw.addEventListener("install", () => {
