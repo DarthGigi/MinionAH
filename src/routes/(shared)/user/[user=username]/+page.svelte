@@ -1,21 +1,21 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import CardLoading from "$lib/components/CardLoading.svelte";
   import CopyButton from "$lib/components/CopyButton.svelte";
   import { MinionCard } from "$lib/components/card";
+  import * as AlertDialog from "$lib/components/ui/alert-dialog";
   import * as Avatar from "$lib/components/ui/avatar";
-  import MessagesSquare from "lucide-svelte/icons/messages-square";
-  import type { PageData } from "./$types";
-  import * as Card from "$lib/components/ui/card";
   import { Button } from "$lib/components/ui/button";
-  import Earth from "lucide-svelte/icons/earth";
+  import * as Card from "$lib/components/ui/card";
+  import { Progress } from "$lib/components/ui/progress";
+  import * as Tooltip from "$lib/components/ui/tooltip";
   import {} from "$lib/utilities";
   import { formatDistanceToNow } from "date-fns";
   import BarChart2 from "lucide-svelte/icons/bar-chart-2";
-  import * as Tooltip from "$lib/components/ui/tooltip";
-  import * as AlertDialog from "$lib/components/ui/alert-dialog";
+  import Earth from "lucide-svelte/icons/earth";
+  import MessagesSquare from "lucide-svelte/icons/messages-square";
+  import SvelteSeo from "svelte-seo";
   import { writable } from "svelte/store";
-  import { Progress } from "$lib/components/ui/progress";
+  import type { PageData } from "./$types";
 
   export let data: PageData;
 
@@ -35,33 +35,55 @@
   };
 </script>
 
-<svelte:head>
-  <title>{data.minionuser.username}'s MinionAH</title>
-  <meta name="title" content="{data.minionuser.username}'s MinionAH" />
-  <meta name="description" content={`Check out ${data.minionuser.username}'s profile on MinionAH!`} />
-  <link rel="canonical" href="https://minionah.com/user/{$page.params.user}" />
-
-  <!-- Open Graph -->
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://minionah.com/user/{$page.params.user}" />
-  <meta property="og:title" content="{data.minionuser.username}'s MinionAH" />
-  <meta property="og:description" content={`Check out ${data.minionuser.username}'s profile on MinionAH!`} />
-  <meta property="og:image" content="https://og.minionah.com/user/{$page.params.user}" />
-  <meta property="og:image:secure_url" content="https://og.minionah.com/user/{$page.params.user}" />
-  <meta property="og:image:alt" content="{data.minionuser.username}'s Profile — MinionAH" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:image:type" content="image/png" />
-  <meta property="og:site_name" content="MinionAH" />
-  <meta property="og:locale" content="en_US" />
-
-  <!-- Twitter -->
-  <meta property="twitter:card" content="summary_large_image" />
-  <meta property="twitter:url" content="https://minionah.com/user/{$page.params.user}" />
-  <meta property="twitter:title" content="{data.minionuser.username}'s MinionAH" />
-  <meta property="twitter:description" content={`Check out ${data.minionuser.username}'s profile on MinionAH!`} />
-  <meta property="twitter:image" content="https://og.minionah.com/user/{$page.params.user}" />
-</svelte:head>
+<SvelteSeo
+  title="{data.minionuser.username}'s MinionAH"
+  description={`Check out ${data.minionuser.username}'s profile on MinionAH!`}
+  themeColor={data.color.toString() || "#171717"}
+  canonical={`https://minionah.com/user/${$page.params.user}`}
+  openGraph={{
+    type: "website",
+    url: `https://minionah.com/user/${$page.params.user}`,
+    title: `${data.minionuser.username}'s MinionAH`,
+    description: `Check out ${data.minionuser.username}'s profile on MinionAH!`,
+    images: [
+      {
+        url: `https://next.minionah.com/user/${$page.params.user}`,
+        secure_url: `https://next.minionah.com/user/${$page.params.user}`,
+        alt: `${data.minionuser.username}'s Profile — MinionAH`,
+        width: 1200,
+        height: 630,
+        type: "image/png"
+      }
+    ],
+    site_name: "MinionAH",
+    locale: "en_US"
+  }}
+  twitter={{
+    card: "summary_large_image",
+    title: `${data.minionuser.username}'s MinionAH`,
+    description: `Check out ${data.minionuser.username}'s profile on MinionAH!`,
+    image: `https://next.minionah.com/user/${$page.params.user}`,
+    imageAlt: `${data.minionuser.username}'s Profile — MinionAH`
+  }}
+  jsonLd={{
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    mainEntity: {
+      "@type": "Person",
+      name: data.minionuser.username,
+      // @ts-ignore
+      agentInteractionStatistic: {
+        "@type": "InteractionCounter",
+        interactionType: "https://schema.org/WriteAction",
+        userInteractionCount: data.minionuser.auctions.length
+      },
+      description: data.minionuser.settings?.profileSettings?.bio ?? undefined,
+      identifier: data.minionuser.username,
+      image: `https://res.cloudinary.com/minionah/image/upload/v1/users/avatars/${data.minionuser.id}`,
+      sameAs: data.minionuser.settings?.profileSettings?.urls ?? undefined,
+      url: `https://minionah.com/user/${$page.params.user}`
+    }
+  }} />
 
 <div class="flex w-full flex-col justify-center pt-6">
   <Card.Root class="relative mx-auto w-full max-w-sm rounded-lg border border-accent bg-secondary shadow">

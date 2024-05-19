@@ -87,8 +87,8 @@
                 <MessagesSquare class="mr-1.5 h-5 w-5" /> Chat
                 {#if !read}
                   <span class="absolute right-0 top-0 -mr-1 -mt-1 flex size-3">
-                    <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-muted-foreground opacity-75" />
-                    <span class="relative inline-flex size-3 rounded-full bg-ring" />
+                    <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-muted-foreground opacity-75"></span>
+                    <span class="relative inline-flex size-3 rounded-full bg-ring"></span>
                   </span>
                 {/if}
               </Button>

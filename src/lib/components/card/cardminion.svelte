@@ -61,7 +61,7 @@
             {minion.minion.generator.replace(/_/g, " ").toLowerCase().charAt(0) + minion.minion.generator.slice(1).toLowerCase().replace(/_/g, " ")} minion{#if minion.amount && minion.amount > 1}s{/if}
           </div>
         </div>
-        <div class="absolute top-0 z-0 h-0 w-full flex-shrink-0 bg-muted-foreground transition-all duration-500 group-hover:h-full peer-hover:top-1/2 peer-hover:h-3/4 peer-hover:w-[95%] peer-hover:-translate-y-1/2 peer-hover:rounded-lg" />
+        <div class="absolute top-0 z-0 h-0 w-full flex-shrink-0 bg-muted-foreground transition-all duration-500 group-hover:h-full peer-hover:top-1/2 peer-hover:h-3/4 peer-hover:w-[95%] peer-hover:-translate-y-1/2 peer-hover:rounded-lg"></div>
       </a>
     </div>
   {/if}

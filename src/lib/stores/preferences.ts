@@ -8,7 +8,7 @@ type InternalStorage = {
 export const preferences = persisted("preferences", {
   romanNumerals: true,
   minecraftFont: true,
-  notifications: true
+  infiniteScroll: true
 });
 
 export const internalPreferences = persisted("internalPreferences", {
@@ -16,11 +16,10 @@ export const internalPreferences = persisted("internalPreferences", {
   hasSeenWelcomeGuideToast: false,
   hasSeenDiscordToast: false,
   hasSeenDeviceNotificationsToast: false,
-  hasSeenEmailNotificationsToast: false,
+  hasSeenEmailNotificationsToast: false
 });
-
 
 export const internalStorage = persisted<InternalStorage>("internalStorage", {
   fcmToken: undefined,
-  lastSeenVersion: "0.0.0",
+  lastSeenVersion: "0.0.0"
 });

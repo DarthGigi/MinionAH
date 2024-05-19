@@ -18,13 +18,17 @@
   import { PUBLIC_VAPID_KEY } from "$env/static/public";
   import * as Alert from "$lib/components/ui/alert";
   import { Button } from "$lib/components/ui/button";
+  import * as Drawer from "$lib/components/ui/drawer";
   import * as Form from "$lib/components/ui/form";
   import * as RadioGroup from "$lib/components/ui/radio-group";
+  import { ScrollArea } from "$lib/components/ui/scroll-area";
   import { Switch } from "$lib/components/ui/switch";
   import { internalStorage } from "$lib/stores/preferences";
   import { requestNotificationPermission } from "$lib/utilities";
   import { getMessaging, getToken } from "firebase/messaging";
   import Construction from "lucide-svelte/icons/construction";
+  import LoaderCircle from "lucide-svelte/icons/loader-circle";
+  import Share from "lucide-svelte/icons/share";
   import TriangleAlert from "lucide-svelte/icons/triangle-alert";
   import { onMount } from "svelte";
   import { toast } from "svelte-sonner";
@@ -41,17 +45,22 @@
     timeoutMs: 2000
   });
 
-  const { form: formData, enhance, tainted, isTainted, submitting, timeout } = form;
+  const { form: formData, enhance, tainted, isTainted, submitting, timeout, submit } = form;
+
+  const isiOS = writable(false);
+  const iOSCanInstall = writable(false);
+  const iOSIsInstalled = writable(false);
+  const registering = writable(false);
+
+  const showInstallInstructions = writable(false);
 
   const deviceRadioDisabled = writable(false);
   const permission = writable<NotificationPermission | undefined>();
   const hasEmail = readable($page.data.userData.settings?.profileSettings?.email ? true : false);
-  const allRadioDisabled = derived([deviceRadioDisabled, hasEmail], ([$deviceRadioDisabled, $hasEmail]) => {
-    return $deviceRadioDisabled || !$hasEmail;
+  const allRadioDisabled = derived([deviceRadioDisabled, hasEmail, iOSIsInstalled], ([$deviceRadioDisabled, $hasEmail, $iOSIsInstalled]) => {
+    return $deviceRadioDisabled || !$hasEmail || ($isiOS && !$iOSIsInstalled);
   });
   const toastLoading = writable<number | string>();
-  const iOSCanInstall = writable(false);
-  const iOSIsInstalled = writable(false);
 
   const handleRequestPermission = async (request: boolean = false) => {
     permission.set(await requestNotificationPermission(request));
@@ -76,10 +85,18 @@
   });
 
   onMount(async () => {
-    handleRequestPermission();
-    if ("standalone" in window.navigator) {
+    isiOS.set(window.navigator?.userAgentData ? window.navigator.userAgentData?.platform === "iOS" : navigator.platform === "iPhone" || navigator.platform === "iPad");
+
+    // @ts-ignore - userAgentData is not yet in the TS types
+    if ($isiOS && "standalone" in window.navigator) {
       iOSCanInstall.set(true);
       iOSIsInstalled.set(window.navigator.standalone === true);
+    }
+
+    if ($isiOS && $iOSIsInstalled) {
+      await handleRequestPermission();
+    } else if (!$isiOS) {
+      await handleRequestPermission();
     }
   });
 </script>
@@ -116,7 +133,7 @@
       toast.error("Something went wrong trying to update your notification preferences.");
     }
   }}>
-  <Form.Fieldset {form} name="type">
+  <Form.Fieldset {form} name="type" disabled={$registering}>
     <Form.Legend>Notify me via...</Form.Legend>
     <RadioGroup.Root class="flex flex-col space-y-1" bind:value={$formData.type}>
       <div class="flex items-center space-x-4">
@@ -148,7 +165,7 @@
       </div>
       <div class="flex items-center space-x-4">
         <Form.Control let:attrs>
-          <RadioGroup.Item value="DEVICE" disabled={$deviceRadioDisabled} {...attrs} />
+          <RadioGroup.Item value="DEVICE" disabled={$deviceRadioDisabled || ($isiOS && !$iOSIsInstalled)} {...attrs} />
           <Form.Label class="flex flex-col font-normal">
             <span class="flex items-center gap-1.5 text-base">Device <Construction class="size-4 text-muted-foreground" /></span>
             <span class="text-sm text-muted-foreground">Receive notifications on your device only.</span>
@@ -170,13 +187,38 @@
     </RadioGroup.Root>
   </Form.Fieldset>
 
-  {#if $permission === "denied" || $permission === "default"}
+  {#if $isiOS && !$iOSIsInstalled}
+    <div class="flex flex-col">
+      <Button class="w-fit" variant="outline" on:click={() => showInstallInstructions.set(true)}>Install MinionAH</Button>
+      <p class="text-sm text-red-500">On iOS devices, you need to install MinionAH first in order to receive notifications.</p>
+    </div>
+  {:else if $permission === "denied" || $permission === "default"}
     <div class="flex flex-col">
       {#if $permission === "default"}
-        <Button class="w-fit" variant="outline" on:click={() => handleRequestPermission(true)}>Receive notifications on this device</Button>
+        <Button
+          class="w-fit"
+          variant="outline"
+          disabled={$submitting || $registering}
+          on:click={async () => {
+            registering.set(true);
+            await handleRequestPermission(true);
+            // @ts-ignore - TypeScript doesn't know that the permission has been set
+            if ($permission === "granted" && $internalStorage.fcmToken) {
+              submit();
+            }
+            registering.set(false);
+          }}>
+          {#if $submitting || $registering}
+            <LoaderCircle class="size-4 animate-spin" />
+          {:else}
+            Receive notifications on this device
+          {/if}
+        </Button>
+
+        <p class="text-sm text-muted-foreground">You need to allow notifications to receive them.</p>
       {/if}
       {#if $permission === "denied"}
-        <p class="text-sm text-red-500">You have denied notifications. Please allow them in your browser settings.</p>
+        <p class="text-sm text-red-500">You have denied notifications. Please allow them in your {$isiOS ? "device settings" : "browser settings"} to receive notifications.</p>
       {/if}
     </div>
   {/if}
@@ -207,5 +249,41 @@
     </Form.Field>
   </div>
 
-  <Form.Button disabled={!isTainted($tainted) || $submitting}>Update notifications</Form.Button>
+  <Form.Button disabled={!isTainted($tainted) || $submitting || $registering}>Update notifications</Form.Button>
 </form>
+
+{#if $isiOS}
+  <Drawer.Root bind:open={$showInstallInstructions} openFocus={null}>
+    <Drawer.Content class="border-border bg-popover">
+      <Drawer.Header class="pb-0">
+        <Drawer.Title class="pb-4">Install MinionAH</Drawer.Title>
+        <Drawer.Description>
+          <ScrollArea class="h-[28rem]" data-vaul-no-drag>
+            <p>To receive notifcations from MinionAH on your Apple device, you need to install the app first. <br /> <br />Follow these simple steps to install MinionAH on your device.</p>
+            <ol class="mt-2 list-inside list-decimal pb-4 text-center">
+              <li>
+                Tap the <span class="inline-flex items-center gap-1 font-semibold"><Share class="size-4" /> Share</span> button at the bottom of the screen.
+                <img src="/assets/images/ios-install/Install Step 1.png" alt="Step 1" class="mx-auto max-h-96" />
+              </li>
+              <li>
+                Tap <strong>Add to Home Screen</strong>.
+                <img src="/assets/images/ios-install/Install Step 2.png" alt="Step 2" class="mx-auto max-h-96" />
+              </li>
+              <li>
+                Tap <strong>Add</strong> in the top right corner.
+                <img src="/assets/images/ios-install/Install Step 3.png" alt="Step 3" class="mx-auto max-h-96" />
+              </li>
+              <li>
+                That's all! Just use MinionAH from your home screen instead of via Safari.
+                <img src="/assets/images/ios-install/Install Step 4.png" alt="Step 4" class="mx-auto max-h-96" />
+              </li>
+            </ol>
+          </ScrollArea>
+        </Drawer.Description>
+      </Drawer.Header>
+      <Drawer.Footer>
+        <Drawer.Close>Close</Drawer.Close>
+      </Drawer.Footer>
+    </Drawer.Content>
+  </Drawer.Root>
+{/if}

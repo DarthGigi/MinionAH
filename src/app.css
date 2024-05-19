@@ -39,9 +39,9 @@
 
   @font-face {
     font-family: "Minecraft";
-    src:
-      url("https://minionah.com/assets/fonts/minecraft.woff2") format("woff2"),
-      url("https://beta.minionah.com/assets/fonts/minecraft.woff2") format("woff2");
+    font-style: normal;
+    font-display: swap;
+    src: url("/assets/fonts/minecraft.woff2") format("woff2");
   }
 
   @font-face {

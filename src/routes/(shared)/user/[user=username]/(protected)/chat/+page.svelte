@@ -1,141 +1,126 @@
-<script lang="ts">
-  import { beforeNavigate } from "$app/navigation";
-  import { PUBLIC_cluster, PUBLIC_key } from "$env/static/public";
-  import Tiptap from "$lib/components/chat/Tiptap.svelte";
-  import ChatLoading from "$lib/components/chat/chat-loading.svelte";
-  import Message from "$lib/components/chat/message.svelte";
-  import * as Avatar from "$lib/components/ui/avatar";
-  import { scrollToBottomAction } from "$lib/utilities";
-  import CircleArrowLeft from "lucide-svelte/icons/circle-arrow-left";
-  import Pusher from "pusher-js";
-  import { onDestroy, onMount } from "svelte";
-  import { draw, fade } from "svelte/transition";
-  import type { PageData } from "./$types";
-
-  interface iMessage {
+<script lang="ts" context="module">
+  export type iMessage = {
     id?: string;
     chat_id: string;
     user_id: string;
     content: string;
     createdAt: Date;
     animate?: boolean;
-  }
+  };
+</script>
+
+<script lang="ts">
+  import { enhance } from "$app/forms";
+  import { beforeNavigate } from "$app/navigation";
+  import { PUBLIC_cluster, PUBLIC_key } from "$env/static/public";
+  import Tiptap from "$lib/components/chat/Tiptap.svelte";
+  import ChatLoading from "$lib/components/chat/chat-loading.svelte";
+  import Message from "$lib/components/chat/message.svelte";
+  import * as Avatar from "$lib/components/ui/avatar";
+  import { Button } from "$lib/components/ui/button";
+  import { scrollToBottomAction } from "$lib/utilities";
+  import CircleArrowLeft from "lucide-svelte/icons/circle-arrow-left";
+  import Pusher from "pusher-js";
+  import { onMount } from "svelte";
+  import { writable } from "svelte/store";
+  import { draw, fade } from "svelte/transition";
+  import type { PageData } from "./$types";
 
   export let data: PageData;
 
-  const pusher = new Pusher(PUBLIC_key, {
-    cluster: PUBLIC_cluster
-  });
+  const chatExists = data.chat !== null;
+  const pusher = chatExists
+    ? new Pusher(PUBLIC_key, {
+        cluster: PUBLIC_cluster
+      })
+    : null;
 
-  const channel = pusher.subscribe(`chat-${data.chat.id}`);
+  const channel = chatExists && pusher ? pusher.subscribe(`chat-${data.chat?.id}`) : null;
 
-  let showChat = true;
+  const showChat = data.chat !== null;
+  const message = writable<iMessage>();
 
-  let chatContainer: HTMLDivElement;
-  let timeout: NodeJS.Timeout;
-  let newChats: iMessage[] = [];
-  let messages: iMessage[] = [];
-  let sentMessageSuccess: boolean | undefined | null = null;
+  const messageForm = writable<HTMLFormElement>();
+  const timeout = writable<NodeJS.Timeout>();
+  const newChats = writable<iMessage[]>([]);
+  const messages = writable<iMessage[]>([]);
+  const sentMessageSuccess = writable<boolean | undefined | null>(null);
 
-  let loading = true;
-  let updateRead = async () => {};
+  const loading = writable<boolean>(false);
 
-  $: newChats;
-  $: messages;
+  const updateRead = async () => {
+    if (typeof window === "undefined") return;
+    await fetch(`${window.location.href}?/updateRead`, {
+      method: "POST",
+      headers: {
+        "x-sveltekit-action": "true",
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: new URLSearchParams({}).toString()
+    });
+  };
 
   const disconnect = () => {
+    if (!chatExists || !pusher || !channel) return;
     channel.unsubscribe();
     channel.unbind_all();
     channel.disconnect();
-    pusher.unsubscribe(data.chat.id);
+    pusher.unsubscribe(data.chat!.id);
     pusher.unbind_all();
     pusher.disconnect();
+    updateRead();
   };
 
-  beforeNavigate(({ to }) => {
-    updateRead();
-    disconnect();
-    // TODO: Revisit this later
-    // This makes sure the +layout.server.ts is re-run so that unreadMessages is updated
-    // window.location.href = to?.url.href || "/";
-  });
-
-  onMount(async () => {
-    await fetch(`${window.location.href}/api`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Requested-With": "fetch"
-      }
-    });
-    const messagesData = await fetch(`${window.location.href}/api`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Requested-With": "fetch"
-      }
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        return res.map((message: any) => {
-          return {
-            ...message,
-            createdAt: new Date(message.createdAt)
-          };
-        });
-      })
-      .finally(() => {
-        loading = false;
-        setTimeout(() => {
-          scrollToBottomAction(chatContainer);
-        }, 300);
-      });
-
-    messages = [...messagesData];
-
-    channel.bind("new-message", (new_message: iMessage) => {
-      sentMessageSuccess = null;
-      new_message.createdAt = new Date(new_message.createdAt);
-      new_message.animate = true;
-      if (new_message.user_id === data.user.id) {
-        messages = [...messages, new_message];
-        newChats = newChats.filter((message) => message.id === new_message.id);
-        sentMessageSuccess = true;
-        clearTimeout(timeout);
-        timeout = setTimeout(() => {
-          sentMessageSuccess = null;
-        }, 1000);
-      } else {
-        messages = [...messages, new_message];
-      }
-    });
-  });
   const sendMessage = async (eventData: any) => {
     const textValue = eventData.detail;
     if (!textValue) return;
-    const message = {
+    message.set({
       content: textValue,
       createdAt: new Date(),
       user_id: data.user.id,
       id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
-      chat_id: data.chat.id
-    };
-    newChats = [...newChats, message];
-    sentMessageSuccess = undefined;
-
-    await fetch(`${window.location.href}/api`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Requested-With": "fetch"
-      },
-      body: JSON.stringify(message)
+      chat_id: data.chat?.id || ""
     });
+    newChats.set([...$newChats, $message]);
+    sentMessageSuccess.set(undefined);
+    $messageForm.requestSubmit();
   };
 
-  onDestroy(() => {
+  onMount(async () => {
+    if (!chatExists || !pusher || !channel) return;
+
+    if (data.messages) messages.set([...$messages, ...(data.messages as unknown as iMessage[])]);
+
     updateRead();
+
+    channel.bind("new-message", (new_message: iMessage) => {
+      sentMessageSuccess.set(null);
+      new_message.createdAt = new Date(new_message.createdAt);
+      new_message.animate = true;
+      if (new_message.user_id === data.user.id) {
+        messages.set([...$messages, new_message]);
+        newChats.set($newChats.filter((message) => message.id === new_message.id));
+        sentMessageSuccess.set(true);
+        clearTimeout($timeout);
+        timeout.set(
+          setTimeout(() => {
+            sentMessageSuccess.set(null);
+          }, 1000)
+        );
+      } else {
+        messages.set([...$messages, new_message]);
+      }
+    });
+  });
+
+  beforeNavigate(async ({ to, type, cancel }) => {
+    if (!chatExists || !pusher || !channel) return;
     disconnect();
+    if (type === "link") {
+      cancel();
+      // This makes sure the +layout.server.ts is re-run so that unreadMessages is updated
+      window.location.href = to?.url.href || "/";
+    }
   });
 </script>
 
@@ -153,39 +138,74 @@
       <h2 class="text-center text-lg font-semibold">{data.user2?.username}</h2>
     </div>
     {#if showChat}
-      <div use:scrollToBottomAction bind:this={chatContainer} class="flex max-h-72 w-full max-w-full flex-col gap-2 overflow-y-auto overflow-x-clip scroll-smooth px-6 py-6">
-        {#if loading}
+      <div use:scrollToBottomAction class="flex max-h-72 w-full max-w-full flex-col gap-2 overflow-y-auto overflow-x-clip scroll-smooth px-6 py-6">
+        {#if $loading}
           <ChatLoading />
-        {:else if messages}
-          {#each messages as message, i}
+        {:else if $messages && Array.isArray($messages)}
+          {#each $messages as message, i (i)}
             {#if message.user_id === data.user.id}
               <Message {message} self={true} />
             {:else}
               <Message {message} self={false} />
             {/if}
           {/each}
-          {#each newChats as message}
+          {#each $newChats as message}
             <Message {message} self={true} class="animate-pulse" />
           {/each}
         {/if}
       </div>
+
+      <div class="relative border-t border-accent p-4">
+        {#if $sentMessageSuccess !== null}
+          <div transition:fade class="absolute -top-8 right-1 rounded bg-accent p-0.5">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-loader-2 h-6 w-6 transition-colors delay-300 duration-300" class:animate-spin={$sentMessageSuccess === undefined && $newChats.length > 0} class:text-blue-500={$sentMessageSuccess === undefined && $newChats.length > 0} class:text-green-500={$sentMessageSuccess === true} class:text-red-500={$sentMessageSuccess === false}>
+              {#if $sentMessageSuccess === undefined && $newChats.length > 0}
+                <path in:draw={{ delay: 300, duration: 300 }} out:draw={{ duration: 300 }} d="M21 12a9 9 0 1 1-6.219-8.56" />
+              {:else if $sentMessageSuccess}
+                <circle in:draw={{ delay: 300, duration: 300 }} out:draw={{ duration: 300 }} cx="12" cy="12" r="10" /><path in:draw={{ delay: 300, duration: 300 }} out:draw d="m9 12 2 2 4-4" />
+              {:else}
+                <circle in:draw={{ delay: 300, duration: 300 }} out:draw={{ duration: 300 }} cx="12" cy="12" r="10" /><path in:draw={{ delay: 300, duration: 300 }} out:draw d="m15 9-6 6" /><path in:draw={{ delay: 300, duration: 300 }} out:draw={{ duration: 300 }} d="m9 9 6 6" />
+              {/if}
+            </svg>
+          </div>
+        {/if}
+        <form
+          method="POST"
+          action="?/sendMessage"
+          use:enhance={({ formData }) => {
+            formData.set("message", JSON.stringify($message));
+            return async ({ result }) => {
+              if (result.type === "success") {
+                sentMessageSuccess.set(true);
+                clearTimeout($timeout);
+                timeout.set(
+                  setTimeout(() => {
+                    sentMessageSuccess.set(null);
+                  }, 1000)
+                );
+              } else if (result.type === "error") {
+                sentMessageSuccess.set(false);
+                clearTimeout($timeout);
+                timeout.set(
+                  setTimeout(() => {
+                    sentMessageSuccess.set(null);
+                  }, 1000)
+                );
+              }
+            };
+          }}
+          bind:this={$messageForm}>
+          <Tiptap on:sendMessage={sendMessage} />
+        </form>
+      </div>
+    {:else}
+      <div class="flex flex-col items-center justify-center gap-2 p-4">
+        <h2 class="text-center text-lg font-semibold">No chat has been started yet.</h2>
+        <form method="POST" action="?/createChat">
+          <Button type="submit">Start Chat</Button>
+        </form>
+      </div>
     {/if}
-    <div class="relative border-t border-accent p-4">
-      {#if sentMessageSuccess !== null}
-        <div transition:fade class="absolute -top-8 right-1 rounded bg-accent p-0.5">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-loader-2 h-6 w-6 transition-colors delay-300 duration-300" class:animate-spin={sentMessageSuccess === undefined && newChats.length > 0} class:text-blue-500={sentMessageSuccess === undefined && newChats.length > 0} class:text-green-500={sentMessageSuccess === true} class:text-red-500={sentMessageSuccess === false}>
-            {#if sentMessageSuccess === undefined && newChats.length > 0}
-              <path in:draw={{ delay: 300, duration: 300 }} out:draw={{ duration: 300 }} d="M21 12a9 9 0 1 1-6.219-8.56" />
-            {:else if sentMessageSuccess}
-              <circle in:draw={{ delay: 300, duration: 300 }} out:draw={{ duration: 300 }} cx="12" cy="12" r="10" /><path in:draw={{ delay: 300, duration: 300 }} out:draw d="m9 12 2 2 4-4" />
-            {:else}
-              <circle in:draw={{ delay: 300, duration: 300 }} out:draw={{ duration: 300 }} cx="12" cy="12" r="10" /><path in:draw={{ delay: 300, duration: 300 }} out:draw d="m15 9-6 6" /><path in:draw={{ delay: 300, duration: 300 }} out:draw={{ duration: 300 }} d="m9 9 6 6" />
-            {/if}
-          </svg>
-        </div>
-      {/if}
-      <Tiptap on:sendMessage={sendMessage} />
-    </div>
   </div>
   <span class="mt-1 text-xs opacity-25"> Messages are not end-to-end encrypted and are stored in plaintext. </span>
 </div>

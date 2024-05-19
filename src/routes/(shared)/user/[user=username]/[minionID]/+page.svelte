@@ -4,39 +4,42 @@
   import { MinionCard } from "$lib/components/card";
   import * as Avatar from "$lib/components/ui/avatar";
   import CircleArrowLeft from "lucide-svelte/icons/circle-arrow-left";
+  import SvelteSeo from "svelte-seo";
   import type { PageData } from "./$types";
 
   export let data: PageData;
 </script>
 
-<svelte:head>
-  <title>{data.userMinion.user.username}'s {data.userMinion.minion.name.replace(/ [IVX]+$/, "")}{data.userMinion.amount && data.userMinion.amount > 1 ? "s" : ""} — MinionAH</title>
-  <meta name="title" content="{data.userMinion.user.username}'s {data.userMinion.minion.name.replace(/ [IVX]+$/, '')}{data.userMinion.amount && data.userMinion.amount > 1 ? 's' : ''} — MinionAH" />
-  <meta name="description" content={`${data.userMinion.user.username} is selling ${data.userMinion.amount ? data.userMinion.amount : 0} ${data.userMinion.minion.name.replace(/ [IVX]+$/, "")}${data.userMinion.amount && data.userMinion.amount > 1 ? "s" : ""}. Check out their listing on MinionAH!`} />
-  <meta name="theme-color" content={data.color.toString()} />
-  <link rel="canonical" href="https://minionah.com/user/{$page.params.user}/{$page.params.minionID}" />
-
-  <!-- Open Graph -->
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://minionah.com/user/{$page.params.user}/{$page.params.minionID}" />
-  <meta property="og:title" content="{data.userMinion.user.username}'s {data.userMinion.minion.name.replace(/ [IVX]+$/, '')}{data.userMinion.amount && data.userMinion.amount > 1 ? 's' : ''} — MinionAH" />
-  <meta property="og:description" content={`${data.userMinion.user.username} is selling ${data.userMinion.amount ? data.userMinion.amount : 0} ${data.userMinion.minion.name.replace(/ [IVX]+$/, "")}${data.userMinion.amount && data.userMinion.amount > 1 ? "s" : ""}. Check out their auction on MinionAH!`} />
-  <meta property="og:image" content="https://og.minionah.com/minion/user/{$page.params.minionID}" />
-  <meta property="og:image:secure_url" content="https://og.minionah.com/minion/{$page.params.minionID}" />
-  <meta property="og:image:alt" content="{data.userMinion.user.username}'s {data.userMinion.minion.name.replace(/ [IVX]+$/, '')}{data.userMinion.amount && data.userMinion.amount > 1 ? 's' : ''} — MinionAH" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:image:type" content="image/png" />
-  <meta property="og:site_name" content="MinionAH" />
-  <meta property="og:locale" content="en_US" />
-
-  <!-- Twitter -->
-  <meta property="twitter:card" content="summary_large_image" />
-  <meta property="twitter:url" content="https://minionah.com/user/{$page.params.user}/{$page.params.minionID}" />
-  <meta property="twitter:title" content="{data.userMinion.user.username}'s {data.userMinion.minion.name.replace(/ [IVX]+$/, '')}{data.userMinion.amount && data.userMinion.amount > 1 ? 's' : ''} — MinionAH" />
-  <meta property="twitter:description" content={`${data.userMinion.user.username} is selling ${data.userMinion.amount ? data.userMinion.amount : 0} ${data.userMinion.minion.name.replace(/ [IVX]+$/, "")}${data.userMinion.amount && data.userMinion.amount > 1 ? "s" : ""}. Check out their auction on MinionAH!`} />
-  <meta property="twitter:image" content="https://og.minionah.com/minion/{$page.params.minionID}" />
-</svelte:head>
+<SvelteSeo
+  title="{data.userMinion.user.username}'s {data.userMinion.minion.name.replace(/ [IVX]+$/, '')}{data.userMinion.amount && data.userMinion.amount > 1 ? 's' : ''} — MinionAH"
+  description={`${data.userMinion.user.username} is selling ${data.userMinion.amount ? data.userMinion.amount : 0} ${data.userMinion.minion.name.replace(/ [IVX]+$/, "")}${data.userMinion.amount && data.userMinion.amount > 1 ? "s" : ""}. Check out their auction on MinionAH!`}
+  themeColor={data.color.toString() || "#171717"}
+  canonical={`https://minionah.com/user/${$page.params.user}/${$page.params.minionID}`}
+  openGraph={{
+    type: "website",
+    url: `https://minionah.com/user/${$page.params.user}/${$page.params.minionID}`,
+    title: `${data.userMinion.user.username}'s ${data.userMinion.minion.name.replace(/ [IVX]+$/, "")}${data.userMinion.amount && data.userMinion.amount > 1 ? "s" : ""} — MinionAH`,
+    description: `${data.userMinion.user.username} is selling ${data.userMinion.amount ? data.userMinion.amount : 0} ${data.userMinion.minion.name.replace(/ [IVX]+$/, "")}${data.userMinion.amount && data.userMinion.amount > 1 ? "s" : ""}. Check out their auction on MinionAH!`,
+    images: [
+      {
+        url: `https://og.minionah.com/minion/user/${$page.params.minionID}`,
+        secure_url: `https://og.minionah.com/minion/${$page.params.minionID}`,
+        alt: `${data.userMinion.user.username}'s ${data.userMinion.minion.name.replace(/ [IVX]+$/, "")}${data.userMinion.amount && data.userMinion.amount > 1 ? "s" : ""} — MinionAH`,
+        width: 1200,
+        height: 630,
+        type: "image/png"
+      }
+    ],
+    site_name: "MinionAH",
+    locale: "en_US"
+  }}
+  twitter={{
+    card: "summary_large_image",
+    title: `${data.userMinion.user.username}'s ${data.userMinion.minion.name.replace(/ [IVX]+$/, "")}${data.userMinion.amount && data.userMinion.amount > 1 ? "s" : ""} — MinionAH`,
+    description: `${data.userMinion.user.username} is selling ${data.userMinion.amount ? data.userMinion.amount : 0} ${data.userMinion.minion.name.replace(/ [IVX]+$/, "")}${data.userMinion.amount && data.userMinion.amount > 1 ? "s" : ""}. Check out their auction on MinionAH!`,
+    image: `https://og.minionah.com/minion/${$page.params.minionID}`,
+    imageAlt: `${data.userMinion.user.username}'s ${data.userMinion.minion.name.replace(/ [IVX]+$/, "")}${data.userMinion.amount && data.userMinion.amount > 1 ? "s" : ""} — MinionAH`
+  }} />
 
 <div class="flex h-[calc(100vh-64px)] w-screen items-center justify-center">
   <div class="relative w-full max-w-sm rounded-lg border border-accent bg-secondary shadow">

@@ -29,7 +29,7 @@
 </script>
 
 <nav class="select-none bg-secondary max-md:fixed max-md:bottom-0 max-md:z-50 max-md:w-full">
-  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+  <div class="mx-auto max-w-7xl px-4 pb-[env(safe-area-inset-bottom)] pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] pt-[env(safe-area-inset-top)] sm:px-6 lg:px-8">
     <div class="flex h-16 flex-row-reverse justify-between md:flex-row">
       <div class="flex flex-shrink-0 items-center">
         <DropdownMenu.Root bind:open={menuDropdownOpen}>
@@ -91,8 +91,8 @@
                     {#if $page.data.unreadChats}
                       {#if !profileDropdownOpen}
                         <span class="absolute -right-0.5 top-0.5 flex h-3 w-3 transition-all duration-300" class:opacity-0={profileDropdownOpen} class:scale-0={profileDropdownOpen}>
-                          <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-muted-foreground opacity-75" />
-                          <span class="relative inline-flex h-3 w-3 rounded-full bg-ring" />
+                          <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-muted-foreground opacity-75"></span>
+                          <span class="relative inline-flex h-3 w-3 rounded-full bg-ring"></span>
                         </span>
                       {/if}
                     {/if}
@@ -120,8 +120,8 @@
                         {#if $page.data.unreadChats}
                           {#if profileDropdownOpen}
                             <span class="absolute right-2 top-1/2 flex h-3 w-3 -translate-y-1/2 transition-all delay-1000 duration-300">
-                              <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-muted-foreground opacity-75" />
-                              <span class="relative inline-flex h-3 w-3 rounded-full bg-ring" />
+                              <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-muted-foreground opacity-75"></span>
+                              <span class="relative inline-flex h-3 w-3 rounded-full bg-ring"></span>
                             </span>
                           {/if}
                         {/if}
@@ -170,6 +170,14 @@
                     checked={$preferences.minecraftFont}
                     onCheckedChange={(checked) => {
                       preferences.update((state) => ({ ...state, minecraftFont: checked }));
+                    }} />
+                </div>
+                <div class="grid w-full grid-cols-2 items-center justify-between gap-4">
+                  <Label>Infinite Scroll</Label>
+                  <Switch
+                    checked={$preferences.infiniteScroll}
+                    onCheckedChange={(checked) => {
+                      preferences.update((state) => ({ ...state, infiniteScroll: checked }));
                     }} />
                 </div>
               </div>

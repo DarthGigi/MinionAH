@@ -4,6 +4,8 @@
   import LoaderCircle from "lucide-svelte/icons/loader-circle";
   import { onMount } from "svelte";
   import { codeToHtml } from "shiki/bundle/web";
+  import SvelteSeo from "svelte-seo";
+
   let [allItems, minions, error] = Array(3).fill('{\n  "LOADING"\n}');
   let demoCode = "";
   let item: string;
@@ -45,24 +47,37 @@
   });
 </script>
 
-<svelte:head>
-  <title>RCC API Documentation — MinionAH</title>
-  <meta name="description" content="Since NEU does not provide a public API for their (raw) craft cost feature, we decided to create our own. We have created a public API that will calculate the (raw) craft cost of any Hypixel SkyBlock item. This API is available for everyone to use in their own projects." />
-  <meta name="keywords" content="RCC, Craft Cost, Raw Craft Cost, API, Documentation, MinionAH" />
-  <meta name="robots" content="index, follow" />
-  <meta name="author" content="DarthGigi" />
-  <meta name="theme-color" content="#171717" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:site" content="@MinionAH" />
-  <meta name="twitter:creator" content="@iDarthGigi" />
-  <meta property="og:title" content="RCC API Documentation — MinionAH" />
-  <meta property="og:description" content="Since NEU does not provide a public API for their (raw) craft cost feature, we decided to create our own. We have created a public API that will calculate the (raw) craft cost of any Hypixel SkyBlock item. This API is available for everyone to use in their own projects." />
-  <meta property="og:image" content="https://minionah.com/assets/images/ogBanner.png?v=2" />
-  <meta property="og:url" content="https://minionah.com/api/craftcost/docs" />
-  <meta property="og:site_name" content="MinionAH" />
-  <meta property="og:locale" content="en_US" />
-  <meta property="og:type" content="website" />
-</svelte:head>
+<SvelteSeo
+  title="RCC API Documentation — MinionAH"
+  description="Since NEU does not provide a public API for their (raw) craft cost feature, we decided to create our own. We have created a public API that will calculate the (raw) craft cost of any Hypixel SkyBlock item. This API is available for everyone to use in their own projects."
+  themeColor="#171717"
+  canonical="https://minionah.com/api/craftcost/docs"
+  openGraph={{
+    type: "website",
+    url: "https://minionah.com/api/craftcost/docs",
+    title: "RCC API Documentation — MinionAH",
+    description: "Since NEU does not provide a public API for their (raw) craft cost feature, we decided to create our own. We have created a public API that will calculate the (raw) craft cost of any Hypixel SkyBlock item. This API is available for everyone to use in their own projects.",
+    images: [
+      {
+        url: "https://minionah.com/assets/images/ogBanner.png?v=2",
+        secure_url: "https://minionah.com/assets/images/ogBanner.png?v=2",
+        alt: "MinionAH",
+        width: 1200,
+        height: 630,
+        type: "image/png"
+      }
+    ],
+    site_name: "MinionAH",
+    locale: "en_US"
+  }}
+  twitter={{
+    card: "summary_large_image",
+    creator: "@iDarthGigi",
+    title: "RCC API Documentation — MinionAH",
+    description: "Since NEU does not provide a public API for their (raw) craft cost feature, we decided to create our own. We have created a public API that will calculate the (raw) craft cost of any Hypixel SkyBlock item. This API is available for everyone to use in their own projects.",
+    image: "https://minionah.com/assets/images/ogBanner.png?v=2",
+    imageAlt: "MinionAH"
+  }} />
 
 <main class="relative overflow-hidden py-8">
   <article class="relative mx-auto mt-6 max-w-2xl px-4 py-4 text-lg text-foreground sm:px-4 lg:px-6">

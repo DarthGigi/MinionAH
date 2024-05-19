@@ -22,5 +22,5 @@
       <span class="absolute -bottom-1 pt-1 text-sm text-primary/50 transition-all duration-300" class:group-hover:opacity-0={isHome} class:-translate-y-2.5={minion.amount ? minion.amount > 1 : false}>/each</span>
     {/if}
   </span>
-  <div class="absolute z-0 h-0 w-full flex-shrink-0 bg-muted-foreground transition-all duration-500 group-hover:h-full" />
+  <div class="absolute z-0 h-0 w-full flex-shrink-0 bg-muted-foreground transition-all duration-500 group-hover:h-full"></div>
 </div>

@@ -3,21 +3,21 @@
   import HtmlToast from "$lib/components/HtmlToast.svelte";
   import TierListbox from "$lib/components/TierListbox.svelte";
   import { MinionCard } from "$lib/components/card";
+  import { Button } from "$lib/components/ui/button";
   import { Input } from "$lib/components/ui/input";
   import { Label } from "$lib/components/ui/label";
-  import { internalPreferences } from "$lib/stores/preferences";
+  import { internalPreferences, preferences } from "$lib/stores/preferences";
   import { searchSignal } from "$lib/stores/signals";
   import type { Seller } from "$lib/types";
-  import { onDestroy, onMount } from "svelte";
-  import { createPress } from "svelte-interactions";
+  import { onMount } from "svelte";
+  import { infiniteScrollAction } from "svelte-legos";
+  import SvelteSeo from "svelte-seo";
   import { toast } from "svelte-sonner";
+  import { writable } from "svelte/store";
   import { draw } from "svelte/transition";
   import type { PageData } from "./$types";
-  import { writable } from "svelte/store";
 
   export let data: PageData;
-
-  const { pressAction } = createPress();
 
   const minions = writable<Promise<Seller[]> | Seller[]>(data.minions);
   const loadingMore = writable(false);
@@ -90,24 +90,53 @@
         });
       });
     }
-    if (!$internalPreferences.hasSeenDeviceNotificationsToast) {
-      /**
-       * TODO: Re-enable this when we have a proper notification system
-       */
-      return;
+    // if (!$internalPreferences.hasSeenDeviceNotificationsToast) {
+    //   /**
+    //    * TODO: Re-enable this when we have a proper notification system
+    //    */
+    //   return;
+    //   if (!data.user) return;
+    //   setTimeout(() => {
+    //     toast("Notifications", {
+    //       description: "Would you like to receive notifications when someone sends you a message?",
+    //       action: {
+    //         label: "Enable",
+    //         onClick: () => {
+    //           internalPreferences.update((state) => ({ ...state, hasSeenDeviceNotificationsToast: true }));
+    //           window.open("/profile/settings/notifications", "_self");
+    //         }
+    //       },
+    //       onDismiss: () => {
+    //         internalPreferences.update((state) => ({ ...state, hasSeenDeviceNotificationsToast: true }));
+    //         toast(HtmlToast, {
+    //           duration: 5000,
+    //           classes: {
+    //             closeButton: "!hidden"
+    //           },
+    //           componentProps: {
+    //             htmlMessage: "You can always enable notifications by visiting <a href='/profile/settings/notifications' target='_self' class='underline'>your settings</a>"
+    //           }
+    //         });
+    //       },
+    //       duration: Number.POSITIVE_INFINITY
+    //     });
+    //   });
+    // }
+
+    if (!$internalPreferences.hasSeenEmailNotificationsToast) {
       if (!data.user) return;
       setTimeout(() => {
-        toast("Notifications", {
-          description: "Would you like to receive notifications when someone sends you a message?",
+        toast("Email Notifications", {
+          description: "Email notifications are here! Would you like to receive emails when someone sends you a message?",
           action: {
             label: "Enable",
             onClick: () => {
-              internalPreferences.update((state) => ({ ...state, hasSeenDeviceNotificationsToast: true }));
+              internalPreferences.update((state) => ({ ...state, hasSeenEmailNotificationsToast: true }));
               window.open("/profile/settings/notifications", "_self");
             }
           },
           onDismiss: () => {
-            internalPreferences.update((state) => ({ ...state, hasSeenDeviceNotificationsToast: true }));
+            internalPreferences.update((state) => ({ ...state, hasSeenEmailNotificationsToast: true }));
             toast(HtmlToast, {
               duration: 5000,
               classes: {
@@ -189,6 +218,22 @@
   };
 </script>
 
+<SvelteSeo
+  jsonLd={{
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "MinionAH",
+    alternateName: "Minion Auction House",
+    description: "The best place to buy and sell Hypixel SkyBlock minions",
+    url: "https://minionah.com",
+    logo: "https://minionah.com/favicon.png",
+    email: "contact@minionah.com",
+    contactPoint: {
+      "@type": "ContactPoint",
+      email: "contact@minionah.com"
+    }
+  }} />
+
 <h2 class="sr-only">MinionAH - The Auction House for SkyBlock Minions</h2>
 
 <div class="mx-auto flex flex-row items-center justify-center gap-4 px-4 py-20 sm:px-6 lg:px-8">
@@ -259,18 +304,29 @@
         {#if $newMinionAmount === 0 || $newMinionAmount < 18 || (minions.length === 0 && !$loadingMore)}
           <p class="px-4 py-1 text-center text-sm text-primary text-opacity-40">No more minions to load.</p>
         {:else}
-          <button type="button" use:pressAction on:press={() => searchMinions($currentTier, $search, true, minions.length)} class="rounded p-1 text-sm text-accent transition-all duration-300 hover:bg-accent hover:text-white" aria-label="Load more minions">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down h-6 w-6" class:animate-spin={$loadingMore}>
-              {#if $loadingMore}
-                <path in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
-                <path in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} d="M21 3v5h-5" />
-                <path in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
-                <path in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} d="M8 16H3v5" />
-              {:else}
-                <path in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} d="m6 9 6 6 6-6" />
-              {/if}
-            </svg>
-          </button>
+          <div
+            use:infiniteScrollAction={{
+              delay: 500, // number, default 200
+              distance: 500, // number, default 0
+              immediate: true, // boolean, default: true
+              disabled: !$preferences.infiniteScroll, // boolean, default: false
+              cb: async () => {
+                await searchMinions($currentTier, $search, true, minions.length);
+              }
+            }}>
+            <Button type="button" variant="ghost" on:click={async () => await searchMinions($currentTier, $search, true, minions.length)} class="text-sm text-accent transition-all duration-300 hover:text-white focus-visible:border-0 focus-visible:outline-none focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0" aria-label="Load more minions">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down h-6 w-6" class:animate-spin={$loadingMore}>
+                {#if $loadingMore}
+                  <path in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+                  <path in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} d="M21 3v5h-5" />
+                  <path in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+                  <path in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} d="M8 16H3v5" />
+                {:else}
+                  <path in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} d="m6 9 6 6 6-6" />
+                {/if}
+              </svg>
+            </Button>
+          </div>
         {/if}
       </div>
     {/await}

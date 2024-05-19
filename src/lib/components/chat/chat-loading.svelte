@@ -11,14 +11,14 @@
 
 {#each initialChats as chat}
   <div class="pulse rounded-full {chat.number % 2 !== 0 ? 'self-end rounded-br-none bg-[#3C83F7]' : 'self-start rounded-bl-none bg-[#3B3B3D]'} px-4 py-2">
-    <div class="h-4 w-16" />
+    <div class="h-4 w-16"></div>
   </div>
 {/each}
 
 {#each chats as chat}
   {#if chat.animate}
     <div in:fly|global={{ y: 24 }} out:fly={{ duration: 0 }} class="pulse rounded-full {chat.number % 2 === 0 ? 'self-end rounded-br-none bg-[#3C83F7]' : 'self-start rounded-bl-none bg-[#3B3B3D]'} px-4 py-2">
-      <div class="h-4 w-16" />
+      <div class="h-4 w-16"></div>
     </div>
   {/if}
 {/each}

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { dev } from "$app/environment";
+  import { goto } from "$app/navigation";
   import { page } from "$app/stores";
   import { PUBLIC_VAPID_KEY } from "$env/static/public";
   import MessageToast from "$lib/components/MessageToast.svelte";
@@ -15,6 +16,7 @@
   import { initializeApp } from "firebase/app";
   import { getMessaging, getToken, onMessage } from "firebase/messaging";
   import { onMount } from "svelte";
+  import SvelteSeo from "svelte-seo";
   import type { ToasterProps } from "svelte-sonner";
   import { toast } from "svelte-sonner";
   import { writable } from "svelte/store";
@@ -25,9 +27,10 @@
   export let data: LayoutData;
 
   const paths = writable<string[]>([]);
+  const blacklistedPaths = ["/", "api"];
 
-  let position: ToasterProps["position"] = "bottom-right";
-  let closeButton: ToasterProps["closeButton"] = true;
+  const position = writable<ToasterProps["position"]>("bottom-right");
+  const closeButton = writable<ToasterProps["closeButton"]>(true);
 
   inject({ mode: dev ? "development" : "production", debug: false });
   if (!dev) {
@@ -51,8 +54,8 @@
 
   onMount(async () => {
     if (window.innerWidth < 768) {
-      position = "top-center";
-      closeButton = false;
+      position.set("top-center");
+      closeButton.set(false);
     }
     const serviceWorker = navigator.serviceWorker.register("/service-worker.js", {
       type: dev ? "module" : "classic"
@@ -83,8 +86,8 @@
           },
           action: {
             label: "View",
-            onClick: () => {
-              window.location.href = `/user/${payload.data?.username}/chat`;
+            onClick: async () => {
+              await goto(`/user/${payload.data?.username}/chat`);
             }
           }
         });
@@ -96,21 +99,23 @@
 <svelte:window
   on:resize={() => {
     if (window.innerWidth < 768) {
-      position = "top-center";
-      closeButton = false;
+      position.set("top-center");
+      closeButton.set(false);
     } else {
-      position = "bottom-right";
-      closeButton = true;
+      position.set("bottom-right");
+      closeButton.set(true);
     }
   }} />
+
+<SvelteSeo applicationName="MinionAH" />
 
 <Navbar />
 
 <BugReport {data} />
 
-<Toaster theme="dark" {closeButton} {position} />
+<Toaster theme="dark" closeButton={$closeButton} position={$position} />
 
-{#if $page.url.pathname !== "/"}
+{#if $paths.length > 0 && !blacklistedPaths.some((path) => $paths.includes(path))}
   <Breadcrumb.Root class="py-2">
     <Breadcrumb.List class="justify-center">
       <Breadcrumb.Item>
@@ -125,7 +130,7 @@
             {:else if $paths[index - 2] === "user"}
               <Breadcrumb.Link href={`/user/${$paths[index - 1]}/${path}`} class="capitalize">{path}</Breadcrumb.Link>
             {:else}
-              <Breadcrumb.Link href={`/${path}`} class="capitalize">{path}</Breadcrumb.Link>
+              <Breadcrumb.Link href={`/${$paths.slice(0, index + 1).join("/")}`} class="capitalize">{path}</Breadcrumb.Link>
             {/if}
           </Breadcrumb.Item>
         {/if}

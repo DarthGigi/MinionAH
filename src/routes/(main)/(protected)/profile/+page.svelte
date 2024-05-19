@@ -136,9 +136,9 @@
       </Button>
     </div>
     {#if canvasIsLoading}
-      <div class="absolute h-full w-full animate-pulse rounded-lg border border-border bg-popover" />
+      <div class="absolute h-full w-full animate-pulse rounded-lg border border-border bg-popover"></div>
     {/if}
-    <canvas bind:this={minecraftAvatar} class="relative !h-full !w-full overflow-hidden rounded-lg border border-border bg-popover transition-all duration-[3s]" class:opacity-100={!canvasIsLoading} class:opacity-0={canvasIsLoading} />
+    <canvas bind:this={minecraftAvatar} class="relative !h-full !w-full overflow-hidden rounded-lg border border-border bg-popover transition-all duration-[3s]" class:opacity-100={!canvasIsLoading} class:opacity-0={canvasIsLoading}></canvas>
   </div>
   {#await data.streamed.userMinions}
     <div class="h-[28.75rem] animate-pulse rounded-lg border-border bg-popover shadow-sm"></div>
