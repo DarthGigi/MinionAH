@@ -29,8 +29,8 @@
   const paths = writable<string[]>([]);
   const blacklistedPaths = ["/", "api"];
 
-  let position: ToasterProps["position"] = "bottom-right";
-  let closeButton: ToasterProps["closeButton"] = true;
+  const position = writable<ToasterProps["position"]>("bottom-right");
+  const closeButton = writable<ToasterProps["closeButton"]>(true);
 
   inject({ mode: dev ? "development" : "production", debug: false });
   if (!dev) {
@@ -54,8 +54,8 @@
 
   onMount(async () => {
     if (window.innerWidth < 768) {
-      position = "top-center";
-      closeButton = false;
+      position.set("top-center");
+      closeButton.set(false);
     }
     const serviceWorker = navigator.serviceWorker.register("/service-worker.js", {
       type: dev ? "module" : "classic"
@@ -99,11 +99,11 @@
 <svelte:window
   on:resize={() => {
     if (window.innerWidth < 768) {
-      position = "top-center";
-      closeButton = false;
+      position.set("top-center");
+      closeButton.set(false);
     } else {
-      position = "bottom-right";
-      closeButton = true;
+      position.set("bottom-right");
+      closeButton.set(true);
     }
   }} />
 
@@ -113,7 +113,7 @@
 
 <BugReport {data} />
 
-<Toaster theme="dark" {closeButton} {position} />
+<Toaster theme="dark" closeButton={$closeButton} position={$position} />
 
 {#if $paths.length > 0 && !blacklistedPaths.some((path) => $paths.includes(path))}
   <Breadcrumb.Root class="py-2">
@@ -130,7 +130,7 @@
             {:else if $paths[index - 2] === "user"}
               <Breadcrumb.Link href={`/user/${$paths[index - 1]}/${path}`} class="capitalize">{path}</Breadcrumb.Link>
             {:else}
-              <Breadcrumb.Link href={`/${path}`} class="capitalize">{path}</Breadcrumb.Link>
+              <Breadcrumb.Link href={`/${$paths.slice(0, index + 1).join("/")}`} class="capitalize">{path}</Breadcrumb.Link>
             {/if}
           </Breadcrumb.Item>
         {/if}
