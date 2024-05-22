@@ -14,8 +14,5 @@ export default defineConfig({
   ],
   build: {
     sourcemap: true
-  },
-  optimizeDeps: {
-    exclude: ["@node-rs/argon2", "@node-rs/bcrypt"]
   }
 });
