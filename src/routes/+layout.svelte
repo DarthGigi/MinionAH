@@ -92,6 +92,14 @@
           }
         });
       });
+
+      if (navigator && navigator.clearAppBadge) {
+        if (data.unreadCount && data.unreadCount > 0) {
+          if (!isNaN(Number(data.unreadCount))) await navigator.setAppBadge(Number(data.unreadCount));
+        } else {
+          await navigator.clearAppBadge();
+        }
+      }
     }
   });
 </script>

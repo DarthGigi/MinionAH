@@ -1,10 +1,12 @@
 <script lang="ts">
   import CardLoading from "$lib/components/CardLoading.svelte";
   import HtmlToast from "$lib/components/HtmlToast.svelte";
+  import MinionsListBox from "$lib/components/MinionsListBox.svelte";
+  import SearchSelect, { SearchType } from "$lib/components/SearchSelect.svelte";
   import TierListbox from "$lib/components/TierListbox.svelte";
+  import UsersListBox from "$lib/components/UsersListBox.svelte";
   import { MinionCard } from "$lib/components/card";
   import { Button } from "$lib/components/ui/button";
-  import { Input } from "$lib/components/ui/input";
   import { Label } from "$lib/components/ui/label";
   import { internalPreferences, preferences } from "$lib/stores/preferences";
   import { searchSignal } from "$lib/stores/signals";
@@ -16,6 +18,8 @@
   import { writable } from "svelte/store";
   import { draw } from "svelte/transition";
   import type { PageData } from "./$types";
+  import ChevronsUpDown from "lucide-svelte/icons/chevrons-up-down";
+  import { cn } from "$lib/utils";
 
   export let data: PageData;
 
@@ -23,15 +27,20 @@
   const loadingMore = writable(false);
   const currentTier = writable<number | undefined>(undefined);
   const newMinionAmount = writable<number>();
-  const lastSearch = writable("");
-  const search = writable<string | undefined>(undefined);
-  const searchValue = writable("");
+  const searchQuery = writable<string | undefined>(undefined);
+  const searchValue = writable<string>("");
+  const maxTier = writable<number | undefined>();
+  const searchType = writable<SearchType>(SearchType.Minion);
 
-  searchSignal.subscribe((search) => {
-    if (search === $searchValue || $search === $lastSearch || search === "") return;
-    searchValue.set(search);
-    searchMinions($currentTier, search);
-    searchSignal.set("");
+  searchSignal.subscribe((query) => {
+    searchType.set(SearchType.Minion);
+    if (query === $searchValue || query === "") return;
+    searchValue.set("");
+    searchValue.set(query);
+    setTimeout(() => {
+      search($currentTier, query);
+      searchSignal.update(() => "");
+    });
   });
 
   onMount(() => {
@@ -153,37 +162,36 @@
     }
   });
 
-  const searchMinions = async (filterTier?: number | undefined, search?: string, isMore: boolean = false, skip?: number) => {
+  const search = async (filterTier?: number | undefined, search?: string, isMore: boolean = false, skip?: number) => {
     loadingMore.set(isMore);
     if (filterTier === 0) filterTier = undefined;
 
-    let where = {};
+    let where;
 
     if (filterTier || search) {
-      where = {
-        OR: [
-          {
-            minion: {
-              ...(filterTier && { generator_tier: filterTier }),
-              ...(search && {
-                AND: [{ name: { contains: search, mode: "insensitive" } }, { generator_tier: filterTier }]
-              })
-            }
-          },
-          {
-            user: {
-              ...(search && { username: { contains: search, mode: "insensitive" } })
-            }
+      if ($searchType === SearchType.Minion) {
+        where = {
+          minion: {
+            ...(filterTier && { generator_tier: filterTier }),
+            ...(search && {
+              AND: [{ generator: search }, { generator_tier: filterTier }]
+            })
           }
-        ]
-      };
+        };
+      } else {
+        where = {
+          user: {
+            ...(search && { id: { contains: search, mode: "insensitive" } })
+          }
+        };
+      }
     }
 
     const res = await fetch(
       "/api/internal/search/minions?" +
         new URLSearchParams({
-          where: JSON.stringify(where),
-          skip: skip?.toString() ?? "0"
+          ...(where && { where: JSON.stringify(where) }),
+          ...(skip && { skip: skip.toString() })
         }),
       {
         method: "GET",
@@ -239,44 +247,84 @@
 <div class="mx-auto flex flex-row items-center justify-center gap-4 px-4 py-20 sm:px-6 lg:px-8">
   <div class="flex flex-col justify-center space-y-2">
     <Label>Search</Label>
-    <Input
-      type="text"
-      class="w-44 border border-input bg-background text-white placeholder-white placeholder-opacity-30 focus-visible:border-input focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0"
-      placeholder="Minion or user"
-      maxlength={32}
-      value={$searchValue}
-      on:input={({ currentTarget }) => {
-        if (!(currentTarget instanceof HTMLInputElement)) return;
-        if (currentTarget.value === $lastSearch) return;
-        // every third character
-        if (currentTarget.value.length % 4 !== 0 && currentTarget.value.length !== 0) return;
-        lastSearch.set(currentTarget.value);
-        search.set(currentTarget.value);
-        searchMinions($currentTier, $search);
-      }}
-      on:keypress={({ key, currentTarget }) => {
-        if (key !== "Enter") return;
-        if (!(currentTarget instanceof HTMLInputElement)) return;
-        if (currentTarget.value === $lastSearch) return;
-        lastSearch.set(currentTarget.value);
-        search.set(currentTarget.value);
-        searchMinions($currentTier, $search);
-      }} />
+
+    <div class="flex items-center">
+      {#if $searchType === SearchType.Minion}
+        {#await data.minionTypes}
+          <div class="flex items-center">
+            <Button variant="outline" type="button" class={cn("relative w-40 cursor-default justify-between rounded-md rounded-r-none border border-r-0 border-input bg-background py-1.5 pl-3 text-left text-muted-foreground shadow-sm focus:z-10 focus:outline-none focus:ring-2 focus:ring-ring sm:text-sm sm:leading-6 md:w-44")}>
+              <div class="flex">
+                <span>Select a minion</span>
+              </div>
+              <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </div>
+        {:then minionTypes}
+          {#key $searchValue}
+            <MinionsListBox
+              showReset={true}
+              bind:search={$searchValue}
+              variant="half-rounded"
+              minionType={minionTypes}
+              on:onSelect={({ detail }) => {
+                maxTier.set(detail.maxTier);
+                searchValue.set(detail.generator);
+                search($currentTier, detail.generator);
+              }} />
+          {/key}
+        {/await}
+      {:else if $searchType === SearchType.User}
+        {#await data.users}
+          <div class="flex items-center">
+            <Button variant="outline" type="button" class={cn("relative w-40 cursor-default justify-between rounded-md rounded-r-none border border-r-0 border-input bg-background py-1.5 pl-3 text-left text-muted-foreground shadow-sm focus:z-10 focus:outline-none focus:ring-2 focus:ring-ring sm:text-sm sm:leading-6 md:w-44")}>
+              <div class="flex">
+                <span>Select a user</span>
+              </div>
+              <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </div>
+        {:then users}
+          {#key $searchValue}
+            <UsersListBox
+              variant="half-rounded"
+              showReset={true}
+              bind:search={$searchValue}
+              {users}
+              on:onSelect={({ detail }) => {
+                searchValue.set(detail.id);
+                search($currentTier, detail.id);
+              }} />
+          {/key}
+        {/await}
+      {/if}
+
+      {#if $searchValue === ""}
+        <SearchSelect
+          bind:searchType={$searchType}
+          on:onSelect={({ detail }) => {
+            searchValue.set("");
+            searchType.set(detail);
+            if (detail === SearchType.User) {
+              maxTier.set(12);
+            }
+          }} />
+      {/if}
+    </div>
   </div>
 
   <div class="flex flex-col justify-center space-y-2">
     <Label>Tier</Label>
     <TierListbox
-      maxtier={12}
+      maxtier={$maxTier}
       disabled={false}
       on:onSelectedTierChange={({ detail }) => {
         if (detail.tier === null) {
           currentTier.set(undefined);
-          searchMinions($currentTier);
+          search($currentTier);
           return;
         }
         currentTier.set(Number(detail.tier));
-        searchMinions($currentTier);
+        search($currentTier);
       }} />
   </div>
 </div>
@@ -311,10 +359,10 @@
               immediate: true, // boolean, default: true
               disabled: !$preferences.infiniteScroll, // boolean, default: false
               cb: async () => {
-                await searchMinions($currentTier, $search, true, minions.length);
+                await search($currentTier, $searchQuery, true, minions.length);
               }
             }}>
-            <Button type="button" variant="ghost" on:click={async () => await searchMinions($currentTier, $search, true, minions.length)} class="text-sm text-accent transition-all duration-300 hover:text-white focus-visible:border-0 focus-visible:outline-none focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0" aria-label="Load more minions">
+            <Button type="button" variant="ghost" on:click={async () => await search($currentTier, $searchQuery, true, minions.length)} class="text-sm text-accent transition-all duration-300 hover:text-white focus-visible:border-0 focus-visible:outline-none focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0" aria-label="Load more minions">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down h-6 w-6" class:animate-spin={$loadingMore}>
                 {#if $loadingMore}
                   <path in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />

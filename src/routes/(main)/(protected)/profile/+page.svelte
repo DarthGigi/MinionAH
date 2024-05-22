@@ -94,7 +94,7 @@
 
   let canvasIsLoading = true;
 
-  let maxtier: number = 12;
+  let maxtier: number | undefined = 12;
 
   let tierListDisabled = true;
 
@@ -167,14 +167,15 @@
                       <Form.Control let:attrs>
                         <Form.Label>Minion</Form.Label>
                         <MinionsListBox
+                          showReset={false}
                           on:onSelect={({ detail }) => {
                             maxtier = detail.maxTier;
                             $formDataCreate.type = detail.generator;
-                            if ($constraintsCreate.tier?.min && $constraintsCreate.tier?.max) {
-                              const minTier = Number($constraintsCreate.tier.min);
-                              const maxTier = Number($constraintsCreate.tier.max);
+                            if ($constraintsCreate.tier?.min && $constraintsCreate.tier?.max && maxtier) {
+                              const minTierConstraint = Number($constraintsCreate.tier.min);
+                              const maxTierConstraint = Number($constraintsCreate.tier.max);
 
-                              if (maxtier > minTier && maxtier <= maxTier) {
+                              if (maxtier > minTierConstraint && maxtier <= maxTierConstraint) {
                                 tierListDisabled = false;
                               }
                             }

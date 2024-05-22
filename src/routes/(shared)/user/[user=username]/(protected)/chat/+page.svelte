@@ -11,7 +11,7 @@
 
 <script lang="ts">
   import { enhance } from "$app/forms";
-  import { beforeNavigate } from "$app/navigation";
+  import { beforeNavigate, goto } from "$app/navigation";
   import { PUBLIC_cluster, PUBLIC_key } from "$env/static/public";
   import Tiptap from "$lib/components/chat/Tiptap.svelte";
   import ChatLoading from "$lib/components/chat/chat-loading.svelte";
@@ -48,16 +48,24 @@
 
   const loading = writable<boolean>(false);
 
-  const updateRead = async () => {
+  const updateRead = async (onload: boolean) => {
     if (typeof window === "undefined") return;
-    await fetch(`${window.location.href}?/updateRead`, {
-      method: "POST",
-      headers: {
-        "x-sveltekit-action": "true",
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      body: new URLSearchParams({}).toString()
+    const response = await fetch(`${window.location.href}`, {
+      method: "PUT"
     });
+    if (response.ok) {
+      if (!onload) return;
+      const data = await response.json();
+      if (typeof window !== "undefined" && typeof navigator !== "undefined" && navigator.setAppBadge) {
+        if (data.unread > 0) {
+          navigator.setAppBadge(data.unread);
+        } else {
+          navigator.clearAppBadge();
+        }
+      }
+    } else if (response.redirected) {
+      await goto(response.url, { invalidateAll: true, replaceState: true });
+    }
   };
 
   const disconnect = () => {
@@ -68,7 +76,7 @@
     pusher.unsubscribe(data.chat!.id);
     pusher.unbind_all();
     pusher.disconnect();
-    updateRead();
+    updateRead(false);
   };
 
   const sendMessage = async (eventData: any) => {
@@ -91,7 +99,7 @@
 
     if (data.messages) messages.set([...$messages, ...(data.messages as unknown as iMessage[])]);
 
-    updateRead();
+    updateRead(true);
 
     channel.bind("new-message", (new_message: iMessage) => {
       sentMessageSuccess.set(null);
