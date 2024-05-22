@@ -108,7 +108,7 @@
             class="group rounded bg-accent p-1 text-sm text-muted-foreground focus:outline-none focus:ring-4 focus:ring-transparent"
             use:pressAction
             on:press={() => {
-              handleSearchSignal(minion.minion.generator.replace(/_/g, " ").toLowerCase().charAt(0).toUpperCase() + minion.minion.generator.slice(1).toLowerCase().replace(/_/g, " "));
+              handleSearchSignal(minion.minion.generator);
             }}>
             <Search class="h-5 w-5 transition-colors duration-300 group-hover:text-white" />
           </button>
