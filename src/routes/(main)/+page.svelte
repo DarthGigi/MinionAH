@@ -18,6 +18,8 @@
   import { writable } from "svelte/store";
   import { draw } from "svelte/transition";
   import type { PageData } from "./$types";
+  import ChevronsUpDown from "lucide-svelte/icons/chevrons-up-down";
+  import { cn } from "$lib/utils";
 
   export let data: PageData;
 
@@ -248,30 +250,52 @@
 
     <div class="flex items-center">
       {#if $searchType === SearchType.Minion}
-        {#key $searchValue}
-          <MinionsListBox
-            showReset={true}
-            bind:search={$searchValue}
-            variant="half-rounded"
-            minionType={data.minionTypes}
-            on:onSelect={({ detail }) => {
-              maxTier.set(detail.maxTier);
-              searchValue.set(detail.generator);
-              search($currentTier, detail.generator);
-            }} />
-        {/key}
+        {#await data.minionTypes}
+          <div class="flex items-center">
+            <Button variant="outline" type="button" class={cn("relative w-40 cursor-default justify-between rounded-md rounded-r-none border border-r-0 border-input bg-background py-1.5 pl-3 text-left text-muted-foreground shadow-sm focus:z-10 focus:outline-none focus:ring-2 focus:ring-ring sm:text-sm sm:leading-6 md:w-44")}>
+              <div class="flex">
+                <span>Select a minion</span>
+              </div>
+              <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </div>
+        {:then minionTypes}
+          {#key $searchValue}
+            <MinionsListBox
+              showReset={true}
+              bind:search={$searchValue}
+              variant="half-rounded"
+              minionType={minionTypes}
+              on:onSelect={({ detail }) => {
+                maxTier.set(detail.maxTier);
+                searchValue.set(detail.generator);
+                search($currentTier, detail.generator);
+              }} />
+          {/key}
+        {/await}
       {:else if $searchType === SearchType.User}
-        {#key $searchValue}
-          <UsersListBox
-            variant="half-rounded"
-            showReset={true}
-            bind:search={$searchValue}
-            users={data.users}
-            on:onSelect={({ detail }) => {
-              searchValue.set(detail.id);
-              search($currentTier, detail.id);
-            }} />
-        {/key}
+        {#await data.users}
+          <div class="flex items-center">
+            <Button variant="outline" type="button" class={cn("relative w-40 cursor-default justify-between rounded-md rounded-r-none border border-r-0 border-input bg-background py-1.5 pl-3 text-left text-muted-foreground shadow-sm focus:z-10 focus:outline-none focus:ring-2 focus:ring-ring sm:text-sm sm:leading-6 md:w-44")}>
+              <div class="flex">
+                <span>Select a user</span>
+              </div>
+              <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </div>
+        {:then users}
+          {#key $searchValue}
+            <UsersListBox
+              variant="half-rounded"
+              showReset={true}
+              bind:search={$searchValue}
+              {users}
+              on:onSelect={({ detail }) => {
+                searchValue.set(detail.id);
+                search($currentTier, detail.id);
+              }} />
+          {/key}
+        {/await}
       {/if}
 
       {#if $searchValue === ""}

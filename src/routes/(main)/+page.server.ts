@@ -29,7 +29,7 @@ export const load = (async () => {
         swr: 60
       }
     }) as Promise<Seller[]>,
-    minionTypes: await prisma.minion.findMany({
+    minionTypes: prisma.minion.findMany({
       select: {
         id: true,
         generator: true,
@@ -44,7 +44,7 @@ export const load = (async () => {
         ttl: 2629746 // 1 month
       }
     }),
-    users: await prisma.user.findMany({
+    users: prisma.user.findMany({
       select: {
         id: true,
         username: true
