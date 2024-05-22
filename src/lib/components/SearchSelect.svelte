@@ -11,6 +11,8 @@
   import { cn } from "$lib/utils";
   import ChevronDown from "lucide-svelte/icons/chevron-down";
   import { createEventDispatcher } from "svelte";
+  import Pickaxe from "lucide-svelte/icons/pickaxe";
+  import Users from "lucide-svelte/icons/users";
 
   export let searchType: SearchType = SearchType.Minion;
 
@@ -33,7 +35,7 @@
             searchType = SearchType.Minion;
             dispatch("onSelect", SearchType.Minion);
           }}>
-          Minions
+          <Pickaxe class="mr-1 size-4" /> Minions
         </DropdownMenu.Item>
       {:else}
         <DropdownMenu.Item
@@ -42,7 +44,7 @@
             searchType = SearchType.User;
             dispatch("onSelect", SearchType.User);
           }}>
-          Users
+          <Users class="mr-1 size-4" /> Users
         </DropdownMenu.Item>
       {/if}
     </DropdownMenu.Group>
