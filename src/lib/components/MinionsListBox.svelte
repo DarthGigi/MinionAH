@@ -73,8 +73,8 @@
   </Popover.Trigger>
   <Popover.Content class="mt-1 w-[200] border border-border bg-popover p-0">
     <Command.Root class="max-h-56 overflow-hidden border-none bg-popover text-base sm:text-sm">
-      <Command.Input autofocus placeholder="Search minion" class="border-0 text-popover-foreground focus:shadow-none focus:outline-0 focus:ring-0" />
-      <Command.Empty>No minion found.</Command.Empty>
+      <Command.Input autofocus placeholder="Search for a minion" class="border-0 text-popover-foreground focus:shadow-none focus:outline-0 focus:ring-0" />
+      <Command.Empty>No minions found</Command.Empty>
       <Command.Group>
         <ScrollArea class="h-40 rounded-md">
           {#each minionType as minionType}
