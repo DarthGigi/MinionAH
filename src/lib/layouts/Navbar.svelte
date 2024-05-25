@@ -29,8 +29,8 @@
 </script>
 
 <nav class="select-none bg-secondary max-md:fixed max-md:bottom-0 max-md:z-50 max-md:w-full">
-  <div class="mx-auto max-w-7xl px-4 pb-[env(safe-area-inset-bottom)] pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] pt-[env(safe-area-inset-top)] sm:px-6 lg:px-8">
-    <div class="flex h-16 flex-row-reverse justify-between md:flex-row">
+  <div class="mx-auto max-w-7xl px-4 pb-[env(safe-area-inset-bottom)] pl-[max(0.5rem,env(safe-area-inset-left))] pr-[max(2rem,env(safe-area-inset-right))] pt-[env(safe-area-inset-top)] sm:px-6 lg:px-8">
+    <div class="flex h-16 flex-row justify-between">
       <div class="flex flex-shrink-0 items-center">
         <DropdownMenu.Root bind:open={menuDropdownOpen}>
           <DropdownMenu.Trigger class="flex items-center gap-2 rounded-md px-4 py-2 hover:bg-popover">
@@ -76,7 +76,7 @@
               <div class="flex-shrink-0 max-md:hidden">
                 <a href="/profile" class="relative inline-flex items-center rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-colors duration-300 hover:bg-primary/60 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-secondary">
                   <Plus class="-ml-1 mr-2 h-5 w-5" />
-                  <span>New Minion</span>
+                  <span>New Auction</span>
                 </a>
               </div>
             {/if}

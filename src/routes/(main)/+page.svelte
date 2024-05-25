@@ -244,88 +244,90 @@
 
 <h2 class="sr-only">MinionAH - The Auction House for SkyBlock Minions</h2>
 
-<div class="mx-auto flex flex-row items-center justify-center gap-4 px-4 py-20 sm:px-6 lg:px-8">
-  <div class="flex flex-col justify-center space-y-2">
-    <Label>Search</Label>
+<div class="mx-auto w-fit">
+  <div class="flex flex-col items-start justify-center gap-4 px-4 pt-8 sm:flex-row sm:items-end sm:px-6 sm:py-20 lg:px-8">
+    <div class="flex flex-col justify-center space-y-2">
+      <Label>Search</Label>
 
-    <div class="flex items-center">
-      {#if $searchType === SearchType.Minion}
-        {#await data.minionTypes}
-          <div class="flex items-center">
-            <Button variant="outline" type="button" class={cn("relative w-40 cursor-default justify-between rounded-md rounded-r-none border border-r-0 border-input bg-background py-1.5 pl-3 text-left text-muted-foreground shadow-sm focus:z-10 focus:outline-none focus:ring-2 focus:ring-ring sm:text-sm sm:leading-6 md:w-44")}>
-              <div class="flex">
-                <span>Select a minion</span>
-              </div>
-              <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
-            </Button>
-          </div>
-        {:then minionTypes}
-          {#key $searchValue}
-            <MinionsListBox
-              showReset={true}
-              bind:search={$searchValue}
-              variant="half-rounded"
-              minionType={minionTypes}
-              on:onSelect={({ detail }) => {
-                maxTier.set(detail.maxTier);
-                searchValue.set(detail.generator);
-                search($currentTier, detail.generator);
-              }} />
-          {/key}
-        {/await}
-      {:else if $searchType === SearchType.User}
-        {#await data.users}
-          <div class="flex items-center">
-            <Button variant="outline" type="button" class={cn("relative w-40 cursor-default justify-between rounded-md rounded-r-none border border-r-0 border-input bg-background py-1.5 pl-3 text-left text-muted-foreground shadow-sm focus:z-10 focus:outline-none focus:ring-2 focus:ring-ring sm:text-sm sm:leading-6 md:w-44")}>
-              <div class="flex">
-                <span>Select a user</span>
-              </div>
-              <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
-            </Button>
-          </div>
-        {:then users}
-          {#key $searchValue}
-            <UsersListBox
-              variant="half-rounded"
-              showReset={true}
-              bind:search={$searchValue}
-              {users}
-              on:onSelect={({ detail }) => {
-                searchValue.set(detail.id);
-                search($currentTier, detail.id);
-              }} />
-          {/key}
-        {/await}
-      {/if}
+      <div class="flex items-center">
+        {#if $searchType === SearchType.Minion}
+          {#await data.minionTypes}
+            <div class="flex items-center">
+              <Button variant="outline" type="button" class={cn("relative w-40 cursor-default justify-between rounded-md rounded-r-none border border-r-0 border-input bg-background py-1.5 pl-3 text-left text-muted-foreground shadow-sm focus:z-10 focus:outline-none focus:ring-2 focus:ring-ring sm:text-sm sm:leading-6 md:w-44")}>
+                <div class="flex">
+                  <span>Select a minion</span>
+                </div>
+                <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </div>
+          {:then minionTypes}
+            {#key $searchValue}
+              <MinionsListBox
+                showReset={true}
+                bind:search={$searchValue}
+                variant="half-rounded"
+                minionType={minionTypes}
+                on:onSelect={({ detail }) => {
+                  maxTier.set(detail.maxTier);
+                  searchValue.set(detail.generator);
+                  search($currentTier, detail.generator);
+                }} />
+            {/key}
+          {/await}
+        {:else if $searchType === SearchType.User}
+          {#await data.users}
+            <div class="flex items-center">
+              <Button variant="outline" type="button" class={cn("relative w-40 cursor-default justify-between rounded-md rounded-r-none border border-r-0 border-input bg-background py-1.5 pl-3 text-left text-muted-foreground shadow-sm focus:z-10 focus:outline-none focus:ring-2 focus:ring-ring sm:text-sm sm:leading-6 md:w-44")}>
+                <div class="flex">
+                  <span>Select a user</span>
+                </div>
+                <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </div>
+          {:then users}
+            {#key $searchValue}
+              <UsersListBox
+                variant="half-rounded"
+                showReset={true}
+                bind:search={$searchValue}
+                {users}
+                on:onSelect={({ detail }) => {
+                  searchValue.set(detail.id);
+                  search($currentTier, detail.id);
+                }} />
+            {/key}
+          {/await}
+        {/if}
 
-      {#if $searchValue === ""}
-        <SearchSelect
-          bind:searchType={$searchType}
-          on:onSelect={({ detail }) => {
-            searchValue.set("");
-            searchType.set(detail);
-            if (detail === SearchType.User) {
-              maxTier.set(12);
-            }
-          }} />
-      {/if}
+        {#if $searchValue === ""}
+          <SearchSelect
+            bind:searchType={$searchType}
+            on:onSelect={({ detail }) => {
+              searchValue.set("");
+              searchType.set(detail);
+              if (detail === SearchType.User) {
+                maxTier.set(12);
+              }
+            }} />
+        {/if}
+      </div>
     </div>
-  </div>
 
-  <div class="flex flex-col justify-center space-y-2">
-    <Label>Tier</Label>
-    <TierListbox
-      maxtier={$maxTier}
-      disabled={false}
-      on:onSelectedTierChange={({ detail }) => {
-        if (detail.tier === null) {
-          currentTier.set(undefined);
+    <div class="flex flex-col justify-center space-y-2">
+      <Label class="sr-only">Tier</Label>
+      <TierListbox
+        maxtier={$maxTier}
+        disabled={false}
+        on:onSelectedTierChange={({ detail }) => {
+          if (detail.tier === null) {
+            currentTier.set(undefined);
+            search($currentTier);
+            return;
+          }
+          currentTier.set(Number(detail.tier));
           search($currentTier);
-          return;
-        }
-        currentTier.set(Number(detail.tier));
-        search($currentTier);
-      }} />
+        }} />
+    </div>
   </div>
 </div>
 

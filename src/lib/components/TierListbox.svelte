@@ -29,8 +29,8 @@
     dispatch("onSelectedTierChange", { tier: v ? v.value : undefined });
     if ($page.url.pathname !== "/profile" && v?.value !== 0) showAny = true;
   }}>
-  <Select.Trigger class={`w-40 border border-input bg-background font-medium focus:border-input focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-0 md:w-44 ${!selected ? "text-muted-foreground" : ""}`} aria-label="Select tier">
-    <Select.Value placeholder="Select tier" />
+  <Select.Trigger class={`w-40 border border-input bg-background font-medium focus:border-input focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-0 md:w-44 ${!selected ? "text-muted-foreground" : ""}`} aria-label="Select a tier">
+    <Select.Value placeholder="Select a tier" />
   </Select.Trigger>
   <Select.Content class="border-border bg-popover text-popover-foreground">
     <ScrollArea class="h-56 rounded-md">
