@@ -244,7 +244,7 @@
 
 <h2 class="sr-only">MinionAH - The Auction House for SkyBlock Minions</h2>
 
-<div class="mx-auto flex flex-row items-center justify-center gap-4 px-4 py-20 sm:px-6 lg:px-8">
+<div class="mx-auto flex flex-row items-end justify-center gap-4 px-4 py-20 sm:px-6 lg:px-8">
   <div class="flex flex-col justify-center space-y-2">
     <Label>Search</Label>
 
@@ -313,7 +313,7 @@
   </div>
 
   <div class="flex flex-col justify-center space-y-2">
-    <Label>Tier</Label>
+    <Label class="sr-only">Tier</Label>
     <TierListbox
       maxtier={$maxTier}
       disabled={false}
