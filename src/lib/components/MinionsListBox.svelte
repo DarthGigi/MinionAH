@@ -63,7 +63,7 @@
           class={cn("relative rounded-md rounded-l-none border-r border-input bg-background py-1.5 pl-3 text-left shadow-sm focus:z-10 focus:outline-none focus:ring-2 focus:ring-ring sm:text-sm sm:leading-6")}
           on:click={() => {
             value.set("");
-            dispatch("onSelect", { id: "", generator: "", texture: "", maxTier: undefined });
+            dispatch("onSelect", { id: "", generator: "", texture: "", maxTier: 12 });
           }}
           aria-label="Reset search">
           <SearchX class="h-4 w-4 shrink-0 opacity-50" />
