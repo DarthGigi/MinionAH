@@ -49,8 +49,7 @@
   const loading = writable<boolean>(false);
 
   const updateRead = async (onload: boolean) => {
-    if (typeof window === "undefined") return;
-    const response = await fetch(`${window.location.href}`, {
+    const response = await fetch("chat", {
       method: "PUT"
     });
     if (response.ok) {
@@ -99,6 +98,7 @@
 
     if (data.messages) messages.set([...$messages, ...(data.messages as unknown as iMessage[])]);
 
+    console.log("Mounting chat page");
     updateRead(true);
 
     channel.bind("new-message", (new_message: iMessage) => {
