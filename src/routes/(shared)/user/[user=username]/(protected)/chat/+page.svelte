@@ -25,6 +25,7 @@
   import { writable } from "svelte/store";
   import { draw, fade } from "svelte/transition";
   import type { PageData } from "./$types";
+  import MessageSquarePlus from "lucide-svelte/icons/message-square-plus";
 
   export let data: PageData;
 
@@ -207,13 +208,13 @@
         </form>
       </div>
     {:else}
-      <div class="flex flex-col items-center justify-center gap-2 p-4">
-        <h2 class="text-center text-lg font-semibold">No chat has been started yet.</h2>
+      <div class="flex flex-col items-center justify-center gap-2 p-4 pt-0">
+        <h2 class="flex-grow text-center text-lg font-semibold">You don't have any chats with {data.user2.username} yet.</h2>
         <form method="POST" action="?/createChat">
-          <Button type="submit">Start Chat</Button>
+          <Button type="submit" class="flex items-center gap-1"><MessageSquarePlus class="size-4" />Start Chat</Button>
         </form>
       </div>
     {/if}
   </div>
-  <span class="mt-1 text-xs opacity-25"> Messages are not end-to-end encrypted and are stored in plaintext. </span>
+  <span class="mt-1 text-pretty text-xs opacity-25"> Messages are not end-to-end encrypted and are stored in plaintext. </span>
 </div>
