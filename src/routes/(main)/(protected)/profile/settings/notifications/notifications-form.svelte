@@ -79,7 +79,8 @@
   timeout.subscribe((value) => {
     if (value) {
       toast.loading("It's taking longer than expected to update your notification preferences...", {
-        id: $toastLoading
+        id: $toastLoading,
+        duration: Number.POSITIVE_INFINITY
       });
     }
   });
@@ -111,26 +112,25 @@
   class="space-y-8"
   use:enhance={{
     onSubmit: async ({ cancel }) => {
+      $toastLoading = toast.loading("Updating your notification preferences...");
       if ($internalStorage.fcmToken && $formData.type !== "NONE" && $formData.type !== "EMAIL") {
         formData.update((state) => ({ ...state, fcmToken: $internalStorage.fcmToken }));
-        $toastLoading = toast.loading("Updating your notification preferences...");
       } else if (!$internalStorage.fcmToken && $formData.type !== "NONE" && $formData.type !== "EMAIL") {
-        toast.error("Failed to update your notification preferences. Please refresh the page and try again.");
+        $toastLoading = toast.error("Failed to update your notification preferences. Please refresh the page and try again.");
         cancel();
       }
     },
-    onResult: async () => {
-      setTimeout(() => toast.dismiss($toastLoading), 300);
-    },
     onUpdate: async ({ result }) => {
       if (result.type === "success") {
-        toast.success("Your notification preferences have been updated successfully.");
+        toast.success("Your notification preferences have been updated successfully.", {id: 'updateToast'});
       } else {
-        toast.error("Failed to update your notification preferences.");
+        toast.error("Failed to update your notification preferences.", {id: 'updateToast'});
       }
+      toast.dismiss($toastLoading)
     },
     onError: async () => {
       toast.error("Something went wrong trying to update your notification preferences.");
+      toast.dismiss($toastLoading)
     }
   }}>
   <Form.Fieldset {form} name="type" disabled={$registering}>
