@@ -13,7 +13,7 @@
 <SvelteSeo
   title="{data.userMinion.user.username}'s {data.userMinion.minion.name.replace(/ [IVX]+$/, '')}{data.userMinion.amount && data.userMinion.amount > 1 ? 's' : ''} — MinionAH"
   description={`${data.userMinion.user.username} is selling ${data.userMinion.amount ? data.userMinion.amount : 0} ${data.userMinion.minion.name.replace(/ [IVX]+$/, "")}${data.userMinion.amount && data.userMinion.amount > 1 ? "s" : ""}. Check out their auction on MinionAH!`}
-  themeColor={data.color.toString() || "#171717"}
+  themeColor={data.color.toString()}
   canonical={`https://minionah.com/user/${$page.params.user}/${$page.params.minionID}`}
   openGraph={{
     type: "website",
@@ -22,8 +22,8 @@
     description: `${data.userMinion.user.username} is selling ${data.userMinion.amount ? data.userMinion.amount : 0} ${data.userMinion.minion.name.replace(/ [IVX]+$/, "")}${data.userMinion.amount && data.userMinion.amount > 1 ? "s" : ""}. Check out their auction on MinionAH!`,
     images: [
       {
-        url: `https://og.minionah.com/minion/user/${$page.params.minionID}`,
-        secure_url: `https://og.minionah.com/minion/${$page.params.minionID}`,
+        url: `https://next.minionah.com/minion/${$page.params.minionID}`,
+        secure_url: `https://next.minionah.com/minion/${$page.params.minionID}`,
         alt: `${data.userMinion.user.username}'s ${data.userMinion.minion.name.replace(/ [IVX]+$/, "")}${data.userMinion.amount && data.userMinion.amount > 1 ? "s" : ""} — MinionAH`,
         width: 1200,
         height: 630,
@@ -37,7 +37,7 @@
     card: "summary_large_image",
     title: `${data.userMinion.user.username}'s ${data.userMinion.minion.name.replace(/ [IVX]+$/, "")}${data.userMinion.amount && data.userMinion.amount > 1 ? "s" : ""} — MinionAH`,
     description: `${data.userMinion.user.username} is selling ${data.userMinion.amount ? data.userMinion.amount : 0} ${data.userMinion.minion.name.replace(/ [IVX]+$/, "")}${data.userMinion.amount && data.userMinion.amount > 1 ? "s" : ""}. Check out their auction on MinionAH!`,
-    image: `https://og.minionah.com/minion/${$page.params.minionID}`,
+    image: `https://next.minionah.com/minion/${$page.params.minionID}`,
     imageAlt: `${data.userMinion.user.username}'s ${data.userMinion.minion.name.replace(/ [IVX]+$/, "")}${data.userMinion.amount && data.userMinion.amount > 1 ? "s" : ""} — MinionAH`
   }} />
 

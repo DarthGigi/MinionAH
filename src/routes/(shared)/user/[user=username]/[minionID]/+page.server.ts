@@ -1,7 +1,8 @@
+import { getImageColor } from "$lib/server/utilities";
 import { redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
-export const load = (async ({ params, fetch }) => {
+export const load = (async ({ params }) => {
   const minionID = params.minionID;
   const username = params.user;
 
@@ -28,10 +29,6 @@ export const load = (async ({ params, fetch }) => {
 
   return {
     userMinion,
-    color: await fetch("/api/internal/color", {
-      headers: {
-        imageUrl: `https://res.cloudinary.com/minionah/image/upload/v1/users/avatars/${userMinion.user.id}`
-      }
-    }).then((res) => res.text())
+    color: await getImageColor(`https://res.cloudinary.com/minionah/image/upload/v1/users/avatars/${userMinion.user.id}`)
   };
 }) satisfies PageServerLoad;

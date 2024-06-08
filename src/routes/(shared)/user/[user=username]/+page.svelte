@@ -38,7 +38,7 @@
 <SvelteSeo
   title="{data.minionuser.username}'s MinionAH"
   description={`Check out ${data.minionuser.username}'s profile on MinionAH!`}
-  themeColor={data.color.toString() || "#171717"}
+  themeColor={data.color.toString()}
   canonical={`https://minionah.com/user/${$page.params.user}`}
   openGraph={{
     type: "website",
