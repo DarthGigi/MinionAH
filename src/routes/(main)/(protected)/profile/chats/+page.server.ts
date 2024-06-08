@@ -1,6 +1,6 @@
 import { fail, message, superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
-import { formSchemaDelete } from "../schema";
+import { formSchemaDelete } from "./+page.svelte";
 import type { Actions, PageServerLoad } from "./$types";
 
 export const load = (async ({ locals }) => {

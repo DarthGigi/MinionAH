@@ -1,3 +1,12 @@
+<script lang="ts" context="module">
+  import { z } from "zod";
+  export const formSchemaDelete = z.object({
+    id: z.string()
+  });
+
+  export type FormSchemaDelete = typeof formSchemaDelete;
+</script>
+
 <script lang="ts">
   import * as AlertDialog from "$lib/components/ui/alert-dialog";
   import * as Avatar from "$lib/components/ui/avatar";
@@ -14,7 +23,6 @@
   import { writable } from "svelte/store";
   import { superForm } from "sveltekit-superforms";
   import { zodClient } from "sveltekit-superforms/adapters";
-  import { formSchemaDelete } from "../schema";
   import type { PageData } from "./$types";
 
   export let data: PageData;
