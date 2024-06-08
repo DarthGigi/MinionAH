@@ -1,17 +1,17 @@
 import { CRON_SECRET } from "$env/static/private";
 import { bulkUpdate, type BulkUpdateEntries } from "$lib/server/utilities";
-import * as Sentry from "@sentry/sveltekit";
+import { captureCheckIn } from "@sentry/sveltekit";
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 
 export const GET: RequestHandler = async ({ request, fetch }) => {
-  const checkInId = Sentry.captureCheckIn({
+  const checkInId = captureCheckIn({
     monitorSlug: "minion-price",
     status: "in_progress"
   });
 
   if (!CRON_SECRET || request.headers.get("Authorization") !== `Bearer ${CRON_SECRET}`) {
-    Sentry.captureCheckIn({
+    captureCheckIn({
       checkInId,
       monitorSlug: "minion-price",
       status: "error"
@@ -37,7 +37,7 @@ export const GET: RequestHandler = async ({ request, fetch }) => {
 
     await prisma.$transaction([bulkUpdate("Minion", bulkUpdates, "double precision")]);
 
-    Sentry.captureCheckIn({
+    captureCheckIn({
       checkInId,
       monitorSlug: "minion-price",
       status: "ok"
@@ -46,7 +46,7 @@ export const GET: RequestHandler = async ({ request, fetch }) => {
     return json({ success: true }, { status: 200 });
   } catch (e) {
     console.error(e);
-    Sentry.captureCheckIn({
+    captureCheckIn({
       checkInId,
       monitorSlug: "minion-price",
       status: "error"
