@@ -1,4 +1,5 @@
 import { type PrismaPromise } from "@prisma/client";
+import { getAverageColor } from "fast-average-color-node";
 
 export type BulkUpdateEntry = {
   id: number | string;
@@ -40,3 +41,16 @@ export function bulkUpdate(tableName: string, entries: BulkUpdateEntries, cast: 
 
   return prisma.$executeRawUnsafe(sql);
 }
+
+export const getImageColor = async (imageUrl: string): Promise<string> => {
+  if (!imageUrl) {
+    return "#171717";
+  }
+  try {
+    const color = (await getAverageColor(imageUrl)).hex;
+    return color;
+  } catch (e) {
+    console.error(e);
+    return "#171717";
+  }
+};

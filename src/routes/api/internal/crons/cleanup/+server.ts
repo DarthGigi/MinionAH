@@ -1,17 +1,17 @@
 import { CRON_SECRET } from "$env/static/private";
 import { lucia } from "$lib/server/lucia";
-import * as Sentry from "@sentry/sveltekit";
+import { captureCheckIn } from "@sentry/sveltekit";
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 
 export const GET: RequestHandler = async ({ request }) => {
-  const checkInId = Sentry.captureCheckIn({
+  const checkInId = captureCheckIn({
     monitorSlug: "cleanup",
     status: "in_progress"
   });
 
   if (!CRON_SECRET || request.headers.get("Authorization") !== `Bearer ${CRON_SECRET}`) {
-    Sentry.captureCheckIn({
+    captureCheckIn({
       checkInId,
       monitorSlug: "cleanup",
       status: "error"
@@ -27,7 +27,7 @@ export const GET: RequestHandler = async ({ request }) => {
 
   try {
     await lucia.deleteExpiredSessions();
-    Sentry.captureCheckIn({
+    captureCheckIn({
       checkInId,
       monitorSlug: "cleanup",
       status: "ok"
@@ -35,7 +35,7 @@ export const GET: RequestHandler = async ({ request }) => {
     return json({ success: true }, { status: 200 });
   } catch (e) {
     console.error(e);
-    Sentry.captureCheckIn({
+    captureCheckIn({
       checkInId,
       monitorSlug: "cleanup",
       status: "error"

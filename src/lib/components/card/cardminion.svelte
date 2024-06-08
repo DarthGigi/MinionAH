@@ -66,7 +66,7 @@
     </div>
   {/if}
   {#if minion.hasInfusion}
-    <Tooltip.Root>
+    <Tooltip.Root openDelay={100} closeDelay={0}>
       <Tooltip.Trigger class="absolute right-2 top-2 m-0 flex items-center justify-center rounded-lg !border-0 bg-accent p-1.5 transition-all duration-300 group-hover:bg-opacity-0">
         <img class="pointer-events-none h-full w-5" src="/assets/images/mithril.png" alt="Mithril Infusion" />
       </Tooltip.Trigger>

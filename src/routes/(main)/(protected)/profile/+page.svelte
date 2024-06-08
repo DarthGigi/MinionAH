@@ -131,17 +131,14 @@
   <div bind:this={minecraftAvatarContainer} class="relative w-full">
     <div class="absolute right-3 top-3 z-30 flex flex-col gap-2">
       <CopyButton on:click={() => navigator.clipboard.writeText(`${window.location.origin}/user/${user?.username}`)} />
-      <Button variant="link" href="/profile/settings" class="group h-auto rounded-lg !border-0 bg-accent p-1.5 focus:outline-none focus:ring-0 focus:ring-transparent">
-        <Cog class="h-5 w-5 text-muted-foreground transition-colors duration-300 group-hover:text-foreground" />
-      </Button>
     </div>
     {#if canvasIsLoading}
       <div class="absolute h-full w-full animate-pulse rounded-lg border border-border bg-popover"></div>
     {/if}
     <canvas bind:this={minecraftAvatar} class="relative !h-full !w-full overflow-hidden rounded-lg border border-border bg-popover transition-all duration-[3s]" class:opacity-100={!canvasIsLoading} class:opacity-0={canvasIsLoading}></canvas>
   </div>
-  {#await data.streamed.userMinions}
-    <div class="h-[28.75rem] animate-pulse rounded-lg border-border bg-popover shadow-sm"></div>
+  {#await data.userMinions}
+    <div class="h-[28.625rem] animate-pulse rounded-lg border border-border bg-popover shadow-sm"></div>
   {:then userMinions}
     {#if userMinions.length < 18}
       <form use:enhanceCreate method="POST" action="?/createMinion" class="space-y-6">
@@ -154,7 +151,7 @@
             <div class="flex w-full flex-col items-center justify-center gap-4">
               <div class="mx-auto flex flex-col gap-4">
                 <div class="flex gap-4">
-                  {#await data.streamed.minionTypes}
+                  {#await data.minionTypes}
                     <div class="flex flex-col space-y-2">
                       <Label>Minion</Label>
                       <Button variant="outline" role="combobox" type="button" class="relative w-40 cursor-default justify-between rounded-md border-none bg-accent py-1.5 pl-3 text-left text-muted-foreground shadow-sm ring-1 ring-inset ring-transparent hover:bg-accent hover:text-primary focus:outline-none focus:ring-2 focus:ring-ring sm:text-sm sm:leading-6 md:w-44">
@@ -336,7 +333,7 @@
 <div class="py-8 max-md:pb-20">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
     <ul role="list" class="grid grid-cols-1 justify-center gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {#await data.streamed.userMinions}
+      {#await data.userMinions}
         {#each Array(9) as _}
           <CardLoading />
         {/each}

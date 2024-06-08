@@ -1,16 +1,24 @@
 import { dev } from "$app/environment";
 import { ADMIN_ID, MAINTENANCE_MODE, RATE_LIMIT_SECRET } from "$env/static/private";
+import { PUBLIC_SENTRY_DSN } from "$env/static/public";
 import { lucia } from "$lib/server/lucia";
 import prisma from "$lib/server/prisma";
-import * as Sentry from "@sentry/sveltekit";
+import { contextLinesIntegration, extraErrorDataIntegration, handleErrorWithSentry, init, sentryHandle } from "@sentry/sveltekit";
 import type { Handle, RequestEvent } from "@sveltejs/kit";
 import { json, redirect } from "@sveltejs/kit";
 import { sequence } from "@sveltejs/kit/hooks";
 import { RetryAfterRateLimiter } from "sveltekit-rate-limiter/server";
 
-Sentry.init({
-  dsn: "https://c7b9b7a1b4e2f091d9a1dc913b23dffc@o4507042038087680.ingest.us.sentry.io/4507042039791616",
-  tracesSampleRate: dev ? 1.0 : 0.1,
+init({
+  dsn: PUBLIC_SENTRY_DSN,
+  tracesSampleRate: dev ? 1.0 : 0.5,
+
+  integrations: [contextLinesIntegration(), extraErrorDataIntegration()],
+
+  // This option is required for capturing headers and cookies.
+  sendDefaultPii: true,
+
+  // Disable Sentry during development
   enabled: !dev,
   environment: dev ? "development" : "production"
 });
@@ -26,7 +34,7 @@ const limiter = new RetryAfterRateLimiter({
   }
 });
 
-export const handle: Handle = sequence(Sentry.sentryHandle(), async ({ event, resolve }) => {
+export const handle: Handle = sequence(sentryHandle(), async ({ event, resolve }) => {
   if (MAINTENANCE_MODE === "true") {
     redirect(303, "https://maintenance.minionah.com");
   }
@@ -166,4 +174,4 @@ export const handle: Handle = sequence(Sentry.sentryHandle(), async ({ event, re
 
   return await resolve(event);
 });
-export const handleError = Sentry.handleErrorWithSentry();
+export const handleError = handleErrorWithSentry();

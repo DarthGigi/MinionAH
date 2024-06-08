@@ -8,7 +8,8 @@ export default defineConfig({
       sourceMapsUploadOptions: {
         org: "minionah",
         project: "minionah"
-      }
+      },
+      adapter: "vercel"
     }),
     sveltekit()
   ],

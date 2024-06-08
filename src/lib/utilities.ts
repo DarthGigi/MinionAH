@@ -1,6 +1,6 @@
+import { sanitize } from "@jill64/universal-sanitizer";
 import type { Chat } from "@prisma/client";
 import { format } from "numerable";
-import { sanitize } from "@jill64/universal-sanitizer";
 
 export const formatNumber = (num: number | string): string => {
   // if the number is a string, parse it to a number

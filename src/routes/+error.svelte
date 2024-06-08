@@ -4,7 +4,7 @@
   import * as Card from "$lib/components/ui/card";
   import { Label } from "$lib/components/ui/label";
   import { Textarea } from "$lib/components/ui/textarea";
-  import * as Sentry from "@sentry/sveltekit";
+  import { feedbackIntegration, sendFeedback } from "@sentry/svelte";
   import MoveVertical from "lucide-svelte/icons/move-vertical";
   import { onMount } from "svelte";
   import { toast } from "svelte-sonner";
@@ -16,7 +16,7 @@
   const bugMessageValue = writable<string>("");
 
   onMount(() => {
-    const feedback = Sentry.feedbackIntegration({
+    const feedback = feedbackIntegration({
       // Additional SDK configuration goes in here, for example:
       colorScheme: "dark",
       showBranding: false,
@@ -49,7 +49,7 @@
         on:click={async () => {
           if (!$bugMessageValue) return;
           toast.promise(
-            Sentry.sendFeedback(
+            sendFeedback(
               {
                 message: $bugMessageValue,
                 // @ts-ignore

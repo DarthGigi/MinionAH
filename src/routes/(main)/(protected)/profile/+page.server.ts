@@ -9,35 +9,32 @@ export const load = (async ({ locals }) => {
   return {
     formCreate: await superValidate(zod(formSchemaCreate), { id: "formCreate" }),
     formDelete: await superValidate(zod(formSchemaDelete), { id: "formDelete" }),
-    streamed: {
-      // Load all generator types, only 1 minion per type
-      minionTypes: prisma.minion.findMany({
-        select: {
-          id: true,
-          generator: true,
-          texture: true,
-          maxTier: true
-        },
-        distinct: ["generator"],
-        orderBy: {
-          generator: "asc"
+    minionTypes: prisma.minion.findMany({
+      select: {
+        id: true,
+        generator: true,
+        texture: true,
+        maxTier: true
+      },
+      distinct: ["generator"],
+      orderBy: {
+        generator: "asc"
+      }
+    }),
+    userMinions: prisma.auction.findMany({
+      where: {
+        user: {
+          id: locals.user!.id
         }
-      }),
-      userMinions: prisma.auction.findMany({
-        where: {
-          user: {
-            id: locals.user!.id
-          }
-        },
-        include: {
-          minion: true,
-          user: true
-        },
-        orderBy: {
-          timeCreated: "desc"
-        }
-      })
-    }
+      },
+      include: {
+        minion: true,
+        user: true
+      },
+      orderBy: {
+        timeCreated: "desc"
+      }
+    })
   };
 }) satisfies PageServerLoad;
 

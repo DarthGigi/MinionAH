@@ -89,7 +89,7 @@
             addSuffix: true,
             includeSeconds: true
           })}
-          <Tooltip.Root openDelay={150}>
+          <Tooltip.Root openDelay={100} closeDelay={0}>
             <Tooltip.Trigger class="cursor-help text-[#FEFF55]">
               <p class="text-wrap text-left">Raw Craft Cost: <span class="text-[#FEAB00]">{formatNumber(minion.minion.craftCost)} coins</span></p>
             </Tooltip.Trigger>

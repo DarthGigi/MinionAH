@@ -50,7 +50,7 @@
 </script>
 
 <div {...$$restProps} class:self-end={self} class:self-start={!self} in:fly|global={{ y: 24 }}>
-  <Tooltip.Root group={true}>
+  <Tooltip.Root openDelay={100} closeDelay={0} group={true}>
     <Tooltip.Trigger class={`flex ${self ? "flex-row" : "flex-row-reverse"}`}>
       {@const isOnlyImage = /^<img src=".*" class=".*">$/i.test(message.content)}
       <div class={`no-scrollbar min-w-0 max-w-[18rem] cursor-default select-text self-end break-words rounded-full py-2 text-left text-[#FDFDFD] transition-all duration-300 data-[image=false]:px-4 ${message.content.length >= 25 ? "!rounded-3xl" : ""} ${self ? "self-end !rounded-br-none data-[image=false]:bg-[#3C83F7]" : "self-start !rounded-bl-none data-[image=false]:bg-[#3B3B3D]"}`} bind:this={element} data-image={isOnlyImage}></div>

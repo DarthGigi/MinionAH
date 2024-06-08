@@ -1,7 +1,8 @@
+import { getImageColor } from "$lib/server/utilities";
 import { redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
-export const load = (async ({ params, fetch }) => {
+export const load = (async ({ params }) => {
   const username = params.user;
 
   const minionuser = await prisma.user.findUnique({
@@ -37,10 +38,6 @@ export const load = (async ({ params, fetch }) => {
 
   return {
     minionuser,
-    color: await fetch("/api/internal/color", {
-      headers: {
-        imageUrl: `https://res.cloudinary.com/minionah/image/upload/v1/users/avatars/${minionuser.id}`
-      }
-    }).then((res) => res.text())
+    color: await getImageColor(`https://res.cloudinary.com/minionah/image/upload/v1/users/avatars/${minionuser.id}`)
   };
 }) satisfies PageServerLoad;
