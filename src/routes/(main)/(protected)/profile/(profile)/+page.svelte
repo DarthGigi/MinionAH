@@ -13,9 +13,8 @@
   import { Label } from "$lib/components/ui/label";
   import { Switch } from "$lib/components/ui/switch";
   import { formatNumber } from "$lib/utilities";
-  import type { Minion, Auction, User } from "@prisma/client";
+  import type { Auction, Minion, User } from "@prisma/client";
   import ChevronsUpDown from "lucide-svelte/icons/chevrons-up-down";
-  import Cog from "lucide-svelte/icons/cog";
   import LoaderCircle from "lucide-svelte/icons/loader-circle";
   import { parse } from "numerable";
   import * as skinview3d from "skinview3d";
@@ -23,7 +22,7 @@
   import { toast } from "svelte-sonner";
   import { superForm } from "sveltekit-superforms";
   import { zodClient } from "sveltekit-superforms/adapters";
-  import type { PageData } from "./$types";
+  import type { PageData } from "../$types";
   import { formSchemaCreate, formSchemaDelete } from "./schema";
 
   export let data: PageData;
