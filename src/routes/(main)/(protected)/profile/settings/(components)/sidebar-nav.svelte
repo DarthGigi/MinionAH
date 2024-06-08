@@ -4,7 +4,7 @@
   import { cn } from "$lib/utils";
   import type { ComponentType } from "svelte";
   import { cubicInOut } from "svelte/easing";
-  import { crossfade } from "svelte/transition";
+  import { crossfade, scale } from "svelte/transition";
 
   let className: string | undefined | null = undefined;
   export let items: { href: string; title: string; icon: ComponentType }[];
@@ -23,6 +23,8 @@
     <Button href={item.href} variant="ghost" class={cn(!isActive && "hover:underline", "relative justify-start gap-2 hover:bg-transparent")} data-sveltekit-noscroll>
       {#if isActive}
         <div class="absolute inset-0 rounded-md bg-accent" in:send={{ key: "active-sidebar-tab" }} out:receive={{ key: "active-sidebar-tab" }}></div>
+      {:else}
+        <div class="absolute inset-0 rounded-md bg-background" in:scale={{ delay: 300, duration: 700, start: 0.8 }} out:scale={{ duration: 700 }}></div>
       {/if}
       <div class="relative">
         <svelte:component this={item.icon} class="size-5" />

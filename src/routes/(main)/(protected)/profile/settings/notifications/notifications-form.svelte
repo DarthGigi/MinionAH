@@ -102,10 +102,11 @@
   });
 </script>
 
-<Alert.Root class="border-border">
-  <TriangleAlert />
-  <Alert.Title>Heads up!</Alert.Title>
-  <Alert.Description>The device notifications feature is still in development. <br /> It may or may not work for you, especially on mobile devices. Please do not rely on this feature yet.</Alert.Description>
+<Alert.Root class="border-accent bg-accent/20  text-accent-foreground/80">
+  <Alert.Description class="text-pretty">
+    The device notifications feature is in
+    <span class="rounded-full border border-accent bg-accent/20 px-2 py-0.5 text-accent-foreground/80">Beta</span>. You may experience issues with notifications. If you do, try using the email notifications option instead.
+  </Alert.Description>
 </Alert.Root>
 <form
   method="POST"
@@ -122,15 +123,15 @@
     },
     onUpdate: async ({ result }) => {
       if (result.type === "success") {
-        toast.success("Your notification preferences have been updated successfully.", {id: 'updateToast'});
+        toast.success("Your notification preferences have been updated successfully.", { id: "updateToast" });
       } else {
-        toast.error("Failed to update your notification preferences.", {id: 'updateToast'});
+        toast.error("Failed to update your notification preferences.", { id: "updateToast" });
       }
-      toast.dismiss($toastLoading)
+      toast.dismiss($toastLoading);
     },
     onError: async () => {
       toast.error("Something went wrong trying to update your notification preferences.");
-      toast.dismiss($toastLoading)
+      toast.dismiss($toastLoading);
     }
   }}>
   <Form.Fieldset {form} name="type" disabled={$registering}>
@@ -140,7 +141,10 @@
         <Form.Control let:attrs>
           <RadioGroup.Item disabled={$allRadioDisabled} value="ALL" {...attrs} />
           <Form.Label class="flex flex-col font-normal">
-            <span class="flex items-center gap-1.5 text-base">Device & Email <Construction class="size-4 text-muted-foreground" /></span>
+            <span class="flex items-center gap-1.5 text-base">
+              Device & Email
+              <span class="rounded-full border border-accent bg-accent/20 px-2 py-0.5 text-xs text-accent-foreground/80">Beta</span>
+            </span>
             <span class="text-sm text-muted-foreground">Receive notifications on your device and via email.</span>
             {#if $permission === "denied" || $permission === "default"}
               <span class="text-sm font-semibold text-muted-foreground">You need to allow notifications to receive them.</span>
@@ -167,7 +171,10 @@
         <Form.Control let:attrs>
           <RadioGroup.Item value="DEVICE" disabled={$deviceRadioDisabled || ($isiOS && !$iOSIsInstalled)} {...attrs} />
           <Form.Label class="flex flex-col font-normal">
-            <span class="flex items-center gap-1.5 text-base">Device <Construction class="size-4 text-muted-foreground" /></span>
+            <span class="flex items-center gap-1.5 text-base">
+              Device
+              <span class="rounded-full border border-accent bg-accent/20 px-2 py-0.5 text-xs text-accent-foreground/80">Beta</span>
+            </span>
             <span class="text-sm text-muted-foreground">Receive notifications on your device only.</span>
             {#if $permission === "denied" || $permission === "default"}
               <span class="text-sm font-semibold text-muted-foreground">You need to allow notifications to receive them.</span>
