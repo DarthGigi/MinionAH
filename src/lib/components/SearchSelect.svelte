@@ -21,7 +21,7 @@
 
 <DropdownMenu.Root>
   <DropdownMenu.Trigger asChild let:builder>
-    <Button builders={[builder]} variant="outline" class={cn("relative rounded-md rounded-l-none border-r border-input bg-background py-1.5 pl-3 text-left shadow-sm focus:z-10 focus:outline-none focus:ring-2 focus:ring-ring sm:text-sm sm:leading-6")} aria-label="Reset search">
+    <Button builders={[builder]} variant="outline" class={cn("relative w-12 rounded-md rounded-l-none border-r border-input bg-background py-1.5 text-left shadow-sm focus:z-10 focus:outline-none focus:ring-2 focus:ring-ring sm:text-sm sm:leading-6")} aria-label="Reset search">
       <ChevronDown class="h-4 w-4 shrink-0 opacity-50" />
     </Button>
   </DropdownMenu.Trigger>

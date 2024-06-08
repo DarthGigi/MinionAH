@@ -316,6 +316,7 @@
     <div class="flex flex-col justify-center space-y-2">
       <Label class="sr-only">Tier</Label>
       <TierListbox
+        tiggerClasses="w-52"
         maxtier={$maxTier}
         disabled={false}
         on:onSelectedTierChange={({ detail }) => {
