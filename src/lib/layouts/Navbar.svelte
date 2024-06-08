@@ -182,7 +182,7 @@
                 </div>
               </div>
             </div>
-            <Tooltip.Root closeDelay={0} openDelay={0} closeOnPointerDown={false} portal="body">
+            <Tooltip.Root openDelay={100} closeDelay={0} portal="body">
               <Tooltip.Trigger class="absolute right-1 top-2 text-accent hover:text-accent-foreground">
                 <Info class="h-4" />
               </Tooltip.Trigger>

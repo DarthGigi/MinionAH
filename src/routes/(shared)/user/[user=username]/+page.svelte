@@ -106,7 +106,7 @@
     {#if data.minionuser.settings?.profileSettings?.urls && data.minionuser.settings?.profileSettings?.urls.length !== 0}
       <Card.Content class="flex flex-wrap items-center justify-center gap-4">
         {#each data.minionuser.settings?.profileSettings?.urls as url}
-          <Tooltip.Root group="links" openDelay={0} closeDelay={0} closeOnPointerDown={true} closeOnEscape={true}>
+          <Tooltip.Root openDelay={100} closeDelay={0} group="links" closeOnPointerDown={true} closeOnEscape={true}>
             <Tooltip.Trigger
               on:pointerdown={() => {
                 urlToOpen.set(url);

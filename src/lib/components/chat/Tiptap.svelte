@@ -192,7 +192,7 @@
     <AlertDialog.Header>
       <AlertDialog.Title class="flex items-center gap-1"
         >Insert Image
-        <Tooltip.Root portal={null} openDelay={0}>
+        <Tooltip.Root openDelay={100} closeDelay={0} portal={null}>
           <Tooltip.Trigger><Info class="h-4 w-4" /></Tooltip.Trigger>
           <Tooltip.Content class="max-w-lg space-y-2 border-border bg-popover">
             <p>You may insert media from these sources:</p>

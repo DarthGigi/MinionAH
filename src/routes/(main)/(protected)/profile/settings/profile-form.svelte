@@ -135,7 +135,7 @@
       <Form.Label>Email</Form.Label>
       <div class="relative">
         <Input type="email" autocomplete="email" class="no-input-borders pl-8" {...attrs} bind:value={$formData.email} />
-        <Tooltip.Root closeOnPointerDown={false} openDelay={150}>
+        <Tooltip.Root openDelay={100} closeDelay={0} closeOnPointerDown={false}>
           <Tooltip.Trigger class="absolute left-2 top-1/2 z-10 -translate-y-1/2">
             <Info class="size-4 opacity-50 group-hover:opacity-100" />
           </Tooltip.Trigger>
