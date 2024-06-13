@@ -11,6 +11,8 @@
   import { internalPreferences, preferences } from "$lib/stores/preferences";
   import { searchSignal } from "$lib/stores/signals";
   import type { Seller } from "$lib/types";
+  import { cn } from "$lib/utils";
+  import ChevronsUpDown from "lucide-svelte/icons/chevrons-up-down";
   import { onMount } from "svelte";
   import { infiniteScrollAction } from "svelte-legos";
   import SvelteSeo from "svelte-seo";
@@ -18,8 +20,6 @@
   import { writable } from "svelte/store";
   import { draw } from "svelte/transition";
   import type { PageData } from "./$types";
-  import ChevronsUpDown from "lucide-svelte/icons/chevrons-up-down";
-  import { cn } from "$lib/utils";
 
   export let data: PageData;
 
