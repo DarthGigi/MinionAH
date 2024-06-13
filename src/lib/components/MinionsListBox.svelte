@@ -1,3 +1,7 @@
+<script context="module" lang="ts">
+  type DispatchEvents = { onSelect: { id: string; generator: string; texture: string; maxTier: number | undefined }; onReset?: void };
+</script>
+
 <script lang="ts">
   import * as Avatar from "$lib/components/ui/avatar";
   import { Button } from "$lib/components/ui/button";
@@ -16,7 +20,7 @@
   export let showReset: boolean;
   export let variant: "rounded" | "half-rounded" = "rounded";
 
-  const dispatch = createEventDispatcher<{ onSelect: { id: string; generator: string; texture: string; maxTier: number | undefined } }>();
+  const dispatch = createEventDispatcher<DispatchEvents>();
 
   const open = writable<boolean>(false);
   const value = writable<string>(search);
@@ -63,7 +67,7 @@
           class={cn("relative rounded-md rounded-l-none border-r border-input bg-background py-1.5 pl-3 text-left shadow-sm focus:z-10 focus:outline-none focus:ring-2 focus:ring-ring sm:text-sm sm:leading-6")}
           on:click={() => {
             value.set("");
-            dispatch("onSelect", { id: "", generator: "", texture: "", maxTier: 12 });
+            dispatch("onReset");
           }}
           aria-label="Reset search">
           <SearchX class="h-4 w-4 shrink-0 opacity-50" />
