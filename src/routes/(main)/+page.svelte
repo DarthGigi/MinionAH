@@ -11,6 +11,8 @@
   import { internalPreferences, preferences } from "$lib/stores/preferences";
   import { searchSignal } from "$lib/stores/signals";
   import type { Seller } from "$lib/types";
+  import { cn } from "$lib/utils";
+  import ChevronsUpDown from "lucide-svelte/icons/chevrons-up-down";
   import { onMount } from "svelte";
   import { infiniteScrollAction } from "svelte-legos";
   import SvelteSeo from "svelte-seo";
@@ -18,8 +20,6 @@
   import { writable } from "svelte/store";
   import { draw } from "svelte/transition";
   import type { PageData } from "./$types";
-  import ChevronsUpDown from "lucide-svelte/icons/chevrons-up-down";
-  import { cn } from "$lib/utils";
 
   export let data: PageData;
 
@@ -27,7 +27,7 @@
   const loadingMore = writable(false);
   const currentTier = writable<number | undefined>(undefined);
   const newMinionAmount = writable<number>();
-  const searchQuery = writable<string | undefined>(undefined);
+  const storedSearchQuery = writable<string | undefined>(undefined);
   const searchValue = writable<string>("");
   const maxTier = writable<number | undefined>();
   const searchType = writable<SearchType>(SearchType.Minion);
@@ -38,7 +38,7 @@
     searchValue.set("");
     searchValue.set(query);
     setTimeout(() => {
-      search($currentTier, query);
+      search($currentTier);
       searchSignal.update(() => "");
     });
   });
@@ -99,38 +99,34 @@
         });
       });
     }
-    // if (!$internalPreferences.hasSeenDeviceNotificationsToast) {
-    //   /**
-    //    * TODO: Re-enable this when we have a proper notification system
-    //    */
-    //   return;
-    //   if (!data.user) return;
-    //   setTimeout(() => {
-    //     toast("Notifications", {
-    //       description: "Would you like to receive notifications when someone sends you a message?",
-    //       action: {
-    //         label: "Enable",
-    //         onClick: () => {
-    //           internalPreferences.update((state) => ({ ...state, hasSeenDeviceNotificationsToast: true }));
-    //           window.open("/profile/settings/notifications", "_self");
-    //         }
-    //       },
-    //       onDismiss: () => {
-    //         internalPreferences.update((state) => ({ ...state, hasSeenDeviceNotificationsToast: true }));
-    //         toast(HtmlToast, {
-    //           duration: 5000,
-    //           classes: {
-    //             closeButton: "!hidden"
-    //           },
-    //           componentProps: {
-    //             htmlMessage: "You can always enable notifications by visiting <a href='/profile/settings/notifications' target='_self' class='underline'>your settings</a>"
-    //           }
-    //         });
-    //       },
-    //       duration: Number.POSITIVE_INFINITY
-    //     });
-    //   });
-    // }
+    if (!$internalPreferences.hasSeenDeviceNotificationsToast) {
+      if (!data.user) return;
+      setTimeout(() => {
+        toast("Device Notifications", {
+          description: "Would you like to receive notifications when someone sends you a message?",
+          action: {
+            label: "Enable",
+            onClick: () => {
+              internalPreferences.update((state) => ({ ...state, hasSeenDeviceNotificationsToast: true }));
+              window.open("/profile/settings/notifications", "_self");
+            }
+          },
+          onDismiss: () => {
+            internalPreferences.update((state) => ({ ...state, hasSeenDeviceNotificationsToast: true }));
+            toast(HtmlToast, {
+              duration: 5000,
+              classes: {
+                closeButton: "!hidden"
+              },
+              componentProps: {
+                htmlMessage: "You can always enable notifications by visiting <a href='/profile/settings/notifications' target='_self' class='underline'>your settings</a>"
+              }
+            });
+          },
+          duration: Number.POSITIVE_INFINITY
+        });
+      });
+    }
 
     if (!$internalPreferences.hasSeenEmailNotificationsToast) {
       if (!data.user) return;
@@ -162,26 +158,27 @@
     }
   });
 
-  const search = async (filterTier?: number | undefined, search?: string, isMore: boolean = false, skip?: number) => {
+  const search = async (filterTier?: number | undefined, isMore: boolean = false, skip?: number) => {
     loadingMore.set(isMore);
     if (filterTier === 0) filterTier = undefined;
 
     let where;
 
-    if (filterTier || search) {
+    if (filterTier || $searchValue) {
       if ($searchType === SearchType.Minion) {
+        console.log(filterTier, $searchValue);
         where = {
           minion: {
             ...(filterTier && { generator_tier: filterTier }),
-            ...(search && {
-              AND: [{ generator: search }, { generator_tier: filterTier }]
+            ...($searchValue && {
+              AND: [{ generator: $searchValue }, { generator_tier: filterTier }]
             })
           }
         };
       } else {
         where = {
           user: {
-            ...(search && { id: { contains: search, mode: "insensitive" } })
+            ...($searchValue && { id: { contains: $searchValue, mode: "insensitive" } })
           }
         };
       }
@@ -270,7 +267,12 @@
                 on:onSelect={({ detail }) => {
                   maxTier.set(detail.maxTier);
                   searchValue.set(detail.generator);
-                  search($currentTier, detail.generator);
+                  search($currentTier);
+                }}
+                on:onReset={() => {
+                  searchValue.set("");
+                  maxTier.set(12);
+                  search($currentTier);
                 }} />
             {/key}
           {/await}
@@ -293,7 +295,7 @@
                 {users}
                 on:onSelect={({ detail }) => {
                   searchValue.set(detail.id);
-                  search($currentTier, detail.id);
+                  search($currentTier);
                 }} />
             {/key}
           {/await}
@@ -362,10 +364,10 @@
               immediate: true, // boolean, default: true
               disabled: !$preferences.infiniteScroll, // boolean, default: false
               cb: async () => {
-                await search($currentTier, $searchQuery, true, minions.length);
+                await search($currentTier, true, minions.length);
               }
             }}>
-            <Button type="button" variant="ghost" on:click={async () => await search($currentTier, $searchQuery, true, minions.length)} class="text-sm text-accent transition-all duration-300 hover:text-white focus-visible:border-0 focus-visible:outline-none focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0" aria-label="Load more minions">
+            <Button type="button" variant="ghost" on:click={async () => await search($currentTier, true, minions.length)} class="text-sm text-accent transition-all duration-300 hover:text-white focus-visible:border-0 focus-visible:outline-none focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0" aria-label="Load more minions">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down h-6 w-6" class:animate-spin={$loadingMore}>
                 {#if $loadingMore}
                   <path in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
