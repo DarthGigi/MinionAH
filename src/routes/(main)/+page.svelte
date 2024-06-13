@@ -99,38 +99,34 @@
         });
       });
     }
-    // if (!$internalPreferences.hasSeenDeviceNotificationsToast) {
-    //   /**
-    //    * TODO: Re-enable this when we have a proper notification system
-    //    */
-    //   return;
-    //   if (!data.user) return;
-    //   setTimeout(() => {
-    //     toast("Notifications", {
-    //       description: "Would you like to receive notifications when someone sends you a message?",
-    //       action: {
-    //         label: "Enable",
-    //         onClick: () => {
-    //           internalPreferences.update((state) => ({ ...state, hasSeenDeviceNotificationsToast: true }));
-    //           window.open("/profile/settings/notifications", "_self");
-    //         }
-    //       },
-    //       onDismiss: () => {
-    //         internalPreferences.update((state) => ({ ...state, hasSeenDeviceNotificationsToast: true }));
-    //         toast(HtmlToast, {
-    //           duration: 5000,
-    //           classes: {
-    //             closeButton: "!hidden"
-    //           },
-    //           componentProps: {
-    //             htmlMessage: "You can always enable notifications by visiting <a href='/profile/settings/notifications' target='_self' class='underline'>your settings</a>"
-    //           }
-    //         });
-    //       },
-    //       duration: Number.POSITIVE_INFINITY
-    //     });
-    //   });
-    // }
+    if (!$internalPreferences.hasSeenDeviceNotificationsToast) {
+      if (!data.user) return;
+      setTimeout(() => {
+        toast("Device Notifications", {
+          description: "Would you like to receive notifications when someone sends you a message?",
+          action: {
+            label: "Enable",
+            onClick: () => {
+              internalPreferences.update((state) => ({ ...state, hasSeenDeviceNotificationsToast: true }));
+              window.open("/profile/settings/notifications", "_self");
+            }
+          },
+          onDismiss: () => {
+            internalPreferences.update((state) => ({ ...state, hasSeenDeviceNotificationsToast: true }));
+            toast(HtmlToast, {
+              duration: 5000,
+              classes: {
+                closeButton: "!hidden"
+              },
+              componentProps: {
+                htmlMessage: "You can always enable notifications by visiting <a href='/profile/settings/notifications' target='_self' class='underline'>your settings</a>"
+              }
+            });
+          },
+          duration: Number.POSITIVE_INFINITY
+        });
+      });
+    }
 
     if (!$internalPreferences.hasSeenEmailNotificationsToast) {
       if (!data.user) return;
