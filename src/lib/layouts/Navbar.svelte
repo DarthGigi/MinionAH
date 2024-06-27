@@ -11,7 +11,7 @@
   import CircleHelp from "lucide-svelte/icons/circle-help";
   import Code from "lucide-svelte/icons/code";
   import Cog from "lucide-svelte/icons/cog";
-  import Home from "lucide-svelte/icons/home";
+  import House from "lucide-svelte/icons/house";
   import Info from "lucide-svelte/icons/info";
   import LayoutDashboard from "lucide-svelte/icons/layout-dashboard";
   import LogOut from "lucide-svelte/icons/log-out";
@@ -41,7 +41,7 @@
           <DropdownMenu.Content class="w-44 border-border bg-popover" transitionConfig={{ duration: 300 }}>
             <DropdownMenu.Group>
               <DropdownMenu.Item class="gap-1.5 hover:cursor-pointer data-[highlighted]:bg-background" href="/">
-                <Home class="size-4" />Home
+                <House class="size-4" />Home
               </DropdownMenu.Item>
               <DropdownMenu.Separator class="bg-border" />
               <DropdownMenu.Item target="_blank" class="gap-1.5 hover:cursor-pointer data-[highlighted]:bg-background" href="https://newsroom.minionah.com">
