@@ -23,7 +23,7 @@
   import { writable } from "svelte/store";
   import { superForm } from "sveltekit-superforms";
   import { zodClient } from "sveltekit-superforms/adapters";
-  import type { PageData } from "./$types";
+  import type { PageData } from "../chats/$types";
 
   export let data: PageData;
   const toastLoading = writable<number | string>();
