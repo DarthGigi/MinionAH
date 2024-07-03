@@ -16,7 +16,7 @@ model User {
   key          Key[]
   loggedInAt   DateTime      @default(now()) @updatedAt
   createdAt    DateTime      @default(now())
-  syncedAt     DateTime?     @default(now())
+  syncedAt     DateTime?
   username     String        @unique
   auctions     Auction[]
   chatsAsUser1 Chat[]        @relation("user1")
