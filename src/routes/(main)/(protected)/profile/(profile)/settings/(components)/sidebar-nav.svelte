@@ -20,7 +20,7 @@
   {#each items as item}
     {@const isActive = $page.url.pathname === item.href}
 
-    <Button href={item.href} variant="ghost" class={cn(!isActive && "hover:underline", "relative justify-start gap-2 hover:bg-transparent")} data-sveltekit-noscroll>
+    <Button href={item.href} variant="ghost" class={cn(!isActive && "hover:underline", "relative w-full max-w-40 justify-center gap-2 hover:bg-transparent")} data-sveltekit-noscroll>
       {#if isActive}
         <div class="absolute inset-0 rounded-md bg-accent" in:send={{ key: "active-sidebar-tab" }} out:receive={{ key: "active-sidebar-tab" }}></div>
       {:else}

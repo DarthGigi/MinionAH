@@ -2,11 +2,12 @@
   import { page } from "$app/stores";
   import { Separator } from "$lib/components/ui/separator";
   import BellRing from "lucide-svelte/icons/bell-ring";
+  import MessagesSquare from "lucide-svelte/icons/messages-square";
   import Settings from "lucide-svelte/icons/settings";
   import UserRound from "lucide-svelte/icons/user-round";
   import type { ComponentType } from "svelte";
-  import SidebarNav from "./settings/(components)/sidebar-nav.svelte";
   import { derived } from "svelte/store";
+  import SidebarNav from "./settings/(components)/sidebar-nav.svelte";
 
   const sidebarNavItems = [
     {
@@ -14,6 +15,12 @@
       description: "Create auctions and manage your listings.",
       href: "/profile",
       icon: UserRound as ComponentType
+    },
+    {
+      title: "Chats",
+      description: "View and manage your chats.",
+      href: "/profile/chats",
+      icon: MessagesSquare as ComponentType
     },
     {
       title: "Settings",
