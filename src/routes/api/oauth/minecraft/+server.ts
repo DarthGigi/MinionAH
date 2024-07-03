@@ -1,6 +1,7 @@
 import { dev } from "$app/environment";
 import { CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET, CLOUDINARY_CLOUD_NAME, MC_AUTH_CLIENT_ID, MC_AUTH_CLIENT_SECRET, MC_AUTH_REDIRECT_URI } from "$env/static/private";
 import { lucia } from "$lib/server/lucia";
+import { getMcAuthInfo } from "$lib/server/minecraft";
 import { Prisma } from "@prisma/client";
 import { error, redirect, type RequestHandler } from "@sveltejs/kit";
 import { v2 as cloudinary } from "cloudinary";
@@ -12,72 +13,6 @@ cloudinary.config({
   api_secret: CLOUDINARY_API_SECRET,
   secure: true
 });
-
-async function getMinecraftInfo(access_token: string): Promise<MCAuthProfile> {
-  const res = await fetch("https://mc-auth.com/api/v2/profile ", {
-    method: "GET",
-    headers: {
-      Authorization: "Bearer " + access_token
-    }
-  });
-  if (res.status != 200) {
-    console.error(res.status, res.statusText);
-    throw new Error("Error getting MC profile");
-  }
-  const body = await res.json();
-  const propertiesValueJSON = JSON.parse(Buffer.from(body.properties[0].value, "base64").toString("utf-8"));
-  return {
-    id: body.id,
-    name: body.name,
-    properties: [
-      {
-        name: body.properties[0].name,
-        value: propertiesValueJSON,
-        signature: body.properties[0].signature
-      }
-    ],
-    profileActions: body.profileActions,
-    legacy: body.legacy
-  };
-}
-
-type MCAuthResponseSuccess = {
-  access_token: string;
-  token_type: string;
-  expires_in: number;
-  scope: string;
-  state: string;
-};
-
-type MCAuthResponseError = {
-  error: number;
-  message: string;
-};
-
-type MCAuthProfile = {
-  id: string;
-  name: string;
-  properties: {
-    name: string;
-    value: {
-      timestamp: number;
-      profileId: string;
-      profileName: string;
-      signatureRequired: boolean;
-      textures: {
-        SKIN: {
-          url: string;
-        };
-        CAPE?: {
-          url: string;
-        };
-      };
-    };
-    signature: string;
-  }[];
-  profileActions: String[];
-  legacy: boolean;
-};
 
 const provider = new OAuth2Client(MC_AUTH_CLIENT_ID, "https://mc-auth.com/oAuth2/authorize", "https://mc-auth.com/oAuth2/token", {
   redirectURI: dev ? "http://localhost:5173/api/oauth/minecraft" : MC_AUTH_REDIRECT_URI
@@ -110,7 +45,7 @@ export const POST = (async ({ cookies, request, locals }) => {
       error(500, "Error getting MC profile");
     }
 
-    const minecraftUser = await getMinecraftInfo(tokens.access_token);
+    const minecraftUser = await getMcAuthInfo(tokens.access_token);
 
     const getUser = async () => {
       let existingUser = await prisma.user.findFirst({
@@ -190,6 +125,7 @@ export const POST = (async ({ cookies, request, locals }) => {
           data: {
             id: minecraftUser.id,
             username: minecraftUser.name,
+            createdAt: new Date(),
             loggedInAt: new Date(),
             key: {
               createMany: {
