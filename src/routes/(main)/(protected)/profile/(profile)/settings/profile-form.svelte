@@ -17,6 +17,8 @@
   import { Input } from "$lib/components/ui/input";
   import { Textarea } from "$lib/components/ui/textarea";
   import * as Tooltip from "$lib/components/ui/tooltip";
+  import { cn } from "$lib/utils";
+  import { formatDistanceStrict } from "date-fns";
   import CircleMinus from "lucide-svelte/icons/circle-minus";
   import Earth from "lucide-svelte/icons/earth";
   import Info from "lucide-svelte/icons/info";
@@ -43,6 +45,10 @@
   const urlErrors = writable<boolean>();
   const urlRegexErrors = writable<boolean>();
   const toastLoading = writable<number | string>();
+  const syncing = writable<boolean>();
+  // sync avaiable every 3 days
+  const ms = 1000 * 60 * 60 * 24 * 3;
+  const canSync = $page.data.user.syncedAt === null || Number($page.data.user.syncedAt) + ms < Date.now();
 
   const addUrl = () => {
     $formData.urls = [...$formData.urls, ""];
@@ -71,6 +77,23 @@
       return null;
     }
     return `/api/internal/favicon/${encodeURIComponent(url.toString())}`;
+  };
+
+  const handleSync = async () => {
+    $syncing = true;
+    const promise = fetch(`/api/internal/minecraft/profile/${$page.data.user.id}`, {
+      method: "PATCH"
+    }).finally(() => {
+      setTimeout(() => {
+        $syncing = false;
+        window.location.reload();
+      }, 1000);
+    });
+    toast.promise(promise, {
+      loading: "Syncing your Minecraft account...",
+      success: "Your Minecraft account has been synced successfully. Avatars may take a few minutes to update.",
+      error: "Failed to sync your Minecraft account."
+    });
   };
 
   errors.subscribe(({ urls }) => {
@@ -120,11 +143,24 @@
           <Avatar.Fallback class="border-2 border-accent bg-accent">{$page.data.user.username.slice(0, 2).toUpperCase()}</Avatar.Fallback>
         </Avatar.Root>
         <Input readonly disabled class="w-1/4 flex-shrink" {...attrs} bind:value={$formData.username} />
-        <Form.Button disabled type="button" variant="outline" class="group relative flex gap-2 text-sm text-muted-foreground transition-all duration-300 hover:text-secondary-foreground">
-          <RefreshCw class="h-4 w-4 transition-transform duration-300 group-hover:rotate-90" />
-          Re-sync
-          <div class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs text-muted-foreground">(coming soon)</div>
-        </Form.Button>
+        {#if canSync}
+          <Form.Button disabled={$syncing} type="button" variant="outline" class="group flex gap-2 text-sm text-muted-foreground transition-all duration-300 hover:text-secondary-foreground" on:click={handleSync}>
+            <RefreshCw class={cn("h-4 w-4", $syncing ? "animate-spin" : "transition-transform duration-300 group-hover:rotate-90")} />
+            Re-sync
+          </Form.Button>
+        {:else}
+          <Tooltip.Root openDelay={0} closeDelay={0} closeOnPointerDown={false}>
+            <Tooltip.Trigger class="group relative flex h-10 cursor-default items-center justify-center gap-2 whitespace-nowrap rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-muted-foreground opacity-50 ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+              <RefreshCw class="h-4 w-4 transition-transform duration-300 group-hover:rotate-90" />
+              Re-sync
+            </Tooltip.Trigger>
+            <Tooltip.Content class="border-border bg-popover">
+              You can sync again {formatDistanceStrict(Date.now() + ms, $page.data.user.syncedAt, {
+                addSuffix: true
+              })}
+            </Tooltip.Content>
+          </Tooltip.Root>
+        {/if}
       </div>
     </Form.Control>
     <Form.Description>This is your Minecraft account. You can edit your Minecraft account on <a href="https://www.minecraft.net/profile" class="underline" target="_blank">minecraft.net</a>.</Form.Description>
