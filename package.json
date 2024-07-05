@@ -21,7 +21,7 @@
     "prisma:studio": "prisma studio"
   },
   "devDependencies": {
-    "@jill64/universal-sanitizer": "^1.2.13",
+    "@jill64/universal-sanitizer": "^1.2.14",
     "@lucia-auth/adapter-prisma": "4.0.1",
     "@sveltejs/adapter-vercel": "^5.4.0",
     "@sveltejs/kit": "^2.5.18",
@@ -53,8 +53,8 @@
   "dependencies": {
     "@prisma/client": "5.16.1",
     "@prisma/extension-accelerate": "^1.1.0",
-    "@sentry/svelte": "^8.13.0",
-    "@sentry/sveltekit": "^8.13.0",
+    "@sentry/svelte": "^8.15.0",
+    "@sentry/sveltekit": "^8.15.0",
     "@tiptap/core": "^2.4.0",
     "@tiptap/extension-bubble-menu": "^2.4.0",
     "@tiptap/extension-character-count": "^2.4.0",
@@ -71,7 +71,7 @@
     "css-tree": "^2.3.1",
     "date-fns": "^3.6.0",
     "fast-average-color-node": "^3.0.0",
-    "firebase": "^10.12.2",
+    "firebase": "^10.12.3",
     "firebase-admin": "^12.2.0",
     "formsnap": "^1.0.1",
     "headview3d": "^3.0.2",
