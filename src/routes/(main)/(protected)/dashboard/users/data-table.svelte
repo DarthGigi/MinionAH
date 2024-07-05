@@ -80,6 +80,24 @@
       }
     }),
     table.column({
+      accessor: "createdAt",
+      header: "Joined",
+      cell: ({ value }) => {
+        return new Date(value).toLocaleString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "numeric",
+          minute: "numeric"
+        });
+      },
+      plugins: {
+        filter: {
+          exclude: true
+        }
+      }
+    }),
+    table.column({
       // @ts-ignore - Prisma doesn't have a type for this
       accessor: ({ _count }) => _count.auctions,
       header: "Minions",

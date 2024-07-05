@@ -7,7 +7,7 @@ export const load = (async ({ locals }) => {
     prisma.user.count(),
     prisma.user.findMany({
       orderBy: {
-        loggedInAt: "desc"
+        createdAt: "desc"
       },
       where: {
         id: {
