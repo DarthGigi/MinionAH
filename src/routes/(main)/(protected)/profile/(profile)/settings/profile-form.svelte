@@ -41,7 +41,7 @@
   });
 
   const { form: formData, enhance, errors, tainted, isTainted, submitting, timeout } = form;
-  const regex = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/;
+  const regex = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/;
   const urlErrors = writable<boolean>();
   const urlRegexErrors = writable<boolean>();
   const toastLoading = writable<number | string>();

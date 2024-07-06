@@ -9,9 +9,11 @@ export const GET: RequestHandler = async () => {
   const itemsArray = Object.values(items);
 
   // Filter items so that only minions are returned, only minions have generator_tier
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const minions = itemsArray.filter((item: any) => item.generator_tier);
 
   // Sort minions first by name, then by tier so that the order is correct
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   minions.sort((a: any, b: any) => {
     if (a.name < b.name) return -1;
     if (a.name > b.name) return 1;

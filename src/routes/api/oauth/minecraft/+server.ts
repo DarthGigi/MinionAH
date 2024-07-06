@@ -48,7 +48,7 @@ export const POST = (async ({ cookies, request, locals }) => {
     const minecraftUser = await getMcAuthInfo(tokens.access_token);
 
     const getUser = async () => {
-      let existingUser = await prisma.user.findFirst({
+      const existingUser = await prisma.user.findFirst({
         where: {
           id: minecraftUser.id
         }
@@ -59,7 +59,7 @@ export const POST = (async ({ cookies, request, locals }) => {
         const response = await fetch(minecraftUser.properties[0].value.textures.SKIN.url);
         const avatarBuffer = await response.arrayBuffer();
         skin = Buffer.from(avatarBuffer).toString("base64");
-        const upload = await cloudinary.uploader.upload(`data:image/png;base64,${skin}`, {
+        await cloudinary.uploader.upload(`data:image/png;base64,${skin}`, {
           folder: `users/skins`,
           public_id: minecraftUser.id,
           overwrite: true,
@@ -75,7 +75,7 @@ export const POST = (async ({ cookies, request, locals }) => {
         const response = await fetch(`https://mc-heads.net/head/${minecraftUser.id}`);
         const avatarBuffer = await response.arrayBuffer();
         avatar = Buffer.from(avatarBuffer).toString("base64");
-        const upload = await cloudinary.uploader.upload(`data:image/png;base64,${avatar}`, {
+        await cloudinary.uploader.upload(`data:image/png;base64,${avatar}`, {
           folder: `users/avatars`,
           public_id: minecraftUser.id,
           overwrite: true,
@@ -89,17 +89,16 @@ export const POST = (async ({ cookies, request, locals }) => {
       let cape: string | null;
       if (minecraftUser.properties[0].value.textures.CAPE) {
         try {
-          // @ts-ignore
           const response = await fetch(minecraftUser.properties[0].value.textures.CAPE.url);
           const avatarBuffer = await response.arrayBuffer();
           cape = Buffer.from(avatarBuffer).toString("base64");
-          const upload = await cloudinary.uploader.upload(`data:image/png;base64,${cape}`, {
+          await cloudinary.uploader.upload(`data:image/png;base64,${cape}`, {
             folder: `users/capes`,
             public_id: minecraftUser.id,
             overwrite: true,
             resource_type: "image"
           });
-        } catch (e) {
+        } catch {
           error(500, "Failed to get cape");
         }
       } else {
@@ -144,7 +143,7 @@ export const POST = (async ({ cookies, request, locals }) => {
           }
         });
         return user;
-      } catch (e: any) {
+      } catch (e) {
         if (!(e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") && !(e instanceof TypeError)) {
           console.error(e);
         }
@@ -163,7 +162,7 @@ export const POST = (async ({ cookies, request, locals }) => {
       path: sessionCookie.attributes.path || "/"
     });
     locals.session = session;
-  } catch (e: any) {
+  } catch (e) {
     console.error(e);
     if (e instanceof OAuth2RequestError) {
       // invalid code

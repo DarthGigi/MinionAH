@@ -18,16 +18,16 @@ async function fetchTexture(minion: Minion, type: "skin" | "head") {
     const texture = await fetch(`https://mc-heads.net/${type}/${minion.texture}`);
     const textureBuffer = await texture.arrayBuffer();
     const textureBase64 = Buffer.from(textureBuffer).toString("base64");
-    const upload = await cloudinary.uploader.upload(`data:image/png;base64,${textureBase64}`, {
+    await cloudinary.uploader.upload(`data:image/png;base64,${textureBase64}`, {
       folder: `minions/${type}`,
       public_id: minion.id,
       overwrite: true,
       resource_type: "image"
     });
-    // @ts-ignore
+    // @ts-expect-error - We're setting a property that doesn't exist on the Minion type
     minion[type] = "";
     console.info(`Got ${type} for ${minion.name}`);
-  } catch (e) {
+  } catch {
     console.error(`Failed to get ${type} for ${minion.name}`);
     throw new Error(`Failed to get ${type} for ${minion.name}`);
   }
@@ -90,7 +90,7 @@ export const PUT: RequestHandler = async ({ fetch }) => {
           name: minion.name,
           generator: minion.generator,
           generator_tier: minion.generator_tier,
-          // @ts-ignore
+          // @ts-expect-error - We're setting a property that doesn't exist on the Minion type
           texture: minion.head,
           skin: minion.skin,
           maxTier: minion.maxTier,

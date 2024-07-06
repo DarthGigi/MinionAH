@@ -7,10 +7,13 @@ type Params = {
   take?: number;
   skip?: number;
   orderBy?: object;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   distinct?: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   where?: any;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function getMinions(take: number = 18, skip?: number, orderBy: object = [{ timeCreated: "desc" }, { price: "asc" }], distinct?: any, where?: any) {
   const minions = await prisma.auction.findMany({
     take,

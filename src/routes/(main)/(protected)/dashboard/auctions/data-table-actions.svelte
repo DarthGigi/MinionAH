@@ -20,7 +20,7 @@
   };
   let auctionDeleteDialogOpen = false;
 
-  async function handleButtonClick(apiEndpoint: string, method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH", body: string, errorMessage: string, dialogOpenSetter: { (value: any): any; (value: any): any; (arg0: boolean): void }) {
+  async function handleButtonClick(apiEndpoint: string, method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH", body: string, errorMessage: string, dialogOpenSetter: { (value: boolean): boolean; (value: boolean): boolean; (arg0: boolean): void }) {
     loading = true;
     try {
       const res = await fetch(apiEndpoint, {
@@ -39,7 +39,7 @@
         statusDialog = { open: true, title: "Oops", description: errorMessage };
         loading = false;
       }
-    } catch (e) {
+    } catch {
       dialogOpenSetter(false);
       statusDialog = { open: true, title: "Oops", description: errorMessage };
       loading = false;

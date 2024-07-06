@@ -49,7 +49,7 @@
       <Card.Description>
         {#if $timePassed >= 10}
           All done!
-        {:else if $timePassed >= 10}
+        {:else if $timePassed > 10}
           Something went wrong. Please try again.
         {:else if $timePassed >= 5}
           This is taking longer than expected...

@@ -39,7 +39,7 @@ export const PATCH: RequestHandler = async ({ params, locals }) => {
     const response = await fetch(profile.properties[0].value.textures.SKIN.url);
     const avatarBuffer = await response.arrayBuffer();
     const skin = Buffer.from(avatarBuffer).toString("base64");
-    const upload = await cloudinary.uploader.upload(`data:image/png;base64,${skin}`, {
+    await cloudinary.uploader.upload(`data:image/png;base64,${skin}`, {
       folder: `users/skins`,
       public_id: profile.id,
       overwrite: true,
@@ -55,7 +55,7 @@ export const PATCH: RequestHandler = async ({ params, locals }) => {
     const response = await fetch(`https://mc-heads.net/head/${profile.id}`);
     const avatarBuffer = await response.arrayBuffer();
     const avatar = Buffer.from(avatarBuffer).toString("base64");
-    const upload = await cloudinary.uploader.upload(`data:image/png;base64,${avatar}`, {
+    await cloudinary.uploader.upload(`data:image/png;base64,${avatar}`, {
       folder: `users/avatars`,
       public_id: profile.id,
       overwrite: true,
@@ -72,14 +72,14 @@ export const PATCH: RequestHandler = async ({ params, locals }) => {
       const response = await fetch(profile.properties[0].value.textures.CAPE.url);
       const avatarBuffer = await response.arrayBuffer();
       const cape = Buffer.from(avatarBuffer).toString("base64");
-      const upload = await cloudinary.uploader.upload(`data:image/png;base64,${cape}`, {
+      await cloudinary.uploader.upload(`data:image/png;base64,${cape}`, {
         folder: `users/capes`,
         public_id: profile.id,
         overwrite: true,
         resource_type: "image",
         invalidate: true
       });
-    } catch (e) {
+    } catch {
       error(500, "Failed to get cape");
     }
   }

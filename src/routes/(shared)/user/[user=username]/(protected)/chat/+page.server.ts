@@ -139,7 +139,7 @@ export const actions = {
         return { exitingChat, user, user2, params };
       }
 
-      const chat = await prisma.chat.create({
+      await prisma.chat.create({
         data: {
           user1: {
             connect: {

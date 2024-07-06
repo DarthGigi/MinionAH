@@ -30,7 +30,6 @@
   const loadingMore = writable(false);
   const currentTier = writable<number | undefined>(undefined);
   const newMinionAmount = writable<number>();
-  const storedSearchQuery = writable<string | undefined>(undefined);
   const searchValue = writable<string>("");
   const maxTier = writable<number | undefined>();
   const searchType = writable<SearchType>(SearchType.Minion);
