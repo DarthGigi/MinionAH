@@ -15,6 +15,6 @@
   </svg>
 {/if}
 
-<div style="--duration: {duration}; --delay: -{delay}; --radius: {radius};" class={cn("animate-orbit absolute flex h-full w-full transform-gpu items-center justify-center rounded-full border bg-black/50 [animation-delay:calc(var(--delay)*1000ms)]", { "[animation-direction:reverse]": reverse }, className)}>
+<div style="--duration: {duration}; --delay: -{delay}; --radius: {radius};" class={cn("absolute flex h-full w-full transform-gpu animate-orbit items-center justify-center rounded-full border bg-black/50 [animation-delay:calc(var(--delay)*1000ms)]", { "[animation-direction:reverse]": reverse }, className)}>
   <slot />
 </div>
