@@ -6,12 +6,15 @@
   import TierListbox from "$lib/components/TierListbox.svelte";
   import UsersListBox from "$lib/components/UsersListBox.svelte";
   import { MinionCard } from "$lib/components/card";
+  import { GradualSpacing } from "$lib/components/magicui";
+  import AnimatedShinyText from "$lib/components/magicui/animated-shiny-text.svelte";
   import { Button } from "$lib/components/ui/button";
   import { Label } from "$lib/components/ui/label";
   import { internalPreferences, preferences } from "$lib/stores/preferences";
   import { searchSignal } from "$lib/stores/signals";
   import type { Seller } from "$lib/types";
   import { cn } from "$lib/utils";
+  import ArrowRight from "lucide-svelte/icons/arrow-right";
   import ChevronsUpDown from "lucide-svelte/icons/chevrons-up-down";
   import { onMount } from "svelte";
   import { infiniteScrollAction } from "svelte-legos";
@@ -240,6 +243,15 @@
   }} />
 
 <h2 class="sr-only">MinionAH - The Auction House for SkyBlock Minions</h2>
+<div class="mt-8 h-10 md:mt-20 md:h-20">
+  <GradualSpacing class="text-center text-4xl font-bold tracking-[-0.1em] text-white md:text-7xl md:leading-[5rem]" text="MinionAH" />
+</div>
+<Button href="/pricecheck" class="group z-10 mx-auto flex w-fit items-center justify-center rounded-full border border-white/5 bg-neutral-900 text-base text-white transition-all ease-in hover:cursor-pointer hover:bg-neutral-800" variant="ghost">
+  <AnimatedShinyText class="inline-flex items-center justify-center px-4 py-1 transition ease-out hover:text-neutral-400 hover:duration-300">
+    <span>💰 <span class="max-sm:hidden">Introducing </span>Price Checker</span>
+    <ArrowRight class="ml-1 size-3 transition-transform duration-300 ease-in-out group-hover:translate-x-0.5" />
+  </AnimatedShinyText>
+</Button>
 
 <div class="mx-auto w-fit">
   <div class="flex flex-col items-start justify-center gap-4 px-4 pt-8 sm:flex-row sm:items-end sm:px-6 sm:py-20 lg:px-8">
