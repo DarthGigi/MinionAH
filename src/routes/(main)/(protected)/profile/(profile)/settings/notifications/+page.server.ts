@@ -1,5 +1,5 @@
 import { fail, type Actions } from "@sveltejs/kit";
-import { message, superValidate, defaultValues } from "sveltekit-superforms";
+import { message, superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
 import type { PageServerLoad } from "../$types";
 import { notificationsFormSchema } from "./notifications-form.svelte";
@@ -41,7 +41,7 @@ export const actions: Actions = {
     const fcmTokens = form.data.fcmToken ? [form.data.fcmToken] : [];
 
     try {
-      const settings = await prisma.userSettings.upsert({
+      await prisma.userSettings.upsert({
         where: {
           user_id: locals.user!.id
         },

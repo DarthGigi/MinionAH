@@ -27,11 +27,24 @@ This section will guide you through the process of setting up the project for de
 ## 📦 Prerequisites
 
 - [Git](https://git-scm.com/downloads)
-- [Node.js](https://nodejs.org/en/) (v20 or higher)
-- [pnpm](https://pnpm.js.org/en/installation) (recommended)
-- [MongoDB](https://www.mongodb.com/try/download/community) (v7.0 or higher) (this project uses MongoDB Atlas, but you can use a local instance if you want)
-- [Vercel](https://vercel.com/) (this project uses Vercel for hosting and deployment, so your fork should be Vercel compatible)
-- [Cloudinary](https://cloudinary.com/) (this project uses Cloudinary for image hosting, so you will need to create an account and get your cloud name, API key, and API secret)
+- [Node.js](https://nodejs.org/en/)
+  - Version 20 or higher
+- [pnpm](https://pnpm.js.org/en/installation)
+- [Supabase](https://supabase.io/)
+  - This project uses Supabase for the database, so you will need to create an account and get your URL and API key or have a local Supabase instance running
+
+### Optional
+
+These are optional, they're not required for development if you don't plan on changing the features that use them.
+
+- [Vercel](https://vercel.com/)
+  - This project uses Vercel for hosting and deployment, so your fork should be Vercel compatible
+- [Cloudinary](https://cloudinary.com/)
+  - Cloudinary is used for image hosting, if you plan on changing the upload mechanism, you will need to create an account
+- [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging)
+  - Firebase Cloud Messaging is used for sending device notifications, if you plan on changing the notification mechanism, you will need to create an account
+- [Resend](https://resend.com/)
+  - Resend is used for sending emails, if you plan on changing the email mechanism, you will need to create an account. To change the email templates check the [MinionAH Next](https://github.com/DarthGigi/MinionAH-Next) project.
 
 ## 🚀 Getting Started
 
@@ -58,7 +71,7 @@ This section will guide you through the process of setting up the project for de
 5. Run the database initialization script
 
    ```bash
-    pnpx prisma db push && pnpx prisma generate
+    pnpm prisma:db:push:dev && pnpm prisma:generate:dev
    ```
 
 6. Start the development server
@@ -69,7 +82,7 @@ This section will guide you through the process of setting up the project for de
 
    This will get rid of TypeScript errors and warnings.
 
-7. Open [localhost:5173/signup](http://localhost:5173/signup) to make an account.
+7. Open [localhost:5173/signup](http://localhost:5173/login) to make an account.
 
 8. After making an account, add your ID to the `ADMIN_ID` field in the `.env` file.
 

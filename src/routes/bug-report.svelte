@@ -20,7 +20,7 @@
   const bugReportOpen = writable(false);
 
   onMount(() => {
-    const feedback = feedbackIntegration({
+    feedbackIntegration({
       // Additional SDK configuration goes in here, for example:
       colorScheme: "dark",
       showBranding: false,
@@ -58,7 +58,6 @@
               sendFeedback(
                 {
                   message: $bugMessageValue,
-                  // @ts-ignore
                   name: data.user?.username || undefined
                 },
                 { includeReplay: true }
@@ -105,7 +104,6 @@
                 sendFeedback(
                   {
                     message: $bugMessageValue,
-                    // @ts-ignore
                     name: data.user?.username || undefined
                   },
                   { includeReplay: true }

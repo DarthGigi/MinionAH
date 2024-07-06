@@ -76,8 +76,8 @@ interface RecipeCost {
 }
 
 // Declare variables to hold all items and their prices
-let allItems: any;
-let allItemPrices: any;
+let allItems;
+let allItemPrices;
 const nameMappingsUrl = "https://raw.githubusercontent.com/kr45732/skyblock-plus-data/main/InternalNameMappings.json";
 try {
   // Fetch data from two APIs concurrently using Promise.all
@@ -251,9 +251,9 @@ export const GET: RequestHandler = async ({ params }) => {
           return numA - numB;
         })
         // Reduce the sorted keys into a new object with the same structure as minionPrices
-        .reduce((acc: { [key: string]: any }, key) => {
+        .reduce((acc: { [key: string]: number }, key: string) => {
           // Add each key-value pair to the accumulator object
-          acc[key] = item[key];
+          acc[key] = item[key] ?? 0;
           // Return the accumulator for the next iteration
           return acc;
         }, {});

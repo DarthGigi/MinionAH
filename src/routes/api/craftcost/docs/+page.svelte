@@ -2,8 +2,8 @@
   import { Button } from "$lib/components/ui/button";
   import { Input } from "$lib/components/ui/input";
   import LoaderCircle from "lucide-svelte/icons/loader-circle";
-  import { onMount } from "svelte";
   import { codeToHtml } from "shiki/bundle/web";
+  import { onMount } from "svelte";
   import SvelteSeo from "svelte-seo";
 
   let [allItems, minions, error] = Array(3).fill('{\n  "LOADING"\n}');
@@ -23,7 +23,7 @@
     let json = await fetch("https://minionah.com" + url).then((res) => res.json());
 
     // truncate the json if it's too long
-    const truncatedJson: Record<string, any> = {};
+    const truncatedJson: Record<string, unknown> = {};
     let count = 0;
     for (const key in json) {
       if (count >= 50) break;

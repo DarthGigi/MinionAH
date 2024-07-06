@@ -19,7 +19,7 @@ type MCAuthProfile = {
     };
     signature: string;
   }[];
-  profileActions: String[];
+  profileActions: string[];
   legacy: boolean;
 };
 

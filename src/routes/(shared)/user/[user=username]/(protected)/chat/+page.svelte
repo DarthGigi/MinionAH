@@ -20,12 +20,12 @@
   import { Button } from "$lib/components/ui/button";
   import { scrollToBottomAction } from "$lib/utilities";
   import CircleArrowLeft from "lucide-svelte/icons/circle-arrow-left";
+  import MessageSquarePlus from "lucide-svelte/icons/message-square-plus";
   import Pusher from "pusher-js";
   import { onMount } from "svelte";
   import { writable } from "svelte/store";
   import { draw, fade } from "svelte/transition";
   import type { PageData } from "./$types";
-  import MessageSquarePlus from "lucide-svelte/icons/message-square-plus";
 
   export let data: PageData;
 
@@ -79,7 +79,7 @@
     updateRead(false);
   };
 
-  const sendMessage = async (eventData: any) => {
+  const sendMessage = async (eventData: { detail: string }) => {
     const textValue = eventData.detail;
     if (!textValue) return;
     message.set({

@@ -9,7 +9,7 @@
     "preview:dev": "dotenv -e .env.development -- vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-    "lint": "prettier --check .",
+    "lint": "prettier --check . && eslint .",
     "format": "prettier --write .",
     "update:shadcn": "pnpm dlx shadcn-svelte@latest update -a && prettier --write ./src/lib/components/ui && prettier --write ./src/lib/utils.ts",
     "postinstall": "prisma generate --no-engine",
@@ -21,6 +21,7 @@
     "prisma:studio": "prisma studio"
   },
   "devDependencies": {
+    "@eslint/js": "^9.6.0",
     "@jill64/universal-sanitizer": "^1.2.14",
     "@lucia-auth/adapter-prisma": "4.0.1",
     "@sveltejs/adapter-vercel": "^5.4.0",
@@ -29,11 +30,14 @@
     "@tailwindcss/container-queries": "^0.1.1",
     "@tailwindcss/forms": "^0.5.7",
     "@types/cookie": "^0.6.0",
-    "@types/node": "^20.14.9",
+    "@types/node": "^20.14.10",
     "@vercel/analytics": "^1.3.1",
     "autoprefixer": "^10.4.19",
     "date-fns-tz": "^3.1.3",
     "encoding": "^0.1.13",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-svelte": "^2.41.0",
+    "globals": "^15.8.0",
     "postcss": "^8.4.39",
     "prettier": "^3.3.2",
     "prettier-plugin-svelte": "^3.2.5",
@@ -43,10 +47,12 @@
     "svelte-check": "^3.8.4",
     "svelte-headless-table": "^0.18.2",
     "svelte-legos": "^0.2.3",
+    "svelte-motion": "^0.12.2",
     "svelte-seo": "^1.6.1",
     "tailwindcss": "^3.4.4",
     "tslib": "^2.6.3",
     "typescript": "^5.5.3",
+    "typescript-eslint": "^7.15.0",
     "vite": "^5.3.3"
   },
   "type": "module",
@@ -87,12 +93,19 @@
     "super-sitemap": "^0.14.17",
     "svelte-interactions": "^0.2.0",
     "svelte-persisted-store": "^0.11.0",
-    "svelte-sonner": "^0.3.24",
+    "svelte-sonner": "^0.3.25",
     "sveltekit-rate-limiter": "^0.5.1",
     "sveltekit-superforms": "^2.15.2",
     "tailwind-merge": "^2.3.0",
     "tailwind-variants": "^0.2.1",
     "vaul-svelte": "^0.3.2",
     "zod": "^3.23.8"
+  },
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9.4",
+    "npm": "forbidden, use pnpm instead",
+    "yarn": "forbidden, use pnpm instead",
+    "bun": "forbidden, use pnpm instead"
   }
 }

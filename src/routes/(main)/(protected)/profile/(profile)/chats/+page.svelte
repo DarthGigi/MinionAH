@@ -52,7 +52,7 @@
     }
   });
 
-  const { form, enhance, message, submitting, submit, timeout } = formDelete;
+  const { form, enhance, submitting, submit, timeout } = formDelete;
   timeout.subscribe((value) => {
     if (value) {
       toast.loading("It's taking longer than expected to delete the chat...", {

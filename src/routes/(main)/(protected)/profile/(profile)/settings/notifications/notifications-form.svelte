@@ -26,10 +26,8 @@
   import { internalStorage } from "$lib/stores/preferences";
   import { requestNotificationPermission } from "$lib/utilities";
   import { getMessaging, getToken } from "firebase/messaging";
-  import Construction from "lucide-svelte/icons/construction";
   import LoaderCircle from "lucide-svelte/icons/loader-circle";
   import Share from "lucide-svelte/icons/share";
-  import TriangleAlert from "lucide-svelte/icons/triangle-alert";
   import { onMount } from "svelte";
   import { toast } from "svelte-sonner";
   import { derived, readable, writable } from "svelte/store";
@@ -55,6 +53,7 @@
   const showInstallInstructions = writable(false);
 
   const deviceRadioDisabled = writable(false);
+
   const permission = writable<NotificationPermission | undefined>();
   const hasEmail = readable($page.data.userData.settings?.profileSettings?.email ? true : false);
   const allRadioDisabled = derived([deviceRadioDisabled, hasEmail, iOSIsInstalled], ([$deviceRadioDisabled, $hasEmail, $iOSIsInstalled]) => {
@@ -86,9 +85,9 @@
   });
 
   onMount(async () => {
+    // @ts-expect-error - userAgentData is not yet in the TS types
     isiOS.set(window.navigator?.userAgentData ? window.navigator.userAgentData?.platform === "iOS" : navigator.platform === "iPhone" || navigator.platform === "iPad");
 
-    // @ts-ignore - userAgentData is not yet in the TS types
     if ($isiOS && "standalone" in window.navigator) {
       iOSCanInstall.set(true);
       iOSIsInstalled.set(window.navigator.standalone === true);
@@ -209,6 +208,7 @@
           on:click={async () => {
             registering.set(true);
             await handleRequestPermission(true);
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore - TypeScript doesn't know that the permission has been set
             if ($permission === "granted" && $internalStorage.fcmToken) {
               submit();

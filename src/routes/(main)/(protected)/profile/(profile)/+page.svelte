@@ -20,6 +20,7 @@
   import * as skinview3d from "skinview3d";
   import { onMount } from "svelte";
   import { toast } from "svelte-sonner";
+  import { writable } from "svelte/store";
   import { superForm } from "sveltekit-superforms";
   import { zodClient } from "sveltekit-superforms/adapters";
   import type { PageData } from "../$types";
@@ -91,27 +92,29 @@
   let minecraftAvatar: HTMLCanvasElement;
   let minecraftAvatarContainer: HTMLDivElement;
 
-  let canvasIsLoading = true;
+  const canvasIsLoading = writable<boolean>(true);
 
   let maxtier: number | undefined = 12;
 
   let tierListDisabled = true;
 
   const user = data.user! as User;
-
+  let viewer: skinview3d.SkinViewer;
   onMount(async () => {
     const minecraftAvatarContainerDimensions = minecraftAvatarContainer.getBoundingClientRect();
-    const viewer = new skinview3d.SkinViewer({
+    const cape = await fetch(`https://res.cloudinary.com/minionah/image/upload/v1/users/capes/${user.id}`, {
+      method: "HEAD"
+    }).catch(() => ({ ok: false }));
+    viewer = new skinview3d.SkinViewer({
       canvas: minecraftAvatar,
       width: minecraftAvatarContainerDimensions.width,
       height: minecraftAvatarContainerDimensions.height,
       skin: `https://res.cloudinary.com/minionah/image/upload/v1/users/skins/${user.id}`,
-      [user.cape ? "cape" : ""]: `https://res.cloudinary.com/minionah/image/upload/v1/users/capes/${user.id}`,
+      cape: cape.ok ? `https://res.cloudinary.com/minionah/image/upload/v1/users/capes/${user.id}` : undefined,
       enableControls: true,
       animation: new skinview3d.IdleAnimation(),
       nameTag: user.username,
       zoom: 0.7,
-      panorama: "/assets/images/panorama.png",
       background: "#050505"
     });
     // disable zooming
@@ -121,8 +124,17 @@
     // disable rotation on the y axis
     viewer.controls.maxPolarAngle = -Math.PI / 2; // upper boundary for the polar angle
     viewer.controls.minPolarAngle = Math.PI / 2; // lower boundary for the polar angle
+    canvasIsLoading.set(false);
 
-    canvasIsLoading = false;
+    return new Promise((resolve) => {
+      resolve(() => {
+        viewer.dispose();
+      });
+    });
+  });
+
+  canvasIsLoading.subscribe(async (loading) => {
+    if (!loading && viewer) viewer.loadPanorama("/assets/images/panorama.png");
   });
 </script>
 
@@ -131,10 +143,10 @@
     <div class="absolute right-3 top-3 z-30 flex flex-col gap-2">
       <CopyButton on:click={() => navigator.clipboard.writeText(`${window.location.origin}/user/${user?.username}`)} />
     </div>
-    {#if canvasIsLoading}
-      <div class="absolute h-full w-full animate-pulse rounded-lg border border-border bg-popover"></div>
+    {#if $canvasIsLoading}
+      <div class="absolute size-full animate-pulse rounded-lg border border-border bg-popover"></div>
     {/if}
-    <canvas bind:this={minecraftAvatar} class="relative !h-full !w-full overflow-hidden rounded-lg border border-border bg-popover transition-all duration-[3s]" class:opacity-100={!canvasIsLoading} class:opacity-0={canvasIsLoading}></canvas>
+    <canvas bind:this={minecraftAvatar} class="relative size-full transform-gpu overflow-hidden rounded-lg border border-border bg-popover transition-opacity duration-[3s]" class:opacity-100={!$canvasIsLoading} class:opacity-0={$canvasIsLoading}></canvas>
   </div>
   {#await data.userMinions}
     <div class="h-[28.625rem] animate-pulse rounded-lg border border-border bg-popover shadow-sm"></div>

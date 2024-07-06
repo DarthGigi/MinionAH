@@ -71,7 +71,7 @@
     mainEntity: {
       "@type": "Person",
       name: data.minionuser.username,
-      // @ts-ignore
+      // @ts-expect-error - This is a valid type
       agentInteractionStatistic: {
         "@type": "InteractionCounter",
         interactionType: "https://schema.org/WriteAction",

@@ -42,7 +42,7 @@ export const actions: Actions = {
 
     // Update user profile
     try {
-      const settings = await prisma.userSettings.upsert({
+      await prisma.userSettings.upsert({
         where: {
           user_id: locals.user!.id
         },
