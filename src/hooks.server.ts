@@ -5,7 +5,7 @@ import { lucia } from "$lib/server/lucia";
 import prisma from "$lib/server/prisma";
 import { contextLinesIntegration, extraErrorDataIntegration, handleErrorWithSentry, init, sentryHandle } from "@sentry/sveltekit";
 import type { Handle, RequestEvent } from "@sveltejs/kit";
-import { json, redirect } from "@sveltejs/kit";
+import { json, redirect, type Reroute } from "@sveltejs/kit";
 import { sequence } from "@sveltejs/kit/hooks";
 import { RetryAfterRateLimiter } from "sveltekit-rate-limiter/server";
 
@@ -172,10 +172,12 @@ export const handle: Handle = sequence(sentryHandle(), async ({ event, resolve }
     redirect(302, "/login");
   }
 
-  if (path === "/pricechecker") {
-    redirect(303, "/pricecheck");
-  }
-
   return await resolve(event);
 });
 export const handleError = handleErrorWithSentry();
+
+export const reroute: Reroute = ({ url }) => {
+  if (url.pathname === "/pricechecker") {
+    return "/pricecheck";
+  }
+};
