@@ -172,6 +172,10 @@ export const handle: Handle = sequence(sentryHandle(), async ({ event, resolve }
     redirect(302, "/login");
   }
 
+  if (path === "/pricechecker") {
+    redirect(303, "/pricecheck");
+  }
+
   return await resolve(event);
 });
 export const handleError = handleErrorWithSentry();
