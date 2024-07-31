@@ -2,11 +2,12 @@
   import { page } from "$app/stores";
   import { Button } from "$lib/components/ui/button";
   import * as Tooltip from "$lib/components/ui/tooltip";
+  import { chatSignal } from "$lib/stores/signals";
   import type { Seller } from "$lib/types";
   import Eye from "lucide-svelte/icons/eye";
   import Trash2 from "lucide-svelte/icons/trash-2";
   import { createEventDispatcher, setContext } from "svelte";
-  import { createHover } from "svelte-interactions";
+  import { createHover, createPress } from "svelte-interactions";
   import { fade } from "svelte/transition";
   import CopyButton from "../CopyButton.svelte";
   import CardItemMinion from "./card-item-minion.svelte";
@@ -15,17 +16,22 @@
   import CardMinionPrice from "./card-minion-price.svelte";
   import CardMinionTier from "./card-minion-tier.svelte";
 
+  const isHome = $page.url.pathname === "/";
+
   export let showButtons = true;
   export let minion: Seller;
-  setContext("minion", minion);
+  export let enableHoverEffects = isHome;
 
-  const isHome = $page.url.pathname === "/";
-  setContext("isHome", isHome);
   const isMinionPage = $page.url.pathname === `/` || $page.url.pathname === `/profile` || $page.url.pathname === `/user/${minion.user.username}`;
+
+  setContext("minion", minion);
+  setContext("isHome", isHome);
+  setContext("enableHoverEffects", enableHoverEffects);
   setContext("isMinionPage", isMinionPage);
 
   const dispatch = createEventDispatcher();
   const { hoverAction, isHovered } = createHover();
+  const { pressAction } = createPress();
 
   function openModal(minionID: string) {
     dispatch("openDeleteModal", {
@@ -34,7 +40,7 @@
   }
 </script>
 
-<li role="listitem" {...$$restProps} class="user-select-none relative list-item divide-y divide-accent rounded-lg bg-background transition-all duration-300" class:group={isHome} class:hover:bg-muted={isHome} in:fade|global={{ delay: 0 }} use:hoverAction>
+<li role="listitem" {...$$restProps} class="user-select-none relative list-item divide-y divide-accent rounded-lg bg-background transition-all duration-300" class:group={enableHoverEffects} class:hover:bg-muted={enableHoverEffects} in:fade|global={{ delay: 0 }} use:hoverAction>
   <div class="flex w-full items-center justify-center gap-x-6 px-4">
     <CardItemMinion />
     {#if isHome}
@@ -49,7 +55,7 @@
   </div>
   {#if isHome}
     <div class="flex h-10">
-      <a href={`/user/${minion.user.username}/chat`} data-sveltekit-preload-data="off" class="relative flex h-full w-full items-center justify-center overflow-hidden rounded-b-lg font-medium text-primary transition-all duration-300">
+      <a href={`/user/${minion.user.username}/chat`} data-sveltekit-preload-data="off" class="relative flex h-full w-full items-center justify-center overflow-hidden rounded-b-lg font-medium text-primary transition-all duration-300" use:pressAction on:press={() => chatSignal.set(minion)}>
         <div class="group peer relative z-10 flex h-full w-full min-w-0 flex-shrink-0 flex-nowrap items-center justify-center text-nowrap rounded-full px-2 py-0.5 text-xs font-medium text-primary transition-all duration-300 group-hover:scale-125 group-hover:text-muted">
           <div class="inline-block">Buy&nbsp;</div>
           <div class="inline-block w-0 max-w-fit flex-nowrap overflow-hidden text-nowrap transition-[width] duration-1000 group-hover:w-full">
