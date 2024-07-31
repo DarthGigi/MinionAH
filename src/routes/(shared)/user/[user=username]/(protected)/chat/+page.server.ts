@@ -1,6 +1,7 @@
 import { FIREBASE_SERVICE_ACCOUNT_KEY, MINIONAH_SECRET, app_id, secret } from "$env/static/private";
 import { PUBLIC_cluster, PUBLIC_key } from "$env/static/public";
 import { sanitize } from "@jill64/universal-sanitizer";
+import { MessageType } from "@prisma/client";
 import { error, fail, redirect } from "@sveltejs/kit";
 import { cert, getApp, getApps, initializeApp } from "firebase-admin/app";
 import { getMessaging, type MulticastMessage } from "firebase-admin/messaging";
@@ -165,9 +166,10 @@ export const actions = {
   sendMessage: async ({ locals, request, params }) => {
     const data = await request.formData();
     const dataMessage = data.get("message");
-    const message = dataMessage ? (JSON.parse(dataMessage.toString()) as iMessage) : null;
+    const messageJSON: Omit<iMessage, "animate"> = dataMessage ? JSON.parse(dataMessage.toString()) : null;
+    const messageType = messageJSON ? messageJSON.type : null;
 
-    if (!message || message.content.length === 0) {
+    if (!messageType || messageJSON.content === "") {
       return fail(400, { message: "Message is required" });
     }
 
@@ -176,9 +178,10 @@ export const actions = {
     if (!user) {
       redirect(302, "/login");
     }
+
     try {
       // max message size
-      if (message.content.length > 1000) {
+      if (messageType === MessageType.TEXT && messageJSON.content.length > 1000) {
         throw new Response("Message exceeds max 1000 characters", {
           status: 413,
           statusText: "Message exceeds max 1000 characters"
@@ -252,16 +255,19 @@ export const actions = {
         .trigger(`chat-${chat.id}`, "new-message", {
           chat_id: chat.id,
           user_id: user.id,
-          content: message.content,
-          createdAt: message.createdAt
-        } as iMessage)
+          content: messageJSON.content,
+          createdAt: messageJSON.createdAt,
+          id: messageJSON.id,
+          type: messageType
+        })
         .then(async (res) => {
           if (res.status === 200) {
             await prisma.message.create({
               data: {
                 chat_id: chat!.id,
-                content: message.content,
-                user_id: user.id
+                content: messageJSON.content,
+                user_id: user.id,
+                type: messageType
               }
             });
 
@@ -343,7 +349,7 @@ export const actions = {
             const pushMessage: MulticastMessage = {
               notification: {
                 title: `${user.username}`,
-                body: sanitize(message.content, {
+                body: sanitize(messageType === MessageType.TEXT ? messageJSON.content : "", {
                   sanitizeHtml: {
                     allowedTags: [],
                     disallowedTagsMode: "discard"
