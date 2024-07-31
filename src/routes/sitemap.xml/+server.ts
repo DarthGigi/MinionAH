@@ -1,6 +1,6 @@
+import { error } from "@sveltejs/kit";
 import * as sitemap from "super-sitemap";
 import type { RequestHandler } from "./$types";
-import { error } from "@sveltejs/kit";
 
 export const GET: RequestHandler = async () => {
   try {
@@ -24,7 +24,7 @@ export const GET: RequestHandler = async () => {
 
     return await sitemap.response({
       origin: "https://minionah.com",
-      excludePatterns: [".*\\(protected\\).*", "^/api.*"],
+      excludeRoutePatterns: [".*\\(protected\\).*", "^/api.*"],
       additionalPaths: ["/api/craftcost/docs"],
       paramValues: {
         "/user/[user=username]": users.map(({ username }: { username: string }) => username),
