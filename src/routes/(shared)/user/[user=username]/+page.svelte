@@ -10,7 +10,7 @@
   import * as Tooltip from "$lib/components/ui/tooltip";
   import {} from "$lib/utilities";
   import { formatDistanceToNow } from "date-fns";
-  import BarChart2 from "lucide-svelte/icons/bar-chart-2";
+  import ChartNoAxesColumn from "lucide-svelte/icons/chart-no-axes-column";
   import Earth from "lucide-svelte/icons/earth";
   import MessagesSquare from "lucide-svelte/icons/messages-square";
   import SvelteSeo from "svelte-seo";
@@ -135,7 +135,7 @@
           <MessagesSquare class="mr-2 h-5 w-5" /> Chat
         </Button>
         <Button href={`https://sky.shiiyu.moe/stats/${data.minionuser.username}`} data-sveltekit-preload-data="off" target="_blank" rel="noopener" variant="outline" class="w-full">
-          <BarChart2 class="mr-2 h-5 w-5" /> SkyCrypt
+          <ChartNoAxesColumn class="mr-2 h-5 w-5" /> SkyCrypt
         </Button>
       </div>
       <p class="text-center text-xs text-muted-foreground">
