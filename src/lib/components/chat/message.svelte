@@ -1,6 +1,5 @@
 <script lang="ts">
   import * as Tooltip from "$lib/components/ui/tooltip";
-  import { MessageType } from "@prisma/client";
   import type { Editor as EditorType } from "@tiptap/core";
   import { Editor } from "@tiptap/core";
   import Image from "@tiptap/extension-image";
@@ -10,7 +9,7 @@
   import { toZonedTime } from "date-fns-tz";
   import { onDestroy, onMount } from "svelte";
   import { fly } from "svelte/transition";
-  import type { iMessage } from "../../../routes/(shared)/user/[user=username]/(protected)/chat/+page.svelte";
+  import { MessageType, type iMessage } from "../../../routes/(shared)/user/[user=username]/(protected)/chat/+page.svelte";
   import { MinionCard } from "../card";
 
   export let self: boolean;

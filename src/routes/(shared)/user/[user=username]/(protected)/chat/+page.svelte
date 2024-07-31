@@ -1,5 +1,9 @@
 <script lang="ts" context="module">
-  import { MessageType } from "@prisma/client";
+  export enum MessageType {
+    TEXT = "TEXT",
+    AUCTION = "AUCTION"
+  }
+
   export type iMessage = {
     id?: string;
     chat_id: string;

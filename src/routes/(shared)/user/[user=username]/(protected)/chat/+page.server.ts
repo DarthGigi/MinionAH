@@ -1,13 +1,12 @@
 import { FIREBASE_SERVICE_ACCOUNT_KEY, MINIONAH_SECRET, app_id, secret } from "$env/static/private";
 import { PUBLIC_cluster, PUBLIC_key } from "$env/static/public";
 import { sanitize } from "@jill64/universal-sanitizer";
-import { MessageType } from "@prisma/client";
 import { error, fail, redirect } from "@sveltejs/kit";
 import { cert, getApp, getApps, initializeApp } from "firebase-admin/app";
 import { getMessaging, type MulticastMessage } from "firebase-admin/messaging";
 import Pusher from "pusher";
 import type { PageServerLoad } from "./$types";
-import type { iMessage } from "./+page.svelte";
+import { MessageType, type iMessage } from "./+page.svelte";
 
 export const load = (async ({ params, locals }) => {
   const user = locals.user;
