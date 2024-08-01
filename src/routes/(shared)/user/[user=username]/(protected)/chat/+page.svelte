@@ -1,10 +1,16 @@
 <script lang="ts" context="module">
+  export enum MessageType {
+    TEXT = "TEXT",
+    AUCTION = "AUCTION"
+  }
+
   export type iMessage = {
     id?: string;
     chat_id: string;
     user_id: string;
     content: string;
     createdAt: Date;
+    type: MessageType;
     animate?: boolean;
   };
 </script>
@@ -13,17 +19,20 @@
   import { enhance } from "$app/forms";
   import { beforeNavigate, goto } from "$app/navigation";
   import { PUBLIC_cluster, PUBLIC_key } from "$env/static/public";
+  import { MinionCard } from "$lib/components/card";
   import Tiptap from "$lib/components/chat/Tiptap.svelte";
   import ChatLoading from "$lib/components/chat/chat-loading.svelte";
   import Message from "$lib/components/chat/message.svelte";
+  import * as AlertDialog from "$lib/components/ui/alert-dialog";
   import * as Avatar from "$lib/components/ui/avatar";
   import { Button } from "$lib/components/ui/button";
+  import { chatSignal } from "$lib/stores/signals";
   import { scrollToBottomAction } from "$lib/utilities";
   import CircleArrowLeft from "lucide-svelte/icons/circle-arrow-left";
   import MessageSquarePlus from "lucide-svelte/icons/message-square-plus";
   import Pusher from "pusher-js";
   import { onMount } from "svelte";
-  import { writable } from "svelte/store";
+  import { derived, writable } from "svelte/store";
   import { draw, fade } from "svelte/transition";
   import type { PageData } from "./$types";
 
@@ -42,10 +51,23 @@
   const message = writable<iMessage>();
 
   const messageForm = writable<HTMLFormElement>();
+  const auctionForm = writable<HTMLFormElement>();
   const timeout = writable<NodeJS.Timeout>();
   const newChats = writable<iMessage[]>([]);
   const messages = writable<iMessage[]>([]);
   const sentMessageSuccess = writable<boolean | undefined | null>(null);
+
+  // Auction ID's in the messages
+  const auctionIds = derived(messages, ($messages) => {
+    const auctions = $messages.filter((message) => message.type === MessageType.AUCTION);
+    return auctions.map((auction) => JSON.parse(auction.content).id);
+  });
+
+  // Only show the alert dialog if there are no auctions with the same ID in the chat
+  const showAuctionAlert = derived([auctionIds, chatSignal], ([$auctionIds, $chatSignal]) => {
+    if (!$chatSignal) return false;
+    return !$auctionIds.includes($chatSignal.id);
+  });
 
   const loading = writable<boolean>(false);
 
@@ -79,19 +101,29 @@
     updateRead(false);
   };
 
-  const sendMessage = async (eventData: { detail: string }) => {
+  const sendMessage = async (eventData: { type: MessageType; detail: string }) => {
     const textValue = eventData.detail;
-    if (!textValue) return;
+    const type = eventData.type;
+    if (!textValue || !type) return;
     message.set({
+      type: eventData.type,
       content: textValue,
       createdAt: new Date(),
       user_id: data.user.id,
-      id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
-      chat_id: data.chat?.id || ""
+      chat_id: data.chat?.id || "",
+      // ID needed to filter out the message from the newChats array. This ID is not stored in the database.
+      id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
     });
     newChats.set([...$newChats, $message]);
     sentMessageSuccess.set(undefined);
-    $messageForm.requestSubmit();
+    switch (type) {
+      case MessageType.TEXT:
+        $messageForm.requestSubmit();
+        break;
+      case MessageType.AUCTION:
+        $auctionForm.requestSubmit();
+        break;
+    }
   };
 
   onMount(async () => {
@@ -99,7 +131,6 @@
 
     if (data.messages) messages.set([...$messages, ...(data.messages as unknown as iMessage[])]);
 
-    console.log("Mounting chat page");
     updateRead(true);
 
     channel.bind("new-message", (new_message: iMessage) => {
@@ -108,7 +139,7 @@
       new_message.animate = true;
       if (new_message.user_id === data.user.id) {
         messages.set([...$messages, new_message]);
-        newChats.set($newChats.filter((message) => message.id === new_message.id));
+        newChats.set($newChats.filter((message) => message.id !== new_message.id));
         sentMessageSuccess.set(true);
         clearTimeout($timeout);
         timeout.set(
@@ -134,7 +165,7 @@
 </script>
 
 <div class="flex h-full w-screen flex-col items-center justify-center">
-  <div class="relative w-full max-w-sm rounded-lg border border-border bg-secondary shadow">
+  <div class="relative w-full max-w-screen-sm rounded-lg border border-border bg-secondary shadow">
     <a href={`/user/${data.user2.username}`} class="absolute left-2 top-2 rounded-lg bg-accent bg-opacity-0 p-1.5 text-sm text-muted-foreground opacity-30 transition-all duration-300 hover:bg-opacity-100 hover:opacity-100">
       <CircleArrowLeft class="h-6 w-6" />
     </a>
@@ -147,7 +178,7 @@
       <h2 class="text-center text-lg font-semibold">{data.user2?.username}</h2>
     </div>
     {#if showChat}
-      <div use:scrollToBottomAction class="flex max-h-72 w-full max-w-full flex-col gap-2 overflow-y-auto overflow-x-clip scroll-smooth px-6 py-6">
+      <div use:scrollToBottomAction class="flex max-h-96 w-full max-w-full flex-col gap-2 overflow-y-auto overflow-x-clip scroll-smooth px-6 py-6">
         {#if $loading}
           <ChatLoading />
         {:else if $messages && Array.isArray($messages)}
@@ -182,7 +213,7 @@
           method="POST"
           action="?/sendMessage"
           use:enhance={({ formData }) => {
-            formData.set("message", JSON.stringify($message));
+            formData.set("message", JSON.stringify({ ...$message, type: MessageType.TEXT }));
             return async ({ result }) => {
               if (result.type === "success") {
                 sentMessageSuccess.set(true);
@@ -204,7 +235,7 @@
             };
           }}
           bind:this={$messageForm}>
-          <Tiptap on:sendMessage={sendMessage} />
+          <Tiptap on:sendMessage={async ({ detail }) => await sendMessage({ type: MessageType.TEXT, detail })} />
         </form>
       </div>
     {:else}
@@ -216,5 +247,64 @@
       </div>
     {/if}
   </div>
+
   <span class="mt-1 text-pretty text-xs opacity-25"> Messages are not end-to-end encrypted and are stored in plaintext. </span>
 </div>
+
+<AlertDialog.Root open={$showAuctionAlert && $chatSignal && $chatSignal.user.id === data.user2.id} openFocus={"#alert-dialog-action"}>
+  <AlertDialog.Content class="border-border bg-popover">
+    <AlertDialog.Header>
+      <AlertDialog.Title class="text-pretty">Would you like to send this auction into your chat with {data.user2.username}?</AlertDialog.Title>
+      <AlertDialog.Description>
+        {#if $chatSignal}
+          <ul role="list" class="mt-4 w-full rounded-lg border border-accent">
+            <MinionCard minion={$chatSignal} enableHoverEffects={true} />
+          </ul>
+          <p class="pt-4 text-center text-xs text-muted-foreground">We've detected that you clicked the buy button on this auction.</p>
+          <form
+            class="hidden"
+            method="POST"
+            action="?/sendMessage"
+            use:enhance={({ formData }) => {
+              formData.set("message", JSON.stringify({ ...$message, type: MessageType.AUCTION }));
+              return async ({ result }) => {
+                if (result.type === "success") {
+                  sentMessageSuccess.set(true);
+                  chatSignal.set(undefined);
+                  clearTimeout($timeout);
+                  timeout.set(
+                    setTimeout(() => {
+                      sentMessageSuccess.set(null);
+                    }, 1000)
+                  );
+                } else if (result.type === "error") {
+                  sentMessageSuccess.set(false);
+                  clearTimeout($timeout);
+                  timeout.set(
+                    setTimeout(() => {
+                      sentMessageSuccess.set(null);
+                    }, 1000)
+                  );
+                }
+              };
+            }}
+            bind:this={$auctionForm}>
+          </form>
+        {:else}
+          Sorry, we couldn't detect the auction you clicked on. Please try again.
+        {/if}
+      </AlertDialog.Description>
+    </AlertDialog.Header>
+    <AlertDialog.Footer>
+      <AlertDialog.Cancel on:click={() => chatSignal.set(undefined)}>Cancel</AlertDialog.Cancel>
+      <AlertDialog.Action
+        id="alert-dialog-action"
+        on:click={async () => {
+          await sendMessage({ detail: JSON.stringify($chatSignal), type: MessageType.AUCTION });
+          chatSignal.set(undefined);
+        }}>
+        Send
+      </AlertDialog.Action>
+    </AlertDialog.Footer>
+  </AlertDialog.Content>
+</AlertDialog.Root>

@@ -9,13 +9,12 @@
   import { toZonedTime } from "date-fns-tz";
   import { onDestroy, onMount } from "svelte";
   import { fly } from "svelte/transition";
+  import { MessageType, type iMessage } from "../../../routes/(shared)/user/[user=username]/(protected)/chat/+page.svelte";
+  import { MinionCard } from "../card";
 
   export let self: boolean;
-  export let message: {
-    content: string;
-    createdAt: Date;
-    animate?: boolean;
-  };
+  export let message: Omit<iMessage, "id" | "chat_id" | "user_id">;
+
   let editor: EditorType;
   let element: HTMLDivElement;
 
@@ -51,9 +50,17 @@
 
 <div {...$$restProps} class:self-end={self} class:self-start={!self} in:fly|global={{ y: 24 }}>
   <Tooltip.Root openDelay={100} closeDelay={0} group={true}>
-    <Tooltip.Trigger class={`flex ${self ? "flex-row" : "flex-row-reverse"}`}>
-      {@const isOnlyImage = /^<img src=".*" class=".*">$/i.test(message.content)}
-      <div class={`no-scrollbar min-w-0 max-w-[18rem] cursor-default select-text self-end break-words rounded-full py-2 text-left text-[#FDFDFD] transition-all duration-300 data-[image=false]:px-4 ${message.content.length >= 25 ? "!rounded-3xl" : ""} ${self ? "self-end !rounded-br-none data-[image=false]:bg-[#3C83F7]" : "self-start !rounded-bl-none data-[image=false]:bg-[#3B3B3D]"}`} bind:this={element} data-image={isOnlyImage}></div>
+    <Tooltip.Trigger asChild let:builder class={`flex w-full ${self ? "flex-row" : "flex-row-reverse"}`}>
+      {#if message.type === MessageType.TEXT}
+        {@const isOnlyImage = /^<img src=".*" class=".*">$/i.test(message.content)}
+        <button {...builder} use:builder.action>
+          <div class={`no-scrollbar min-w-0 max-w-[18rem] cursor-default select-text self-end break-words rounded-full py-2 text-left text-[#FDFDFD] transition-all duration-300 data-[image=false]:px-4 ${message.content.length >= 25 ? "!rounded-3xl" : ""} ${self ? "self-end !rounded-br-none data-[image=false]:bg-[#3C83F7]" : "self-start !rounded-bl-none data-[image=false]:bg-[#3B3B3D]"}`} bind:this={element} data-image={isOnlyImage}></div>
+        </button>
+      {:else if message.type === MessageType.AUCTION}
+        <ul class="w-96 rounded-lg border border-accent" {...builder} use:builder.action>
+          <MinionCard minion={JSON.parse(message.content)} enableHoverEffects={true} />
+        </ul>
+      {/if}
     </Tooltip.Trigger>
     <Tooltip.Content class="border-2 border-accent bg-accent text-white">
       <time datetime={message.createdAt.toLocaleString()} class="text-nowrap text-xs">
