@@ -151,7 +151,7 @@
       <ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {#if data.minionuser.auctions.length !== 0}
           {#each data.minionuser.auctions as minion (minion.id)}
-            <MinionCard {minion} />
+            <MinionCard {minion} showBuyButton={true} enableHoverEffects={true} />
           {/each}
         {:else}
           <div class="col-span-3 flex w-full items-center justify-center">

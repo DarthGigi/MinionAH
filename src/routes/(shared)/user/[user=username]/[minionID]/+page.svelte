@@ -62,7 +62,7 @@
     </a>
 
     <ul class="mt-2">
-      <MinionCard minion={data.userMinion} />
+      <MinionCard minion={data.userMinion} showBuyButton={true} />
     </ul>
   </div>
 </div>
