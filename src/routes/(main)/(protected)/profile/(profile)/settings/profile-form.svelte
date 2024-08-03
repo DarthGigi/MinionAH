@@ -56,7 +56,9 @@
     tick().then(() => {
       const urlInputs = Array.from(document.querySelectorAll<HTMLElement>("#profile-form input[name='urls']"));
       const lastInput = urlInputs[urlInputs.length - 1];
-      lastInput && lastInput.focus();
+      if (lastInput) {
+        lastInput.focus();
+      }
     });
   };
 

@@ -21,11 +21,13 @@
   export let showButtons = true;
   export let minion: Seller;
   export let enableHoverEffects = isHome;
+  export let showBuyButton = isHome;
 
   const isMinionPage = $page.url.pathname === `/` || $page.url.pathname === `/profile` || $page.url.pathname === `/user/${minion.user.username}`;
 
   setContext("minion", minion);
   setContext("isHome", isHome);
+  setContext("showBuyButton", showBuyButton);
   setContext("enableHoverEffects", enableHoverEffects);
   setContext("isMinionPage", isMinionPage);
 
@@ -53,7 +55,7 @@
     <CardMinionPrice bind:hovering={$isHovered} />
     <CardMinionAmount />
   </div>
-  {#if isHome}
+  {#if showBuyButton}
     <div class="flex h-10">
       <a href={`/user/${minion.user.username}/chat`} data-sveltekit-preload-data="off" class="relative flex h-full w-full items-center justify-center overflow-hidden rounded-b-lg font-medium text-primary transition-all duration-300" use:pressAction on:press={() => chatSignal.set(minion)}>
         <div class="group peer relative z-10 flex h-full w-full min-w-0 flex-shrink-0 flex-nowrap items-center justify-center text-nowrap rounded-full px-2 py-0.5 text-xs font-medium text-primary transition-all duration-300 group-hover:scale-125 group-hover:text-muted">
