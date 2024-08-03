@@ -13,6 +13,7 @@
   let userViewer: headview3d.SkinViewer;
   let userCanvas: HTMLCanvasElement;
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
   $: userCanvas, createUserViewer();
   const createUserViewer = () => {
     if (userCanvas) {

@@ -40,7 +40,9 @@ export const checkReadStatus = (chat: Chat, loggedInUserId: string | undefined) 
 export const scrollToBottomAction = (node: HTMLElement, immediate = true) => {
   let stop: () => void;
   const destroy = () => {
-    stop && stop();
+    if (stop) {
+      stop();
+    }
   };
   const update = () => {
     destroy();

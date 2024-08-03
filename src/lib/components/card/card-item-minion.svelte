@@ -25,6 +25,7 @@
     searchSignal.update(() => search);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
   $: minionCanvas, createMinionViewer();
   const createMinionViewer = () => {
     if (minionCanvas) {

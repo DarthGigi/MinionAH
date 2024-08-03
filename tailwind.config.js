@@ -1,3 +1,5 @@
+import containerPlugin from "@tailwindcss/container-queries";
+import formsPlugin from "@tailwindcss/forms";
 import { fontFamily } from "tailwindcss/defaultTheme";
 
 /** @type {import('tailwindcss').Config} */
@@ -83,7 +85,7 @@ const config = {
     }
   },
 
-  plugins: [require("@tailwindcss/forms"), require("@tailwindcss/container-queries")]
+  plugins: [formsPlugin, containerPlugin]
 };
 
 export default config;

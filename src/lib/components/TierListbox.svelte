@@ -1,10 +1,10 @@
 <script lang="ts">
   import { page } from "$app/stores";
+  import { ScrollArea } from "$lib/components/ui/scroll-area";
   import * as Select from "$lib/components/ui/select";
   import { preferences } from "$lib/stores/preferences";
-  import { createEventDispatcher } from "svelte";
-  import { ScrollArea } from "$lib/components/ui/scroll-area";
   import { cn } from "$lib/utils";
+  import { createEventDispatcher } from "svelte";
 
   const dispatch = createEventDispatcher<{ onSelectedTierChange: { tier: number | undefined | unknown } }>();
 
@@ -16,6 +16,7 @@
 
   let tiers: number[];
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
   $: maxtier,
     (tiers = Array(maxtier)
       .fill(0)
