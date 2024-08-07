@@ -273,7 +273,7 @@
                 showReset={true}
                 bind:search={$searchValue}
                 variant="half-rounded"
-                minionType={minionTypes}
+                {minionTypes}
                 on:onSelect={({ detail }) => {
                   maxTier.set(detail.maxTier);
                   searchValue.set(detail.generator);
