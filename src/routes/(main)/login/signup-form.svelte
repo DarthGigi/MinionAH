@@ -20,6 +20,7 @@
   </Card.Header>
   <Card.Content>
     <div class="flex flex-col items-center justify-center">
+      <span class="mb-2 text-center text-xs text-muted-foreground"> By signing up, you agree to our <a href="https://newsroom.minionah.com/terms-of-service" target="_blank" class="underline">Terms of Service</a> and <a href="https://newsroom.minionah.com/privacy-policy" target="_blank" class="underline">Privacy Policy</a>.</span>
       <Button data-sveltekit-preload-data="tap" href="/api/oauth" class="w-full">
         <img src="/assets/images/mc-auth.svg" class="pointer-events-none mr-1 h-6 w-auto" alt="Mc-Auth" />
         Sign up with MC-Auth
@@ -35,12 +36,12 @@
   </Card.Footer>
 </Card.Root>
 
-<Collapsible.Root class="mt-6 flex w-full flex-col gap-y-6">
+<Collapsible.Root open={true} class="mt-6 flex w-full flex-col gap-y-6">
   <Collapsible.Trigger class="flex w-full items-center justify-between rounded-lg border border-border px-6 py-2 transition-colors duration-300 hover:bg-background ">FAQ <ChevronsUpDown class="size-5" /></Collapsible.Trigger>
   <Collapsible.Content class="rounded-lg border border-border px-6 py-2">
     <Accordion.Root class="w-full text-muted-foreground">
       <Accordion.Item value="item-1" class="border-border">
-        <Accordion.Trigger class="text-accent-foreground">How does it work?</Accordion.Trigger>
+        <Accordion.Trigger class="text-start text-accent-foreground">How does it work?</Accordion.Trigger>
         <Accordion.Content>
           We use MC-Auth to authenticate your Minecraft account, which is the most secure way to do so.
           <br /><br />
@@ -50,7 +51,7 @@
         </Accordion.Content>
       </Accordion.Item>
       <Accordion.Item value="item-2" class="border-border">
-        <Accordion.Trigger class="text-accent-foreground">Can I trust you with my account?</Accordion.Trigger>
+        <Accordion.Trigger class="text-start text-accent-foreground">Can I trust you with my account?</Accordion.Trigger>
         <Accordion.Content>
           We will never try to steal, sell, or otherwise misuse your Minecraft account information. We use the information provided by MC-Auth to verify your Minecraft identity.
           <br /><br />
@@ -58,7 +59,7 @@
         </Accordion.Content>
       </Accordion.Item>
       <Accordion.Item value="item-3" class="border-border">
-        <Accordion.Trigger class="text-accent-foreground">What information do you store?</Accordion.Trigger>
+        <Accordion.Trigger class="text-start text-accent-foreground">What information do you store?</Accordion.Trigger>
         <Accordion.Content>
           We store the following information:
           <ul class="list-inside list-disc">
@@ -70,7 +71,7 @@
         </Accordion.Content>
       </Accordion.Item>
       <Accordion.Item value="item-4" class="border-none">
-        <Accordion.Trigger class="text-accent-foreground">What if your database is compromised?</Accordion.Trigger>
+        <Accordion.Trigger class="text-start text-accent-foreground">What if your database is compromised?</Accordion.Trigger>
         <Accordion.Content>In the extremely unlikely event that our database is compromised, your Minecraft account will not be at risk at all and you will not have to change your Minecraft password.</Accordion.Content>
       </Accordion.Item>
     </Accordion.Root>
