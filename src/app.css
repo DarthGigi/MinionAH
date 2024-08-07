@@ -112,3 +112,10 @@
     display: none;
   }
 }
+.virtual-list-wrapper {
+  @apply no-scrollbar overflow-y-auto overflow-x-hidden p-1;
+}
+
+.virtual-list-inner {
+  @apply overflow-hidden;
+}

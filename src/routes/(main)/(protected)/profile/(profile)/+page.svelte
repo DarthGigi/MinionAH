@@ -188,7 +188,7 @@
                               }
                             }
                           }}
-                          minionType={minionTypes} />
+                          {minionTypes} />
                         <input hidden bind:value={$formDataCreate.type} name={attrs.name} />
                         <Form.FieldErrors />
                       </Form.Control>

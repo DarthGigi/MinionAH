@@ -130,7 +130,7 @@
 <div>
   <div class="flex items-center py-4">
     <MinionsListBox
-      minionType={data.filter((value, index, self) => self.findIndex((v) => v.generator === value.generator) === index).sort((a, b) => a.generator.localeCompare(b.generator))}
+      minionTypes={data.filter((value, index, self) => self.findIndex((v) => v.generator === value.generator) === index).sort((a, b) => a.generator.localeCompare(b.generator))}
       showReset={true}
       on:onSelect={({ detail }) => {
         filterValue.set(detail.generator);

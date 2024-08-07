@@ -1,11 +1,19 @@
 import { lucia } from "$lib/server/lucia";
+import { hash, verify, type Options } from "@node-rs/argon2";
 import { fail, redirect } from "@sveltejs/kit";
 import { LegacyScrypt } from "lucia";
-import { Argon2id } from "oslo/password";
 import { message, superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
 import type { Actions, PageServerLoad } from "./$types";
 import { formSchema } from "./schema";
+
+const hashOptions = {
+  // recommended minimum parameters
+  memoryCost: 19456,
+  timeCost: 2,
+  outputLen: 32,
+  parallelism: 1
+} satisfies Options;
 
 export const load = (async () => {
   return {
@@ -35,14 +43,13 @@ export const actions: Actions = {
           }
         );
       }
-      const argon2id = new Argon2id();
       const password = form.data["current-password"];
       const oldHash = key.hashed_password!;
-      const newHash = await argon2id.hash(password);
+      const newHash = await hash(password, hashOptions);
 
       const validPasswordOld = await new LegacyScrypt().verify(oldHash, password);
 
-      const validPassword = await argon2id.verify(newHash, password);
+      const validPassword = await verify(newHash, password);
 
       if (!validPasswordOld && !validPassword) {
         return message(
@@ -58,7 +65,7 @@ export const actions: Actions = {
             id: key.id
           },
           data: {
-            hashed_password: await argon2id.hash(password)
+            hashed_password: await hash(password, hashOptions)
           }
         });
       }

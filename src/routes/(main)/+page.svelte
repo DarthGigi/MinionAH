@@ -168,7 +168,6 @@
 
     if (filterTier || $searchValue) {
       if ($searchType === SearchType.Minion) {
-        console.log(filterTier, $searchValue);
         where = {
           minion: {
             ...(filterTier && { generator_tier: filterTier }),
@@ -274,7 +273,7 @@
                 showReset={true}
                 bind:search={$searchValue}
                 variant="half-rounded"
-                minionType={minionTypes}
+                {minionTypes}
                 on:onSelect={({ detail }) => {
                   maxTier.set(detail.maxTier);
                   searchValue.set(detail.generator);

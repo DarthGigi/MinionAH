@@ -2,10 +2,10 @@ import { dev } from "$app/environment";
 import { CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET, CLOUDINARY_CLOUD_NAME, MC_AUTH_CLIENT_ID, MC_AUTH_CLIENT_SECRET, MC_AUTH_REDIRECT_URI } from "$env/static/private";
 import { lucia } from "$lib/server/lucia";
 import { getMcAuthInfo } from "$lib/server/minecraft";
+import { TokenRequestResult } from "@oslojs/oauth2";
 import { Prisma } from "@prisma/client";
 import { error, redirect, type RequestHandler } from "@sveltejs/kit";
 import { v2 as cloudinary } from "cloudinary";
-import { OAuth2Client, OAuth2RequestError } from "oslo/oauth2";
 
 cloudinary.config({
   cloud_name: CLOUDINARY_CLOUD_NAME,
@@ -14,12 +14,10 @@ cloudinary.config({
   secure: true
 });
 
-const provider = new OAuth2Client(MC_AUTH_CLIENT_ID, "https://mc-auth.com/oAuth2/authorize", "https://mc-auth.com/oAuth2/token", {
-  redirectURI: dev ? "http://localhost:5173/api/oauth/minecraft" : MC_AUTH_REDIRECT_URI
-});
-
-export const POST = (async ({ cookies, request, locals }) => {
-  const { code, state } = await request.json();
+export const GET = (async ({ cookies, locals, fetch, url }) => {
+  const params = url.searchParams;
+  const code = params.get("code");
+  const state = params.get("state");
 
   // get state cookie we set when we got the authorization url
   const stateCookie = cookies.get("minecraft_oauth_state");
@@ -34,18 +32,30 @@ export const POST = (async ({ cookies, request, locals }) => {
   if (!codeVerifier) redirect(302, "/login"); // invalid code verifier
 
   try {
-    const tokens = await provider.validateAuthorizationCode(code as string, {
-      codeVerifier,
-      credentials: MC_AUTH_CLIENT_SECRET,
-      authenticateWith: "request_body"
+    const response = await fetch("https://mc-auth.com/oAuth2/token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        client_id: MC_AUTH_CLIENT_ID,
+        client_secret: MC_AUTH_CLIENT_SECRET,
+        code,
+        redirect_uri: dev ? "http://localhost:5173/api/oauth/minecraft" : MC_AUTH_REDIRECT_URI,
+        grant_type: "authorization_code"
+      })
     });
 
-    if ("error" in tokens) {
-      console.error(tokens.error);
+    const result = new TokenRequestResult(await response.json());
+
+    if (result.hasErrorCode()) {
+      console.error(result.errorCode());
       error(500, "Error getting MC profile");
     }
 
-    const minecraftUser = await getMcAuthInfo(tokens.access_token);
+    const accessToken = result.accessToken();
+
+    const minecraftUser = await getMcAuthInfo(accessToken);
 
     const getUser = async () => {
       const existingUser = await prisma.user.findFirst({
@@ -54,17 +64,23 @@ export const POST = (async ({ cookies, request, locals }) => {
         }
       });
 
+      const [skinResponse, avatarResponse, capeResponse] = await Promise.all([fetch(minecraftUser.properties[0].value.textures.SKIN.url), fetch(`https://mc-heads.net/head/${minecraftUser.id}`), minecraftUser.properties[0].value.textures.CAPE ? fetch(minecraftUser.properties[0].value.textures.CAPE.url) : null]);
+
+      const [skinBuffer, avatarBuffer, capeBuffer] = await Promise.all([skinResponse.arrayBuffer(), avatarResponse.arrayBuffer(), capeResponse ? capeResponse.arrayBuffer() : null]);
+
+      const cloudinaryRequests: Promise<unknown>[] = [];
+
       let skin: string;
       try {
-        const response = await fetch(minecraftUser.properties[0].value.textures.SKIN.url);
-        const avatarBuffer = await response.arrayBuffer();
-        skin = Buffer.from(avatarBuffer).toString("base64");
-        await cloudinary.uploader.upload(`data:image/png;base64,${skin}`, {
-          folder: `users/skins`,
-          public_id: minecraftUser.id,
-          overwrite: true,
-          resource_type: "image"
-        });
+        skin = Buffer.from(skinBuffer).toString("base64");
+        cloudinaryRequests.push(
+          cloudinary.uploader.upload(`data:image/png;base64,${skin}`, {
+            folder: `users/skins`,
+            public_id: minecraftUser.id,
+            overwrite: true,
+            resource_type: "image"
+          })
+        );
       } catch (e) {
         console.error(e);
         error(500, "Failed to get skin");
@@ -72,37 +88,44 @@ export const POST = (async ({ cookies, request, locals }) => {
 
       let avatar: string;
       try {
-        const response = await fetch(`https://mc-heads.net/head/${minecraftUser.id}`);
-        const avatarBuffer = await response.arrayBuffer();
         avatar = Buffer.from(avatarBuffer).toString("base64");
-        await cloudinary.uploader.upload(`data:image/png;base64,${avatar}`, {
-          folder: `users/avatars`,
-          public_id: minecraftUser.id,
-          overwrite: true,
-          resource_type: "image"
-        });
+        cloudinaryRequests.push(
+          cloudinary.uploader.upload(`data:image/png;base64,${avatar}`, {
+            folder: `users/avatars`,
+            public_id: minecraftUser.id,
+            overwrite: true,
+            resource_type: "image"
+          })
+        );
       } catch (e) {
         console.error(e);
         error(500, "Failed to get avatar");
       }
 
       let cape: string | null;
-      if (minecraftUser.properties[0].value.textures.CAPE) {
+      if (capeBuffer) {
         try {
-          const response = await fetch(minecraftUser.properties[0].value.textures.CAPE.url);
-          const avatarBuffer = await response.arrayBuffer();
-          cape = Buffer.from(avatarBuffer).toString("base64");
-          await cloudinary.uploader.upload(`data:image/png;base64,${cape}`, {
-            folder: `users/capes`,
-            public_id: minecraftUser.id,
-            overwrite: true,
-            resource_type: "image"
-          });
+          cape = Buffer.from(capeBuffer).toString("base64");
+          cloudinaryRequests.push(
+            cloudinary.uploader.upload(`data:image/png;base64,${cape}`, {
+              folder: `users/capes`,
+              public_id: minecraftUser.id,
+              overwrite: true,
+              resource_type: "image"
+            })
+          );
         } catch {
           error(500, "Failed to get cape");
         }
       } else {
         cape = null;
+      }
+
+      try {
+        await Promise.all(cloudinaryRequests);
+      } catch (e) {
+        console.error(e);
+        error(500, "Failed to upload to cloudinary");
       }
 
       if (existingUser) {
@@ -153,7 +176,10 @@ export const POST = (async ({ cookies, request, locals }) => {
 
     const user = await getUser();
 
-    if (!user) throw new Error("Failed to get user");
+    if (!user) {
+      console.error("Failed to create account");
+      error(500, "Failed to create account");
+    }
 
     const session = await lucia.createSession(user.id, {});
     const sessionCookie = lucia.createSessionCookie(session.id);
@@ -164,12 +190,8 @@ export const POST = (async ({ cookies, request, locals }) => {
     locals.session = session;
   } catch (e) {
     console.error(e);
-    if (e instanceof OAuth2RequestError) {
-      // invalid code
-      error(400, "Invalid Code");
-    }
-
     error(500, "Internal Server Error");
   }
+
   redirect(302, "/signup/password");
 }) satisfies RequestHandler;
