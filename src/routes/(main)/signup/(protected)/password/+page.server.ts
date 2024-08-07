@@ -1,9 +1,17 @@
+import { hash, type Options } from "@node-rs/argon2";
 import { fail, redirect } from "@sveltejs/kit";
-import { Argon2id } from "oslo/password";
 import { message, superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
 import type { Actions, PageServerLoad } from "./$types";
 import { formSchema } from "./schema";
+
+const hashOptions = {
+  // recommended minimum parameters
+  memoryCost: 19456,
+  timeCost: 2,
+  outputLen: 32,
+  parallelism: 1
+} satisfies Options;
 
 export const load = (async () => {
   const superValidatedFormSchema = await superValidate(zod(formSchema));
@@ -25,7 +33,7 @@ export const actions: Actions = {
           id: `username:${locals.user!.username.toLowerCase()}`
         },
         data: {
-          hashed_password: await new Argon2id().hash(form.data["new-password"])
+          hashed_password: await hash(form.data["new-password"], hashOptions)
         },
         include: {
           user: true
