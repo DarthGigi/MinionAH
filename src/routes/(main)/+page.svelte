@@ -168,7 +168,6 @@
 
     if (filterTier || $searchValue) {
       if ($searchType === SearchType.Minion) {
-        console.log(filterTier, $searchValue);
         where = {
           minion: {
             ...(filterTier && { generator_tier: filterTier }),
