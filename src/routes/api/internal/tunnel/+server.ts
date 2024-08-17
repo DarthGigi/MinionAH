@@ -1,42 +1,41 @@
+import { PUBLIC_SENTRY_HOST, PUBLIC_SENTRY_PROJECT_ID } from "$env/static/public";
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 
+const SENTRY_PROJECT_IDS = [PUBLIC_SENTRY_PROJECT_ID];
+
 export const POST: RequestHandler = async ({ request, fetch }) => {
   try {
-    const envelope = await request.text();
+    const envelopeBytes = await request.arrayBuffer();
 
-    const pieces = envelope?.split("\n");
+    const envelope = new TextDecoder().decode(envelopeBytes);
 
-    const header = JSON.parse(pieces[0]);
+    const piece = envelope.split("\n")[0];
 
-    const { host, pathname, username } = new URL(header.dsn);
+    const header = JSON.parse(piece);
 
-    const projectId = pathname.slice(1);
+    const dsn = new URL(header["dsn"]);
 
-    const url = `https://${host}/api/${projectId}/envelope/?sentry_key=${username}&sentry_version=${header.sdk.version.split(".")[0]}&sentry_client=${header.sdk.name}/${header.sdk.version}`;
+    const projectId = dsn.pathname?.replace("/", "");
 
-    const response = await fetch(url, {
+    if (dsn.hostname !== PUBLIC_SENTRY_HOST) {
+      throw new Error(`Invalid sentry hostname: ${dsn.hostname}`);
+    }
+
+    if (!projectId || !SENTRY_PROJECT_IDS.includes(projectId)) {
+      throw new Error(`Invalid sentry project id: ${projectId}`);
+    }
+
+    const upstream_sentry_url = `https://${PUBLIC_SENTRY_HOST}/api/${projectId}/envelope/`;
+
+    await fetch(upstream_sentry_url, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/x-sentry-envelope"
-      },
-      body: envelope
+      body: envelopeBytes
     });
 
-    return json(
-      { message: "Success", data: response?.data },
-      {
-        status: 201
-      }
-    );
+    return json({}, { status: 200 });
   } catch (e) {
-    const error = e?.response || e?.message;
-
-    return json(
-      { message: "invalid request", error: error },
-      {
-        status: 400
-      }
-    );
+    console.error("Error tunneling to Sentry", e);
+    return json({ error: "Error tunneling to Sentry" }, { status: 500 });
   }
 };
