@@ -8,7 +8,9 @@
   import { MinionCard } from "$lib/components/card";
   import { GradualSpacing } from "$lib/components/magicui";
   import AnimatedShinyText from "$lib/components/magicui/animated-shiny-text.svelte";
+  import NumberTicker from "$lib/components/magicui/number-ticker.svelte";
   import { Button } from "$lib/components/ui/button";
+  import * as Card from "$lib/components/ui/card";
   import { Label } from "$lib/components/ui/label";
   import { internalPreferences, preferences } from "$lib/stores/preferences";
   import { searchSignal } from "$lib/stores/signals";
@@ -16,6 +18,9 @@
   import { cn } from "$lib/utils";
   import ArrowRight from "lucide-svelte/icons/arrow-right";
   import ChevronsUpDown from "lucide-svelte/icons/chevrons-up-down";
+  import LayoutGrid from "lucide-svelte/icons/layout-grid";
+  import MessagesSquare from "lucide-svelte/icons/messages-square";
+  import Users from "lucide-svelte/icons/users";
   import { onMount } from "svelte";
   import { infiniteScrollAction } from "svelte-legos";
   import SvelteSeo from "svelte-seo";
@@ -241,6 +246,7 @@
   }} />
 
 <h2 class="sr-only">MinionAH - The Auction House for SkyBlock Minions</h2>
+
 <div class="mt-8 h-10 md:mt-20 md:h-20">
   <GradualSpacing class="text-center text-4xl font-bold tracking-[-0.1em] text-white md:text-7xl md:leading-[5rem]" text="MinionAH" />
 </div>
@@ -251,8 +257,50 @@
   </AnimatedShinyText>
 </Button>
 
+<div class="mx-auto mt-[1.375rem] flex gap-1 px-1 md:max-w-2xl md:gap-2 md:px-2">
+  <Card.Root class="w-full border-border bg-transparent">
+    <Card.Header class="flex flex-row items-center justify-center gap-2 space-y-0 pb-2">
+      <Users class="h-4 w-4 text-muted-foreground" />
+      <Card.Title class="text-sm font-medium">Users</Card.Title>
+    </Card.Header>
+    <Card.Content>
+      {#await data.stats.users}
+        <div class="h-12 w-20 animate-pulse rounded-lg bg-background"></div>
+      {:then users}
+        <NumberTicker class="w-full text-center text-3xl font-bold md:text-5xl" value={users} />
+      {/await}
+    </Card.Content>
+  </Card.Root>
+  <Card.Root class="w-full border-border bg-transparent">
+    <Card.Header class="flex flex-row items-center justify-center gap-2 space-y-0 pb-2">
+      <LayoutGrid class="h-4 w-4 text-muted-foreground" />
+      <Card.Title class="text-sm font-medium">Auctions</Card.Title>
+    </Card.Header>
+    <Card.Content>
+      {#await data.stats.auctions}
+        <div class="h-12 w-20 animate-pulse rounded-lg bg-background"></div>
+      {:then auctions}
+        <NumberTicker class="w-full text-center text-3xl font-bold md:text-5xl" value={auctions} />
+      {/await}
+    </Card.Content>
+  </Card.Root>
+  <Card.Root class="w-full border-border bg-transparent">
+    <Card.Header class="flex flex-row items-center justify-center gap-2 space-y-0 pb-2">
+      <MessagesSquare class="h-4 w-4 text-muted-foreground" />
+      <Card.Title class="text-sm font-medium">Chats</Card.Title>
+    </Card.Header>
+    <Card.Content>
+      {#await data.stats.chats}
+        <div class="h-12 w-20 animate-pulse rounded-lg bg-background"></div>
+      {:then chats}
+        <NumberTicker class="w-full text-center text-3xl font-bold md:text-5xl" value={chats} />
+      {/await}
+    </Card.Content>
+  </Card.Root>
+</div>
+
 <div class="mx-auto w-fit">
-  <div class="flex flex-col items-start justify-center gap-4 px-4 pt-8 sm:flex-row sm:items-end sm:px-6 sm:py-20 lg:px-8">
+  <div class="flex flex-col items-start justify-center gap-4 px-4 pt-8 sm:flex-row sm:items-end sm:px-6 sm:pt-20 lg:px-8">
     <div class="flex flex-col justify-center space-y-2">
       <Label>Search</Label>
 
