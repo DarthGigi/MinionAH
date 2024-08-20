@@ -33,35 +33,35 @@
     <div class="flex h-16 flex-row justify-between">
       <div class="flex flex-shrink-0 items-center">
         <DropdownMenu.Root bind:open={menuDropdownOpen}>
-          <DropdownMenu.Trigger class="flex items-center gap-2 rounded-md px-4 py-2 hover:bg-popover">
+          <DropdownMenu.Trigger class="flex items-center gap-2 rounded-md px-4 py-2 transition-colors duration-300 hover:bg-popover">
             <img class="pointer-events-none block h-8 w-auto transition-transform duration-300 ease-in-out" src="/favicon.png" alt="Minion AH" class:rotate-45={menuDropdownOpen} class:max-md:-rotate-45={menuDropdownOpen} />
             <h1>MinionAH<span class="sr-only">: The Auction House for SkyBlock Minions</span></h1>
             <ChevronDown class="h-4 w-4" />
           </DropdownMenu.Trigger>
           <DropdownMenu.Content class="w-44 border-border bg-popover" transitionConfig={{ duration: 300 }}>
             <DropdownMenu.Group>
-              <DropdownMenu.Item class="gap-1.5 hover:cursor-pointer data-[highlighted]:bg-background" href="/">
+              <DropdownMenu.Item class="gap-1.5 transition-colors duration-300 hover:cursor-pointer data-[highlighted]:bg-background" href="/">
                 <House class="size-4" />Home
               </DropdownMenu.Item>
               <DropdownMenu.Separator class="bg-border" />
-              <DropdownMenu.Item target="_blank" class="gap-1.5 hover:cursor-pointer data-[highlighted]:bg-background" href="https://newsroom.minionah.com">
+              <DropdownMenu.Item target="_blank" class="gap-1.5 transition-colors duration-300 hover:cursor-pointer data-[highlighted]:bg-background" href="https://newsroom.minionah.com">
                 <Newspaper class="size-4" />Newsroom
               </DropdownMenu.Item>
-              <DropdownMenu.Item target="_blank" class="gap-1.5 hover:cursor-pointer data-[highlighted]:bg-background" href="https://discord.minionah.com">
+              <DropdownMenu.Item target="_blank" class="gap-1.5 transition-colors duration-300 hover:cursor-pointer data-[highlighted]:bg-background" href="https://discord.minionah.com">
                 <Users class="size-4" />Community
               </DropdownMenu.Item>
               <DropdownMenu.Separator class="bg-border" />
-              <DropdownMenu.Item target="_blank" class="gap-1.5 hover:cursor-pointer data-[highlighted]:bg-background" href="https://newsroom.minionah.com/minionah/">
+              <DropdownMenu.Item target="_blank" class="gap-1.5 transition-colors duration-300 hover:cursor-pointer data-[highlighted]:bg-background" href="https://newsroom.minionah.com/minionah/">
                 <CircleHelp class="size-4" />About
               </DropdownMenu.Item>
-              <DropdownMenu.Item target="_blank" class="gap-1.5 hover:cursor-pointer data-[highlighted]:bg-background" href="https://github.com/DarthGigi/MinionAH">
+              <DropdownMenu.Item target="_blank" class="gap-1.5 transition-colors duration-300 hover:cursor-pointer data-[highlighted]:bg-background" href="https://github.com/DarthGigi/MinionAH">
                 <Code class="size-4" /> GitHub
               </DropdownMenu.Item>
               <DropdownMenu.Separator class="bg-border" />
-              <DropdownMenu.Item target="_blank" class="gap-1.5 hover:cursor-pointer data-[highlighted]:bg-background" href="https://newsroom.minionah.com/privacy-policy">
+              <DropdownMenu.Item target="_blank" class="gap-1.5 transition-colors duration-300 hover:cursor-pointer data-[highlighted]:bg-background" href="https://newsroom.minionah.com/privacy-policy">
                 <Scale class="size-4" />Privacy Policy
               </DropdownMenu.Item>
-              <DropdownMenu.Item target="_blank" class="gap-1.5 hover:cursor-pointer data-[highlighted]:bg-background" href="https://newsroom.minionah.com/terms-of-service">
+              <DropdownMenu.Item target="_blank" class="gap-1.5 transition-colors duration-300 hover:cursor-pointer data-[highlighted]:bg-background" href="https://newsroom.minionah.com/terms-of-service">
                 <Scale class="size-4" />Terms of Service
               </DropdownMenu.Item>
             </DropdownMenu.Group>
