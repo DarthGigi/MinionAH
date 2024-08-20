@@ -24,6 +24,7 @@ export const load = (async () => {
           }
         }
       },
+      // @ts-expect-error - This isn't typed yet
       cacheStrategy: {
         ttl: 30,
         swr: 60
@@ -40,6 +41,7 @@ export const load = (async () => {
       orderBy: {
         generator: "asc"
       },
+      // @ts-expect-error - This isn't typed yet
       cacheStrategy: {
         ttl: 2629746 // 1 month
       }
@@ -49,6 +51,7 @@ export const load = (async () => {
         id: true,
         username: true
       },
+      // @ts-expect-error - This isn't typed yet
       cacheStrategy: {
         ttl: 86400, // 1 day
         swr: 60 // 1 minute
@@ -56,6 +59,34 @@ export const load = (async () => {
       orderBy: {
         loggedInAt: "desc"
       }
-    })
+    }),
+    stats: {
+      users: prisma.user.count({
+        // @ts-expect-error - This isn't typed yet
+        cacheStrategy: {
+          ttl: 86400, // 1 day
+          swr: 60 // 1 minute
+        }
+      }),
+      auctions: prisma.auction.count({
+        // @ts-expect-error - This isn't typed yet
+        cacheStrategy: {
+          ttl: 30,
+          swr: 60
+        }
+      }),
+      chats: prisma.chat.count({
+        where: {
+          messages: {
+            some: {}
+          }
+        },
+        // @ts-expect-error - This isn't typed yet
+        cacheStrategy: {
+          ttl: 43200, // 12 hours
+          swr: 60
+        }
+      })
+    }
   };
 }) as PageServerLoad;
