@@ -11,6 +11,7 @@
   import CircleHelp from "lucide-svelte/icons/circle-help";
   import Code from "lucide-svelte/icons/code";
   import Cog from "lucide-svelte/icons/cog";
+  import Handshake from "lucide-svelte/icons/handshake";
   import House from "lucide-svelte/icons/house";
   import Info from "lucide-svelte/icons/info";
   import LayoutDashboard from "lucide-svelte/icons/layout-dashboard";
@@ -49,6 +50,10 @@
               </DropdownMenu.Item>
               <DropdownMenu.Item target="_blank" class="gap-1.5 transition-colors duration-300 hover:cursor-pointer data-[highlighted]:bg-background" href="https://discord.minionah.com">
                 <Users class="size-4" />Community
+              </DropdownMenu.Item>
+              <DropdownMenu.Separator class="bg-border" />
+              <DropdownMenu.Item class="gap-1.5 transition-colors duration-300 hover:cursor-pointer data-[highlighted]:bg-background" href="/partners">
+                <Handshake class="size-4" />Partners
               </DropdownMenu.Item>
               <DropdownMenu.Separator class="bg-border" />
               <DropdownMenu.Item target="_blank" class="gap-1.5 transition-colors duration-300 hover:cursor-pointer data-[highlighted]:bg-background" href="https://newsroom.minionah.com/minionah/">
