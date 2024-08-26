@@ -1,26 +1,32 @@
 import prisma from "$lib/server/prisma";
 import type { Seller } from "$lib/types";
+import { Prisma } from "@prisma/client";
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 
 type Params = {
   take?: number;
   skip?: number;
-  orderBy?: object;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  distinct?: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  where?: any;
+  orderBy?: Prisma.AuctionOrderByWithRelationInput[];
+  distinct?: Prisma.AuctionScalarFieldEnum; // enum resolving to string
+  where?: string // resolves to Prisma.AuctionWhereInput;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function getMinions(take: number = 18, skip?: number, orderBy: object = [{ timeCreated: "desc" }, { price: "asc" }], distinct?: any, where?: any) {
+
+
+async function getMinions({
+  take = 18,
+  skip,
+  orderBy = [{ timeCreated: "desc" }, { price: "asc" }],
+  distinct,
+  where
+}: Params) {
   const minions = await prisma.auction.findMany({
     take,
     skip,
     orderBy,
     distinct,
-    where,
+    where: where ? JSON.parse(where) : undefined,
     include: {
       minion: true,
       user: {
@@ -40,7 +46,17 @@ export const GET: RequestHandler = async ({ url }) => {
   const params: Params = Object.fromEntries(new URLSearchParams(url.search));
 
   try {
-    const minions = await getMinions(Math.min(50, params.take || 18), typeof params.skip === "number" ? params.skip : parseInt(params.skip || "0"), params.orderBy, params.distinct, JSON.parse(params.where || "{}"));
+    // modify params
+    const take = Math.min(50, parseInt(`${params.take}` || "18")); // parseInt safely parses search params
+    const skip = parseInt(`${params.skip}` || "0");
+    // process request
+    const minions = await getMinions({
+      take,
+      skip,
+      orderBy: params.orderBy,
+      distinct: params.distinct,
+      where: params.where
+    });
     return json(minions);
   } catch (e) {
     console.error(e);
