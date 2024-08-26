@@ -9,20 +9,12 @@ type Params = {
   skip?: number;
   orderBy?: Prisma.AuctionOrderByWithRelationInput[];
   distinct?: Prisma.AuctionScalarFieldEnum; // enum resolving to string
-  where?: string // resolves to Prisma.AuctionWhereInput;
+  where?: string; // resolves to Prisma.AuctionWhereInput;
 };
 
-
-
-async function getMinions({
-  take = 18,
-  skip,
-  orderBy = [{ timeCreated: "desc" }, { price: "asc" }],
-  distinct,
-  where
-}: Params) {
+async function getMinions({ take = 18, skip, orderBy = [{ timeCreated: "desc" }, { price: "asc" }], distinct, where }: Params) {
   const minions = await prisma.auction.findMany({
-    take,
+    take: take,
     skip,
     orderBy,
     distinct,
@@ -47,8 +39,11 @@ export const GET: RequestHandler = async ({ url }) => {
 
   try {
     // modify params
-    const take = Math.min(50, parseInt(`${params.take}` || "18")); // parseInt safely parses search params
-    const skip = parseInt(`${params.skip}` || "0");
+    let take = Math.min(50, parseInt(`${params.take}` || "")); // parseInt safely parses string search params
+    if (isNaN(take)) take = 18; // check for Not a Number
+
+    let skip = parseInt(`${params.skip}` || "0");
+    if (isNaN(skip)) skip = 0;
     // process request
     const minions = await getMinions({
       take,
