@@ -75,6 +75,20 @@ model Key {
   @@index([user_id])
 }
 
+model Passkey {
+  id        String   @id
+  key       String
+  createdAt DateTime @default(now())
+}
+
+model PasskeyChallenge {
+  id        String   @id
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  challenge String
+  expiresAt DateTime
+}
+
 model Minion {
   id             String    @id
   name           String
