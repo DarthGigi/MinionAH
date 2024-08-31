@@ -21,7 +21,7 @@
   <Card.Content>
     <div class="flex flex-col items-center justify-center">
       <span class="mb-2 text-center text-xs text-muted-foreground"> By signing up, you agree to our <a href="https://newsroom.minionah.com/terms-of-service" target="_blank" class="underline">Terms of Service</a> and <a href="https://newsroom.minionah.com/privacy-policy" target="_blank" class="underline">Privacy Policy</a>.</span>
-      <Button data-sveltekit-preload-data="tap" href="/api/oauth" class="w-full">
+      <Button data-sveltekit-preload-data="tap" href="/api/oauth/minecraft" class="w-full">
         <img src="/assets/images/mc-auth.svg" class="pointer-events-none mr-1 h-6 w-auto" alt="Mc-Auth" />
         Sign up with MC-Auth
       </Button>

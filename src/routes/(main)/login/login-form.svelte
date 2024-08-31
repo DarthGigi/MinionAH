@@ -1,15 +1,15 @@
 <script lang="ts">
+  import { Button } from "$lib/components/ui/button";
   import * as Card from "$lib/components/ui/card";
   import * as Form from "$lib/components/ui/form";
   import { Input } from "$lib/components/ui/input";
   import LoaderCircle from "lucide-svelte/icons/loader-circle";
+  import { createEventDispatcher } from "svelte";
   import { toast } from "svelte-sonner";
   import { writable } from "svelte/store";
   import { superForm, type Infer, type SuperValidated } from "sveltekit-superforms";
   import { zodClient } from "sveltekit-superforms/adapters";
   import { formSchema, type FormSchema } from "./schema";
-  import { Button } from "$lib/components/ui/button";
-  import { createEventDispatcher } from "svelte";
 
   export let data: SuperValidated<Infer<FormSchema>>;
 
@@ -94,7 +94,7 @@
       </Form.Button>
 
       <span class="my-2 w-full text-center text-sm opacity-50">Or</span>
-      <Button href="/api/oauth" variant="outline" data-disabled={$submitting} data-sveltekit-preload-data="tap" class="data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50">
+      <Button href="/api/oauth/minecraft" variant="outline" data-disabled={$submitting} data-sveltekit-preload-data="tap" class="data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50">
         <img src="/assets/images/mc-auth.svg" class="pointer-events-none mr-1 h-6 w-auto select-none transition-opacity duration-300 group-hover:opacity-70" alt="Mc-Auth" />
         Login with MC-Auth
       </Button>

@@ -11,18 +11,30 @@ datasource db {
 }
 
 model User {
-  id           String        @id
+  id           String              @id
   sessions     Session[]
   key          Key[]
-  loggedInAt   DateTime      @default(now()) @updatedAt
-  createdAt    DateTime      @default(now())
+  loggedInAt   DateTime            @default(now()) @updatedAt
+  createdAt    DateTime            @default(now())
   syncedAt     DateTime?
-  username     String        @unique
+  username     String              @unique
   auctions     Auction[]
-  chatsAsUser1 Chat[]        @relation("user1")
-  chatsAsUser2 Chat[]        @relation("user2")
+  chatsAsUser1 Chat[]              @relation("user1")
+  chatsAsUser2 Chat[]              @relation("user2")
   messages     Message[]
   settings     UserSettings?
+  oauth        UserOAuthProvider[]
+}
+
+model UserOAuthProvider {
+  id               String    @id @unique
+  userId           String
+  provider         String
+  providerUsername String
+  syncedAt         DateTime? @default(now())
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model UserSettings {
@@ -122,14 +134,14 @@ enum MessageType {
 }
 
 model Message {
-  id        String   @id @default(cuid())
+  id        String      @id @default(cuid())
   chat_id   String
   user_id   String
   content   String
   type      MessageType @default(TEXT)
-  chat      Chat     @relation(fields: [chat_id], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
+  chat      Chat        @relation(fields: [chat_id], references: [id], onDelete: Cascade)
+  user      User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  createdAt DateTime    @default(now())
 
   @@index([chat_id])
   @@index([user_id])
