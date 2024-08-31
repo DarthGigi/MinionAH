@@ -265,7 +265,7 @@
     </Card.Header>
     <Card.Content>
       {#await data.stats.users}
-        <div class="h-12 w-20 animate-pulse rounded-lg bg-background"></div>
+        <div class="mx-auto h-12 w-20 animate-pulse rounded-lg bg-background"></div>
       {:then users}
         <NumberTicker class="w-full text-center text-3xl font-bold md:text-5xl" value={users} />
       {/await}
@@ -278,7 +278,7 @@
     </Card.Header>
     <Card.Content>
       {#await data.stats.auctions}
-        <div class="h-12 w-20 animate-pulse rounded-lg bg-background"></div>
+        <div class="mx-auto h-12 w-20 animate-pulse rounded-lg bg-background"></div>
       {:then auctions}
         <NumberTicker class="w-full text-center text-3xl font-bold md:text-5xl" value={auctions} />
       {/await}
@@ -291,7 +291,7 @@
     </Card.Header>
     <Card.Content>
       {#await data.stats.chats}
-        <div class="h-12 w-20 animate-pulse rounded-lg bg-background"></div>
+        <div class="mx-auto h-12 w-20 animate-pulse rounded-lg bg-background"></div>
       {:then chats}
         <NumberTicker class="w-full text-center text-3xl font-bold md:text-5xl" value={chats} />
       {/await}
