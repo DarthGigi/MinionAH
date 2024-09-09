@@ -1,5 +1,5 @@
 import { dev } from "$app/environment";
-import { ADMIN_ID, MAINTENANCE_MODE, RATE_LIMIT_SECRET } from "$env/static/private";
+import { ADMIN_ID, DISCORD_BOT_API_SECRET, MAINTENANCE_MODE, RATE_LIMIT_SECRET } from "$env/static/private";
 import { PUBLIC_SENTRY_DSN } from "$env/static/public";
 import { lucia } from "$lib/server/lucia";
 import prisma from "$lib/server/prisma";
@@ -39,7 +39,7 @@ export const handle: Handle = sequence(sentryHandle(), async ({ event, resolve }
     redirect(303, "https://maintenance.minionah.com");
   }
 
-  if (!dev) {
+  if (!dev || event.request.headers.get("Authorization") !== DISCORD_BOT_API_SECRET) {
     await limiter.cookieLimiter?.preflight(event);
 
     const status = await limiter.check(event);
