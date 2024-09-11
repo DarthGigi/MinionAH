@@ -261,16 +261,16 @@ export const actions = {
         })
         .then(async (res) => {
           if (res.status === 200) {
-            await prisma.message.create({
+            await Promise.all([
+              prisma.message.create({
               data: {
                 chat_id: chat!.id,
                 content: messageJSON.content,
                 user_id: user.id,
                 type: messageType
               }
-            });
-
-            await prisma.chat.update({
+              }),
+              prisma.chat.update({
               where: {
                 id: chat!.id
               },
@@ -278,7 +278,8 @@ export const actions = {
                 user1Read: user.id === chat!.user1_id ? chat!.user1Read : false,
                 user2Read: user.id === chat!.user2_id ? chat!.user2Read : false
               }
-            });
+              })
+            ]);
           }
         })
         .catch((err) => {
