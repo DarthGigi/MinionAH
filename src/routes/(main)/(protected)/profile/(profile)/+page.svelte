@@ -332,11 +332,7 @@
         </Card.Root>
       </form>
     {:else}
-      <div class="space-y-8 divide-y divide-secondary rounded-lg bg-background px-6 py-8 text-primary">
-        <div class="space-y-8 divide-y divide-secondary">
-          <div>You can't have more than 9 minions on the AH. Delete a few in order to make a new one</div>
-        </div>
-      </div>
+      <div class="rounded-lg border border-border bg-popover p-6 text-primary">You can't have more than 18 active auctions. Delete a few in order to make a new one</div>
     {/if}
   {/await}
 </div>
