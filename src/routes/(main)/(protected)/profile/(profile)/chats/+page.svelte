@@ -67,8 +67,8 @@
 
 <div class="py-8 max-md:pb-20">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-    <div role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {#await data.streamed.chats then chats}
+    {#await data.streamed.chats then chats}
+      <div role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {#each chats as chat}
           {@const chatUser = chat.user1_id === data.user?.id ? chat.user2 : chat.user1}
           {@const read = checkReadStatus(chat, data.user?.id)}
@@ -116,11 +116,11 @@
             </div>
           </div>
         {/each}
-        {#if chats.length === 0}
-          <p class="text-muted-foreground">You have no chats yet.</p>
-        {/if}
-      {/await}
-    </div>
+      </div>
+      {#if chats.length === 0}
+        <p class="w-full text-center text-muted-foreground">You have no chats yet.</p>
+      {/if}
+    {/await}
   </div>
 </div>
 
