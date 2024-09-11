@@ -45,14 +45,16 @@ export const PUT: RequestHandler = async ({ locals, params }) => {
     }
 
     let unreadChats: number = 0;
-    if ((user.id === chat.user1_id && !chat.user1Read) || (user.id === chat.user2_id && !chat.user2Read)) {
+    if ((user.id === chat.user1_id && !chat.user1Read) || (user.id === chat.user2_id && !chat.user2Read) || (user.id === chat.user1_id && chat.user1Emailed) || (user.id === chat.user2_id && chat.user2Emailed)) {
       const updatedChat = await prisma.chat.update({
         where: {
           id: chat.id
         },
         data: {
           user1Read: user.id === chat.user1_id ? true : chat.user1Read,
-          user2Read: user.id === chat.user2_id ? true : chat.user2Read
+          user2Read: user.id === chat.user2_id ? true : chat.user2Read,
+          user1Emailed: user.id === chat.user1_id ? false : chat.user1Emailed,
+          user2Emailed: user.id === chat.user2_id ? false : chat.user2Emailed
         }
       });
 
