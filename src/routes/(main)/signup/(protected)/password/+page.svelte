@@ -25,7 +25,7 @@
 
   timeout.subscribe((value) => {
     if (value) {
-      toast.loading("It's taking longer than expected to  create your account...", {
+      toast.loading("It's taking longer than expected to create your account...", {
         id: $toastLoading
       });
     }
