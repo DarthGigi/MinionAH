@@ -1,8 +1,8 @@
-import { lucia } from "$lib/server/lucia";
+import { invalidateSession } from "$lib/server/lucia/auth";
 import type { RequestHandler } from "./$types";
 
 export const GET: RequestHandler = async ({ locals, cookies }) => {
-  await lucia.invalidateSession(locals.session!.id);
+  await invalidateSession(locals.session!.id);
   locals.user = null;
   locals.session = null;
 

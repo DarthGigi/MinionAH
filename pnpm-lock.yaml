@@ -11,6 +11,12 @@ importers:
       '@node-rs/argon2':
         specifier: ^2.0.0
         version: 2.0.0
+      '@oslojs/crypto':
+        specifier: ^1.0.1
+        version: 1.0.1
+      '@oslojs/encoding':
+        specifier: ^1.1.0
+        version: 1.1.0
       '@oslojs/oauth2':
         specifier: ^0.5.0
         version: 0.5.0
@@ -129,9 +135,6 @@ importers:
       '@jill64/universal-sanitizer':
         specifier: ^1.3.3
         version: 1.3.3
-      '@lucia-auth/adapter-prisma':
-        specifier: 4.0.1
-        version: 4.0.1(@prisma/client@5.21.0(prisma@5.21.0))(lucia@3.2.1)
       '@sveltejs/adapter-vercel':
         specifier: ^5.4.5
         version: 5.4.5(@sveltejs/kit@2.7.1(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@5.4.9(@types/node@22.7.5)))(svelte@4.2.19)(vite@5.4.9(@types/node@22.7.5)))(encoding@0.1.13)
@@ -1071,12 +1074,6 @@ packages:
 
   '@js-sdsl/ordered-map@4.4.2':
     resolution: {integrity: sha512-iUKgm52T8HOE/makSxjqoWhe95ZJA1/G1sYsGev2JDKUSS14KAgg1LHb+Ba+IPow0xflbnSkOsZcO08C7w1gYw==}
-
-  '@lucia-auth/adapter-prisma@4.0.1':
-    resolution: {integrity: sha512-3SztRhj1RAHbbhI/0aB7YC5zl6Z6aktPhkWpn2CHhiB03B9x/+A+M6pqJuAt1usU8PzkjVilgRPhrPymMar66A==}
-    peerDependencies:
-      '@prisma/client': ^4.2.0 || ^5.0.0
-      lucia: 3.x
 
   '@mapbox/node-pre-gyp@1.0.11':
     resolution: {integrity: sha512-Yhlar6v9WQgUp/He7BdgzOz8lqMQ8sU+jkCq7Wx8Myc5YFJLbEe7lgui/V7G1qB1DJykHSGwreceSaD60Y0PUQ==}
@@ -5505,11 +5502,6 @@ snapshots:
 
   '@js-sdsl/ordered-map@4.4.2':
     optional: true
-
-  '@lucia-auth/adapter-prisma@4.0.1(@prisma/client@5.21.0(prisma@5.21.0))(lucia@3.2.1)':
-    dependencies:
-      '@prisma/client': 5.21.0(prisma@5.21.0)
-      lucia: 3.2.1
 
   '@mapbox/node-pre-gyp@1.0.11(encoding@0.1.13)':
     dependencies:

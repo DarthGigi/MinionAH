@@ -1,4 +1,5 @@
-import { lucia } from "$lib/server/lucia";
+import { createSession, generateSessionToken } from "$lib/server/lucia/auth";
+import { setSessionTokenCookie } from "$lib/server/lucia/cookies";
 import { hash, verify, type Options } from "@node-rs/argon2";
 import { fail, redirect } from "@sveltejs/kit";
 import { LegacyScrypt } from "lucia";
@@ -70,12 +71,10 @@ export const actions: Actions = {
         });
       }
 
-      const session = await lucia.createSession(key?.user_id, {});
-      const sessionCookie = lucia.createSessionCookie(session.id);
-      cookies.set(sessionCookie.name, sessionCookie.value, {
-        ...sessionCookie.attributes,
-        path: sessionCookie.attributes.path || "/"
-      });
+      const token = generateSessionToken();
+      const session = await createSession(token, key?.user_id);
+
+      setSessionTokenCookie(cookies, token, session.expiresAt);
     } catch (e) {
       console.error(e);
       return message(
