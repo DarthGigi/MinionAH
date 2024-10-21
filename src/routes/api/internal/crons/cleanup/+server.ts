@@ -1,5 +1,4 @@
 import { CRON_SECRET } from "$env/static/private";
-import { lucia } from "$lib/server/lucia";
 import { captureCheckIn } from "@sentry/sveltekit";
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
@@ -26,7 +25,14 @@ export const GET: RequestHandler = async ({ request }) => {
   }
 
   try {
-    await lucia.deleteExpiredSessions();
+    await prisma.session.deleteMany({
+      where: {
+        expiresAt: {
+          lt: new Date()
+        }
+      }
+    });
+
     captureCheckIn({
       checkInId,
       monitorSlug: "cleanup",

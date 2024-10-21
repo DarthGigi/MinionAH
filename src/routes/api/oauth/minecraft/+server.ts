@@ -1,6 +1,7 @@
 import { dev } from "$app/environment";
 import { CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET, CLOUDINARY_CLOUD_NAME, MC_AUTH_CLIENT_ID, MC_AUTH_CLIENT_SECRET, MC_AUTH_REDIRECT_URI } from "$env/static/private";
-import { lucia } from "$lib/server/lucia";
+import { createSession, generateSessionToken } from "$lib/server/lucia/auth";
+import { setSessionTokenCookie } from "$lib/server/lucia/cookies";
 import { getMcAuthInfo } from "$lib/server/minecraft";
 import { TokenRequestResult } from "@oslojs/oauth2";
 import { Prisma } from "@prisma/client";
@@ -181,12 +182,10 @@ export const GET = (async ({ cookies, locals, fetch, url }) => {
       error(500, "Failed to create account");
     }
 
-    const session = await lucia.createSession(user.id, {});
-    const sessionCookie = lucia.createSessionCookie(session.id);
-    cookies.set(sessionCookie.name, sessionCookie.value, {
-      ...sessionCookie.attributes,
-      path: sessionCookie.attributes.path || "/"
-    });
+    const token = generateSessionToken();
+    const session = await createSession(token, user.id);
+    setSessionTokenCookie(cookies, token, session.expiresAt);
+
     locals.session = session;
   } catch (e) {
     console.error(e);
