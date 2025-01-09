@@ -308,7 +308,7 @@
                   </div>
                 </div>
               </div>
-              <Collapsible.Root open={true} class="flex flex-col items-center gap-y-2">
+              <Collapsible.Root class="flex flex-col items-center gap-y-2">
                 <Collapsible.Trigger class="flex items-center justify-between gap-2 rounded-lg border border-border px-6 py-2 transition-colors duration-300 hover:bg-background ">
                   Minion Upgrades <ChevronsUpDown class="size-5" />
                 </Collapsible.Trigger>
