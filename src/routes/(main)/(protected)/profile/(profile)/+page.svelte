@@ -13,15 +13,15 @@
   import { Input } from "$lib/components/ui/input";
   import { Label } from "$lib/components/ui/label";
   import { Switch } from "$lib/components/ui/switch";
-  import { formatNumber } from "$lib/utilities";
+  import NumberFlow, { NumberFlowGroup } from "@number-flow/svelte";
   import type { Auction, Minion, User } from "@prisma/client";
   import ChevronsUpDown from "lucide-svelte/icons/chevrons-up-down";
   import LoaderCircle from "lucide-svelte/icons/loader-circle";
-  import { parse } from "numerable";
   import * as skinview3d from "skinview3d";
   import { onMount } from "svelte";
   import { toast } from "svelte-sonner";
   import { writable } from "svelte/store";
+  import { slide } from "svelte/transition";
   import { superForm } from "sveltekit-superforms";
   import { zodClient } from "sveltekit-superforms/adapters";
   import type { PageData } from "../$types";
@@ -299,9 +299,15 @@
                           }} />
 
                         {#if Number($formDataCreate.price) >= 1000}
-                          <Form.Description>{parse($formDataCreate.price)} = {formatNumber($formDataCreate.price)}</Form.Description>
+                          <div transition:slide>
+                            <Form.Description>
+                              <NumberFlowGroup>
+                                <NumberFlow value={$formDataCreate.price} format={{ notation: "standard" }} suffix=" =" />
+                                <NumberFlow value={$formDataCreate.price} format={{ notation: "compact", maximumFractionDigits: 2, roundingMode: "halfCeil" }} />
+                              </NumberFlowGroup>
+                            </Form.Description>
+                          </div>
                         {/if}
-
                         <Form.FieldErrors />
                       </Form.Control>
                     </Form.Field>
