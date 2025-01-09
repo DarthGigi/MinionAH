@@ -8,19 +8,20 @@
   import * as AlertDialog from "$lib/components/ui/alert-dialog";
   import { Button } from "$lib/components/ui/button";
   import * as Card from "$lib/components/ui/card";
+  import * as Collapsible from "$lib/components/ui/collapsible";
   import * as Form from "$lib/components/ui/form";
   import { Input } from "$lib/components/ui/input";
   import { Label } from "$lib/components/ui/label";
   import { Switch } from "$lib/components/ui/switch";
-  import { formatNumber } from "$lib/utilities";
+  import NumberFlow, { NumberFlowGroup } from "@number-flow/svelte";
   import type { Auction, Minion, User } from "@prisma/client";
   import ChevronsUpDown from "lucide-svelte/icons/chevrons-up-down";
   import LoaderCircle from "lucide-svelte/icons/loader-circle";
-  import { parse } from "numerable";
   import * as skinview3d from "skinview3d";
   import { onMount } from "svelte";
   import { toast } from "svelte-sonner";
   import { writable } from "svelte/store";
+  import { slide } from "svelte/transition";
   import { superForm } from "sveltekit-superforms";
   import { zodClient } from "sveltekit-superforms/adapters";
   import type { PageData } from "../$types";
@@ -298,26 +299,50 @@
                           }} />
 
                         {#if Number($formDataCreate.price) >= 1000}
-                          <Form.Description>{parse($formDataCreate.price)} = {formatNumber($formDataCreate.price)}</Form.Description>
+                          <div transition:slide>
+                            <Form.Description>
+                              <NumberFlowGroup>
+                                <NumberFlow value={$formDataCreate.price} format={{ notation: "standard" }} suffix=" =" />
+                                <NumberFlow value={$formDataCreate.price} format={{ notation: "compact", maximumFractionDigits: 2, roundingMode: "halfCeil" }} />
+                              </NumberFlowGroup>
+                            </Form.Description>
+                          </div>
                         {/if}
-
                         <Form.FieldErrors />
                       </Form.Control>
                     </Form.Field>
                   </div>
                 </div>
               </div>
-              <div class="flex gap-4">
-                <Form.Field form={formCreate} name="infusion" class="flex flex-row items-center justify-between gap-6 rounded-lg border border-input bg-background p-4">
-                  <Form.Control let:attrs>
-                    <div class="select-none space-y-0.5">
-                      <Form.Label>Mithril Infused</Form.Label>
-                      <Form.Description><a href="https://hypixel-skyblock.fandom.com/wiki/Mithril_Infusion" target="_blank" class="underline underline-offset-2">Mithril Infusion</a> is a minion upgrade which <br /> increases a minion's speed by 10% permanently.</Form.Description>
-                    </div>
-                    <Switch includeInput {...attrs} bind:checked={$formDataCreate.infusion} />
-                  </Form.Control>
-                </Form.Field>
-              </div>
+              <Collapsible.Root class="flex flex-col items-center gap-y-2">
+                <Collapsible.Trigger class="flex items-center justify-between gap-2 rounded-lg border border-border px-6 py-2 transition-colors duration-300 hover:bg-background ">
+                  Minion Upgrades <ChevronsUpDown class="size-5" />
+                </Collapsible.Trigger>
+                <Collapsible.Content class="mt-4 flex w-full flex-col items-center justify-center gap-4">
+                  <div class="flex gap-4">
+                    <Form.Field form={formCreate} name="infusion" class="flex flex-row items-center justify-between gap-6 rounded-lg border border-input bg-background p-4">
+                      <Form.Control let:attrs>
+                        <div class="select-none space-y-0.5">
+                          <Form.Label>Mithril Infused</Form.Label>
+                          <Form.Description><a href="https://hypixel-skyblock.fandom.com/wiki/Mithril_Infusion" target="_blank" class="underline underline-offset-2">Mithril Infusion</a> is a minion upgrade which <br /> increases a minion's speed by 10% permanently.</Form.Description>
+                        </div>
+                        <Switch includeInput {...attrs} bind:checked={$formDataCreate.infusion} />
+                      </Form.Control>
+                    </Form.Field>
+                  </div>
+                  <div class="flex gap-4">
+                    <Form.Field form={formCreate} name="free-will" class="flex flex-row items-center justify-between gap-6 rounded-lg border border-input bg-background p-4">
+                      <Form.Control let:attrs>
+                        <div class="select-none space-y-0.5">
+                          <Form.Label>Free Will</Form.Label>
+                          <Form.Description><a href="https://hypixel-skyblock.fandom.com/wiki/Free_Will" target="_blank" class="underline underline-offset-2">Free Will</a> is a minion upgrade which <br /> increases a minion's speed by 10% permanently.</Form.Description>
+                        </div>
+                        <Switch includeInput {...attrs} bind:checked={$formDataCreate["free-will"]} />
+                      </Form.Control>
+                    </Form.Field>
+                  </div>
+                </Collapsible.Content>
+              </Collapsible.Root>
             </div>
           </Card.Content>
           <Card.Footer class="justify-end">

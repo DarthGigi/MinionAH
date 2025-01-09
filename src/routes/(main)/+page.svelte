@@ -1,17 +1,17 @@
 <script lang="ts">
+  import { MinionCard } from "$lib/components/card";
   import CardLoading from "$lib/components/CardLoading.svelte";
   import HtmlToast from "$lib/components/HtmlToast.svelte";
+  import AnimatedShinyText from "$lib/components/magicui/animated-shiny-text.svelte";
   import MinionsListBox from "$lib/components/MinionsListBox.svelte";
+  import NumberFlowTicker from "$lib/components/NumberFlowTicker.svelte";
   import SearchSelect, { SearchType } from "$lib/components/SearchSelect.svelte";
   import TierListbox from "$lib/components/TierListbox.svelte";
-  import UsersListBox from "$lib/components/UsersListBox.svelte";
-  import { MinionCard } from "$lib/components/card";
-  import AnimatedShinyText from "$lib/components/magicui/animated-shiny-text.svelte";
-  import NumberTicker from "$lib/components/magicui/number-ticker.svelte";
   import { Button } from "$lib/components/ui/button";
   import * as Card from "$lib/components/ui/card";
   import * as Collapsible from "$lib/components/ui/collapsible";
   import { Label } from "$lib/components/ui/label";
+  import UsersListBox from "$lib/components/UsersListBox.svelte";
   import { internalPreferences, preferences } from "$lib/stores/preferences";
   import { searchSignal } from "$lib/stores/signals";
   import type { Seller } from "$lib/types";
@@ -269,11 +269,11 @@
       <Users class="h-4 w-4 text-muted-foreground" />
       <Card.Title class="text-sm font-medium">Users</Card.Title>
     </Card.Header>
-    <Card.Content>
+    <Card.Content class="py-3">
       {#await data.stats.users}
         <div class="mx-auto h-12 w-20 animate-pulse rounded-lg bg-background"></div>
       {:then users}
-        <NumberTicker class="w-full text-center text-3xl font-bold md:text-5xl" value={users} duration={3500} />
+        <NumberFlowTicker class="w-full text-center text-3xl font-bold md:text-5xl" value={users} duration={3500} />
       {/await}
     </Card.Content>
   </Card.Root>
@@ -282,11 +282,11 @@
       <LayoutGrid class="h-4 w-4 text-muted-foreground" />
       <Card.Title class="text-sm font-medium">Auctions</Card.Title>
     </Card.Header>
-    <Card.Content>
+    <Card.Content class="py-3">
       {#await data.stats.auctions}
         <div class="mx-auto h-12 w-20 animate-pulse rounded-lg bg-background"></div>
       {:then auctions}
-        <NumberTicker class="w-full text-center text-3xl font-bold md:text-5xl" value={auctions} duration={3500} />
+        <NumberFlowTicker class="w-full text-center text-3xl font-bold md:text-5xl" value={auctions} duration={3500} />
       {/await}
     </Card.Content>
   </Card.Root>
@@ -295,11 +295,11 @@
       <MessagesSquare class="h-4 w-4 text-muted-foreground" />
       <Card.Title class="text-sm font-medium">Chats</Card.Title>
     </Card.Header>
-    <Card.Content>
+    <Card.Content class="py-3">
       {#await data.stats.chats}
         <div class="mx-auto h-12 w-20 animate-pulse rounded-lg bg-background"></div>
       {:then chats}
-        <NumberTicker class="w-full text-center text-3xl font-bold md:text-5xl" value={chats} duration={3500} />
+        <NumberFlowTicker class="w-full text-center text-3xl font-bold md:text-5xl" value={chats} duration={3500} />
       {/await}
     </Card.Content>
   </Card.Root>

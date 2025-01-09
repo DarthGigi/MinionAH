@@ -8,5 +8,14 @@
       "path": "/api/internal/crons/cleanup",
       "schedule": "0 0 * * *"
     }
+  ],
+  "headers": [
+    {
+      "source": "/favicon.png",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Cache-Control", "value": "public, max-age=604800, immutable" }
+      ]
+    }
   ]
 }
