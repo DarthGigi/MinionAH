@@ -82,6 +82,7 @@ export const actions = {
           amount: formCreate.data.amount,
           price: Number(formCreate.data.price),
           hasInfusion: formCreate.data.infusion,
+          hasFreeWill: formCreate.data["free-will"],
           user: {
             connect: {
               id: user!.id

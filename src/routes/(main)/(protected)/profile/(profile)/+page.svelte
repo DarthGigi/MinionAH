@@ -318,6 +318,17 @@
                   </Form.Control>
                 </Form.Field>
               </div>
+              <div class="flex gap-4">
+                <Form.Field form={formCreate} name="free-will" class="flex flex-row items-center justify-between gap-6 rounded-lg border border-input bg-background p-4">
+                  <Form.Control let:attrs>
+                    <div class="select-none space-y-0.5">
+                      <Form.Label>Free Will</Form.Label>
+                      <Form.Description><a href="https://hypixel-skyblock.fandom.com/wiki/Free_Will" target="_blank" class="underline underline-offset-2">Free Will</a> is a minion upgrade which <br /> increases a minion's speed by 10% permanently.</Form.Description>
+                    </div>
+                    <Switch includeInput {...attrs} bind:checked={$formDataCreate["free-will"]} />
+                  </Form.Control>
+                </Form.Field>
+              </div>
             </div>
           </Card.Content>
           <Card.Footer class="justify-end">

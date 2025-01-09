@@ -4,6 +4,7 @@
   import * as Tooltip from "$lib/components/ui/tooltip";
   import { chatSignal } from "$lib/stores/signals";
   import type { Seller } from "$lib/types";
+  import { cn } from "$lib/utils";
   import Eye from "lucide-svelte/icons/eye";
   import Trash2 from "lucide-svelte/icons/trash-2";
   import { createEventDispatcher, setContext } from "svelte";
@@ -80,6 +81,16 @@
       </Tooltip.Trigger>
       <Tooltip.Content class="border-border bg-popover text-popover-foreground">
         <p>Mithril Infused</p>
+      </Tooltip.Content>
+    </Tooltip.Root>
+  {/if}
+  {#if minion.hasFreeWill}
+    <Tooltip.Root openDelay={100} closeDelay={0}>
+      <Tooltip.Trigger class={cn("absolute right-2 m-0 flex items-center justify-center rounded-lg !border-0 bg-accent p-1.5 transition-all duration-300 group-hover:bg-opacity-0", minion.hasInfusion ? "top-12" : "top-2")}>
+        <img class="pointer-events-none h-full w-5" src="/assets/images/freewill.png" alt="Free Will" />
+      </Tooltip.Trigger>
+      <Tooltip.Content class="border-border bg-popover text-popover-foreground">
+        <p>Free Will</p>
       </Tooltip.Content>
     </Tooltip.Root>
   {/if}
