@@ -302,8 +302,8 @@
                           <div transition:slide>
                             <Form.Description>
                               <NumberFlowGroup>
-                                <NumberFlow value={$formDataCreate.price} format={{ notation: "standard" }} suffix=" =" />
-                                <NumberFlow value={$formDataCreate.price} format={{ notation: "compact", maximumFractionDigits: 2, roundingMode: "halfCeil" }} />
+                                <NumberFlow value={$formDataCreate.price} format={{ notation: "standard" }} suffix=" =" locales={["en"]} />
+                                <NumberFlow value={$formDataCreate.price} format={{ notation: "compact", maximumFractionDigits: 2, roundingMode: "halfCeil" }} locales={["en"]} />
                               </NumberFlowGroup>
                             </Form.Description>
                           </div>

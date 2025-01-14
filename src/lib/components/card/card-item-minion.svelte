@@ -104,7 +104,7 @@
           })}
           <Tooltip.Root openDelay={100} closeDelay={0}>
             <Tooltip.Trigger class="cursor-help text-[#FEFF55]">
-              <p class="text-wrap text-left">Raw Craft Cost: <NumberFlow class="inline text-[#FEAB00]" format={{ notation: "compact", maximumFractionDigits: 2, roundingMode: "halfCeil" }} value={$cost} suffix=" coins" /></p>
+              <p class="text-wrap text-left">Raw Craft Cost: <NumberFlow class="inline text-[#FEAB00]" format={{ notation: "compact", maximumFractionDigits: 2, roundingMode: "halfCeil" }} value={$cost} suffix=" coins" locales={["en"]} /></p>
             </Tooltip.Trigger>
             <Tooltip.Content class="border-accent bg-muted text-primary">
               <p>Raw Craft Cost is <span class="underline">not</span> 100% accurate.</p>
