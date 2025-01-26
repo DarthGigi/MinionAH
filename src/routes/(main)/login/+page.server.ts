@@ -1,12 +1,16 @@
+import { dev } from "$app/environment";
+import { MC_AUTH_CLIENT_ID, MC_AUTH_CLIENT_SECRET, MC_AUTH_REDIRECT_URI } from "$env/static/private";
 import { createSession, generateSessionToken } from "$lib/server/lucia/auth";
 import { setSessionTokenCookie } from "$lib/server/lucia/cookies";
+import { parseMinecraftProfile } from "$lib/server/minecraft";
+import { getMcAuthUser } from "$lib/server/signup";
 import { hash, verify, type Options } from "@node-rs/argon2";
 import { fail, redirect } from "@sveltejs/kit";
 import { LegacyScrypt } from "lucia";
 import { message, superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
 import type { Actions, PageServerLoad } from "./$types";
-import { formSchema } from "./schema";
+import { loginFormSchema, mcLoginFormSchema, signupFormSchema } from "./schema";
 
 const hashOptions = {
   // recommended minimum parameters
@@ -16,15 +20,41 @@ const hashOptions = {
   parallelism: 1
 } satisfies Options;
 
+async function mcAuthLogin(code: string, username: string) {
+  const mc_id = (await (await fetch(`https://api.mojang.com/users/profiles/minecraft/${username}`)).json()).id;
+
+  const response = await fetch("https://mc-auth.com/oAuth2/alternate-code-exchange", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      client_id: MC_AUTH_CLIENT_ID,
+      client_secret: MC_AUTH_CLIENT_SECRET,
+      code,
+      redirect_uri: dev ? "http://localhost:5173/api/oauth/minecraft" : MC_AUTH_REDIRECT_URI,
+      grant_type: "authorization_code",
+      mc_id
+    })
+  });
+
+  const minecraftUser = await parseMinecraftProfile(response);
+
+  const user = await getMcAuthUser(minecraftUser);
+  return user;
+}
+
 export const load = (async () => {
   return {
-    form: await superValidate(zod(formSchema))
+    loginForm: await superValidate(zod(loginFormSchema)),
+    mcLoginForm: await superValidate(zod(mcLoginFormSchema)),
+    signupForm: await superValidate(zod(signupFormSchema))
   };
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
-  default: async ({ request, cookies }) => {
-    const form = await superValidate(request, zod(formSchema));
+  login: async ({ request, cookies }) => {
+    const form = await superValidate(request, zod(loginFormSchema));
 
     if (!form.valid) return fail(400, { form });
 
@@ -86,5 +116,71 @@ export const actions: Actions = {
       );
     }
     redirect(302, "/profile");
+  },
+  mclogin: async ({ request, cookies }) => {
+    const form = await superValidate(request, zod(mcLoginFormSchema));
+
+    if (!form.valid) return fail(400, { form });
+
+    try {
+      const key = await prisma.key.findFirst({
+        where: {
+          id: `username:${form.data.mcloginusername.toLowerCase()}`
+        }
+      });
+
+      if (!key) {
+        return message(
+          form,
+          { title: "Failed to log you in", description: "The username you entered is incorrect. Please try again." },
+          {
+            status: 400
+          }
+        );
+      }
+    } catch (e) {
+      console.error(e);
+      return message(
+        form,
+        { title: "Unable to log you in", description: "We could not log you in due to a technical issue on our end. Please try again. <br/>If this issue keeps happening, please contact us." },
+        {
+          status: 500
+        }
+      );
+    }
+
+    try {
+      const user = await mcAuthLogin(form.data.logincode, form.data.mcloginusername);
+
+      const token = generateSessionToken();
+      const session = await createSession(token, user.id);
+
+      setSessionTokenCookie(cookies, token, session.expiresAt);
+    } catch (e) {
+      console.error(e);
+      return fail(500, { form });
+    }
+
+    redirect(302, "/profile");
+  },
+  signup: async ({ request, cookies, locals }) => {
+    const form = await superValidate(request, zod(signupFormSchema));
+
+    if (!form.valid) return fail(400, { form });
+
+    try {
+      const user = await mcAuthLogin(form.data.code, form.data.mcusername);
+
+      const token = generateSessionToken();
+      const session = await createSession(token, user.id);
+      setSessionTokenCookie(cookies, token, session.expiresAt);
+
+      locals.session = session;
+    } catch (e) {
+      console.error(e);
+      return fail(500, { form });
+    }
+
+    redirect(302, "/signup/password");
   }
 };

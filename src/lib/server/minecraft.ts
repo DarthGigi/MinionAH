@@ -1,4 +1,4 @@
-type MCAuthProfile = {
+export type MCAuthProfile = {
   id: string;
   name: string;
   properties: {
@@ -40,24 +40,26 @@ export async function getMinecraftInfo(uuid: string): Promise<MCAuthProfile> {
   return await parseMinecraftProfile(res);
 }
 
-async function parseMinecraftProfile(res: Response) {
+export async function parseMinecraftProfile(res: Response) {
   if (res.status != 200) {
     console.error(res.status, res.statusText);
     throw new Error("Error getting MC profile");
   }
   const body = await res.json();
-  const propertiesValueJSON = JSON.parse(Buffer.from(body.properties[0].value, "base64").toString("utf-8"));
+  const data = body.profile ?? body;
+  const properties = data.properties;
+  const propertiesValueJSON = JSON.parse(Buffer.from(properties[0].value, "base64").toString("utf-8"));
   return {
-    id: body.id,
-    name: body.name,
+    id: data.id,
+    name: data.name,
     properties: [
       {
-        name: body.properties[0].name,
+        name: properties[0].name,
         value: propertiesValueJSON,
-        signature: body.properties[0].signature
+        signature: properties[0].signature
       }
     ],
-    profileActions: body.profileActions,
-    legacy: body.legacy
+    profileActions: data.profileActions,
+    legacy: data.legacy
   };
 }
