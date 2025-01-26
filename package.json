@@ -18,7 +18,8 @@
     "prisma:db:push:dev": "dotenv -e .env.development -- prisma db push",
     "prisma:db:push": "prisma db push",
     "prisma:studio:dev": "dotenv -e .env.development -- prisma studio",
-    "prisma:studio": "prisma studio"
+    "prisma:studio": "prisma studio",
+    "prepare": "svelte-kit sync"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
@@ -108,8 +109,9 @@
     "tailwind-variants": "^0.2.1"
   },
   "engines": {
-    "node": "^20",
-    "pnpm": "^9",
+    "node": "^22",
+    "pnpm": "^10",
+    "deno": "forbidden, use node instead",
     "npm": "forbidden, use pnpm instead",
     "yarn": "forbidden, use pnpm instead",
     "bun": "forbidden, use pnpm instead"
