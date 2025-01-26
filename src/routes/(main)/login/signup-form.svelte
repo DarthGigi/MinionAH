@@ -26,7 +26,7 @@
     validationMethod: "oninput"
   });
 
-  const { form: formData, enhance, tainted, isTainted, submitting, timeout } = form;
+  const { form: formData, enhance, tainted, isTainted, submitting, timeout, errors } = form;
 
   const toastLoading = writable<number | string>();
 
@@ -76,7 +76,11 @@
           <Form.Label for="mcusername">Username</Form.Label>
           <Form.Description>This is your <span class="font-semibold">Minecraft</span> username.</Form.Description>
           <Input {...attrs} bind:value={$formData.mcusername} maxlength={16} type="text" class="border-2 border-accent transition-all duration-300 focus:border-muted-foreground focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[invalid]:border-destructive/40 focus:data-[invalid]:border-destructive" autocomplete="username" name="mcusername" id="mcusername" />
-          <Form.FieldErrors />
+          <div class="text-sm font-medium text-destructive">
+            {#if $errors.mcusername?.length}
+              <div>{$errors.mcusername[0]}</div>
+            {/if}
+          </div>
         </Form.Control>
       </Form.Field>
       <Form.Field {form} name="code">
