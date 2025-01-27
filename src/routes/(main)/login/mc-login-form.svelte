@@ -100,7 +100,7 @@
                 <p>Click to copy</p>
               </Tooltip.Content>
             </Tooltip.Root>You'll get kicked from the server and provided with an code</Form.Description>
-          <Input {...attrs} bind:value={$formData.logincode} maxlength={16} type="text" class="border-2 border-accent transition-all duration-300 focus:border-muted-foreground focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[invalid]:border-destructive/40 focus:data-[invalid]:border-destructive" name="logincode" id="logincode" />
+          <Input {...attrs} bind:value={$formData.logincode} maxlength={16} type="text" class="border-2 border-accent transition-all duration-300 focus:border-muted-foreground focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[invalid]:border-destructive/40 focus:data-[invalid]:border-destructive" name="logincode" id="logincode" on:keydown={(e) => e.code === "Space" && e.preventDefault()} />
           <Form.FieldErrors />
         </Form.Control>
       </Form.Field>
