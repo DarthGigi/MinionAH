@@ -29,12 +29,16 @@ export const GET: RequestHandler = async ({ request, fetch }) => {
   try {
     const minions: Record<string, number> = await fetch("/api/craftcost/minions").then((r) => r.json());
 
+    console.info("Minion prices fetched", minions);
+
     const bulkUpdates: BulkUpdateEntries = Object.keys(minions).map((minion) => {
       return {
         id: minion,
         craftCost: minions[minion]
       };
     });
+
+    console.info("Minion prices to update", bulkUpdates);
 
     const [response] = await prisma.$transaction([bulkUpdate("Minion", bulkUpdates, "double precision")]);
 
