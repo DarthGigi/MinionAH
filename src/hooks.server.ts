@@ -1,5 +1,5 @@
 import { dev } from "$app/environment";
-import { ADMIN_ID, MAINTENANCE_MODE, RATE_LIMIT_SECRET } from "$env/static/private";
+import { ADMIN_ID, CRON_SECRET, MAINTENANCE_MODE, RATE_LIMIT_SECRET } from "$env/static/private";
 import { PUBLIC_SENTRY_DSN } from "$env/static/public";
 import { validateSessionToken } from "$lib/server/lucia/auth";
 import { deleteSessionTokenCookie, setSessionTokenCookie } from "$lib/server/lucia/cookies";
@@ -24,12 +24,12 @@ init({
 });
 
 const limiter = new RetryAfterRateLimiter({
-  IP: [60, "15m"],
-  IPUA: [40, "m"],
+  IP: [100, "15m"],
+  IPUA: [60, "m"],
   cookie: {
     name: "limiterid",
     secret: RATE_LIMIT_SECRET,
-    rate: [15, "10s"],
+    rate: [30, "10s"],
     preflight: true
   }
 });
@@ -44,7 +44,7 @@ export const handle: Handle = sequence(sentryHandle(), async ({ event, resolve }
     redirect(303, "https://maintenance.minionah.com");
   }
 
-  if (!dev) {
+  if (event.request.headers.get("Authorization") !== `Bearer ${CRON_SECRET}` && !dev) {
     await limiter.cookieLimiter?.preflight(event);
 
     const status = await limiter.check(event);

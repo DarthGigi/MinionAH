@@ -187,7 +187,7 @@
             <li>Even though the API tries to take as many items into calculation as possible, it is not possible to take every item into calculation due to different factors (like some not having a price, not obtainable, etc). So the prices might not be 100% accurate.</li>
           </ul>
         </li>
-        <li>The API used for the Bazaar prices is <a href="https://api.slothpixel.me/api/skyblock/bazaar" target="_blank">Slothpixel</a>. Every time a request is made to the API, the API will request Slothpixel to get the latest Bazaar prices. This means that the API will always have the latest Bazaar prices.</li>
+        <li>The API used for the Bazaar prices is <a href="https://api.hypixel.net/v2/skyblock/bazaar" target="_blank">Hypixel</a>. Every time a request is made to the API, the API will request Hypixel to get the latest Bazaar prices. This means that the API will always have the latest Bazaar prices.</li>
         <li>Not all items have a recipe to craft or are sold by an NPC. For example, the Snow and Flower Minions can't be obtained by crafting or purchasing via an NPC, some items are only purchasable with Bits. In cases like these where calculating the price is not possible, the API will return <code>0</code> as the price.</li>
         <li>As always, the code is open-source and available at <a href="https://github.com/DarthGigi/MinionAH/tree/main/src/routes/api/craftcost/%5B%5BinternalName%5D%5D" target="_blank">github.com/DarthGigi/MinionAH</a>.</li>
       </ul>

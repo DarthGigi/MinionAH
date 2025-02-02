@@ -10,6 +10,7 @@ export const GET: RequestHandler = async ({ request }) => {
   });
 
   if (!CRON_SECRET || request.headers.get("Authorization") !== `Bearer ${CRON_SECRET}`) {
+    console.error("Invalid Authorization header");
     captureCheckIn({
       checkInId,
       monitorSlug: "cleanup",
@@ -25,13 +26,15 @@ export const GET: RequestHandler = async ({ request }) => {
   }
 
   try {
-    await prisma.session.deleteMany({
+    const response = await prisma.session.deleteMany({
       where: {
         expiresAt: {
           lt: new Date()
         }
       }
     });
+
+    console.info("Expired sessions cleaned up", response);
 
     captureCheckIn({
       checkInId,
@@ -40,7 +43,7 @@ export const GET: RequestHandler = async ({ request }) => {
     });
     return json({ success: true }, { status: 200 });
   } catch (e) {
-    console.error(e);
+    console.error("Error cleaning up expired sessions", e);
     captureCheckIn({
       checkInId,
       monitorSlug: "cleanup",
