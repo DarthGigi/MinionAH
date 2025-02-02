@@ -44,7 +44,7 @@ export const handle: Handle = sequence(sentryHandle(), async ({ event, resolve }
     redirect(303, "https://maintenance.minionah.com");
   }
 
-  if (event.request.headers.get("Authorization") !== `Bearer ${CRON_SECRET}` || !dev) {
+  if (event.request.headers.get("Authorization") !== `Bearer ${CRON_SECRET}` && !dev) {
     await limiter.cookieLimiter?.preflight(event);
 
     const status = await limiter.check(event);
