@@ -11,6 +11,7 @@ export const GET: RequestHandler = async ({ request, fetch }) => {
   });
 
   if (!CRON_SECRET || request.headers.get("Authorization") !== `Bearer ${CRON_SECRET}`) {
+    console.error("Invalid Authorization header");
     captureCheckIn({
       checkInId,
       monitorSlug: "minion-price",
@@ -35,7 +36,9 @@ export const GET: RequestHandler = async ({ request, fetch }) => {
       };
     });
 
-    await prisma.$transaction([bulkUpdate("Minion", bulkUpdates, "double precision")]);
+    const response = await prisma.$transaction([bulkUpdate("Minion", bulkUpdates, "double precision")]);
+
+    console.info("Minion prices updated", response);
 
     captureCheckIn({
       checkInId,
@@ -45,7 +48,7 @@ export const GET: RequestHandler = async ({ request, fetch }) => {
 
     return json({ success: true }, { status: 200 });
   } catch (e) {
-    console.error(e);
+    console.error("Error updating minion prices", e);
     captureCheckIn({
       checkInId,
       monitorSlug: "minion-price",
