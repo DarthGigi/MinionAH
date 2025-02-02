@@ -36,9 +36,19 @@ export const GET: RequestHandler = async ({ request, fetch }) => {
       };
     });
 
-    const response = await prisma.$transaction([bulkUpdate("Minion", bulkUpdates, "double precision")]);
+    const [response] = await prisma.$transaction([bulkUpdate("Minion", bulkUpdates, "double precision")]);
 
-    console.info("Minion prices updated", response);
+    if (response === 0) {
+      console.error("No minion prices updated", response);
+      captureCheckIn({
+        checkInId,
+        monitorSlug: "minion-price",
+        status: "error"
+      });
+      return json({ success: false, error: "No minion prices updated" }, { status: 500, statusText: "Internal Server Error" });
+    }
+
+    console.info("Minion prices updated", { total: response, details: bulkUpdates });
 
     captureCheckIn({
       checkInId,
