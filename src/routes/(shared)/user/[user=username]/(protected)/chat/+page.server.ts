@@ -261,24 +261,25 @@ export const actions = {
         })
         .then(async (res) => {
           if (res.status === 200) {
-            await prisma.message.create({
-              data: {
-                chat_id: chat!.id,
-                content: messageJSON.content,
-                user_id: user.id,
-                type: messageType
-              }
-            });
-
-            await prisma.chat.update({
-              where: {
-                id: chat!.id
-              },
-              data: {
-                user1Read: user.id === chat!.user1_id ? chat!.user1Read : false,
-                user2Read: user.id === chat!.user2_id ? chat!.user2Read : false
-              }
-            });
+            await Promise.all([
+              prisma.message.create({
+                data: {
+                  chat_id: chat!.id,
+                  content: messageJSON.content,
+                  user_id: user.id,
+                  type: messageType
+                }
+              }),
+              prisma.chat.update({
+                where: {
+                  id: chat!.id
+                },
+                data: {
+                  user1Read: user.id === chat!.user1_id ? chat!.user1Read : false,
+                  user2Read: user.id === chat!.user2_id ? chat!.user2Read : false
+                }
+              })
+            ]);
           }
         })
         .catch((err) => {
@@ -397,7 +398,7 @@ export const actions = {
               }
             });
 
-      const alreadySentEmail = user.id === chat.user1_id ? chat.user1Emailed : chat.user2Emailed;
+      const alreadySentEmail = user.id === chat.user1_id ? chat.user2Emailed : chat.user1Emailed;
 
       if (profileSettings && !alreadySentEmail) {
         if (notificationSettings?.notificationType === "ALL" || notificationSettings?.notificationType === "EMAIL") {
@@ -422,8 +423,8 @@ export const actions = {
                   id: chat.id
                 },
                 data: {
-                  user1Emailed: user.id === chat.user1_id ? true : chat.user1Emailed,
-                  user2Emailed: user.id === chat.user2_id ? true : chat.user2Emailed
+                  user1Emailed: user2?.id === chat.user1_id ? true : chat.user1Emailed,
+                  user2Emailed: user2?.id === chat.user2_id ? true : chat.user2Emailed
                 }
               });
             } else {

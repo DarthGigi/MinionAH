@@ -82,11 +82,12 @@ const nameMappingsUrl = "https://raw.githubusercontent.com/kr45732/skyblock-plus
 try {
   // Fetch data from two APIs concurrently using Promise.all
   // The first API provides item names, the second one provides item prices
-  const [itemsResponse, itemsPriceResponse] = await Promise.all([fetch(nameMappingsUrl), fetch(`https://api.slothpixel.me/api/skyblock/bazaar`)]);
+  const [itemsResponse, itemsPriceResponse] = await Promise.all([fetch(nameMappingsUrl), fetch(`https://api.hypixel.net/v2/skyblock/bazaar`)]);
 
   // Parse the JSON responses to get the actual data
   allItems = await itemsResponse.json();
-  allItemPrices = await itemsPriceResponse.json();
+  const allItemPricesJson = await itemsPriceResponse.json();
+  allItemPrices = allItemPricesJson.products;
 } catch (e) {
   // Log the error and throw a new one if any of the fetch operations fail
   console.error("Failed to fetch data:", e);

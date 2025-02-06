@@ -63,9 +63,9 @@
     return auctions.map((auction) => JSON.parse(auction.content).id);
   });
 
-  // Only show the alert dialog if there are no auctions with the same ID in the chat
+  // Only show the alert dialog if there are no auctions with the same ID in the chat and the chat exists
   const showAuctionAlert = derived([auctionIds, chatSignal], ([$auctionIds, $chatSignal]) => {
-    if (!$chatSignal) return false;
+    if (!$chatSignal || !chatExists) return false;
     return !$auctionIds.includes($chatSignal.id);
   });
 

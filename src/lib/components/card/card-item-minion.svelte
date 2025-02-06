@@ -4,7 +4,7 @@
   import * as Tooltip from "$lib/components/ui/tooltip";
   import { searchSignal } from "$lib/stores/signals";
   import type { Seller } from "$lib/types";
-  import { formatNumber } from "$lib/utilities";
+  import NumberFlow from "@number-flow/svelte";
   import { formatDistanceToNow } from "date-fns";
   import { toZonedTime } from "date-fns-tz";
   import * as headview3d from "headview3d";
@@ -12,6 +12,7 @@
   import Search from "lucide-svelte/icons/search";
   import { getContext } from "svelte";
   import { createPress } from "svelte-interactions";
+  import { derived, writable } from "svelte/store";
 
   const minion = getContext<Seller>("minion");
   const isHome = getContext<boolean>("isHome");
@@ -59,14 +60,25 @@
     }, 300);
   };
 
-  let minionisOpen = false;
+  const minionisOpen = writable(false);
+  const cost = derived(
+    minionisOpen,
+    ($minionisOpen, set) => {
+      if ($minionisOpen) {
+        setTimeout(() => set(minion.minion.craftCost), 0);
+      } else {
+        set(0);
+      }
+    },
+    0
+  );
 
-  $: if (!minionisOpen && minionViewer) {
+  $: if (!$minionisOpen && minionViewer) {
     destroyViewer(minionViewer);
   }
 </script>
 
-<HoverCard.Root openDelay={150} closeDelay={150} bind:open={minionisOpen}>
+<HoverCard.Root openDelay={150} closeDelay={150} bind:open={$minionisOpen}>
   <HoverCard.Trigger href={`https://hypixel-skyblock.fandom.com/wiki/${minion.minion.name.replace(/ [IVX]+$/, "").replace(/ /g, "_")}`} target="_blank" rel="noopener" class="my-2 flex flex-col items-center truncate rounded p-1 transition-all duration-500">
     <Avatar.Root class="h-12 w-12 flex-shrink-0 rounded-full ">
       <Avatar.Image class="pointer-events-none h-full w-full bg-accent p-1" src={`https://res.cloudinary.com/minionah/image/upload/f_auto,q_auto/v1/minions/head/${minion.minion.id}`} alt={minion.minion.name} />
@@ -92,7 +104,7 @@
           })}
           <Tooltip.Root openDelay={100} closeDelay={0}>
             <Tooltip.Trigger class="cursor-help text-[#FEFF55]">
-              <p class="text-wrap text-left">Raw Craft Cost: <span class="text-[#FEAB00]">{formatNumber(minion.minion.craftCost)} coins</span></p>
+              <p class="text-wrap text-left">Raw Craft Cost: <NumberFlow class="inline text-[#FEAB00]" format={{ notation: "compact", maximumFractionDigits: 2, roundingMode: "halfCeil" }} value={$cost} suffix=" coins" locales={["en"]} /></p>
             </Tooltip.Trigger>
             <Tooltip.Content class="border-accent bg-muted text-primary">
               <p>Raw Craft Cost is <span class="underline">not</span> 100% accurate.</p>

@@ -6,11 +6,12 @@
   import { crossfade } from "svelte/transition";
   import type { PageData } from "./$types";
   import LoginForm from "./login-form.svelte";
+  import McLoginForm from "./mc-login-form.svelte";
   import SignupForm from "./signup-form.svelte";
 
   export let data: PageData;
 
-  const value = writable<"login" | "sign-up">("login");
+  const value = writable<"login" | "sign-up" | "mclogin">("login");
 
   const tabs = [
     { title: "Login", value: "login" },
@@ -23,6 +24,10 @@
 
   const handleSignInButtonClick = () => {
     value.set("login");
+  };
+
+  const handleMcSignInButtonClick = () => {
+    value.set("mclogin");
   };
 
   const [send, receive] = crossfade({
@@ -74,8 +79,8 @@
 <Tabs.Root bind:value={$value} class="mx-auto w-full max-w-md px-4">
   <Tabs.List class="grid w-full grid-cols-2 gap-4">
     {#each tabs as tab}
-      {@const isActive = $value === tab.value}
-      <Tabs.Trigger value={tab.value} class="relative data-[state=active]:bg-transparent" data-sveltekit-noscroll>
+      {@const isActive = $value === tab.value || ($value === "mclogin" && tab.value === "login")}
+      <Tabs.Trigger value={tab.value} class="relative data-[state=active]:bg-transparent" data-sveltekit-noscroll data-state={isActive ? "active" : "inactive"}>
         {#if isActive}
           <div class="absolute inset-0 rounded-md bg-accent" in:send={{ key: "active-tab" }} out:receive={{ key: "active-tab" }}></div>
         {/if}
@@ -86,9 +91,12 @@
     {/each}
   </Tabs.List>
   <Tabs.Content value="login">
-    <LoginForm data={data.form} on:signup={handleSignUpButtonClick} />
+    <LoginForm data={data.loginForm} on:signup={handleSignUpButtonClick} on:mclogin={handleMcSignInButtonClick} />
+  </Tabs.Content>
+  <Tabs.Content value="mclogin">
+    <McLoginForm data={data.mcLoginForm} on:signup={handleSignUpButtonClick} on:login={handleSignInButtonClick} />
   </Tabs.Content>
   <Tabs.Content value="sign-up">
-    <SignupForm on:signin={handleSignInButtonClick} />
+    <SignupForm data={data.signupForm} on:signin={handleSignInButtonClick} />
   </Tabs.Content>
 </Tabs.Root>

@@ -1,8 +1,8 @@
 import { dev } from "$app/environment";
-import { ADMIN_ID, MAINTENANCE_MODE, RATE_LIMIT_SECRET } from "$env/static/private";
+import { ADMIN_ID, CRON_SECRET, MAINTENANCE_MODE, RATE_LIMIT_SECRET } from "$env/static/private";
 import { PUBLIC_SENTRY_DSN } from "$env/static/public";
-import { lucia } from "$lib/server/lucia";
-import prisma from "$lib/server/prisma";
+import { validateSessionToken } from "$lib/server/lucia/auth";
+import { deleteSessionTokenCookie, setSessionTokenCookie } from "$lib/server/lucia/cookies";
 import { contextLinesIntegration, extraErrorDataIntegration, handleErrorWithSentry, init, sentryHandle } from "@sentry/sveltekit";
 import type { Handle, RequestEvent } from "@sveltejs/kit";
 import { json, redirect, type Reroute } from "@sveltejs/kit";
@@ -24,22 +24,27 @@ init({
 });
 
 const limiter = new RetryAfterRateLimiter({
-  IP: [60, "15m"],
-  IPUA: [40, "m"],
+  IP: [100, "15m"],
+  IPUA: [60, "m"],
   cookie: {
     name: "limiterid",
     secret: RATE_LIMIT_SECRET,
-    rate: [15, "10s"],
+    rate: [30, "10s"],
     preflight: true
   }
 });
+
+function resetEventLocals(event: RequestEvent) {
+  event.locals.user = null;
+  event.locals.session = null;
+}
 
 export const handle: Handle = sequence(sentryHandle(), async ({ event, resolve }) => {
   if (MAINTENANCE_MODE === "true") {
     redirect(303, "https://maintenance.minionah.com");
   }
 
-  if (!dev) {
+  if (event.request.headers.get("Authorization") !== `Bearer ${CRON_SECRET}` && !dev) {
     await limiter.cookieLimiter?.preflight(event);
 
     const status = await limiter.check(event);
@@ -58,95 +63,45 @@ export const handle: Handle = sequence(sentryHandle(), async ({ event, resolve }
     }
   }
 
-  async function resetEventLocals(event: RequestEvent<Partial<Record<string, string>>, string | null>) {
-    event.locals.user = null;
-    event.locals.session = null;
-  }
-
   try {
-    const sessionId = event.cookies.get(lucia.sessionCookieName);
+    const token = event.cookies.get("session") ?? null;
 
-    if (sessionId) {
-      const { session } = await lucia.validateSession(sessionId);
-      if (session) {
-        if (session.fresh) {
-          const sessionCookie = lucia.createSessionCookie(session.id);
-          event.cookies.set(sessionCookie.name, sessionCookie.value, {
-            path: ".",
-            ...sessionCookie.attributes
-          });
-        }
-
-        const user = await prisma.user.findUnique({
-          where: {
-            id: session.userId
-          },
-          include: {
-            _count: {
-              select: {
-                chatsAsUser1: {
-                  where: {
-                    user1Read: false
-                  }
-                },
-                chatsAsUser2: {
-                  where: {
-                    user2Read: false
-                  }
-                },
-                key: {
-                  //where id starts with username:
-                  where: {
-                    id: {
-                      startsWith: "username:"
-                    },
-                    hashed_password: {
-                      equals: null
-                    }
-                  }
-                }
-              }
-            }
-          }
-        });
-        if (user) {
-          event.locals.user = user;
-          event.locals.session = session;
-          // if the time difference is more than an hour, update the loggedInAt time
-          const timeDifference = new Date().getTime() - user.loggedInAt.getTime();
-          if (timeDifference > 3600000) {
-            await prisma.user.update({
-              where: {
-                id: user.id
-              },
-              data: {
-                loggedInAt: new Date()
-              }
-            });
-          }
-          if (user.id === ADMIN_ID) {
-            event.locals.isAdmin = true;
-          }
-        } else {
-          event.locals.user = null;
-          event.locals.session = null;
-        }
-      } else {
-        const sessionCookie = lucia.createBlankSessionCookie();
-        event.cookies.set(sessionCookie.name, sessionCookie.value, {
-          path: ".",
-          ...sessionCookie.attributes
-        });
-        resetEventLocals(event);
-      }
-    } else {
+    if (token === null) {
       resetEventLocals(event);
+      checkRoutes(event);
+      return await resolve(event);
     }
+
+    const { session, user } = await validateSessionToken(token);
+
+    if (session !== null) {
+      setSessionTokenCookie(event.cookies, token, session.expiresAt);
+      if (user.id === ADMIN_ID) event.locals.isAdmin = true;
+    } else {
+      deleteSessionTokenCookie(event.cookies);
+    }
+
+    event.locals.session = session;
+    event.locals.user = user;
   } catch (error) {
     console.error(error);
     resetEventLocals(event);
   }
 
+  checkRoutes(event);
+
+  return await resolve(event);
+});
+
+export const handleError = handleErrorWithSentry();
+
+export const reroute: Reroute = ({ url }) => {
+  if (url.pathname === "/pricechecker") {
+    return "/pricecheck";
+  }
+};
+
+function checkRoutes(event: RequestEvent) {
   const isProtectedRoute = event.route.id?.includes("(protected)") ?? false;
   const path = event.url.pathname;
 
@@ -171,13 +126,4 @@ export const handle: Handle = sequence(sentryHandle(), async ({ event, resolve }
   if (path.includes("dashboard") && !event.locals.isAdmin) {
     redirect(302, "/login");
   }
-
-  return await resolve(event);
-});
-export const handleError = handleErrorWithSentry();
-
-export const reroute: Reroute = ({ url }) => {
-  if (url.pathname === "/pricechecker") {
-    return "/pricecheck";
-  }
-};
+}

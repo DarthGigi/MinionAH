@@ -1,22 +1,21 @@
 <script lang="ts">
+  import { MinionCard } from "$lib/components/card";
   import CardLoading from "$lib/components/CardLoading.svelte";
   import HtmlToast from "$lib/components/HtmlToast.svelte";
+  import AnimatedShinyText from "$lib/components/magicui/animated-shiny-text.svelte";
   import MinionsListBox from "$lib/components/MinionsListBox.svelte";
+  import NumberFlowTicker from "$lib/components/NumberFlowTicker.svelte";
   import SearchSelect, { SearchType } from "$lib/components/SearchSelect.svelte";
   import TierListbox from "$lib/components/TierListbox.svelte";
-  import UsersListBox from "$lib/components/UsersListBox.svelte";
-  import { MinionCard } from "$lib/components/card";
-  import { GradualSpacing } from "$lib/components/magicui";
-  import AnimatedShinyText from "$lib/components/magicui/animated-shiny-text.svelte";
-  import NumberTicker from "$lib/components/magicui/number-ticker.svelte";
   import { Button } from "$lib/components/ui/button";
   import * as Card from "$lib/components/ui/card";
+  import * as Collapsible from "$lib/components/ui/collapsible";
   import { Label } from "$lib/components/ui/label";
+  import UsersListBox from "$lib/components/UsersListBox.svelte";
   import { internalPreferences, preferences } from "$lib/stores/preferences";
   import { searchSignal } from "$lib/stores/signals";
   import type { Seller } from "$lib/types";
   import { cn } from "$lib/utils";
-  import ArrowRight from "lucide-svelte/icons/arrow-right";
   import ChevronsUpDown from "lucide-svelte/icons/chevrons-up-down";
   import LayoutGrid from "lucide-svelte/icons/layout-grid";
   import MessagesSquare from "lucide-svelte/icons/messages-square";
@@ -248,12 +247,19 @@
 <h2 class="sr-only">MinionAH - The Auction House for SkyBlock Minions</h2>
 
 <div class="mt-8 h-10 md:mt-20 md:h-20">
-  <GradualSpacing class="text-center text-4xl font-bold tracking-[-0.1em] text-white md:text-7xl md:leading-[5rem]" text="MinionAH" />
+  <!-- <GradualSpacing class="text-center text-4xl font-bold tracking-[-0.1em] text-white md:text-7xl md:leading-[5rem]" text="MinionAH" /> -->
+  <div class="flex justify-center space-x-1">
+    <span class="text-center text-4xl font-bold tracking-[-0.045em] text-white md:text-7xl md:leading-[5rem]">MinionAH</span>
+  </div>
 </div>
-<Button href="/pricecheck" class="group z-10 mx-auto mt-2 flex w-fit items-center justify-center rounded-full border border-white/5 bg-neutral-900 text-base text-white transition-all ease-in hover:cursor-pointer hover:bg-neutral-800" variant="ghost">
+
+<Button href="https://discord.minionah.com" target="_blank" class="group z-10 mx-auto mt-2 flex w-fit items-center justify-center rounded-full border border-white/5 bg-neutral-900 text-base text-white transition-all ease-in hover:cursor-pointer hover:bg-neutral-800" variant="ghost">
   <AnimatedShinyText class="inline-flex items-center justify-center px-4 py-1 transition ease-out hover:text-neutral-400 hover:duration-300">
-    <span>💰 <span class="max-sm:hidden">Introducing </span>Price Checker</span>
-    <ArrowRight class="ml-1 size-3 transition-transform duration-300 ease-in-out group-hover:translate-x-0.5" />
+    Join our Discord
+    <!-- <ArrowRight class="ml-1 size-3 transition-transform duration-300 ease-in-out group-hover:translate-x-0.5" /> -->
+    <svg viewBox="0 0 256 199" width="256" height="199" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid" class="ml-2 size-4">
+      <path d="M216.856 16.597A208.502 208.502 0 0 0 164.042 0c-2.275 4.113-4.933 9.645-6.766 14.046-19.692-2.961-39.203-2.961-58.533 0-1.832-4.4-4.55-9.933-6.846-14.046a207.809 207.809 0 0 0-52.855 16.638C5.618 67.147-3.443 116.4 1.087 164.956c22.169 16.555 43.653 26.612 64.775 33.193A161.094 161.094 0 0 0 79.735 175.3a136.413 136.413 0 0 1-21.846-10.632 108.636 108.636 0 0 0 5.356-4.237c42.122 19.702 87.89 19.702 129.51 0a131.66 131.66 0 0 0 5.355 4.237 136.07 136.07 0 0 1-21.886 10.653c4.006 8.02 8.638 15.67 13.873 22.848 21.142-6.58 42.646-16.637 64.815-33.213 5.316-56.288-9.08-105.09-38.056-148.36ZM85.474 135.095c-12.645 0-23.015-11.805-23.015-26.18s10.149-26.2 23.015-26.2c12.867 0 23.236 11.804 23.015 26.2.02 14.375-10.148 26.18-23.015 26.18Zm85.051 0c-12.645 0-23.014-11.805-23.014-26.18s10.148-26.2 23.014-26.2c12.867 0 23.236 11.804 23.015 26.2 0 14.375-10.148 26.18-23.015 26.18Z" fill="currentColor" />
+    </svg>
   </AnimatedShinyText>
 </Button>
 
@@ -263,11 +269,11 @@
       <Users class="h-4 w-4 text-muted-foreground" />
       <Card.Title class="text-sm font-medium">Users</Card.Title>
     </Card.Header>
-    <Card.Content>
+    <Card.Content class="py-3">
       {#await data.stats.users}
-        <div class="h-12 w-20 animate-pulse rounded-lg bg-background"></div>
+        <div class="mx-auto h-12 w-20 animate-pulse rounded-lg bg-background"></div>
       {:then users}
-        <NumberTicker class="w-full text-center text-3xl font-bold md:text-5xl" value={users} />
+        <NumberFlowTicker class="w-full text-center text-3xl font-bold md:text-5xl" value={users} duration={3500} />
       {/await}
     </Card.Content>
   </Card.Root>
@@ -276,11 +282,11 @@
       <LayoutGrid class="h-4 w-4 text-muted-foreground" />
       <Card.Title class="text-sm font-medium">Auctions</Card.Title>
     </Card.Header>
-    <Card.Content>
+    <Card.Content class="py-3">
       {#await data.stats.auctions}
-        <div class="h-12 w-20 animate-pulse rounded-lg bg-background"></div>
+        <div class="mx-auto h-12 w-20 animate-pulse rounded-lg bg-background"></div>
       {:then auctions}
-        <NumberTicker class="w-full text-center text-3xl font-bold md:text-5xl" value={auctions} />
+        <NumberFlowTicker class="w-full text-center text-3xl font-bold md:text-5xl" value={auctions} duration={3500} />
       {/await}
     </Card.Content>
   </Card.Root>
@@ -289,21 +295,34 @@
       <MessagesSquare class="h-4 w-4 text-muted-foreground" />
       <Card.Title class="text-sm font-medium">Chats</Card.Title>
     </Card.Header>
-    <Card.Content>
+    <Card.Content class="py-3">
       {#await data.stats.chats}
-        <div class="h-12 w-20 animate-pulse rounded-lg bg-background"></div>
+        <div class="mx-auto h-12 w-20 animate-pulse rounded-lg bg-background"></div>
       {:then chats}
-        <NumberTicker class="w-full text-center text-3xl font-bold md:text-5xl" value={chats} />
+        <NumberFlowTicker class="w-full text-center text-3xl font-bold md:text-5xl" value={chats} duration={3500} />
       {/await}
     </Card.Content>
   </Card.Root>
 </div>
 
+<div class="mx-auto my-4 max-w-sm">
+  <Collapsible.Root class="mt-6 flex w-full flex-col gap-y-2">
+    <Collapsible.Trigger class="flex w-full items-center justify-between rounded-lg border border-border px-6 py-2 transition-colors duration-300 hover:bg-background ">
+      Handy Links <ChevronsUpDown class="size-5" />
+    </Collapsible.Trigger>
+    <Collapsible.Content class="rounded-lg border border-border px-6 py-2">
+      <Button href="/pricecheck" variant="link" class="group flex-col items-start justify-start p-0 text-start hover:no-underline">
+        <span class="group-hover:underline">Price Checker</span>
+        <span class="text-muted-foreground">Check the price of any minion</span>
+      </Button>
+    </Collapsible.Content>
+  </Collapsible.Root>
+</div>
+
 <div class="mx-auto w-fit">
-  <div class="flex flex-col items-start justify-center gap-4 px-4 pt-8 sm:flex-row sm:items-end sm:px-6 sm:pt-20 lg:px-8">
+  <div class="flex flex-col items-start justify-center gap-4 px-4 pt-8 sm:flex-row sm:items-end sm:px-6 sm:pt-12 lg:px-8">
     <div class="flex flex-col justify-center space-y-2">
       <Label>Search</Label>
-
       <div class="flex items-center">
         {#if $searchType === SearchType.Minion}
           {#await data.minionTypes}
