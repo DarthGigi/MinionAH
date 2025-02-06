@@ -138,6 +138,9 @@ importers:
       '@number-flow/svelte':
         specifier: ^0.3.1
         version: 0.3.3(svelte@4.2.19)
+      '@sveltejs/adapter-auto':
+        specifier: ^4.0.0
+        version: 4.0.0(@sveltejs/kit@2.16.1(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@5.4.14(@types/node@22.10.10)))(svelte@4.2.19)(vite@5.4.14(@types/node@22.10.10)))
       '@sveltejs/adapter-vercel':
         specifier: ^5.4.6
         version: 5.5.3(@sveltejs/kit@2.16.1(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@5.4.14(@types/node@22.10.10)))(svelte@4.2.19)(vite@5.4.14(@types/node@22.10.10)))(encoding@0.1.13)(rollup@4.32.0)
@@ -1823,6 +1826,11 @@ packages:
 
   '@sinclair/typebox@0.34.14':
     resolution: {integrity: sha512-TJ7Al17j3+by5y2QkTLcF/oBVMbgXBhILVgi9PuwpxQVZZvGh5BFRzWbJPmZVNKpbRLjuMzFuRwR+tdFPqCkvA==}
+
+  '@sveltejs/adapter-auto@4.0.0':
+    resolution: {integrity: sha512-kmuYSQdD2AwThymQF0haQhM8rE5rhutQXG4LNbnbShwhMO4qQGnKaaTy+88DuNSuoQDi58+thpq8XpHc1+oEKQ==}
+    peerDependencies:
+      '@sveltejs/kit': ^2.0.0
 
   '@sveltejs/adapter-vercel@5.5.3':
     resolution: {integrity: sha512-yvHkduNTVK5UMz9/N4EDPLWw+ndlZfTG2uz6kqYXyoQMuSMjqMqJcjdlFnLP3L/S3B6eMOtwEnUcwFYp+o7How==}
@@ -6199,6 +6207,11 @@ snapshots:
 
   '@sinclair/typebox@0.34.14':
     optional: true
+
+  '@sveltejs/adapter-auto@4.0.0(@sveltejs/kit@2.16.1(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@5.4.14(@types/node@22.10.10)))(svelte@4.2.19)(vite@5.4.14(@types/node@22.10.10)))':
+    dependencies:
+      '@sveltejs/kit': 2.16.1(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@5.4.14(@types/node@22.10.10)))(svelte@4.2.19)(vite@5.4.14(@types/node@22.10.10))
+      import-meta-resolve: 4.1.0
 
   '@sveltejs/adapter-vercel@5.5.3(@sveltejs/kit@2.16.1(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@5.4.14(@types/node@22.10.10)))(svelte@4.2.19)(vite@5.4.14(@types/node@22.10.10)))(encoding@0.1.13)(rollup@4.32.0)':
     dependencies:
