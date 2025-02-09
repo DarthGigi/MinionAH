@@ -10,8 +10,6 @@
   import Navbar from "$lib/layouts/Navbar.svelte";
   import { internalStorage, preferences } from "$lib/stores/preferences";
   import { requestNotificationPermission } from "$lib/utilities";
-  import { inject } from "@vercel/analytics";
-  import { injectSpeedInsights } from "@vercel/speed-insights/sveltekit";
   import type { FirebaseApp } from "firebase/app";
   import { initializeApp } from "firebase/app";
   import { getMessaging, getToken, onMessage } from "firebase/messaging";
@@ -32,11 +30,6 @@
 
   const position = writable<ToasterProps["position"]>("bottom-right");
   const closeButton = writable<ToasterProps["closeButton"]>(true);
-
-  inject({ mode: dev ? "development" : "production", debug: false });
-  if (!dev) {
-    injectSpeedInsights();
-  }
 
   page.subscribe((value) => {
     const urls = value.url.pathname.split("/").filter((url) => Boolean(url));

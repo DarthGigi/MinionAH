@@ -5,9 +5,10 @@ import { validateSessionToken } from "$lib/server/lucia/auth";
 import { deleteSessionTokenCookie, setSessionTokenCookie } from "$lib/server/lucia/cookies";
 import { contextLinesIntegration, extraErrorDataIntegration, handleErrorWithSentry, init, sentryHandle } from "@sentry/sveltekit";
 import type { Handle, RequestEvent } from "@sveltejs/kit";
-import { json, redirect, type Reroute } from "@sveltejs/kit";
+import { redirect, type Reroute } from "@sveltejs/kit";
 import { sequence } from "@sveltejs/kit/hooks";
 import { RetryAfterRateLimiter } from "sveltekit-rate-limiter/server";
+import { CloudflareIPUARateLimiter } from "sveltekit-rate-limiter/server/limiters";
 
 init({
   dsn: PUBLIC_SENTRY_DSN,
@@ -24,14 +25,18 @@ init({
 });
 
 const limiter = new RetryAfterRateLimiter({
-  IP: [100, "15m"],
-  IPUA: [60, "m"],
   cookie: {
     name: "limiterid",
     secret: RATE_LIMIT_SECRET,
-    rate: [30, "10s"],
+    rate: [180, "m"], // 3 requests/second
     preflight: true
-  }
+  },
+  plugins: [
+    new CloudflareIPUARateLimiter([
+      [120, "m"], // 2 requests/second
+      [500, "15m"] // ~33 requests/minute over 15 minutes
+    ])
+  ]
 });
 
 function resetEventLocals(event: RequestEvent) {
@@ -44,21 +49,17 @@ export const handle: Handle = sequence(sentryHandle(), async ({ event, resolve }
     redirect(303, "https://maintenance.minionah.com");
   }
 
-  if (event.request.headers.get("Authorization") !== `Bearer ${CRON_SECRET}` && !dev) {
+  const authHeader = event.request.headers.get("Authorization");
+
+  if (!authHeader && authHeader !== `Bearer ${CRON_SECRET}` && !dev) {
     await limiter.cookieLimiter?.preflight(event);
 
     const status = await limiter.check(event);
-
     if (status.limited) {
-      event.setHeaders({
-        "Retry-After": status.retryAfter.toString()
-      });
-      return json("Too many requests", {
+      console.warn("Rate limit activated:", event.getClientAddress());
+      return new Response(`You are being rate limited. Please try after ${status.retryAfter} seconds.`, {
         status: 429,
-        headers: {
-          "Retry-After": status.retryAfter.toString()
-        },
-        statusText: "You have made too many requests, please try again later."
+        headers: { "Retry-After": status.retryAfter.toString() }
       });
     }
   }
