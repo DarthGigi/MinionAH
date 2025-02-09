@@ -1,0 +1,33 @@
+{
+  "providers": [],
+  "buildImage": "ghcr.io/railwayapp/nixpacks:ubuntu-1737417843",
+  "variables": {
+    "CI": "true",
+    "NIXPACKS_METADATA": "node",
+    "NIXPACKS_SPA_OUTPUT_DIR": "dist",
+    "NODE_ENV": "production",
+    "NPM_CONFIG_PRODUCTION": "false"
+  },
+  "phases": {
+    "setup": {
+      "nixPkgs": ["nodejs_22", "pnpm-10_x", "openssl"],
+      "nixLibs": ["gcc-unwrapped", "libuuid", "libGL"],
+      "nixOverlays": ["https://github.com/railwayapp/nix-npm-overlay/archive/main.tar.gz"],
+      "nixpkgsArchive": "5624e1334b26ddc18da37e132b6fa8e93b481468"
+    },
+    "install": {
+      "dependsOn": ["setup"],
+      "cmds": ["pnpm i --frozen-lockfile"],
+      "cacheDirectories": ["/root/.local/share/pnpm/store/v3"],
+      "paths": ["/app/node_modules/.bin"]
+    },
+    "build": {
+      "dependsOn": ["install"],
+      "cmds": ["pnpm run build"],
+      "cacheDirectories": ["node_modules/.cache"]
+    }
+  },
+  "start": {
+    "cmd": "node build"
+  }
+}
