@@ -160,9 +160,6 @@ build
 
 # Optional stylelint cache
 
-# Vercel
-.vercel
-
 # SvelteKit build / generate output
 .svelte-kit
 
