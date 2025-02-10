@@ -11,7 +11,7 @@ export const GET: RequestHandler = async ({ request }) => {
 
   const authorization = request.headers.get("Authorization");
 
-  if (!CRON_SECRET && authorization !== `Bearer ${CRON_SECRET}`) {
+  if (!CRON_SECRET || authorization !== `Bearer ${CRON_SECRET}`) {
     console.error("Invalid Authorization header", authorization);
     captureCheckIn({
       checkInId,
