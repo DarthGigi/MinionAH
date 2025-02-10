@@ -9,8 +9,10 @@ export const GET: RequestHandler = async ({ request }) => {
     status: "in_progress"
   });
 
-  if (!CRON_SECRET || request.headers.get("Authorization") !== `Bearer ${CRON_SECRET}`) {
-    console.error("Invalid Authorization header");
+  const authorization = request.headers.get("Authorization");
+
+  if (!CRON_SECRET && authorization !== `Bearer ${CRON_SECRET}`) {
+    console.error("Invalid Authorization header", authorization);
     captureCheckIn({
       checkInId,
       monitorSlug: "cleanup",
