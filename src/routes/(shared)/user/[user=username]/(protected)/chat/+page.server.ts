@@ -237,7 +237,7 @@ export const actions = {
                 credential: cert({
                   clientEmail: FIREBASE_SERVICE_CLIENT_EMAIL,
                   projectId: FIREBASE_SERVICE_PROJECT_ID,
-                  privateKey: FIREBASE_SERVICE_PRIVATE_KEY
+                  privateKey: FIREBASE_SERVICE_PRIVATE_KEY.replace(/\\n/gm, "\n")
                 })
               },
               "admin"
