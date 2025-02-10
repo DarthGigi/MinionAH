@@ -46,24 +46,26 @@
     }
   });
 
-  if (browser) {
+  if (browser && !dev) {
     beforeNavigate(() => posthog.capture("$pageleave"));
     afterNavigate(() => posthog.capture("$pageview"));
   }
 
   onMount(async () => {
-    if (browser) {
-      posthog.init(PUBLIC_POSTHOG_KEY, {
-        api_host: "https://e.minionah.com",
-        person_profiles: "always", // or 'always' to create profiles for anonymous users as well,
-        ui_host: "https://eu.posthog.com",
-        capture_pageview: false,
-        capture_pageleave: false
-      });
-      if ($page.data.user) {
-        posthog.identify($page.data.user.id, {
-          username: $page.data.user.username
+    if (!dev) {
+      if (browser) {
+        posthog.init(PUBLIC_POSTHOG_KEY, {
+          api_host: "https://e.minionah.com",
+          person_profiles: "always", // or 'always' to create profiles for anonymous users as well,
+          ui_host: "https://eu.posthog.com",
+          capture_pageview: false,
+          capture_pageleave: false
         });
+        if ($page.data.user) {
+          posthog.identify($page.data.user.id, {
+            username: $page.data.user.username
+          });
+        }
       }
     }
     if (window.innerWidth < 768) {

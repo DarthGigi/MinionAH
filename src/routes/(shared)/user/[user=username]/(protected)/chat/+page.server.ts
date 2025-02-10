@@ -1,4 +1,4 @@
-import { FIREBASE_SERVICE_ACCOUNT_KEY, MINIONAH_SECRET, app_id, secret } from "$env/static/private";
+import { FIREBASE_SERVICE_CLIENT_EMAIL, FIREBASE_SERVICE_PRIVATE_KEY, FIREBASE_SERVICE_PROJECT_ID, MINIONAH_SECRET, app_id, secret } from "$env/static/private";
 import { PUBLIC_cluster, PUBLIC_key } from "$env/static/public";
 import { sanitize } from "@jill64/universal-sanitizer";
 import { error, fail, redirect } from "@sveltejs/kit";
@@ -234,7 +234,11 @@ export const actions = {
         getApps().length === 0
           ? initializeApp(
               {
-                credential: cert(JSON.parse(FIREBASE_SERVICE_ACCOUNT_KEY))
+                credential: cert({
+                  clientEmail: FIREBASE_SERVICE_CLIENT_EMAIL,
+                  projectId: FIREBASE_SERVICE_PROJECT_ID,
+                  privateKey: FIREBASE_SERVICE_PRIVATE_KEY
+                })
               },
               "admin"
             )
