@@ -10,6 +10,9 @@ export const GET: RequestHandler = async ({ request, fetch }) => {
     status: "in_progress"
   });
 
+  console.log("Authorization:", request.headers.get("Authorization"));
+  console.log("!CRON_SECRET", !CRON_SECRET);
+
   if (!CRON_SECRET || request.headers.get("Authorization") !== `Bearer ${CRON_SECRET}`) {
     console.error("Invalid Authorization header");
     captureCheckIn({
