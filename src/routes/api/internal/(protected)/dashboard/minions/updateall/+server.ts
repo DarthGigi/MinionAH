@@ -81,28 +81,37 @@ export const PUT: RequestHandler = async ({ fetch }) => {
     await Promise.all(items.map((minion) => fetchTexture(minion, "head")));
     await fetchCraftCosts(items);
 
-    // Then perform the Prisma transaction
-    await prisma.$transaction([
-      prisma.minion.deleteMany(),
-      prisma.minion.createMany({
-        data: items.map((minion) => ({
+    const prismaPromises = items.map((minion) =>
+      prisma.minion.upsert({
+        where: { id: minion.id },
+        update: {
+          name: minion.name,
+          generator: minion.generator,
+          generator_tier: minion.generator_tier,
+          maxTier: minion.maxTier,
+          craftCost: minion.craftCost
+        },
+        create: {
           id: minion.id,
           name: minion.name,
           generator: minion.generator,
           generator_tier: minion.generator_tier,
-          // @ts-expect-error - We're setting a property that doesn't exist on the Minion type
-          texture: minion.head,
-          skin: minion.skin,
           maxTier: minion.maxTier,
-          craftCost: minion.craftCost
-        }))
+          craftCost: minion.craftCost,
+          skin: minion.skin,
+          // @ts-expect-error - We're setting a property that doesn't exist on the Minion type
+          texture: minion.head
+        }
       })
-    ]);
+    );
 
-    console.info("\n\nSuccessfully filled database with minions");
+    // Then perform the Prisma transaction
+    await prisma.$transaction(prismaPromises);
+
+    console.info("\n\nSuccessfully updated the database with minions");
 
     return json(
-      { success: true, message: "Successfully filled database with minions" },
+      { success: true, message: "Successfully updated the database with minions" },
       {
         status: 200,
         statusText: "Success"
@@ -111,7 +120,7 @@ export const PUT: RequestHandler = async ({ fetch }) => {
   } catch (e) {
     console.error(e);
     return json(
-      { success: false, message: "Failed to fill database with minions" },
+      { success: false, message: "Failed to update the database with minions" },
       {
         status: 500,
         statusText: "Internal Server Error"
