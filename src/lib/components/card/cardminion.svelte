@@ -5,6 +5,8 @@
   import { chatSignal } from "$lib/stores/signals";
   import type { Seller } from "$lib/types";
   import { cn } from "$lib/utils";
+  import { formatDistanceToNowStrict } from "date-fns";
+  import ChevronsUp from "lucide-svelte/icons/chevrons-up";
   import Eye from "lucide-svelte/icons/eye";
   import Trash2 from "lucide-svelte/icons/trash-2";
   import { createEventDispatcher, setContext } from "svelte";
@@ -38,6 +40,12 @@
 
   function openModal(minionID: string) {
     dispatch("openDeleteModal", {
+      minion: minionID
+    });
+  }
+
+  function bump(minionID: string) {
+    dispatch("bumpMinion", {
       minion: minionID
     });
   }
@@ -96,9 +104,35 @@
   {/if}
   {#if showButtons}
     {#if $page.url.pathname === "/profile"}
-      <Button class="group absolute left-12 top-2 h-auto rounded-lg !border-0 bg-accent p-1.5 text-sm text-muted-foreground transition-all duration-300 hover:bg-destructive hover:text-destructive-foreground focus:outline-none focus:ring-4 focus:ring-transparent group-hover:opacity-100" type="button" on:click={() => openModal(minion.id)} aria-label="Delete minion">
-        <Trash2 class="h-5 w-5" />
-      </Button>
+      {@const maxTimeDiff = 72 * 60 * 60 * 1000}
+      {@const lastBumped = minion.timeBumped ? minion.timeBumped.getTime() : 0}
+      {@const timeDiff = new Date().getTime() - lastBumped}
+      {@const canBump = !minion.timeBumped || timeDiff > maxTimeDiff}
+      <div class="flex items-center justify-center gap-4 py-2">
+        <Tooltip.Root openDelay={0} closeDelay={0} closeOnPointerDown={false}>
+          <Tooltip.Trigger
+            class="group aspect-square h-auto rounded-lg !border-0 bg-accent p-1.5 text-sm text-muted-foreground transition-all duration-300 hover:text-foreground focus:outline-none focus:ring-4 focus:ring-transparent disabled:text-muted-foreground disabled:opacity-50 group-hover:opacity-100"
+            on:pointerdown={() => {
+              if (!canBump) return;
+              bump(minion.id);
+            }}
+            aria-label="Bump minion"
+            disabled={!canBump}>
+            <ChevronsUp class="translate-all size-5 duration-150 group-hover:-translate-y-0.5 group-disabled:group-hover:-translate-y-0" />
+          </Tooltip.Trigger>
+          <Tooltip.Content class="border-border bg-popover text-popover-foreground">
+            {#if !canBump}
+              <p>Can bump {formatDistanceToNowStrict(lastBumped + maxTimeDiff, { addSuffix: true })}</p>
+            {:else}
+              <p>Bump minion</p>
+            {/if}
+          </Tooltip.Content>
+        </Tooltip.Root>
+
+        <Button class="group aspect-square h-auto rounded-lg !border-0 bg-accent p-1.5 text-sm text-muted-foreground transition-all duration-300 hover:bg-destructive hover:text-destructive-foreground focus:outline-none focus:ring-4 focus:ring-transparent group-hover:opacity-100" type="button" on:click={() => openModal(minion.id)} aria-label="Delete minion">
+          <Trash2 class="size-5" />
+        </Button>
+      </div>
     {/if}
 
     {#if isMinionPage}
