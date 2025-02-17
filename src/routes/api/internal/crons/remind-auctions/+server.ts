@@ -145,7 +145,7 @@ export const GET: RequestHandler = async ({ request }) => {
       if (settings?.notificationSettings?.notificationType === "ALL" || settings?.notificationSettings?.notificationType === "EMAIL") {
         if (settings?.profileSettings?.email) {
           promiseFactories.push(() =>
-            fetch("https://next.minionah.com/api/resend/reminder", {
+            fetch("https://next.minionah.com/api/resend/auctionreminder", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -155,6 +155,7 @@ export const GET: RequestHandler = async ({ request }) => {
                 username: user.username,
                 auctionName: auction.minion.name,
                 auctionAmount: auction.amount,
+                minionId: auction.minion_id,
                 userEmail: settings?.profileSettings?.email
               })
             }).catch((error) => {
