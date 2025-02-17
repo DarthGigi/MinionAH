@@ -3,12 +3,13 @@ import { fail } from "@sveltejs/kit";
 import { message, superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
 import type { Actions, PageServerLoad } from "./$types";
-import { formSchemaCreate, formSchemaDelete } from "./schema";
+import { formSchemaBump, formSchemaCreate, formSchemaDelete } from "./schema";
 
 export const load = (async ({ locals }) => {
   return {
     formCreate: await superValidate(zod(formSchemaCreate), { id: "formCreate" }),
     formDelete: await superValidate(zod(formSchemaDelete), { id: "formDelete" }),
+    formBump: await superValidate(zod(formSchemaBump), { id: "formBump" }),
     minionTypes: prisma.minion.findMany({
       select: {
         id: true,
@@ -137,6 +138,72 @@ export const actions = {
     } catch (e) {
       console.error(e);
       return message(formDelete, { title: "Unable to delete your minion.", description: "We couldn't delete your minion. Please try again. <br/>If this issue keeps happening, please contact us." }, { status: 400 });
+    }
+  },
+  bumpMinion: async ({ locals, request }) => {
+    const formBump = await superValidate(request, zod(formSchemaBump), { id: "formBump" });
+
+    if (!formBump.valid) {
+      return fail(400, {
+        formBump
+      });
+    }
+
+    const minionId = formBump.data.id as string;
+
+    try {
+      const minion = await prisma.auction.findUnique({
+        where: {
+          id: minionId,
+          AND: [
+            {
+              user: {
+                id: locals.user!.id
+              }
+            }
+          ]
+        }
+      });
+
+      if (!minion) {
+        throw new Error("Minion not found");
+      }
+
+      // if the minion has been bumped in the last 72 hours, don't allow bumping
+      const timeBumped = minion.timeBumped || new Date(0);
+      const timeNow = new Date();
+      const timeDiff = timeNow.getTime() - timeBumped.getTime();
+      const maxTimeDiff = 72 * 60 * 60 * 1000;
+
+      if (timeDiff < maxTimeDiff) {
+        return message(formBump, { title: "Your minion can't be bumped yet.", description: "You can only bump your minion once every 72 hours." }, { status: 400 });
+      }
+
+      const updatedMinion = await prisma.auction.update({
+        where: {
+          id: minionId,
+          AND: [
+            {
+              user: {
+                id: locals.user!.id
+              }
+            }
+          ]
+        },
+        data: {
+          timeBumped: timeNow,
+          timeCreated: minion.timeCreated
+        }
+      });
+
+      if (!updatedMinion) {
+        throw new Error("Something went wrong");
+      }
+
+      return message(formBump, { title: "Your minion has been bumped!", description: "Your minion has successfully been bumped on the auction house." });
+    } catch (e) {
+      console.error(e);
+      return message(formBump, { title: "Unable to bump your minion.", description: "We couldn't bump your minion. Please try again. <br/>If this issue keeps happening, please contact us." }, { status: 400 });
     }
   }
 } satisfies Actions;

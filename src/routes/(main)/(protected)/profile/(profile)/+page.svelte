@@ -24,8 +24,8 @@
   import { slide } from "svelte/transition";
   import { superForm } from "sveltekit-superforms";
   import { zodClient } from "sveltekit-superforms/adapters";
-  import type { PageData } from "../$types";
-  import { formSchemaCreate, formSchemaDelete } from "./schema";
+  import type { PageData } from "./$types";
+  import { formSchemaBump, formSchemaCreate, formSchemaDelete } from "./schema";
 
   export let data: PageData;
 
@@ -83,12 +83,42 @@
     }
   });
 
+  const formBump = superForm(data.formBump, {
+    validators: zodClient(formSchemaBump),
+    onSubmit: ({ formData }) => {
+      formData.set("id", minionToBump?.id);
+    },
+    onUpdated: () => {
+      if ($messageBump) {
+        toast($messageBump.title, {
+          description: HtmlToast,
+          componentProps: {
+            htmlMessage: $messageBump.description
+          }
+        });
+      }
+    },
+    onError: () => {
+      if ($messageBump) {
+        toast.error($messageBump.title, {
+          description: HtmlToast,
+          componentProps: {
+            htmlMessage: $messageBump.description
+          }
+        });
+      }
+    }
+  });
+
   const { form: formDataCreate, enhance: enhanceCreate, message: messageCreate, submitting: submittingCreate, errors: errorsCreate, constraints: constraintsCreate } = formCreate;
   const { form: formDataDelete, enhance: enhanceDelete, message: messageDelete, submitting: submittingDelete, submit: submitDelete } = formDelete;
+  const { form: formDataBump, enhance: enhanceBump, message: messageBump, submitting: submittingBump, submit: bump } = formBump;
 
   $: moreThan1 = $formDataCreate.amount > (parseInt($constraintsCreate.amount?.min?.toString() ?? "0") || 0);
   let showDeleteFormDialog = false;
   let minionToDelete: Auction & { minion: Minion } & { user: User };
+
+  let minionToBump: Auction & { minion: Minion } & { user: User };
 
   let minecraftAvatar: HTMLCanvasElement;
   let minecraftAvatarContainer: HTMLDivElement;
@@ -377,6 +407,10 @@
               showDeleteFormDialog = true;
               minionToDelete = seller;
             }}
+            on:bumpMinion={() => {
+              minionToBump = seller;
+              formBump.submit();
+            }}
             class="only:col-start-2" />
         {/each}
       {/await}
@@ -388,6 +422,14 @@
   <Form.Field form={formDelete} name="id">
     <Form.Control let:attrs>
       <input hidden bind:value={$formDataDelete.id} name={attrs.name} />
+    </Form.Control>
+  </Form.Field>
+</form>
+
+<form use:enhanceBump action="?/bumpMinion" class="hidden" method="POST">
+  <Form.Field form={formBump} name="id">
+    <Form.Control let:attrs>
+      <input hidden bind:value={$formDataBump.id} name={attrs.name} />
     </Form.Control>
   </Form.Field>
 </form>

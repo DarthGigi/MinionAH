@@ -27,6 +27,12 @@ export const formSchemaDelete = z.object({
   id: z.string()
 });
 
+export const formSchemaBump = z.object({
+  id: z.string()
+});
+
 export type FormSchemaCreate = typeof formSchemaCreate;
 
 export type FormSchemaDelete = typeof formSchemaDelete;
+
+export type FormSchemaBump = typeof formSchemaBump;

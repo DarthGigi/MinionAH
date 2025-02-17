@@ -96,12 +96,21 @@
         <h4 class="text-sm font-semibold">
           {minion.minion.name}
         </h4>
-        <p class="text-xs text-muted-foreground">
+        <p class="whitespace-nowrap text-xs text-muted-foreground">
           Created
           {formatDistanceToNow(toZonedTime(minion.timeCreated, Intl.DateTimeFormat().resolvedOptions().timeZone ?? "UTC"), {
             addSuffix: true,
             includeSeconds: true
           })}
+          {#if minion.timeBumped && minion.timeBumped !== minion.timeCreated}
+            <br />
+            Last bumped
+            {formatDistanceToNow(toZonedTime(minion.timeBumped, Intl.DateTimeFormat().resolvedOptions().timeZone ?? "UTC"), {
+              addSuffix: true,
+              includeSeconds: true
+            })}
+          {/if}
+          <br />
           <Tooltip.Root openDelay={100} closeDelay={0}>
             <Tooltip.Trigger class="cursor-help text-[#FEFF55]">
               <p class="text-wrap text-left">Raw Craft Cost: <NumberFlow class="inline text-[#FEAB00]" format={{ notation: "compact", maximumFractionDigits: 2, roundingMode: "halfCeil" }} value={$cost} suffix=" coins" locales={["en"]} /></p>

@@ -98,6 +98,7 @@ model Auction {
   price       Float
   amount      Int
   timeCreated DateTime @default(now()) @updatedAt
+  timeBumped  DateTime?
 
   @@index([user_id])
   @@index([minion_id])
