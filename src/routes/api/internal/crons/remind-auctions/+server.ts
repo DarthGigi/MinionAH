@@ -154,7 +154,7 @@ export const GET: RequestHandler = async ({ request }) => {
               body: JSON.stringify({
                 username: user.username,
                 auctionName: auction.minion.name,
-                auctionAmount: auction.amount,
+                auctionAmount: auction.amount.toString(),
                 minionId: auction.minion_id,
                 userEmail: settings?.profileSettings?.email
               })
