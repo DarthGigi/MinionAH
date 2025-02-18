@@ -104,6 +104,13 @@ export const GET: RequestHandler = async ({ request }) => {
     const messaging = getMessaging(firebaseApp);
 
     let promiseFactories: (() => Promise<any>)[] = [];
+    let emails: {
+      username: string;
+      auctionName: string;
+      auctionAmount: string;
+      minionId: string;
+      userEmail: string;
+    }[] = [];
 
     for (const auction of response) {
       const { user } = auction;
@@ -144,35 +151,37 @@ export const GET: RequestHandler = async ({ request }) => {
 
       if (settings?.notificationSettings?.notificationType === "ALL" || settings?.notificationSettings?.notificationType === "EMAIL") {
         if (settings?.profileSettings?.email) {
-          promiseFactories.push(() =>
-            fetch("https://next.minionah.com/api/resend/auctionreminder", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${MINIONAH_SECRET}`
-              },
-              body: JSON.stringify({
-                username: user.username,
-                auctionName: auction.minion.name,
-                auctionAmount: auction.amount.toString(),
-                minionId: auction.minion_id,
-                userEmail: settings?.profileSettings?.email
-              })
-            }).catch((error) => {
-              console.error("Error sending email:", error);
-            })
-          );
+          emails.push({
+            username: user.username,
+            auctionName: auction.minion.name,
+            auctionAmount: auction.amount.toString(),
+            minionId: auction.minion_id,
+            userEmail: settings.profileSettings.email
+          });
         }
       }
 
-      console.info("Sent reminder(s) to user", user.id, "aka", user.username);
+      console.info("Saving reminder for", user.id, "aka", user.username);
     }
 
-    console.info("Sending reminders...");
+    promiseFactories.push(() =>
+      fetch("https://next.minionah.com/api/resend/auctionreminder", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${MINIONAH_SECRET}`
+        },
+        body: JSON.stringify(emails)
+      }).catch((error) => {
+        console.error("Error sending emails:", error);
+      })
+    );
+
+    console.info("Sending a total of ", promiseFactories.length + emails.length, "reminders to a total of ", new Set(emails.map((email) => email.userEmail)).size, " users");
 
     await Promise.all(promiseFactories.map((factory) => factory()));
 
-    console.info(`Sent ${promiseFactories.length} reminder(s)`);
+    console.info(`Sent ${promiseFactories.length + emails.length} reminder(s)`);
 
     captureCheckIn({
       checkInId,
