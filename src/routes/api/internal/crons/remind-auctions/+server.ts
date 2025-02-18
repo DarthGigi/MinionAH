@@ -37,25 +37,40 @@ export const GET: RequestHandler = async ({ request }) => {
     // Get auctions that are about to expire
     const response = await prisma.auction.findMany({
       where: {
-        OR: [
+        AND: [
           {
-            // For bumped auctions: check if they're approaching expiration
-            timeBumped: {
-              not: null,
-              // Between 11-14 days old from bump
-              lt: new Date(now.getTime() - THREE_DAYS),
-              gt: new Date(now.getTime() - TWO_WEEKS)
-            }
+            OR: [
+              {
+                // For bumped auctions: check if they're approaching expiration
+                timeBumped: {
+                  not: null,
+                  // Between 11-14 days old from bump
+                  lt: new Date(now.getTime() - THREE_DAYS),
+                  gt: new Date(now.getTime() - TWO_WEEKS)
+                }
+              },
+              {
+                // For non-bumped auctions: check original creation date
+                AND: {
+                  timeBumped: null,
+                  timeCreated: {
+                    // At least 2 weeks old
+                    lt: new Date(now.getTime() - TWO_WEEKS)
+                  }
+                }
+              }
+            ]
           },
           {
-            // For non-bumped auctions: check original creation date
-            AND: {
-              timeBumped: null,
-              timeCreated: {
-                // At least 2 weeks old
-                lt: new Date(now.getTime() - TWO_WEEKS)
+            OR: [
+              { timeEmailed: null },
+              {
+                timeEmailed: {
+                  // Only email if last reminder was sent more than 3 days ago
+                  lt: new Date(now.getTime() - THREE_DAYS)
+                }
               }
-            }
+            ]
           }
         ]
       },
@@ -105,6 +120,7 @@ export const GET: RequestHandler = async ({ request }) => {
 
     let promiseFactories: (() => Promise<any>)[] = [];
     let emails: {
+      auctionId: string;
       username: string;
       auctionName: string;
       auctionAmount: string;
@@ -152,6 +168,7 @@ export const GET: RequestHandler = async ({ request }) => {
       if (settings?.notificationSettings?.notificationType === "ALL" || settings?.notificationSettings?.notificationType === "EMAIL") {
         if (settings?.profileSettings?.email) {
           emails.push({
+            auctionId: auction.id,
             username: user.username,
             auctionName: auction.minion.name,
             auctionAmount: auction.amount.toString(),

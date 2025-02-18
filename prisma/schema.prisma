@@ -99,6 +99,7 @@ model Auction {
   amount      Int
   timeCreated DateTime @default(now()) @updatedAt
   timeBumped  DateTime?
+  timeEmailed DateTime?
 
   @@index([user_id])
   @@index([minion_id])
