@@ -138,7 +138,7 @@ const getRecipeCost = (recipeName: string, recipeIngredients: { [key: string]: n
 
     // If the item price is found, add the total cost of the item to the total cost
     if (itemPrice) {
-      cost += itemPrice * amount;
+      cost += itemPrice / amount;
     }
     // If the item is a "SKYBLOCK_COIN", add the amount directly to the cost
     else if (item === "SKYBLOCK_COIN") {
