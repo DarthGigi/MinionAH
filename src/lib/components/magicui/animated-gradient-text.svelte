@@ -1,8 +1,6 @@
 <script lang="ts">
   import { cn } from "$lib/utils";
 
-  let className: string = "";
-  export { className as class };
   export let colorClass: string = "";
 </script>
 
