@@ -62,7 +62,8 @@ const config = {
       },
       animation: {
         orbit: "orbit calc(var(--duration)*1s) linear infinite",
-        shimmer: "shimmer 8s infinite"
+        shimmer: "shimmer 8s infinite",
+        gradient: "gradient 8s linear infinite"
       },
       keyframes: {
         orbit: {
@@ -79,6 +80,17 @@ const config = {
           },
           "30%, 60%": {
             "background-position": "calc(100% + var(--shimmer-width)) 0"
+          }
+        },
+        gradient: {
+          "0%": {
+            backgroundPosition: "0% -50%"
+          },
+          "50%": {
+            backgroundPosition: "100% 50%"
+          },
+          "100%": {
+            backgroundPosition: "0% 100%"
           }
         }
       }
