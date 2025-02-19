@@ -166,6 +166,26 @@
         });
       });
     }
+
+    if (!$internalPreferences.hasSeenBumpingAuctionsToast) {
+      if (!data.user) return;
+      setTimeout(() => {
+        toast("Bumping & Automatic Auction Deletion", {
+          description: "Bumping and automatic auction deletion are now available! Please bump your auctions to prevent them from being deleted.",
+          action: {
+            label: "Bump auctions",
+            onClick: () => {
+              internalPreferences.update((state) => ({ ...state, hasSeenBumpingAuctionsToast: true }));
+              window.open("/profile", "_self");
+            }
+          },
+          onDismiss: () => {
+            internalPreferences.update((state) => ({ ...state, hasSeenBumpingAuctionsToast: true }));
+          },
+          duration: Number.POSITIVE_INFINITY
+        });
+      });
+    }
   });
 
   const search = async (filterTier?: number | undefined, isMore: boolean = false, skip?: number) => {
@@ -261,11 +281,11 @@
   </AnimatedShinyText>
 </Button> -->
 
-<Button href="https://newsroom.minionah.com/automatic-deletion/" target="_blank" class="text- group relative z-10 mx-auto mt-2 flex w-fit items-center justify-center rounded-full border-0 border-white/5 bg-neutral-900 px-8 text-base text-white transition-all ease-in hover:cursor-pointer hover:bg-neutral-800" variant="ghost">
+<Button href="https://newsroom.minionah.com/automatic-deletion/" target="_blank" class="group relative z-10 mx-auto mt-2 flex w-fit items-center justify-center rounded-full border-0 border-white/5 bg-neutral-900 px-8 text-base text-white transition-all ease-in hover:cursor-pointer hover:bg-neutral-800" variant="ghost">
   <AnimatedGradientText colorClass="from-[#C4B7B2]/50 via-[#574330]/50 to-[#E4E4E4]/50">
     <ChevronsUp class="mx-0 size-4 text-muted-foreground transition-transform duration-300 ease-in-out group-hover:-translate-y-0.5" />
     <Separator class="mx-1 h-4 min-h-0" orientation="vertical" decorative={true} />
-    <span class="text-muted-foreground"> Bumping & Automatic Auction Deletion </span>
+    <span class="text-muted-foreground"> Bumping <span class="hidden sm:contents"> & Automatic Auction Deletion</span> </span>
   </AnimatedGradientText>
 </Button>
 
