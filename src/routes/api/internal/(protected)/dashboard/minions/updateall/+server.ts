@@ -1,9 +1,29 @@
 import { CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET, CLOUDINARY_CLOUD_NAME } from "$env/static/private";
-import prisma from "$lib/server/prisma";
 import type { Minion } from "@prisma/client";
 import { json } from "@sveltejs/kit";
 import { v2 as cloudinary } from "cloudinary";
 import type { RequestHandler } from "./$types";
+
+interface MinionWithTexture extends Minion {
+  texture?: string;
+}
+
+type TextureSuccess = {
+  minionId: string;
+  response: Response;
+  error?: undefined;
+};
+
+type TextureError = {
+  minionId: string;
+  error: any;
+  response?: undefined;
+};
+
+type TextureUpload = {
+  minionId: string;
+  base64: string;
+};
 
 cloudinary.config({
   cloud_name: CLOUDINARY_CLOUD_NAME,
@@ -12,28 +32,121 @@ cloudinary.config({
   secure: true
 });
 
-async function fetchTexture(minion: Minion, type: "skin" | "head") {
+async function fetchTextures(minions: MinionWithTexture[], type: "skin" | "head") {
   try {
-    console.info(`Getting ${type} for ${minion.name}`);
-    const texture = await fetch(`https://mc-heads.net/${type}/${minion.texture}`);
-    const textureBuffer = await texture.arrayBuffer();
-    const textureBase64 = Buffer.from(textureBuffer).toString("base64");
-    await cloudinary.uploader.upload(`data:image/png;base64,${textureBase64}`, {
-      folder: `minions/${type}`,
-      public_id: minion.id,
-      overwrite: true,
-      resource_type: "image"
+    const textureRequests = minions.map((minion) => ({
+      minion,
+      promise: () =>
+        fetch(`https://mc-heads.net/${type}/${minion.texture}`)
+          .then(
+            (response): TextureSuccess => ({
+              minionId: minion.id,
+              response
+            })
+          )
+          .catch((error): TextureError => {
+            console.error(`Error fetching ${type} for ${minion.name}:`, error);
+            return {
+              minionId: minion.id,
+              error
+            };
+          })
+    }));
+
+    const results = await Promise.allSettled(textureRequests.map((request) => request.promise()));
+
+    const textureMap = new Map<string, Response>();
+
+    results.forEach((result) => {
+      if (result.status === "fulfilled") {
+        const value = result.value;
+        if (!("error" in value)) {
+          textureMap.set(value.minionId, value.response);
+          console.info(`Got ${type} for minion ${value.minionId}`);
+        } else {
+          console.error(`Failed to get ${type} for minion ${value.minionId}`);
+        }
+      } else {
+        console.error(`Failed to get ${type} for minion: ${result.reason}`);
+      }
     });
-    // @ts-expect-error - We're setting a property that doesn't exist on the Minion type
-    minion[type] = "";
-    console.info(`Got ${type} for ${minion.name}`);
-  } catch {
-    console.error(`Failed to get ${type} for ${minion.name}`);
-    throw new Error(`Failed to get ${type} for ${minion.name}`);
+
+    return textureMap;
+  } catch (e) {
+    console.error(e);
+    throw new Error("Failed to fetch textures");
   }
 }
 
-export const PUT: RequestHandler = async ({ fetch }) => {
+async function parseTexture(textureMap: Map<string, Response>) {
+  try {
+    const textureEntries = Array.from(textureMap.entries());
+    const textureBuffers = await Promise.allSettled(
+      textureEntries.map(async ([minionId, response]) => ({
+        minionId,
+        buffer: await response.arrayBuffer()
+      }))
+    );
+
+    // Create a map to store base64 textures
+    const textureBase64Map = new Map<string, string>();
+
+    textureBuffers.forEach((result) => {
+      if (result.status === "fulfilled") {
+        const base64 = Buffer.from(result.value.buffer).toString("base64");
+        textureBase64Map.set(result.value.minionId, base64);
+      }
+    });
+
+    return textureBase64Map;
+  } catch (e) {
+    console.error(e);
+    throw new Error("Failed to parse textures");
+  }
+}
+
+async function uploadTexture(textureMap: Map<string, string>, minions: Minion[], type: "skin" | "head") {
+  try {
+    // Create array of texture uploads with minion IDs
+    const uploads: TextureUpload[] = minions
+      .map((minion) => ({
+        minionId: minion.id,
+        base64: textureMap.get(minion.id) || ""
+      }))
+      .filter((upload) => upload.base64 !== "");
+
+    const cloudinaryPromises = uploads.map(
+      ({ minionId, base64 }) =>
+        () =>
+          cloudinary.uploader.upload(`data:image/png;base64,${base64}`, {
+            folder: `minions/${type}`,
+            public_id: minionId,
+            overwrite: true,
+            resource_type: "image"
+          })
+    );
+
+    const cloudinaryResponse = await Promise.allSettled(cloudinaryPromises.map((promise) => promise()));
+
+    cloudinaryResponse.forEach((response, index) => {
+      const minion = minions.find((m) => m.id === uploads[index].minionId);
+      if (!minion) return;
+
+      if (response.status === "fulfilled") {
+        // @ts-expect-error - Dynamic property assignment
+        minion[type] = response.value.secure_url;
+        console.info(`Uploaded ${type} for ${minion.name}`);
+      } else {
+        console.error(`Failed to upload ${type} for ${minion.name}`, response);
+      }
+    });
+  } catch (e) {
+    console.error(e);
+    throw new Error("Failed to upload textures");
+  }
+}
+
+export const PUT: RequestHandler = async ({ fetch, request }) => {
   const itemsList = await fetch("/api/internal/dashboard/minions/filter");
   const items = (await itemsList.json()) as Minion[];
 
@@ -76,9 +189,14 @@ export const PUT: RequestHandler = async ({ fetch }) => {
   }
 
   try {
-    // Fetch all skins and heads in parallel
-    await Promise.all(items.map((minion) => fetchTexture(minion, "skin")));
-    await Promise.all(items.map((minion) => fetchTexture(minion, "head")));
+    const heads = await fetchTextures(items, "head");
+    const headsBase64 = await parseTexture(heads);
+    await uploadTexture(headsBase64, items, "head");
+
+    const skins = await fetchTextures(items, "skin");
+    const skinsBase64 = await parseTexture(skins);
+    await uploadTexture(skinsBase64, items, "skin");
+
     await fetchCraftCosts(items);
 
     const prismaPromises = items.map((minion) =>
@@ -97,10 +215,7 @@ export const PUT: RequestHandler = async ({ fetch }) => {
           generator: minion.generator,
           generator_tier: minion.generator_tier,
           maxTier: minion.maxTier,
-          craftCost: minion.craftCost,
-          skin: minion.skin,
-          // @ts-expect-error - We're setting a property that doesn't exist on the Minion type
-          texture: minion.head
+          craftCost: minion.craftCost
         }
       })
     );
@@ -111,7 +226,7 @@ export const PUT: RequestHandler = async ({ fetch }) => {
     console.info("\n\nSuccessfully updated the database with minions");
 
     return json(
-      { success: true, message: "Successfully updated the database with minions" },
+      { success: true, message: "Successfully updated the minions" },
       {
         status: 200,
         statusText: "Success"
@@ -120,7 +235,7 @@ export const PUT: RequestHandler = async ({ fetch }) => {
   } catch (e) {
     console.error(e);
     return json(
-      { success: false, message: "Failed to update the database with minions" },
+      { success: false, message: "Failed to update the minions" },
       {
         status: 500,
         statusText: "Internal Server Error"
