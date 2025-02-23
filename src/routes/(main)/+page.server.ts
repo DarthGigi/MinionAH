@@ -34,7 +34,6 @@ export const load = (async () => {
       select: {
         id: true,
         generator: true,
-        texture: true,
         maxTier: true
       },
       distinct: ["generator"],

@@ -80,8 +80,6 @@ model Minion {
   name           String
   generator      String
   generator_tier Int
-  texture        String
-  skin           String
   maxTier        Int
   craftCost      Float     @default(0)
   sellers        Auction[]

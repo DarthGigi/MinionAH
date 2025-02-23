@@ -1,5 +1,5 @@
 <script context="module" lang="ts">
-  type DispatchEvents = { onSelect: { id: string; generator: string; texture: string; maxTier: number | undefined }; onReset?: void };
+  type DispatchEvents = { onSelect: { id: string; generator: string; maxTier: number | undefined }; onReset?: void };
 </script>
 
 <script lang="ts">
@@ -16,7 +16,7 @@
   import VirtualList from "svelte-tiny-virtual-list";
   import { writable } from "svelte/store";
 
-  type MinionType = Pick<Minion, "id" | "generator" | "texture" | "maxTier">;
+  type MinionType = Pick<Minion, "id" | "generator" | "maxTier">;
 
   export let minionTypes: MinionType[];
   export let search: string = "";
