@@ -14,7 +14,6 @@ export const load = (async ({ locals }) => {
       select: {
         id: true,
         generator: true,
-        texture: true,
         maxTier: true
       },
       distinct: ["generator"],
