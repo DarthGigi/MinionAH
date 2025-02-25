@@ -14,6 +14,7 @@ interface Item {
       C1?: string;
       C2?: string;
       C3?: string;
+      count?: number;
     };
     wiki: string[];
   };
@@ -42,22 +43,21 @@ const recipeCost: Record<string, number> = {};
 
 const getRecipeCost = (recipeId: string, recipeIngredients: Item["recipe"]) => {
   let cost = 0;
-
-  for (const recipeStr of Object.values(recipeIngredients)) {
-    const recipeString = recipeStr.toString();
-    if (recipeString.length === 0) {
+  for (const [key, value] of Object.entries(recipeIngredients)) {
+    const recipeString = value.toString();
+    if (recipeString.length === 0 || key === "count") {
       continue;
     }
 
+    const itemRecipeAmount = recipeIngredients.recipe?.count ?? 1;
     const [id, amount] = recipeString.split(";");
-    const itemRecipeAmount = id && !amount ? id : 1;
 
     const itemPrice = allItemPrices[id];
     if (id === "SKYBLOCK_COIN") {
-      cost += parseInt(amount);
+      cost += parseInt(amount) * itemRecipeAmount;
     } else if (itemPrice && amount) {
-      cost += itemPrice * parseInt(amount);
-    } else if (itemRecipeAmount !== 1) {
+      cost += itemPrice * parseInt(amount) * itemRecipeAmount;
+    } else {
       const itemRecipe = allItems[id];
       if (
         itemRecipe &&
@@ -66,7 +66,7 @@ const getRecipeCost = (recipeId: string, recipeIngredients: Item["recipe"]) => {
           .every((x) => x === recipeId)
       ) {
         const recipeCost = getRecipeCost(id, itemRecipe.recipe);
-        cost += recipeCost;
+        cost += recipeCost * parseInt(amount) * itemRecipeAmount;
       }
     }
   }
