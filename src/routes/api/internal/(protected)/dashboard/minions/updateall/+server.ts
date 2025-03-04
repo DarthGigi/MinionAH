@@ -38,12 +38,17 @@ async function fetchTextures(minions: MinionWithTexture[], type: "skin" | "head"
       minion,
       promise: () =>
         fetch(`https://mc-heads.net/${type}/${minion.texture}`)
-          .then(
-            (response): TextureSuccess => ({
+          .then((response): TextureSuccess => {
+            // Check if the response indicates a valid account/texture
+            const isValidTexture = response.headers.get("X-Account-Valid") !== "false";
+            if (!isValidTexture) {
+              throw new Error("Invalid texture - default Steve skin returned");
+            }
+            return {
               minionId: minion.id,
               response
-            })
-          )
+            };
+          })
           .catch((error): TextureError => {
             console.error(`Error fetching ${type} for ${minion.name}:`, error);
             return {
@@ -207,7 +212,7 @@ export const PUT: RequestHandler = async ({ fetch, request }) => {
           generator: minion.generator,
           generator_tier: minion.generator_tier,
           maxTier: minion.maxTier,
-          craftCost: minion.craftCost
+          craftCost: minion.craftCost ?? 0
         },
         create: {
           id: minion.id,
@@ -215,7 +220,7 @@ export const PUT: RequestHandler = async ({ fetch, request }) => {
           generator: minion.generator,
           generator_tier: minion.generator_tier,
           maxTier: minion.maxTier,
-          craftCost: minion.craftCost
+          craftCost: minion.craftCost ?? 0
         }
       })
     );
