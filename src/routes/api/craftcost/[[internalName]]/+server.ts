@@ -73,7 +73,7 @@ const getRecipeCost = (recipeId: string, recipeIngredients: Item["recipe"]) => {
 
   recipeCost[recipeId] = Math.floor(cost);
 
-  return Math.floor(cost);
+  return Math.floor(cost) || 0;
 };
 
 const getAllRecipeCost = (itemsSet: Record<string, Item>) => {
@@ -96,7 +96,7 @@ export const GET: RequestHandler = async ({ params }) => {
 
   // If the internalName is "minions", set the filter to "GENERATOR"
   if (internalName === "minions") {
-    applyFilter = "GENERATOR";
+    applyFilter = "_GENERATOR";
   } else {
     // Otherwise, set the filter to the internalName
     applyFilter = internalName;
@@ -106,7 +106,7 @@ export const GET: RequestHandler = async ({ params }) => {
     // Create a new items object, filtering the keys of allItems based on the applyFilter
     // and reducing to a new object with the filtered keys and their corresponding values
     const items: Record<string, Item> = Object.keys(allItems)
-      .filter((key: string) => (applyFilter ? (applyFilter === "GENERATOR" ? key.includes(applyFilter) : key === applyFilter) : true))
+      .filter((key: string) => (applyFilter ? (applyFilter === "_GENERATOR" ? key.includes(applyFilter) : key === applyFilter) : true))
       .reduce((acc: Record<string, Item>, key: string) => {
         acc[key] = allItems[key];
         return acc;
