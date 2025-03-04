@@ -73,7 +73,7 @@ const getRecipeCost = (recipeId: string, recipeIngredients: Item["recipe"]) => {
 
   recipeCost[recipeId] = Math.floor(cost);
 
-  return Math.floor(cost);
+  return Math.floor(cost) || 0;
 };
 
 const getAllRecipeCost = (itemsSet: Record<string, Item>) => {
