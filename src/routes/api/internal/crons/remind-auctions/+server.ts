@@ -119,6 +119,14 @@ export const GET: RequestHandler = async ({ request }) => {
     const messaging = getMessaging(firebaseApp);
 
     let promiseFactories: (() => Promise<any>)[] = [];
+    let emails: {
+      username: string;
+      userEmail: string;
+      auctions: {
+        id: string;
+        minionId: string;
+      }[];
+    }[] = [];
 
     // Group auctions by user
     const userAuctions = response.reduce(
@@ -186,32 +194,31 @@ export const GET: RequestHandler = async ({ request }) => {
 
       if (settings?.notificationSettings?.notificationType === "ALL" || settings?.notificationSettings?.notificationType === "EMAIL") {
         if (settings?.profileSettings?.email) {
-          promiseFactories.push(() =>
-            fetch("https://next.minionah.com/api/resend/auctionreminder", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${MINIONAH_SECRET}`
-              },
-              body: JSON.stringify({
-                username: user.username,
-                userEmail: settings.profileSettings.email,
-                auctions: auctions.map((a) => ({
-                  id: a.id,
-                  name: a.minionName,
-                  amount: a.amount.toString(),
-                  minion: {
-                    id: a.minionId,
-                    name: a.minionName
-                  }
-                }))
-              })
-            }).catch((error) => {
-              console.error("Error sending emails:", error);
-            })
-          );
+          emails.push({
+            username: user.username,
+            userEmail: settings.profileSettings.email,
+            auctions: auctions.map((a) => ({
+              id: a.id.toString(),
+              minionId: a.minionId.toString()
+            }))
+          });
         }
       }
+    }
+
+    if (emails.length !== 0) {
+      promiseFactories.push(() =>
+        fetch("https://next.minionah.com/api/resend/auctionreminder", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${MINIONAH_SECRET}`
+          },
+          body: JSON.stringify(emails)
+        }).catch((error) => {
+          console.error("Error sending emails:", error);
+        })
+      );
     }
 
     console.info("Sending notifications to", Object.keys(userAuctions).length, "users");
