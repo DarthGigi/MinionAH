@@ -119,17 +119,31 @@ export const GET: RequestHandler = async ({ request }) => {
     const messaging = getMessaging(firebaseApp);
 
     let promiseFactories: (() => Promise<any>)[] = [];
-    let emails: {
-      auctionId: string;
-      username: string;
-      auctionName: string;
-      auctionAmount: string;
-      minionId: string;
-      userEmail: string;
-    }[] = [];
 
-    for (const auction of response) {
-      const { user } = auction;
+    // Group auctions by user
+    const userAuctions = response.reduce(
+      (acc, auction) => {
+        const userId = auction.user.id;
+        if (!acc[userId]) {
+          acc[userId] = {
+            user: auction.user,
+            auctions: []
+          };
+        }
+        acc[userId].auctions.push({
+          id: auction.id,
+          amount: auction.amount,
+          minionId: auction.minion_id,
+          minionName: auction.minion.name
+        });
+        return acc;
+      },
+      {} as Record<string, { user: any; auctions: any[] }>
+    );
+
+    // Process each user's notifications
+    for (const [userId, data] of Object.entries(userAuctions)) {
+      const { user, auctions } = data;
       const { settings } = user;
 
       if (!settings?.notificationSettings?.socialNotifications) {
@@ -137,12 +151,17 @@ export const GET: RequestHandler = async ({ request }) => {
         continue;
       }
 
+      // Prepare notification content
+      const auctionCount = auctions.length;
+      const notificationTitle = `${auctionCount} ${auctionCount === 1 ? "Auction" : "Auctions"} About to Expire`;
+      const notificationBody = auctions.map((a) => `${a.amount} ${a.minionName}`).join(", ");
+
       if (settings?.notificationSettings?.notificationType === "ALL" || settings?.notificationSettings?.notificationType === "DEVICE") {
         const message: MulticastMessage = {
           notification: {
-            title: "Auction Bump Reminder",
-            body: `Your ${auction.amount} ${auction.minion.name} auction is about to expire!`,
-            imageUrl: `https://res.cloudinary.com/minionah/image/upload/v1/minions/head/${auction.minion_id}`
+            title: notificationTitle,
+            body: notificationBody,
+            imageUrl: `https://res.cloudinary.com/minionah/image/upload/v1/minions/head/${auctions[0].minionId}`
           },
           tokens: settings.notificationSettings.fcmTokens,
           webpush: {
@@ -150,9 +169,9 @@ export const GET: RequestHandler = async ({ request }) => {
               link: "https://minionah.com/profile"
             },
             notification: {
-              icon: `https://res.cloudinary.com/minionah/image/upload/v1/minions/head/${auction.minion_id}`,
-              image: `https://res.cloudinary.com/minionah/image/upload/v1/minions/head/${auction.minion_id}`,
-              tag: `bump-${auction.id}`,
+              icon: `https://res.cloudinary.com/minionah/image/upload/v1/minions/head/${auctions[0].minionId}`,
+              image: `https://res.cloudinary.com/minionah/image/upload/v1/minions/head/${auctions[0].minionId}`,
+              tag: `bump-summary-${userId}`,
               renotify: true
             }
           }
@@ -167,38 +186,39 @@ export const GET: RequestHandler = async ({ request }) => {
 
       if (settings?.notificationSettings?.notificationType === "ALL" || settings?.notificationSettings?.notificationType === "EMAIL") {
         if (settings?.profileSettings?.email) {
-          emails.push({
-            auctionId: auction.id,
-            username: user.username,
-            auctionName: auction.minion.name,
-            auctionAmount: auction.amount.toString(),
-            minionId: auction.minion_id,
-            userEmail: settings.profileSettings.email
-          });
+          promiseFactories.push(() =>
+            fetch("https://next.minionah.com/api/resend/auctionreminder", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${MINIONAH_SECRET}`
+              },
+              body: JSON.stringify({
+                username: user.username,
+                userEmail: settings.profileSettings.email,
+                auctions: auctions.map((a) => ({
+                  id: a.id,
+                  name: a.minionName,
+                  amount: a.amount.toString(),
+                  minion: {
+                    id: a.minionId,
+                    name: a.minionName
+                  }
+                }))
+              })
+            }).catch((error) => {
+              console.error("Error sending emails:", error);
+            })
+          );
         }
       }
-
-      console.info("Saving reminder for", user.id, "aka", user.username);
     }
 
-    promiseFactories.push(() =>
-      fetch("https://next.minionah.com/api/resend/auctionreminder", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${MINIONAH_SECRET}`
-        },
-        body: JSON.stringify(emails)
-      }).catch((error) => {
-        console.error("Error sending emails:", error);
-      })
-    );
-
-    console.info("Sending a total of ", promiseFactories.length + emails.length, "reminders to a total of ", new Set(emails.map((email) => email.userEmail)).size, " users");
+    console.info("Sending notifications to", Object.keys(userAuctions).length, "users");
 
     await Promise.all(promiseFactories.map((factory) => factory()));
 
-    console.info(`Sent ${promiseFactories.length + emails.length} reminder(s)`);
+    console.info(`Sent ${promiseFactories.length} notifications`);
 
     captureCheckIn({
       checkInId,
