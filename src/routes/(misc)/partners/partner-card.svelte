@@ -8,7 +8,7 @@
   export let cardData: CardData;
 </script>
 
-<Card.Root class="max-w-[32rem] border-border bg-background">
+<Card.Root class="max-w-[32rem] self-stretch border-border bg-background">
   <Card.Header class="flex flex-col items-center justify-center space-y-0 max-md:gap-6 md:flex-row md:justify-between">
     <a href={cardData.links[0].url} target="_blank" rel="noopener noreferrer" class="group flex flex-row items-center justify-start gap-2">
       <Avatar.Root class="pointer-events-none select-none">
@@ -48,7 +48,7 @@
   <Card.Footer class="flex flex-1 items-center justify-center">
     <Avatar.Root asChild>
       <a href={cardData.links[0].url} target="_blank" rel="noopener noreferrer" class="group relative flex aspect-video h-auto w-full shrink-0 overflow-hidden rounded-xl border border-border shadow-sm">
-        <Avatar.Image src={cardData.banner} alt={cardData.title} class="pointer-events-none select-none transition-all duration-300 group-hover:brightness-150" />
+        <Avatar.Image src={cardData.banner} alt={cardData.title} class="pointer-events-none select-none object-cover transition-all duration-300 group-hover:brightness-150" />
         <Avatar.Fallback class="pointer-events-none select-none rounded-xl transition-all duration-300 group-hover:brightness-150">{cardData.title.slice(0, 2).toUpperCase()}</Avatar.Fallback>
       </a>
     </Avatar.Root>
