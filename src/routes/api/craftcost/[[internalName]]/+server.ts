@@ -50,13 +50,14 @@ const getRecipeCost = (recipeId: string, recipeIngredients: Item["recipe"]) => {
     }
 
     const itemRecipeAmount = recipeIngredients.recipe?.count ?? 1;
-    const [id, amount] = recipeString.split(";");
+    const [id, currAmount] = recipeString.split(";") as [string, string];
+    const amount = isNaN(parseInt(currAmount)) ? 1 : parseInt(currAmount);
 
-    const itemPrice = allItemPrices[id];
+    const itemPrice = allItemPrices[id] ?? 0;
     if (id === "SKYBLOCK_COIN") {
-      cost += parseInt(amount) * itemRecipeAmount;
+      cost += amount * itemRecipeAmount;
     } else if (itemPrice && amount) {
-      cost += itemPrice * parseInt(amount) * itemRecipeAmount;
+      cost += itemPrice * amount * itemRecipeAmount;
     } else {
       const itemRecipe = allItems[id];
       if (
@@ -66,14 +67,14 @@ const getRecipeCost = (recipeId: string, recipeIngredients: Item["recipe"]) => {
           .every((x) => x === recipeId)
       ) {
         const recipeCost = getRecipeCost(id, itemRecipe.recipe);
-        cost += recipeCost * parseInt(amount) * itemRecipeAmount;
+        cost += recipeCost * amount * itemRecipeAmount;
       }
     }
   }
 
   recipeCost[recipeId] = Math.floor(cost);
 
-  return Math.floor(cost) || 0;
+  return Math.floor(cost);
 };
 
 const getAllRecipeCost = (itemsSet: Record<string, Item>) => {
