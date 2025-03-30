@@ -119,19 +119,6 @@
   });
 </script>
 
-<svelte:head>
-  {#if !dev}
-    <script defer data-domain="minionah.com" data-api="/p/endpoint/event" src="/p/script/script.outbound-links.js"></script>
-    <script>
-      window.plausible =
-        window.plausible ||
-        function () {
-          (window.plausible.q = window.plausible.q || []).push(arguments);
-        };
-    </script>
-  {/if}
-</svelte:head>
-
 <svelte:window
   on:resize={() => {
     if (window.innerWidth < 768) {
