@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { dev } from "$app/environment";
   import { page } from "$app/stores";
   import { Button } from "$lib/components/ui/button";
   import * as Card from "$lib/components/ui/card";
@@ -27,16 +26,6 @@
     });
   });
 </script>
-
-<svelte:head>
-  {#if !dev}
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        plausible("404", { props: { path: document.location.pathname } });
-      });
-    </script>
-  {/if}
-</svelte:head>
 
 <div class="flex h-full w-screen flex-col items-center justify-center">
   <Card.Root class="border-border bg-popover ">
