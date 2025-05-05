@@ -23,11 +23,6 @@ export const load = (async () => {
             username: true
           }
         }
-      },
-      // @ts-expect-error - This isn't typed yet
-      cacheStrategy: {
-        ttl: 30,
-        swr: 60
       }
     }) as Promise<Seller[]>,
     minionTypes: prisma.minion.findMany({
@@ -39,10 +34,6 @@ export const load = (async () => {
       distinct: ["generator"],
       orderBy: {
         generator: "asc"
-      },
-      // @ts-expect-error - This isn't typed yet
-      cacheStrategy: {
-        ttl: 2629746 // 1 month
       }
     }),
     users: prisma.user.findMany({
@@ -50,40 +41,18 @@ export const load = (async () => {
         id: true,
         username: true
       },
-      // @ts-expect-error - This isn't typed yet
-      cacheStrategy: {
-        ttl: 86400, // 1 day
-        swr: 60 // 1 minute
-      },
       orderBy: {
         loggedInAt: "desc"
       }
     }),
     stats: {
-      users: prisma.user.count({
-        // @ts-expect-error - This isn't typed yet
-        cacheStrategy: {
-          ttl: 86400, // 1 day
-          swr: 60 // 1 minute
-        }
-      }),
-      auctions: prisma.auction.count({
-        // @ts-expect-error - This isn't typed yet
-        cacheStrategy: {
-          ttl: 30,
-          swr: 60
-        }
-      }),
+      users: prisma.user.count(),
+      auctions: prisma.auction.count(),
       chats: prisma.chat.count({
         where: {
           messages: {
             some: {}
           }
-        },
-        // @ts-expect-error - This isn't typed yet
-        cacheStrategy: {
-          ttl: 43200, // 12 hours
-          swr: 60
         }
       })
     }
