@@ -23,14 +23,14 @@
   import MessagesSquare from "lucide-svelte/icons/messages-square";
   import Users from "lucide-svelte/icons/users";
   import { onMount } from "svelte";
-  import { infiniteScrollAction } from "svelte-legos";
+  import { InfiniteLoader, LoaderState } from "svelte-infinite";
   import SvelteSeo from "svelte-seo";
   import { toast } from "svelte-sonner";
   import { writable } from "svelte/store";
   import { draw } from "svelte/transition";
   import type { PageData } from "./$types";
 
-  export let data: PageData;
+  const { data }: { data: PageData } = $props();
 
   const minions = writable<Promise<Seller[]> | Seller[]>(data.minions);
   const loadingMore = writable(false);
@@ -40,7 +40,10 @@
   const maxTier = writable<number | undefined>();
   const searchType = writable<SearchType>(SearchType.Minion);
 
+  const loaderState = new LoaderState();
+
   searchSignal.subscribe((query) => {
+    loaderState.reset();
     searchType.set(SearchType.Minion);
     if (query === $searchValue || query === "") return;
     searchValue.set("");
@@ -186,6 +189,18 @@
     }
   });
 
+  const loadMore = async () => {
+    if (!$preferences.infiniteScroll) return;
+    const currentMinionsValue = await $minions;
+    search($currentTier, true, currentMinionsValue.length)
+      .finally(() => loaderState.loaded())
+      .catch((e) => {
+        loaderState.error();
+        console.error(e);
+      });
+    if ($newMinionAmount === 0 || $newMinionAmount < 18 || ((await $minions).length === 0 && !$loadingMore)) loaderState.complete();
+  };
+
   const search = async (filterTier?: number | undefined, isMore: boolean = false, skip?: number) => {
     loadingMore.set(isMore);
     if (filterTier === 0) filterTier = undefined;
@@ -270,7 +285,7 @@
 
 <div class="mt-8 flex justify-center space-x-1 text-center text-4xl font-bold tracking-[-0.045em] text-white md:mt-20 md:text-7xl md:leading-[5rem]">MinionAH</div>
 
-<Button href="https://discord.minionah.com" target="_blank" class="group z-10 mx-auto mt-2 flex w-fit items-center justify-center rounded-full border border-white/5 bg-neutral-900 text-base text-white transition-all ease-in hover:cursor-pointer hover:bg-neutral-800" variant="ghost">
+<Button href="https://discord.minionah.com" target="_blank" class="group z-10 mx-auto mx-auto mt-2 flex w-fit items-center justify-center rounded-full border border-white/5 bg-neutral-900 text-base text-white transition-all ease-in hover:cursor-pointer hover:bg-neutral-800" variant="ghost">
   <AnimatedShinyText class="inline-flex items-center justify-center px-4 py-1 transition ease-out hover:text-neutral-400 hover:duration-300">
     Join our Discord
     <svg viewBox="0 0 256 199" width="256" height="199" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid" class="ml-2 size-4">
@@ -447,36 +462,34 @@
         {/if}
       {/await}
     </ul>
-    {#await $minions then minions}
-      <div class="flex w-full justify-center py-4">
-        {#if $newMinionAmount === 0 || $newMinionAmount < 18 || (minions.length === 0 && !$loadingMore)}
+    <div class="flex w-full justify-center py-4 [&>.infinite-loader-wrapper>.infinite-intersection-target]:!p-0 [&>.infinite-loader-wrapper]:flex [&>.infinite-loader-wrapper]:w-full [&>.infinite-loader-wrapper]:flex-col [&>.infinite-loader-wrapper]:justify-center">
+      <InfiniteLoader {loaderState} triggerLoad={loadMore} intersectionOptions={{ rootMargin: "0px 0px 500px 0px" }}>
+        <Button type="button" variant="ghost" on:click={loadMore} class="mx-auto text-sm text-accent transition-all duration-300 hover:text-white focus-visible:border-0 focus-visible:outline-none focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0" aria-label="Load more minions">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down h-6 w-6" class:animate-spin={$loadingMore}>
+            {#if $loadingMore}
+              <path in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+              <path in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} d="M21 3v5h-5" />
+              <path in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+              <path in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} d="M8 16H3v5" />
+            {:else}
+              <path in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} d="m6 9 6 6 6-6" />
+            {/if}
+          </svg>
+        </Button>
+        {#snippet loading()}{/snippet}
+        {#snippet noResults()}
           <p class="px-4 py-1 text-center text-sm text-primary text-opacity-40">No more minions to load.</p>
-        {:else}
-          <div
-            use:infiniteScrollAction={{
-              delay: 500, // number, default 200
-              distance: 500, // number, default 0
-              immediate: true, // boolean, default: true
-              disabled: !$preferences.infiniteScroll, // boolean, default: false
-              cb: async () => {
-                await search($currentTier, true, minions.length);
-              }
-            }}>
-            <Button type="button" variant="ghost" on:click={async () => await search($currentTier, true, minions.length)} class="text-sm text-accent transition-all duration-300 hover:text-white focus-visible:border-0 focus-visible:outline-none focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0" aria-label="Load more minions">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down h-6 w-6" class:animate-spin={$loadingMore}>
-                {#if $loadingMore}
-                  <path in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
-                  <path in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} d="M21 3v5h-5" />
-                  <path in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
-                  <path in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} d="M8 16H3v5" />
-                {:else}
-                  <path in:draw={{ duration: 500, delay: 500 }} out:draw={{ duration: 500 }} d="m6 9 6 6 6-6" />
-                {/if}
-              </svg>
-            </Button>
-          </div>
-        {/if}
-      </div>
-    {/await}
+        {/snippet}
+        {#snippet noData()}
+          <p class="px-4 py-1 text-center text-sm text-primary text-opacity-40">No more minions to load.</p>
+        {/snippet}
+        {#snippet coolingOff()}
+          <p class="px-4 py-1 text-center text-sm text-primary text-opacity-40">You're too fast, please wait a few seconds and try again</p>
+        {/snippet}
+        {#snippet error()}
+          <p class="px-4 py-1 text-center text-sm text-primary text-opacity-40">Something went wrong, please try again or contact us</p>
+        {/snippet}
+      </InfiniteLoader>
+    </div>
   </div>
 </div>
