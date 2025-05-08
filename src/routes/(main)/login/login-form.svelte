@@ -9,18 +9,18 @@
   import { writable } from "svelte/store";
   import { superForm, type Infer, type SuperValidated } from "sveltekit-superforms";
   import { zodClient } from "sveltekit-superforms/adapters";
-  import { formSchema, type FormSchema } from "./schema";
+  import { loginFormSchema, type LoginFormSchema } from "./schema";
 
-  export let data: SuperValidated<Infer<FormSchema>>;
+  export let data: SuperValidated<Infer<LoginFormSchema>>;
 
   const form = superForm(data, {
-    validators: zodClient(formSchema),
+    validators: zodClient(loginFormSchema),
     dataType: "json",
     timeoutMs: 2000,
     validationMethod: "oninput"
   });
 
-  const { form: formData, enhance, tainted, isTainted, submitting, timeout } = form;
+  const { form: formData, enhance, tainted, isTainted, submitting, timeout, errors } = form;
 
   const toastLoading = writable<number | string>();
 
@@ -28,6 +28,10 @@
 
   const handleSignUpButtonClick = () => {
     dispatch("signup");
+  };
+
+  const handleMcLoginButtonClick = () => {
+    dispatch("mclogin");
   };
 
   timeout.subscribe((value) => {
@@ -47,6 +51,7 @@
   <Card.Content>
     <form
       method="POST"
+      action="?/login"
       use:enhance={{
         onSubmit: async () => {
           $toastLoading = toast.loading("Logging you in...");
@@ -71,7 +76,11 @@
           <Form.Label for="username">Username</Form.Label>
           <Form.Description>This is your <span class="font-semibold">Minecraft</span> username.</Form.Description>
           <Input {...attrs} bind:value={$formData.username} maxlength={16} type="text" class="border-2 border-accent transition-all duration-300 focus:border-muted-foreground focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[invalid]:border-destructive/40 focus:data-[invalid]:border-destructive" autocomplete="username" name="username" id="username" />
-          <Form.FieldErrors />
+          <div class="text-sm font-medium text-destructive">
+            {#if $errors.username?.length}
+              <div>{$errors.username[0]}</div>
+            {/if}
+          </div>
         </Form.Control>
       </Form.Field>
       <Form.Field {form} name="current-password">
@@ -94,7 +103,7 @@
       </Form.Button>
 
       <span class="my-2 w-full text-center text-sm opacity-50">Or</span>
-      <Button href="/api/oauth/minecraft" variant="outline" data-disabled={$submitting} data-sveltekit-preload-data="tap" class="data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50">
+      <Button variant="outline" data-disabled={$submitting} data-sveltekit-preload-data="tap" class="data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50" on:click={handleMcLoginButtonClick}>
         <img src="/assets/images/mc-auth.svg" class="pointer-events-none mr-1 h-6 w-auto select-none transition-opacity duration-300 group-hover:opacity-70" alt="Mc-Auth" />
         Login with MC-Auth
       </Button>

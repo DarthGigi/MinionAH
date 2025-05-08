@@ -23,6 +23,7 @@
   import Settings from "lucide-svelte/icons/settings";
   import UserRound from "lucide-svelte/icons/user-round";
   import Users from "lucide-svelte/icons/users";
+  import posthog from "posthog-js";
 
   let profileDropdownOpen = false;
   let menuDropdownOpen = false;
@@ -133,7 +134,7 @@
                       {/if}
                     </DropdownMenu.Item>
                     <DropdownMenu.Separator class="bg-border" />
-                    <DropdownMenu.Item href="/logout" class="cursor-pointer gap-1.5 data-[highlighted]:bg-background" data-sveltekit-preload-data="off">
+                    <DropdownMenu.Item href="/logout" class="cursor-pointer gap-1.5 data-[highlighted]:bg-background" data-sveltekit-preload-data="off" on:click={() => posthog.reset()}>
                       <LogOut class="size-4" /> Sign out
                     </DropdownMenu.Item>
                   </DropdownMenu.Group>

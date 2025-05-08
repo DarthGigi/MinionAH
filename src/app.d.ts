@@ -1,4 +1,4 @@
-import type { PrismaClient, User } from "@prisma/client";
+import type { PrismaClient, Session, User } from "$generated/prisma";
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
 
@@ -15,7 +15,7 @@ declare global {
             };
           })
         | null;
-      session: import("lucia").Session | null;
+      session: Session | null;
       isProtectedRoute: boolean;
       isAdmin: boolean | undefined;
     }

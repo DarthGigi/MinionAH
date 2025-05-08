@@ -1,11 +1,11 @@
-import adapter from "@sveltejs/adapter-vercel";
+import adapter from "@sveltejs/adapter-node";
 import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
   // Consult https://kit.svelte.dev/docs/integrations#preprocessors
   // for more information about preprocessors
-  preprocess: vitePreprocess(),
+  preprocess: vitePreprocess({ script: true }),
 
   kit: {
     // adapter-auto only supports some environments, see https://kit.svelte.dev/docs/adapter-auto for a list.
@@ -14,18 +14,26 @@ const config = {
     adapter: adapter(),
     csp: {
       directives: {
-        "script-src": ["self", "unsafe-eval", "https://*.vercel-scripts.com", "https://*.vercel.app", "https://*.pusher.com", "sha256-y2WkUILyE4eycy7x+pC0z99aZjTZlWfVwgUAfNc1sY8="],
+        "script-src": ["self", "unsafe-eval", "unsafe-inline", "https://*.pusher.com", "https://*.posthog.com", "https://*.minionah.com", "https://*.cloudflareinsights.com", "https://*.googletagmanager.com"],
         "worker-src": ["self", "blob:", "https://*.minionah.com"],
-        "img-src": ["self", "data:", "https://*.vercel.app", "https://*.vercel-scripts.com", "https://*.imgur.com", "https://*.imgbb.com", "https://*.vgy.me", "https://*.gyazo.com", "https://*.prnt.sc", "https://*.prntscr.com", "https://*.tenor.com", "https://*.giphy.com", "https://*.gfycat.com", "https://*.discordapp.net", "https://*.discordapp.com", "https://*.discord.com", "https://*.minionah.com", "https://*.cloudinary.com", "https://*.hypixel.net"],
-        "style-src": ["self", "unsafe-inline"]
+        "img-src": ["self", "data:", "https://*.imgur.com", "https://*.imgbb.com", "https://*.vgy.me", "https://*.gyazo.com", "https://*.prnt.sc", "https://*.prntscr.com", "https://*.tenor.com", "https://*.giphy.com", "https://*.gfycat.com", "https://*.discordapp.net", "https://*.discordapp.com", "https://*.discord.com", "https://*.minionah.com", "https://*.cloudinary.com", "https://*.hypixel.net"],
+        "style-src": ["self", "unsafe-inline", "https://*.posthog.com", "https://*.minionah.com"]
       },
       mode: "auto"
     },
     csrf: {
-      checkOrigin: true
+      checkOrigin: false
     },
     serviceWorker: {
       register: false
+    },
+    paths: {
+      relative: false
+    },
+
+    alias: {
+      $generated: "src/generated",
+      $components: "src/components"
     }
   }
 };

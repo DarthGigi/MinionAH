@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { Minion } from "$generated/prisma";
   import MinionsListBox from "$lib/components/MinionsListBox.svelte";
   import { Button } from "$lib/components/ui/button";
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
@@ -6,7 +7,6 @@
   import * as Tooltip from "$lib/components/ui/tooltip";
   import { formatNumber } from "$lib/utilities";
   import { cn } from "$lib/utils";
-  import type { Minion } from "@prisma/client";
   import ArrowDown01 from "lucide-svelte/icons/arrow-down-0-1";
   import ArrowDownAZ from "lucide-svelte/icons/arrow-down-a-z";
   import ArrowUp01 from "lucide-svelte/icons/arrow-up-0-1";

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { Auction } from "$generated/prisma";
   import * as AlertDialog from "$lib/components/ui/alert-dialog";
   import { Button } from "$lib/components/ui/button";
   import * as Dialog from "$lib/components/ui/dialog";
@@ -7,7 +8,6 @@
   import * as Table from "$lib/components/ui/table";
   import { preferences } from "$lib/stores/preferences";
   import { formatNumber } from "$lib/utilities";
-  import type { Auction } from "@prisma/client";
   import ArrowUpDown from "lucide-svelte/icons/arrow-up-down";
   import ChevronDown from "lucide-svelte/icons/chevron-down";
   import CircleEllipsis from "lucide-svelte/icons/circle-ellipsis";

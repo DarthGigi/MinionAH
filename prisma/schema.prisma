@@ -1,7 +1,8 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -92,8 +93,6 @@ model Minion {
   name           String
   generator      String
   generator_tier Int
-  texture        String
-  skin           String
   maxTier        Int
   craftCost      Float     @default(0)
   sellers        Auction[]
@@ -106,9 +105,12 @@ model Auction {
   user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
   minion      Minion   @relation(fields: [minion_id], references: [id], onDelete: Cascade)
   hasInfusion Boolean  @default(false)
+  hasFreeWill Boolean  @default(false)
   price       Float
   amount      Int
   timeCreated DateTime @default(now()) @updatedAt
+  timeBumped  DateTime?
+  timeEmailed DateTime?
 
   @@index([user_id])
   @@index([minion_id])

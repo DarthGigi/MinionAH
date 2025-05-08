@@ -1,11 +1,11 @@
 <script lang="ts">
+  import type { Chat } from "$generated/prisma";
   import * as AlertDialog from "$lib/components/ui/alert-dialog";
   import { Button } from "$lib/components/ui/button";
   import * as Dialog from "$lib/components/ui/dialog";
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
   import { Input } from "$lib/components/ui/input";
   import * as Table from "$lib/components/ui/table";
-  import type { Chat } from "@prisma/client";
   import ArrowUpDown from "lucide-svelte/icons/arrow-up-down";
   import ChevronDown from "lucide-svelte/icons/chevron-down";
   import CircleEllipsis from "lucide-svelte/icons/circle-ellipsis";

@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { dev } from "$app/environment";
-  import { goto } from "$app/navigation";
+  import { browser, dev } from "$app/environment";
+  import { afterNavigate, beforeNavigate, goto } from "$app/navigation";
   import { page } from "$app/stores";
-  import { PUBLIC_VAPID_KEY } from "$env/static/public";
+  import { PUBLIC_POSTHOG_KEY, PUBLIC_VAPID_KEY } from "$env/static/public";
   import MessageToast from "$lib/components/MessageToast.svelte";
   import * as Breadcrumb from "$lib/components/ui/breadcrumb";
   import { Toaster } from "$lib/components/ui/sonner";
@@ -10,11 +10,10 @@
   import Navbar from "$lib/layouts/Navbar.svelte";
   import { internalStorage, preferences } from "$lib/stores/preferences";
   import { requestNotificationPermission } from "$lib/utilities";
-  import { inject } from "@vercel/analytics";
-  import { injectSpeedInsights } from "@vercel/speed-insights/sveltekit";
   import type { FirebaseApp } from "firebase/app";
   import { initializeApp } from "firebase/app";
   import { getMessaging, getToken, onMessage } from "firebase/messaging";
+  import posthog from "posthog-js";
   import { onMount } from "svelte";
   import SvelteSeo from "svelte-seo";
   import type { ToasterProps } from "svelte-sonner";
@@ -32,11 +31,6 @@
   const position = writable<ToasterProps["position"]>("bottom-right");
   const closeButton = writable<ToasterProps["closeButton"]>(true);
 
-  inject({ mode: dev ? "development" : "production", debug: false });
-  if (!dev) {
-    injectSpeedInsights();
-  }
-
   page.subscribe((value) => {
     const urls = value.url.pathname.split("/").filter((url) => Boolean(url));
     paths.set(urls);
@@ -52,7 +46,28 @@
     }
   });
 
+  if (browser && !dev) {
+    beforeNavigate(() => posthog.capture("$pageleave"));
+    afterNavigate(() => posthog.capture("$pageview"));
+  }
+
   onMount(async () => {
+    if (!dev) {
+      if (browser) {
+        posthog.init(PUBLIC_POSTHOG_KEY, {
+          api_host: "https://e.minionah.com",
+          person_profiles: "always", // or 'always' to create profiles for anonymous users as well,
+          ui_host: "https://eu.posthog.com",
+          capture_pageview: false,
+          capture_pageleave: false
+        });
+        if ($page.data.user) {
+          posthog.identify($page.data.user.id, {
+            username: $page.data.user.username
+          });
+        }
+      }
+    }
     if (window.innerWidth < 768) {
       position.set("top-center");
       closeButton.set(false);

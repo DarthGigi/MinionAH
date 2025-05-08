@@ -1,6 +1,6 @@
+import { Prisma } from "$generated/prisma";
 import prisma from "$lib/server/prisma";
 import type { Seller } from "$lib/types";
-import { Prisma } from "@prisma/client";
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 

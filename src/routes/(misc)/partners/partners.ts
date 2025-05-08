@@ -27,5 +27,18 @@ export const partners: CardData[] = [
         url: "https://hypixel.net/threads/skyblock-university-helping-early-and-mid-game-players-no-reqs-friendly-and-welcoming-community-5-3k-member-discord-9-guilds.5730713/"
       }
     ]
+  },
+  {
+    image: "https://res.cloudinary.com/minionah/image/upload/v1/partners/icons/sbh",
+    title: "Skyblock Hub",
+    subTitle: "@sbh",
+    description: 'Skyblock Hub is a Discord server that focuses on carry services. We have an active, friendly, and well moderated community, many giveaways and events, and a support channel to answer any questions you may have about SkyBlock progression. We would love for you to check out our server, even if it\'s just a pop-in just to say "hi!".',
+    banner: "https://res.cloudinary.com/minionah/image/upload/v1/partners/banners/sbh%20banner",
+    links: [
+      {
+        name: "Discord",
+        url: "https://discord.gg/QFQ64B4Whn"
+      }
+    ]
   }
 ];

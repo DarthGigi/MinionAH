@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { Minion } from "$generated/prisma";
   import * as AlertDialog from "$lib/components/ui/alert-dialog";
   import { Button } from "$lib/components/ui/button";
   import * as Dialog from "$lib/components/ui/dialog";
@@ -7,7 +8,6 @@
   import * as Table from "$lib/components/ui/table";
   import { preferences } from "$lib/stores/preferences";
   import { formatNumber } from "$lib/utilities";
-  import type { Minion } from "@prisma/client";
   import ArrowUpDown from "lucide-svelte/icons/arrow-up-down";
   import ChevronDown from "lucide-svelte/icons/chevron-down";
   import CircleEllipsis from "lucide-svelte/icons/circle-ellipsis";
@@ -299,13 +299,13 @@
 </div>
 
 <AlertDialog.Root bind:open={minionRefreshDialogOpen} closeOnEscape={!loading} closeOnOutsideClick={!loading}>
-  <AlertDialog.Content>
+  <AlertDialog.Content class="border-border bg-popover">
     <AlertDialog.Header>
       <AlertDialog.Title>Are you absolutely sure?</AlertDialog.Title>
-      <AlertDialog.Description
-        >Updating every minion will first delete all minions and then re-add them.
+      <AlertDialog.Description>
+        Updating every minion will update every property of every minion if the minion exists. If the minion does not exist, it will be created.
         <br /><br />
-        <span class="text-destructive">This will cause every auction to be deleted. <br /> <span class="font-semibold">This action is irreversible.</span></span>
+        Use this when filling the database for the first time or a new minion or minion tier has been added to Hypixel Skyblock.
         <br /><br />
         This action will take some time to complete.
       </AlertDialog.Description>
@@ -313,7 +313,7 @@
     <AlertDialog.Footer>
       <AlertDialog.Cancel disabled={loading}>Cancel</AlertDialog.Cancel>
       <AlertDialog.Action asChild>
-        <Button disabled={loading} variant="destructive" on:click={() => handleButtonClick("/api/internal/dashboard/minions/resetall", "PUT", JSON.stringify({}), "Updating the minions failed. Please try again later or contact support.", (value) => (minionRefreshDialogOpen = value))}>
+        <Button disabled={loading} on:click={() => handleButtonClick("/api/internal/dashboard/minions/updateall", "PUT", JSON.stringify({}), "Updating the minions failed. Please try again later or contact support.", (value) => (minionRefreshDialogOpen = value))}>
           {#if loading}
             <LoaderCircle class="h-4 w-4 animate-spin" />
           {:else}

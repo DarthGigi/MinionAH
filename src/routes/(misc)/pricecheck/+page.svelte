@@ -90,9 +90,9 @@
 <div class="container mx-auto pb-10">
   {#await data.minions}
     <div class="mt-[4.5rem] divide-y divide-border overflow-hidden rounded-md border border-border bg-background">
-      <div class="h-12 w-full animate-pulse bg-muted" />
+      <div class="h-12 w-full animate-pulse bg-muted"></div>
       {#each Array(12) as _, index (index)}
-        <div class="h-[4.25rem] w-full animate-pulse bg-muted" />
+        <div class="h-[4.25rem] w-full animate-pulse bg-muted"></div>
       {/each}
     </div>
   {:then minions}

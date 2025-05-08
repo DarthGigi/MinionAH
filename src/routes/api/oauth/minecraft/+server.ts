@@ -1,38 +1,71 @@
 import { dev } from "$app/environment";
-import { MC_AUTH_CLIENT_ID, MC_AUTH_REDIRECT_URI } from "$env/static/private";
-import { redirect, type RequestHandler } from "@sveltejs/kit";
-import { generateCodeVerifier, generateState } from "arctic";
+import { MC_AUTH_CLIENT_ID, MC_AUTH_CLIENT_SECRET, MC_AUTH_REDIRECT_URI } from "$env/static/private";
+import { createSession, generateSessionToken } from "$lib/server/lucia/auth";
+import { setSessionTokenCookie } from "$lib/server/lucia/cookies";
+import { getMcAuthInfo } from "$lib/server/minecraft";
+import { getMcAuthUser } from "$lib/server/signup";
+import { TokenRequestResult } from "@oslojs/oauth2";
+import { error, redirect, type RequestHandler } from "@sveltejs/kit";
 
-const state = generateState();
-const codeVerifier = generateCodeVerifier();
+export const GET = (async ({ cookies, locals, fetch, url }) => {
+  const params = url.searchParams;
+  const code = params.get("code");
+  const state = params.get("state");
 
-const url = new URL("https://mc-auth.com/oAuth2/authorize");
-const params = {
-  response_type: "code",
-  client_id: MC_AUTH_CLIENT_ID,
-  state: state,
-  scope: "profile",
-  redirect_uri: dev ? "http://localhost:5173/api/oauth/minecraft/callback" : MC_AUTH_REDIRECT_URI,
-  code_challenge: codeVerifier,
-  code_challenge_method: "S256"
-};
+  // get state cookie we set when we got the authorization url
+  const stateCookie = cookies.get("minecraft_oauth_state");
+  cookies.delete("minecraft_oauth_state", { path: "/" });
 
-Object.entries(params).forEach(([key, value]) => url.searchParams.append(key, value));
+  // validate state
+  if (!state || !stateCookie || state !== stateCookie) redirect(302, "/login"); // invalid state
 
-export const GET: RequestHandler = async ({ cookies }) => {
-  // the state can be stored in cookies or localstorage for request validation on callback
-  cookies.set("minecraft_code_verifier", codeVerifier, {
-    path: "/",
-    httpOnly: true,
-    maxAge: 60 * 60
-  });
+  const codeVerifier = cookies.get("minecraft_code_verifier");
+  cookies.delete("minecraft_code_verifier", { path: "/" });
 
-  cookies.set("minecraft_oauth_state", state, {
-    path: "/",
-    httpOnly: true,
-    maxAge: 60 * 60
-  });
+  if (!codeVerifier) redirect(302, "/login"); // invalid code verifier
 
-  // redirect to authorization url
-  redirect(302, url.href);
-};
+  try {
+    const response = await fetch("https://mc-auth.com/oAuth2/token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        client_id: MC_AUTH_CLIENT_ID,
+        client_secret: MC_AUTH_CLIENT_SECRET,
+        code,
+        redirect_uri: dev ? "http://localhost:5173/api/oauth/minecraft" : MC_AUTH_REDIRECT_URI,
+        grant_type: "authorization_code"
+      })
+    });
+
+    const result = new TokenRequestResult(await response.json());
+
+    if (result.hasErrorCode()) {
+      console.error(result.errorCode());
+      error(500, "Error getting MC profile");
+    }
+
+    const accessToken = result.accessToken();
+
+    const minecraftUser = await getMcAuthInfo(accessToken);
+
+    const user = await getMcAuthUser(minecraftUser);
+
+    if (!user) {
+      console.error("Failed to create account");
+      error(500, "Failed to create account");
+    }
+
+    const token = generateSessionToken();
+    const session = await createSession(token, user.id);
+    setSessionTokenCookie(cookies, token, session.expiresAt);
+
+    locals.session = session;
+  } catch (e) {
+    console.error(e);
+    error(500, "Internal Server Error");
+  }
+
+  redirect(302, "/signup/password");
+}) satisfies RequestHandler;
