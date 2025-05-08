@@ -9,8 +9,8 @@
   import Bug from "lucide-svelte/icons/bug";
   import MoveVertical from "lucide-svelte/icons/move-vertical";
   import { onMount } from "svelte";
-  import { mediaQuery } from "svelte-legos";
   import { toast } from "svelte-sonner";
+  import { MediaQuery } from "svelte/reactivity";
   import { writable } from "svelte/store";
   import type { LayoutData } from "./$types";
 
@@ -30,10 +30,10 @@
     });
   });
 
-  const isMobile = mediaQuery("(max-width: 640px)");
+  const isMobile = new MediaQuery("max-width: 640px");
 </script>
 
-{#if $isMobile}
+{#if isMobile.current}
   <Drawer.Root bind:open={$bugReportOpen} openFocus="data-dialog-close" shouldScaleBackground={true}>
     <Drawer.Trigger class="fixed bottom-[calc(env(safe-area-inset-bottom)+1rem)] right-0 z-50 translate-x-1/2 -rotate-90 rounded-full border border-input bg-background p-2 text-muted-foreground transition-all duration-300 hover:translate-x-0 hover:rotate-0 hover:bg-accent hover:text-accent-foreground data-[open=true]:translate-x-0 data-[open=true]:rotate-0 data-[open=true]:bg-accent data-[open=true]:text-accent-foreground" data-open={$bugReportOpen}>
       <Bug class="size-4" />
