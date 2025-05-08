@@ -1,7 +1,7 @@
 <script lang="ts">
+  import type { Minion } from "$generated/prisma";
   import { Button } from "$lib/components/ui/button";
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
-  import type { Minion } from "@prisma/client";
   import Ellipsis from "lucide-svelte/icons/ellipsis";
 
   export let minion: Minion | undefined;

@@ -1,4 +1,4 @@
-import type { PrismaClient, Session, User } from "@prisma/client";
+import type { PrismaClient, Session, User } from "$generated/prisma";
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
 

@@ -1,7 +1,7 @@
+import type { Session, User } from "$generated/prisma";
 import prisma from "$lib/server/prisma";
 import { sha256 } from "@oslojs/crypto/sha2";
 import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from "@oslojs/encoding";
-import type { Session, User } from "@prisma/client";
 
 export function generateSessionToken(): string {
   const bytes = new Uint8Array(20);

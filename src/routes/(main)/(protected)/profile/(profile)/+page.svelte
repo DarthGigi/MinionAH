@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { Auction, Minion, User } from "$generated/prisma";
   import CardLoading from "$lib/components/CardLoading.svelte";
   import CopyButton from "$lib/components/CopyButton.svelte";
   import HtmlToast from "$lib/components/HtmlToast.svelte";
@@ -14,7 +15,6 @@
   import { Label } from "$lib/components/ui/label";
   import { Switch } from "$lib/components/ui/switch";
   import NumberFlow, { NumberFlowGroup } from "@number-flow/svelte";
-  import type { Auction, Minion, User } from "@prisma/client";
   import ChevronsUpDown from "lucide-svelte/icons/chevrons-up-down";
   import LoaderCircle from "lucide-svelte/icons/loader-circle";
   import * as skinview3d from "skinview3d";

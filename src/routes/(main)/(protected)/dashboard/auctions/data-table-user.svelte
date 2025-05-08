@@ -1,6 +1,6 @@
 <script lang="ts">
+  import type { User } from "$generated/prisma";
   import * as Avatar from "$lib/components/ui/avatar";
-  import type { User } from "@prisma/client";
 
   export let user: User;
 </script>

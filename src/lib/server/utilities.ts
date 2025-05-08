@@ -1,4 +1,4 @@
-import { type PrismaPromise } from "@prisma/client";
+import { type PrismaPromise } from "$generated/prisma";
 import { getAverageColor } from "fast-average-color-node";
 
 export type BulkUpdateEntry = {

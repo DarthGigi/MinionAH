@@ -3,12 +3,12 @@
 </script>
 
 <script lang="ts">
+  import type { Minion } from "$generated/prisma";
   import * as Avatar from "$lib/components/ui/avatar";
   import { Button } from "$lib/components/ui/button";
   import * as Command from "$lib/components/ui/command";
   import * as Popover from "$lib/components/ui/popover";
   import { cn } from "$lib/utils";
-  import type { Minion } from "@prisma/client";
   import Check from "lucide-svelte/icons/check";
   import ChevronsUpDown from "lucide-svelte/icons/chevrons-up-down";
   import SearchX from "lucide-svelte/icons/search-x";
