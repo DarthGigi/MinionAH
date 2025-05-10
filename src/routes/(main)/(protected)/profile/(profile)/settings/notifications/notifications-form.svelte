@@ -56,7 +56,7 @@
 
   const showInstallInstructions = writable(false);
 
-  const deviceRadioDisabled = writable(false);
+  const deviceCheckboxDisabled = writable(false);
 
   const permission = writable<NotificationPermission | undefined>();
   const hasEmail = readable($page.data.userData.settings?.profileSettings?.email ? true : false);
@@ -100,9 +100,12 @@
         serviceWorkerRegistration: await navigator.serviceWorker.ready
       });
       internalStorage.update((state) => ({ ...state, fcmToken: token }));
-      deviceRadioDisabled.set(false);
+      deviceCheckboxDisabled.set(false);
+      if (request) {
+        window.location.reload();
+      }
     } else if ($permission === "denied" || $permission === "default" || $permission === undefined) {
-      deviceRadioDisabled.set(true);
+      deviceCheckboxDisabled.set(true);
     }
   };
 
@@ -215,7 +218,7 @@
         <Form.Control let:attrs>
           <Checkbox
             value="DEVICE"
-            disabled={$deviceRadioDisabled || ($isiOS && !$iOSIsInstalled)}
+            disabled={$deviceCheckboxDisabled || ($isiOS && !$iOSIsInstalled)}
             {...attrs}
             bind:checked={$isDeviceSelected}
             onCheckedChange={(v) => {
