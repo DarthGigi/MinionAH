@@ -1,4 +1,4 @@
-import { FIREBASE_SERVICE_CLIENT_EMAIL, FIREBASE_SERVICE_PRIVATE_KEY, FIREBASE_SERVICE_PROJECT_ID, MINIONAH_SECRET, app_id, secret } from "$env/static/private";
+import { DISCORD_BOT_API_SECRET, FIREBASE_SERVICE_CLIENT_EMAIL, FIREBASE_SERVICE_PRIVATE_KEY, FIREBASE_SERVICE_PROJECT_ID, MINIONAH_SECRET, app_id, secret } from "$env/static/private";
 import { PUBLIC_cluster, PUBLIC_key } from "$env/static/public";
 import { sanitize } from "@jill64/universal-sanitizer";
 import { error, fail, redirect } from "@sveltejs/kit";
@@ -199,6 +199,12 @@ export const actions = {
               notificationSettings: true,
               profileSettings: true
             }
+          },
+          oauth: {
+            where: {
+              provider: "discord",
+              userId: user.id
+            }
           }
         }
       });
@@ -324,69 +330,67 @@ export const actions = {
               }
             });
 
-      if (notificationSettings?.notificationType === "ALL" || notificationSettings?.notificationType === "DEVICE") {
-        if (notificationSettings.socialNotifications) {
-          if (notificationSettings.fcmTokens.length > 0) {
-            const unreadCount = await prisma.chat.count({
-              where: {
-                id: chat.id,
-                OR: [
-                  {
-                    user1_id: {
-                      equals: user2?.id
-                    },
-                    user1Read: {
-                      equals: false
-                    }
+      if (notificationSettings?.notificationType.includes("DEVICE") && notificationSettings.socialNotifications) {
+        if (notificationSettings.fcmTokens.length > 0) {
+          const unreadCount = await prisma.chat.count({
+            where: {
+              id: chat.id,
+              OR: [
+                {
+                  user1_id: {
+                    equals: user2?.id
                   },
-                  {
-                    user2_id: {
-                      equals: user2?.id
-                    },
-                    user2Read: {
-                      equals: false
-                    }
+                  user1Read: {
+                    equals: false
                   }
-                ]
-              }
-            });
-            const pushMessage: MulticastMessage = {
+                },
+                {
+                  user2_id: {
+                    equals: user2?.id
+                  },
+                  user2Read: {
+                    equals: false
+                  }
+                }
+              ]
+            }
+          });
+          const pushMessage: MulticastMessage = {
+            notification: {
+              title: `${user.username}`,
+              body: sanitize(messageType === MessageType.TEXT ? messageJSON.content : "", {
+                sanitizeHtml: {
+                  allowedTags: [],
+                  disallowedTagsMode: "discard"
+                }
+              }),
+              imageUrl: `https://res.cloudinary.com/minionah/image/upload/v1/users/avatars/${user.id}`
+            },
+            data: {
+              chat_id: chat.id,
+              user_id: user.id,
+              username: user.username
+            },
+            tokens: notificationSettings.fcmTokens,
+            webpush: {
+              fcmOptions: {
+                link: `https://minionah.com/${user.username}/chat`
+              },
               notification: {
-                title: `${user.username}`,
-                body: sanitize(messageType === MessageType.TEXT ? messageJSON.content : "", {
-                  sanitizeHtml: {
-                    allowedTags: [],
-                    disallowedTagsMode: "discard"
-                  }
-                }),
-                imageUrl: `https://res.cloudinary.com/minionah/image/upload/v1/users/avatars/${user.id}`
+                icon: `https://res.cloudinary.com/minionah/image/upload/v1/users/avatars/${user.id}`,
+                image: `https://res.cloudinary.com/minionah/image/upload/v1/users/avatars/${user.id}`,
+                tag: `chat-${chat.id}`,
+                renotify: true
               },
               data: {
-                chat_id: chat.id,
-                user_id: user.id,
-                username: user.username
-              },
-              tokens: notificationSettings.fcmTokens,
-              webpush: {
-                fcmOptions: {
-                  link: `https://minionah.com/${user.username}/chat`
-                },
-                notification: {
-                  icon: `https://res.cloudinary.com/minionah/image/upload/v1/users/avatars/${user.id}`,
-                  image: `https://res.cloudinary.com/minionah/image/upload/v1/users/avatars/${user.id}`,
-                  tag: `chat-${chat.id}`,
-                  renotify: true
-                },
-                data: {
-                  unreadCount: unreadCount.toString()
-                }
+                unreadCount: unreadCount.toString()
               }
-            };
+            }
+          };
 
-            await messaging.sendEachForMulticast(pushMessage).catch((error) => {
-              console.error("Error sending message:", error);
-            });
-          }
+          await messaging.sendEachForMulticast(pushMessage).catch((error) => {
+            console.error("Error sending message:", error);
+          });
         }
       }
 
@@ -405,7 +409,7 @@ export const actions = {
       const alreadySentEmail = user.id === chat.user1_id ? chat.user2Emailed : chat.user1Emailed;
 
       if (profileSettings && !alreadySentEmail) {
-        if (notificationSettings?.notificationType === "ALL" || notificationSettings?.notificationType === "EMAIL") {
+        if (notificationSettings?.notificationType.includes("EMAIL")) {
           if (notificationSettings.socialNotifications && profileSettings?.email) {
             const data = await fetch("https://next.minionah.com/api/resend/userchat", {
               method: "POST",
@@ -434,6 +438,42 @@ export const actions = {
             } else {
               console.error(data.error);
             }
+          }
+        }
+      }
+
+      // get the oauth settings of the other user
+      const oauthSettings =
+        user.id === chat.user1_id
+          ? user2?.oauth
+          : await prisma.userOAuthProvider.findMany({
+              where: {
+                user: {
+                  id: chat.user1_id
+                },
+                provider: "discord"
+              }
+            });
+
+      if (oauthSettings && oauthSettings.length) {
+        if (notificationSettings?.notificationType.includes("DISCORD") && notificationSettings.socialNotifications) {
+          const response = await fetch("https://bot.minionah.com/notifications/send", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: DISCORD_BOT_API_SECRET
+            },
+            body: JSON.stringify({
+              receiverDiscordID: oauthSettings[0].id,
+              senderUsername: user.username,
+              senderID: user.id
+            })
+          });
+
+          const responseData = await response.json();
+
+          if (!response.ok || responseData.code === 50007) {
+            console.error("Error sending notification:", response.statusText);
           }
         }
       }
