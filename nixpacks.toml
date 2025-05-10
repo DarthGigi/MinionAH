@@ -11,7 +11,7 @@ NPM_CONFIG_PRODUCTION = 'false'
 [phases.setup]
 nixPkgs = [
     'nodejs_22',
-    'pnpm-10_x',
+    'pnpm-9_x',
     'openssl',
 ]
 nixLibs = [
