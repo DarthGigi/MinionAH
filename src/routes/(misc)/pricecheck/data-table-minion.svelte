@@ -1,6 +1,6 @@
 <script lang="ts">
+  import type { Minion } from "$generated/prisma";
   import * as Avatar from "$lib/components/ui/avatar";
-  import type { Minion } from "@prisma/client";
 
   export let minion: Minion;
 </script>

@@ -190,6 +190,7 @@ package
 .ionide
 
 # Custom rules
+/src/generated/prisma
 
 # Sentry Config File
 .sentryclirc

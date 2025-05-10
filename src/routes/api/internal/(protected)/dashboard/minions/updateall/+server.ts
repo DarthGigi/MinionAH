@@ -1,5 +1,5 @@
 import { CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET, CLOUDINARY_CLOUD_NAME } from "$env/static/private";
-import type { Minion } from "@prisma/client";
+import type { Minion } from "$generated/prisma";
 import { json } from "@sveltejs/kit";
 import { v2 as cloudinary } from "cloudinary";
 import type { RequestHandler } from "./$types";

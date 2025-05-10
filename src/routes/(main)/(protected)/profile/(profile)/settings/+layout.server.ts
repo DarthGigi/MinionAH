@@ -11,6 +11,12 @@ export const load = (async ({ locals }) => {
           notificationSettings: true,
           profileSettings: true
         }
+      },
+      oauth: {
+        where: {
+          provider: "discord",
+          userId: locals.user!.id
+        }
       }
     }
   });

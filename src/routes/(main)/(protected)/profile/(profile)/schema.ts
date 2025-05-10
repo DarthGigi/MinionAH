@@ -20,7 +20,8 @@ export const formSchemaCreate = z.object({
     .max(10000000000000, "Minion's price can't be higher than 10000000000000 coins")
     .default("" as unknown as number),
   infusion: z.boolean(),
-  "free-will": z.boolean()
+  "free-will": z.boolean(),
+  negotiable: z.boolean().default(false)
 });
 
 export const formSchemaDelete = z.object({

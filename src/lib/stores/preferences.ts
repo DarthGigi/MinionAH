@@ -17,7 +17,7 @@ export const internalPreferences = persisted("internalPreferences", {
   hasSeenDiscordToast: false,
   hasSeenDeviceNotificationsToast: false,
   hasSeenEmailNotificationsToast: false,
-  hasSeenBumpingAuctionsToast: false
+  hasSeenDiscordNotificationsToast: false
 });
 
 export const internalStorage = persisted<InternalStorage>("internalStorage", {

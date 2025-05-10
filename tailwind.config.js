@@ -63,7 +63,8 @@ const config = {
       animation: {
         orbit: "orbit calc(var(--duration)*1s) linear infinite",
         shimmer: "shimmer 8s infinite",
-        gradient: "gradient 8s linear infinite"
+        gradient: "gradient 8s linear infinite",
+        wiggle: "wiggle 3s ease-in-out infinite"
       },
       keyframes: {
         orbit: {
@@ -92,6 +93,14 @@ const config = {
           "100%": {
             backgroundPosition: "0% 100%"
           }
+        },
+        wiggle: {
+          "0%, 30%": { transform: "rotate(0deg)" },
+          "40%": { transform: "rotate(5deg)" },
+          "50%": { transform: "rotate(-5deg)" },
+          "60%": { transform: "rotate(10deg)" },
+          "70%": { transform: "rotate(-10deg)" },
+          "80%, 100%": { transform: "rotate(0deg)" }
         }
       }
     }

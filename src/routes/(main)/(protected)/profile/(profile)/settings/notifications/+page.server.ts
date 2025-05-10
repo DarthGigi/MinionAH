@@ -17,7 +17,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   return {
     form: await superValidate(
       {
-        type: userSettings?.notificationSettings?.notificationType || "NONE",
+        type: userSettings?.notificationSettings?.notificationType.sort() || null,
         marketing_notifications: userSettings?.notificationSettings?.marketNotifications || false,
         social_notifications: userSettings?.notificationSettings?.socialNotifications || false
       },
@@ -35,7 +35,7 @@ export const actions: Actions = {
       });
     }
 
-    const notificationType = form.data.type;
+    const notificationType = form.data.type?.sort();
     const marketNotifications = form.data.marketing_notifications;
     const socialNotifications = form.data.social_notifications;
     const fcmTokens = form.data.fcmToken ? [form.data.fcmToken] : [];
