@@ -55,16 +55,15 @@ model ProfileSettings {
 }
 
 enum NotificationType {
-  ALL
   EMAIL
   DEVICE
-  NONE
+  DISCORD
 }
 
 model NotificationSettings {
   id                  String           @id
   userSettings        UserSettings     @relation(fields: [id], references: [user_id], onDelete: Cascade)
-  notificationType    NotificationType
+  notificationType    NotificationType[]
   marketNotifications Boolean          @default(true)
   socialNotifications Boolean          @default(true)
   fcmTokens           String[]
