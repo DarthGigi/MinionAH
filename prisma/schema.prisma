@@ -61,11 +61,11 @@ enum NotificationType {
 }
 
 model NotificationSettings {
-  id                  String           @id
-  userSettings        UserSettings     @relation(fields: [id], references: [user_id], onDelete: Cascade)
+  id                  String             @id
+  userSettings        UserSettings       @relation(fields: [id], references: [user_id], onDelete: Cascade)
   notificationType    NotificationType[]
-  marketNotifications Boolean          @default(true)
-  socialNotifications Boolean          @default(true)
+  marketNotifications Boolean            @default(true)
+  socialNotifications Boolean            @default(true)
   fcmTokens           String[]
 }
 
@@ -98,18 +98,19 @@ model Minion {
 }
 
 model Auction {
-  id          String   @id @default(cuid())
-  minion_id   String
-  user_id     String
-  user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  minion      Minion   @relation(fields: [minion_id], references: [id], onDelete: Cascade)
-  hasInfusion Boolean  @default(false)
-  hasFreeWill Boolean  @default(false)
-  price       Float
-  amount      Int
-  timeCreated DateTime @default(now()) @updatedAt
-  timeBumped  DateTime?
-  timeEmailed DateTime?
+  id           String    @id @default(cuid())
+  minion_id    String
+  user_id      String
+  user         User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  minion       Minion    @relation(fields: [minion_id], references: [id], onDelete: Cascade)
+  hasInfusion  Boolean   @default(false)
+  hasFreeWill  Boolean   @default(false)
+  isNegotiable Boolean   @default(false)
+  price        Float
+  amount       Int
+  timeCreated  DateTime  @default(now()) @updatedAt
+  timeBumped   DateTime?
+  timeEmailed  DateTime?
 
   @@index([user_id])
   @@index([minion_id])

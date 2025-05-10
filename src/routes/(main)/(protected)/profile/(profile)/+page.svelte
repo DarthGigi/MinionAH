@@ -349,8 +349,8 @@
                   Minion Upgrades <ChevronsUpDown class="size-5" />
                 </Collapsible.Trigger>
                 <Collapsible.Content class="mt-4 flex w-full flex-col items-center justify-center gap-4">
-                  <div class="flex gap-4">
-                    <Form.Field form={formCreate} name="infusion" class="flex flex-row items-center justify-between gap-6 rounded-lg border border-input bg-background p-4">
+                  <div class="flex w-full gap-4">
+                    <Form.Field form={formCreate} name="infusion" class="flex w-full flex-row items-center justify-between gap-6 rounded-lg border border-input bg-background p-4">
                       <Form.Control let:attrs>
                         <div class="select-none space-y-0.5">
                           <Form.Label>Mithril Infused</Form.Label>
@@ -360,14 +360,33 @@
                       </Form.Control>
                     </Form.Field>
                   </div>
-                  <div class="flex gap-4">
-                    <Form.Field form={formCreate} name="free-will" class="flex flex-row items-center justify-between gap-6 rounded-lg border border-input bg-background p-4">
+                  <div class="flex w-full gap-4">
+                    <Form.Field form={formCreate} name="free-will" class="flex w-full flex-row items-center justify-between gap-6 rounded-lg border border-input bg-background p-4">
                       <Form.Control let:attrs>
                         <div class="select-none space-y-0.5">
                           <Form.Label>Free Will</Form.Label>
                           <Form.Description><a href="https://hypixel-skyblock.fandom.com/wiki/Free_Will" target="_blank" class="underline underline-offset-2">Free Will</a> is a minion upgrade which <br /> increases a minion's speed by 10% permanently.</Form.Description>
                         </div>
                         <Switch includeInput {...attrs} bind:checked={$formDataCreate["free-will"]} />
+                      </Form.Control>
+                    </Form.Field>
+                  </div>
+                </Collapsible.Content>
+              </Collapsible.Root>
+
+              <Collapsible.Root class="flex flex-col items-center gap-y-2">
+                <Collapsible.Trigger class="flex items-center justify-between gap-2 rounded-lg border border-border px-6 py-2 transition-colors duration-300 hover:bg-background ">
+                  Auction Options <ChevronsUpDown class="size-5" />
+                </Collapsible.Trigger>
+                <Collapsible.Content class="mt-4 flex w-full flex-col items-center justify-center gap-4">
+                  <div class="flex w-full gap-4">
+                    <Form.Field form={formCreate} name="negotiable" class="flex w-full flex-row items-center justify-between gap-6 rounded-lg border border-input bg-background p-4">
+                      <Form.Control let:attrs>
+                        <div class="select-none space-y-0.5">
+                          <Form.Label>Negotiable</Form.Label>
+                          <Form.Description>This will allow the buyer to negotiate the price with you.</Form.Description>
+                        </div>
+                        <Switch includeInput {...attrs} bind:checked={$formDataCreate.negotiable} />
                       </Form.Control>
                     </Form.Field>
                   </div>
