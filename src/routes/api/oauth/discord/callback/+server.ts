@@ -34,8 +34,8 @@ export const GET: RequestHandler = async ({ cookies, locals, fetch, url }) => {
   if (!codeVerifier) redirect(302, "/login"); // invalid code verifier
 
   try {
-    const tokens = await discord.validateAuthorizationCode(code);
-    const accessToken = tokens.accessToken;
+    const tokens = await discord.validateAuthorizationCode(code, codeVerifier);
+    const accessToken = tokens.accessToken();
 
     const response = await fetch("https://discord.com/api/users/@me", {
       headers: {
