@@ -5,25 +5,41 @@ import type { PageServerLoad } from "../$types";
 import { profileFormSchema } from "./profile-form.svelte";
 
 export const load: PageServerLoad = async ({ locals }) => {
-  const userSettings = await prisma.userSettings.findFirst({
-    where: {
-      user_id: locals.user!.id
-    },
-    include: {
-      profileSettings: true
-    }
-  });
+  const [userSettings, discordAccount] = await Promise.all([
+    prisma.userSettings.findFirst({
+      where: {
+        user_id: locals.user!.id
+      },
+      include: {
+        profileSettings: true
+      }
+    }),
+    prisma.userOAuthProvider.findFirst({
+      where: {
+        userId: locals.user!.id,
+        provider: "discord"
+      },
+      select: {
+        id: true,
+        providerUsername: true,
+        userId: true,
+        syncedAt: true
+      }
+    })
+  ]);
 
   return {
     form: await superValidate(
       {
         username: locals.user!.username,
+        discord: discordAccount?.providerUsername,
         email: userSettings?.profileSettings?.email || "",
         bio: userSettings?.profileSettings?.bio || "",
         urls: userSettings?.profileSettings?.urls || []
       },
       zod(profileFormSchema)
-    )
+    ),
+    discordAccount
   };
 };
 
