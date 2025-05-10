@@ -1,10 +1,1 @@
-onlyBuiltDependencies:
-  - '@firebase/util'
-  - '@prisma/client'
-  - '@prisma/engines'
-  - '@sentry/cli'
-  - core-js
-  - esbuild
-  - prisma
-  - protobufjs
-  - sharp
+dangerouslyAllowAllBuilds: true
