@@ -89,9 +89,9 @@
             let:index
             let:style
             {style}
-            value={$filteredUsers[index].username}
+            value={$filteredUsers[index]?.username}
             onSelect={() => {
-              value.set($filteredUsers[index].id);
+              value.set($filteredUsers[index]?.id);
               dispatch("onSelect", $filteredUsers[index]);
               closeAndFocusTrigger(ids.trigger);
             }}

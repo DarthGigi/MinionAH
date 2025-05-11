@@ -97,9 +97,9 @@
             let:index
             let:style
             {style}
-            value={$filteredMinions[index].generator}
+            value={$filteredMinions[index]?.generator}
             onSelect={() => {
-              value.set($filteredMinions[index].generator);
+              value.set($filteredMinions[index]?.generator);
               dispatch("onSelect", $filteredMinions[index]);
               closeAndFocusTrigger(ids.trigger);
             }}
