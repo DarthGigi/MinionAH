@@ -7,6 +7,7 @@
     bio: z.string().max(160, { message: "Your bio can't be longer than 160 characters." }).optional(),
     urls: z.array(z.string().url({ message: "Please enter a valid URL" }).max(100, { message: "Your website URL can't be longer than 100 characters." })).max(6, { message: "You can't add more than 6 URLs." })
   });
+
   export type ProfileFormSchema = typeof profileFormSchema;
 </script>
 
@@ -36,6 +37,7 @@
   export let data: SuperValidated<Infer<ProfileFormSchema>>;
 
   const form = superForm(data, {
+    id: "profile-form",
     validators: zodClient(profileFormSchema),
     dataType: "json",
     resetForm: false,
@@ -157,6 +159,7 @@
 <form
   method="POST"
   class="space-y-8"
+  action="?/updateProfile"
   use:enhance={{
     onSubmit: () => {
       $toastLoading = toast.loading("Updating your profile preferences...");
