@@ -6,7 +6,7 @@ import { fontFamily } from "tailwindcss/defaultTheme";
 const config = {
   darkMode: ["class"],
   content: ["./src/**/*.{html,js,svelte,ts}"],
-  safelist: ["dark"],
+  safelist: ["dark", "ml-2", "mr-2", "size-6", "size-5", "size-4", "size-3", "size-2"],
   theme: {
     container: {
       center: true,
