@@ -3,6 +3,7 @@
   import CardLoading from "$lib/components/CardLoading.svelte";
   import HtmlToast from "$lib/components/HtmlToast.svelte";
   import AnimatedGradientText from "$lib/components/magicui/animated-gradient-text.svelte";
+  import AnimatedShinyText from "$lib/components/magicui/animated-shiny-text.svelte";
   import MinionsListBox from "$lib/components/MinionsListBox.svelte";
   import NumberFlowTicker from "$lib/components/NumberFlowTicker.svelte";
   import SearchSelect, { SearchType } from "$lib/components/SearchSelect.svelte";
@@ -32,6 +33,8 @@
   import type { PageData } from "./$types";
 
   const { data }: { data: PageData } = $props();
+
+  console.log(data.pillData);
 
   const minions = writable<Promise<Seller[]> | Seller[]>(data.minions);
   const loadingMore = writable(false);
@@ -238,21 +241,39 @@
 
 <div class="mt-8 flex justify-center space-x-1 text-center text-4xl font-bold tracking-[-0.045em] text-white md:mt-20 md:text-7xl md:leading-[5rem]">MinionAH</div>
 
-<!-- <Button href="https://discord.minionah.com" target="_blank" class="group z-10 mx-auto mt-2 flex w-fit items-center justify-center rounded-full border border-white/5 bg-neutral-900 text-base text-white transition-all ease-in hover:cursor-pointer hover:bg-neutral-800" variant="ghost">
-  <AnimatedShinyText class="inline-flex items-center justify-center px-4 py-1 transition ease-out hover:text-neutral-400 hover:duration-300">
-    Join our Discord
-    <svg viewBox="0 0 256 199" width="256" height="199" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid" class="ml-2 size-4">
-      <path d="M216.856 16.597A208.502 208.502 0 0 0 164.042 0c-2.275 4.113-4.933 9.645-6.766 14.046-19.692-2.961-39.203-2.961-58.533 0-1.832-4.4-4.55-9.933-6.846-14.046a207.809 207.809 0 0 0-52.855 16.638C5.618 67.147-3.443 116.4 1.087 164.956c22.169 16.555 43.653 26.612 64.775 33.193A161.094 161.094 0 0 0 79.735 175.3a136.413 136.413 0 0 1-21.846-10.632 108.636 108.636 0 0 0 5.356-4.237c42.122 19.702 87.89 19.702 129.51 0a131.66 131.66 0 0 0 5.355 4.237 136.07 136.07 0 0 1-21.886 10.653c4.006 8.02 8.638 15.67 13.873 22.848 21.142-6.58 42.646-16.637 64.815-33.213 5.316-56.288-9.08-105.09-38.056-148.36ZM85.474 135.095c-12.645 0-23.015-11.805-23.015-26.18s10.149-26.2 23.015-26.2c12.867 0 23.236 11.804 23.015 26.2.02 14.375-10.148 26.18-23.015 26.18Zm85.051 0c-12.645 0-23.014-11.805-23.014-26.18s10.148-26.2 23.014-26.2c12.867 0 23.236 11.804 23.015 26.2 0 14.375-10.148 26.18-23.015 26.18Z" fill="currentColor" />
-    </svg>
-  </AnimatedShinyText>
-</Button> -->
-
-<Button href="https://newsroom.minionah.com/discord-update" target="_blank" class="group relative z-10 mx-auto mt-2 flex w-fit items-center justify-center rounded-full border border-white/5 bg-neutral-900 text-base text-white transition-all ease-in hover:cursor-pointer hover:bg-neutral-800" variant="ghost">
-  <AnimatedGradientText>
-    The Discord Update
-    <ExternalLink class="ml-2 size-4" />
-  </AnimatedGradientText>
-</Button>
+{#await data.pillData}
+  <Button class="group pointer-events-none z-10 mx-auto mt-2 flex w-fit animate-pulse select-none items-center justify-center rounded-full border border-white/5 bg-background text-white transition-all ease-in hover:cursor-pointer" variant="ghost">
+    <div class="h-full w-44"></div>
+  </Button>
+{:then pillData}
+  {#if !pillData.hidden}
+    {#if pillData.type === "normal"}
+      <Button href={pillData.url} target="_blank" class="group z-10 mx-auto mt-2 flex w-fit items-center justify-center rounded-full border border-white/5 bg-neutral-900 text-base text-white transition-all ease-in hover:cursor-pointer hover:bg-neutral-800" variant="ghost">
+        <AnimatedShinyText class="inline-flex items-center justify-center px-4 py-1 transition ease-out hover:text-neutral-400 hover:duration-300">
+          {pillData.text}
+          {#if pillData.icon}
+            {@html pillData.icon}
+          {/if}
+          {#if pillData.external}
+            <ExternalLink class="ml-2 size-4" />
+          {/if}
+        </AnimatedShinyText>
+      </Button>
+    {:else if pillData.type === "gradient"}
+      <Button href={pillData.url} target="_blank" class="group relative z-10 mx-auto mt-2 flex w-fit items-center justify-center rounded-full border border-white/5 bg-neutral-900 text-base text-white transition-all ease-in hover:cursor-pointer hover:bg-neutral-800" variant="ghost">
+        <AnimatedGradientText>
+          {pillData.text}
+          {#if pillData.icon}
+            {@html pillData.icon}
+          {/if}
+          {#if pillData.external}
+            <ExternalLink class="ml-2 size-4" />
+          {/if}
+        </AnimatedGradientText>
+      </Button>
+    {/if}
+  {/if}
+{/await}
 
 <div class="mx-auto mt-[1.375rem] flex gap-1 px-1 md:max-w-2xl md:gap-2 md:px-2">
   <Card.Root class="w-full border-border bg-transparent">

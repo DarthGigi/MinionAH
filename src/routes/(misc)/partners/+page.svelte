@@ -1,7 +1,13 @@
 <script lang="ts">
+  import * as Avatar from "$lib/components/ui/avatar/index.js";
+  import * as Card from "$lib/components/ui/card/index.js";
+  import Earth from "lucide-svelte/icons/earth";
   import SvelteSeo from "svelte-seo";
+  import type { PageData } from "./$types";
   import PartnerCard from "./partner-card.svelte";
-  import { partners } from "./partners";
+
+  const { data }: { data: PageData } = $props();
+  const partners = data.partners;
 </script>
 
 <SvelteSeo
@@ -44,8 +50,51 @@
 
 <div class="py-8 max-md:pb-20">
   <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-6 px-4 sm:px-6 lg:px-8">
-    {#each partners as partner}
-      <PartnerCard cardData={partner} />
-    {/each}
+    {#await partners}
+      {#each Array(4)}
+        <Card.Root class="w-full max-w-[32rem] animate-pulse self-stretch border-border bg-background">
+          <Card.Header class="flex flex-col items-center justify-center space-y-0 max-md:gap-6 md:flex-row md:justify-between">
+            <div class="group flex flex-row items-center justify-start gap-2">
+              <Avatar.Root class="pointer-events-none select-none">
+                <Avatar.Image class="transition-all duration-300" />
+                <Avatar.Fallback class="transition-all duration-300"></Avatar.Fallback>
+              </Avatar.Root>
+              <div class="flex flex-col">
+                <Card.Title class="h-4 w-40 rounded bg-muted"></Card.Title>
+                <Card.Description class="mt-1 h-3 w-8 rounded bg-muted"></Card.Description>
+              </div>
+            </div>
+            <div class="flex flex-row-reverse flex-wrap items-center justify-center gap-2">
+              <div class="group">
+                <Avatar.Root class="size-7 select-none">
+                  <Avatar.Image class="pointer-events-none h-full w-full rounded-full bg-accent p-0.5 transition-all duration-300" alt="Favicon" />
+                  <Avatar.Fallback class="pointer-events-none h-full w-full rounded-full bg-accent p-0.5 transition-all duration-300">
+                    <Earth />
+                  </Avatar.Fallback>
+                </Avatar.Root>
+              </div>
+            </div>
+          </Card.Header>
+          <Card.Content class="space-y-2 text-sm">
+            <p class="h-12 w-full rounded bg-muted"></p>
+            <p class="h-12 w-full rounded bg-muted"></p>
+          </Card.Content>
+          <Card.Footer class="flex flex-1 items-center justify-center">
+            <Avatar.Root asChild>
+              <div class="group relative flex aspect-video h-auto w-full shrink-0 overflow-hidden rounded-xl border border-border shadow-sm">
+                <Avatar.Image class="pointer-events-none select-none object-cover transition-all duration-300" />
+                <Avatar.Fallback class="pointer-events-none select-none rounded-xl transition-all duration-300"></Avatar.Fallback>
+              </div>
+            </Avatar.Root>
+          </Card.Footer>
+        </Card.Root>
+      {/each}
+    {:then partners}
+      {#each partners.filter((partner) => !partner.hidden) as partner}
+        <PartnerCard cardData={partner} />
+      {/each}
+    {:catch error}
+      <p class="text-center text-2xl font-semibold leading-none text-red-500">Error: {error.message}</p>
+    {/await}
   </div>
 </div>
