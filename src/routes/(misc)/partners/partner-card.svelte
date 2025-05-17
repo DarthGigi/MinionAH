@@ -3,9 +3,9 @@
   import * as Card from "$lib/components/ui/card";
   import * as Tooltip from "$lib/components/ui/tooltip";
   import Earth from "lucide-svelte/icons/earth";
-  import type { CardData } from "./partners";
+  import type { CardData } from "./types";
 
-  export let cardData: CardData;
+  const { cardData }: { cardData: CardData } = $props();
 </script>
 
 <Card.Root class="max-w-[32rem] self-stretch border-border bg-background">
