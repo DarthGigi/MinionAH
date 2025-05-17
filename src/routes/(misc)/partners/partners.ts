@@ -37,7 +37,7 @@ export const partners: CardData[] = [
     links: [
       {
         name: "Discord",
-        url: "https://discord.gg/QFQ64B4Whn"
+        url: "https://discord.gg/eKGBy9cA4E"
       }
     ]
   }
