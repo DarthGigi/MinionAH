@@ -208,7 +208,7 @@
           <Tooltip.Root openDelay={0} closeDelay={0}>
             <Tooltip.Trigger asChild let:builder>
               <a use:builder.action {...builder} href="https://ko-fi.com/F1F04KOJQ" class="text-accent transition-all duration-300 hover:text-accent-foreground/50" target="_blank">
-                <HandCoins class="class" />
+                <HandCoins />
               </a>
             </Tooltip.Trigger>
             <Tooltip.Content class="border-border bg-popover" side="top" sideOffset={4} align="center">
