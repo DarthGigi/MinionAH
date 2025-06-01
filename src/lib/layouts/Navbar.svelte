@@ -11,6 +11,8 @@
   import CircleHelp from "lucide-svelte/icons/circle-help";
   import Code from "lucide-svelte/icons/code";
   import Cog from "lucide-svelte/icons/cog";
+  import ExternalLink from "lucide-svelte/icons/external-link";
+  import HandCoins from "lucide-svelte/icons/hand-coins";
   import Handshake from "lucide-svelte/icons/handshake";
   import House from "lucide-svelte/icons/house";
   import Info from "lucide-svelte/icons/info";
@@ -53,6 +55,9 @@
                 <Users class="size-4" />Community
               </DropdownMenu.Item>
               <DropdownMenu.Separator class="bg-border" />
+              <DropdownMenu.Item class="gap-1.5 transition-colors duration-300 hover:cursor-pointer data-[highlighted]:bg-background" href="https://ko-fi.com/F1F04KOJQ" target="_blank">
+                <HandCoins class="size-4" />Support Us
+              </DropdownMenu.Item>
               <DropdownMenu.Item class="gap-1.5 transition-colors duration-300 hover:cursor-pointer data-[highlighted]:bg-background" href="/partners">
                 <Handshake class="size-4" />Partners
               </DropdownMenu.Item>
@@ -142,8 +147,8 @@
               </DropdownMenu.Root>
             </div>
           {:else if $page.url.pathname !== "/login"}
-            <div class="flex flex-shrink-0 items-center">
-              <div class="relative ml-3">
+            <div class="flex flex-shrink-0 items-center justify-center">
+              <div class="relative">
                 <div>
                   <a href="/login" class="relative inline-flex items-center rounded-md border border-transparent bg-ring px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors duration-300 hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-secondary"> Login </a>
                 </div>
@@ -151,6 +156,7 @@
             </div>
           {/if}
         {/await}
+
         <Popover.Root bind:open={settingsOpen}>
           <Popover.Trigger aria-label="Settings">
             <Settings class={`text-accent transition-all duration-300 hover:text-accent-foreground/50 ${settingsOpen ? "rotate-45 !text-white" : ""}`} />
@@ -198,6 +204,18 @@
             </Tooltip.Root>
           </Popover.Content>
         </Popover.Root>
+        <div class="flex flex-shrink-0 items-center">
+          <Tooltip.Root openDelay={0} closeDelay={0}>
+            <Tooltip.Trigger asChild let:builder>
+              <a use:builder.action {...builder} href="https://ko-fi.com/F1F04KOJQ" class="text-accent transition-all duration-300 hover:text-accent-foreground/50" target="_blank">
+                <HandCoins />
+              </a>
+            </Tooltip.Trigger>
+            <Tooltip.Content class="border-border bg-popover" side="top" sideOffset={4} align="center">
+              <p class="pr-2.5">Support us on <a href="https://ko-fi.com/F1F04KOJQ" target="_blank" class="relative"><span class="underline">Ko-fi</span><ExternalLink class="absolute -right-2.5 top-0 size-2" /></a></p>
+            </Tooltip.Content>
+          </Tooltip.Root>
+        </div>
       </div>
     </div>
   </div>

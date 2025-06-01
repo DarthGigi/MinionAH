@@ -34,8 +34,6 @@
 
   const { data }: { data: PageData } = $props();
 
-  console.log(data.pillData);
-
   const minions = writable<Promise<Seller[]> | Seller[]>(data.minions);
   const loadingMore = writable(false);
   const currentTier = writable<number | undefined>(undefined);

@@ -4,7 +4,7 @@
 /// <reference lib="webworker" />
 
 const sw = /** @type {ServiceWorkerGlobalScope} */ (/** @type {unknown} */ (self));
-import { initializeApp, getApps, getApp } from "firebase/app";
+import { getApp, getApps, initializeApp } from "firebase/app";
 import { getMessaging, onBackgroundMessage } from "firebase/messaging/sw";
 
 const firebase =
@@ -43,7 +43,7 @@ onBackgroundMessage(messaging, async (/** @type {import("firebase/messaging").Me
 
 // A simple, no-op service worker that takes immediate control.
 sw.addEventListener("install", () => {
-  console.log("Service worker installed.");
+  console.info("Service worker installed.");
   // Skip over the "waiting" lifecycle state, to ensure that our
   // new service worker is activated immediately, even if there's
   // another tab open controlled by our older service worker code.
@@ -51,7 +51,7 @@ sw.addEventListener("install", () => {
 });
 
 sw.addEventListener("activate", () => {
-  console.log("Service worker activated.");
+  console.info("Service worker activated.");
   // Optional: Get a list of all the current open windows/tabs under
   // our service worker's control, and force them to reload.
   // This can "unbreak" any open windows/tabs as soon as the new
