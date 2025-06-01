@@ -173,15 +173,17 @@
     <span class="rounded-full border border-accent bg-accent/20 px-2 py-0.5 text-accent-foreground/80">Beta</span>. You may experience issues with notifications. If you do, try using another notification method.
   </Alert.Description>
 </Alert.Root>
+
 <form
   method="POST"
   class="space-y-8"
   use:enhance={{
     onSubmit: async ({ cancel }) => {
+      const wantsDevice = $formData.type?.includes("DEVICE");
       $toastLoading = toast.loading("Updating your notification preferences...");
-      if ($internalStorage.fcmToken && !$formData.type?.includes("EMAIL")) {
+      if (wantsDevice && $internalStorage.fcmToken) {
         formData.update((state) => ({ ...state, fcmToken: $internalStorage.fcmToken }));
-      } else if (!$internalStorage.fcmToken && !$formData.type?.includes("EMAIL")) {
+      } else if (wantsDevice && !$internalStorage.fcmToken) {
         $toastLoading = toast.error("Failed to update your notification preferences. Please refresh the page and try again.");
         cancel();
       }
