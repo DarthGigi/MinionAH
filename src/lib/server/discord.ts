@@ -10,7 +10,6 @@ cloudinary.config({
 });
 
 export const updateDiscordAvatar = async (discordId: string, discordAvatarHash: string) => {
-  console.log("Updating Discord avatar", discordId, discordAvatarHash);
   try {
     if (!discordId || !discordAvatarHash) {
       error(500, "Error getting Discord profile");
