@@ -60,8 +60,6 @@ async function mcAuthLogin(code: string, username: string) {
     })
   });
 
-  console.log("response", response);
-
   const minecraftUser = await parseMinecraftProfile(response);
 
   const user = await getMcAuthUser(minecraftUser);
