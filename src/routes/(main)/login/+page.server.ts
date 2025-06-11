@@ -21,7 +21,29 @@ const hashOptions = {
 } satisfies Options;
 
 async function mcAuthLogin(code: string, username: string) {
-  const mc_id = (await (await fetch(`https://api.mojang.com/users/profiles/minecraft/${username}`)).json()).id;
+  let mc_id: string;
+
+  try {
+    const response = await fetch(`https://api.mojang.com/users/profiles/minecraft/${username}`);
+    if (!response.ok) {
+      throw new Error(`Mojang API returned ${response.status}`);
+    }
+    const data = await response.json();
+    mc_id = data.id;
+  } catch (e) {
+    console.warn("Mojang API failed, trying fallback API:", e);
+    try {
+      const response = await fetch(`https://api.minecraftservices.com/minecraft/profile/lookup/name/${username.toLowerCase()}`);
+      if (!response.ok) {
+        throw new Error(`Microsoft API returned ${response.status}`);
+      }
+      const data = await response.json();
+      mc_id = data.id;
+    } catch (e) {
+      console.error("Failed to get Minecraft ID for user", username, e);
+      throw new Error("Failed to get Minecraft ID");
+    }
+  }
 
   const response = await fetch("https://mc-auth.com/oAuth2/alternate-code-exchange", {
     method: "POST",
