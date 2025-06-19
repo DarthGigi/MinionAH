@@ -8,7 +8,7 @@ const username = z
   .regex(/^[a-zA-Z0-9_]{3,16}$/, "Username must be 3-16 characters and only contain letters, numbers, and underscores");
 
 const code = z.string().refine((x) => /^[A-Z]\d{6}$/.test(x), {
-  message: "Invalid code"
+  message: "Code must start with a capital letter followed by exactly 6 digits (e.g. A123456)"
 });
 
 export const loginFormSchema = z.object({
