@@ -115,6 +115,7 @@ model Auction {
 
   @@index([user_id])
   @@index([minion_id])
+  @@index([timeCreated])
 }
 
 model Chat {
@@ -129,6 +130,8 @@ model Chat {
   user2Read    Boolean   @default(false)
   user1Emailed Boolean   @default(false)
   user2Emailed Boolean   @default(false)
+
+  @@index([createdAt])
 }
 
 enum MessageType {
@@ -148,4 +151,5 @@ model Message {
 
   @@index([chat_id])
   @@index([user_id])
+  @@index([createdAt])
 }
